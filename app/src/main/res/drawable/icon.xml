@@ -1,0 +1,9 @@
+<!-- drawable/vector.xml -->
+<vector
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="29.7dp"
+    android:height="25.65dp"
+    android:viewportWidth="29.7"
+    android:viewportHeight="25.65"
+   />
