@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "254303755123",
+    "project_id": "sarawan-8b458",
+    "storage_bucket": "sarawan-8b458.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:254303755123:android:0f2a1bf96fb931599e0306",
+        "android_client_info": {
+          "package_name": "com.example.sarawan"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "254303755123-ocrpdo944p35si8pm2vad6j72onp7b19.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.sarawan",
+            "certificate_hash": "f89e33f6f14444a93976e23a5ea49bc733e1ddb4"
+          }
+        },
+        {
+          "client_id": "254303755123-l5p3moqricmifam4lqp877i1q722n03q.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAryeLLlEY2PCawgAmfZwzvqdtx0MtpkkU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "254303755123-l5p3moqricmifam4lqp877i1q722n03q.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
