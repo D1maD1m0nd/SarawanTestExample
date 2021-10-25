@@ -1,15 +1,13 @@
-package com.example.sarawan
+package com.example.sarawan.service
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.app.Service
 import android.content.Context
-import android.content.Intent
 import android.os.Build
-import android.os.IBinder
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
+import com.example.sarawan.R
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 
