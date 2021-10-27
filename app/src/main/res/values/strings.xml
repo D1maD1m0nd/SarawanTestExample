@@ -4,4 +4,5 @@
     <string name="title_home">Главная</string>
     <string name="title_basket">Корзина</string>
     <string name="title_profile">Профиль</string>
+    <string name="information">Информация</string>
 </resources>
