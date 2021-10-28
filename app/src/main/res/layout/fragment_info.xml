@@ -23,36 +23,40 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
+                android:fontFamily="@font/montserrat_medium"
                 android:text="Войдите или зарегистрируйтесь"
                 android:textColor="@color/black"
-                android:textSize="26sp" />
+                android:textSize="28sp" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
+                android:fontFamily="@font/montserrat_regular"
                 android:text="Чтобы делать покупки и отслеживать заказы необходимо зарегистрироваться"
                 android:textColor="@color/black"
-                android:textSize="18sp" />
+                android:textSize="16sp" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/info_sign_up_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginStart="35dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="35dp"
+                android:layout_marginStart="38dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginEnd="38dp"
                 android:backgroundTint="@color/primary_green"
-                android:paddingTop="10dp"
-                android:paddingBottom="10dp"
+                android:fitsSystemWindows="false"
+                android:fontFamily="@font/montserrat_semi_bold"
+                android:letterSpacing="0.01"
+                android:paddingTop="9dp"
+                android:paddingBottom="9dp"
                 android:text="Зарегистрироваться"
                 android:textAllCaps="false"
                 android:textColor="@color/white"
-                android:textSize="18sp"
-                android:textStyle="normal"
-                app:cornerRadius="10dp" />
+                android:textSize="16sp"
+                app:cornerRadius="12dp" />
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 
