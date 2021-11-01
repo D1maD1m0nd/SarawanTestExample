@@ -9,4 +9,10 @@
     <string name="price_text">₽</string>
     <string name="kg">Кг</string>
     <string name="min_price">Мин. цена:</string>
+    <string name="default_product_title">Грибы шампиньоны свежие</string>
+    <string name="product_sample_properties">уп. 600г</string>
+    <string name="product_company_owner">Горзеленхоз</string>
+    <string name="russia">Россия</string>
+    <string name="lenta_shop">ЛЕНТА</string>
+    <string name="default_sum">000,00 ₽</string>
 </resources>
