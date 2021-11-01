@@ -5,8 +5,8 @@
     <string name="title_basket">Корзина</string>
     <string name="title_profile">Профиль</string>
     <string name="information">Информация</string>
-    <string name="buy">Buy</string>
+    <string name="buy">Купить</string>
     <string name="price_text">₽</string>
-    <string name="kg">kg</string>
-    <string name="min_price">Min. price:</string>
+    <string name="kg">Кг</string>
+    <string name="min_price">Мин. цена:</string>
 </resources>

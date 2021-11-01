@@ -3,12 +3,9 @@ package com.example.sarawan.di.component
 import android.app.Application
 import com.example.sarawan.app.App
 import com.example.sarawan.di.modules.*
-import com.example.sarawan.framework.ui.main.MainFragment
 import dagger.BindsInstance
 import dagger.Component
 import dagger.android.AndroidInjectionModule
-import dagger.android.ContributesAndroidInjector
-import dagger.android.support.AndroidSupportInjection
 import dagger.android.support.AndroidSupportInjectionModule
 import javax.inject.Singleton
 
@@ -24,7 +21,8 @@ import javax.inject.Singleton
         SchedulerModule::class,
         CacheModule::class,
         AppModule::class,
-        NetworkModule::class
+        NetworkModule::class,
+        ImageModule::class
     ]
 )
 @Singleton

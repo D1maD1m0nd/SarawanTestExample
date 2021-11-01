@@ -9,16 +9,14 @@
         android:id="@+id/discount"
         android:layout_width="50dp"
         android:layout_height="50dp"
+        android:layout_gravity="top|end"
         android:background="@drawable/ic_discount"
         android:elevation="1dp"
         android:gravity="center"
         android:textColor="?colorOnPrimary"
         android:textSize="16sp"
-        android:visibility="gone"
-       android:layout_gravity="top|end"
         tools:ignore="TextContrastCheck"
-        tools:text="-30%"
-        tools:visibility="visible" />
+        tools:text="-30%" />
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -33,21 +31,19 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp">
+                android:paddingHorizontal="16dp">
 
                 <ImageView
                     android:id="@+id/item_image"
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:layout_marginStart="33dp"
+                    android:layout_width="0dp"
+                    app:layout_constraintHorizontal_weight="1"
+                    android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:layout_marginEnd="33dp"
                     android:scaleType="fitCenter"
+                    app:layout_constraintBottom_toTopOf="@id/item_description"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toTopOf="@id/item_description"
                     tools:ignore="ContentDescription"
                     tools:src="@drawable/test_card_img" />
 
@@ -55,15 +51,17 @@
                     android:id="@+id/item_description"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginEnd="16dp"
-                    android:maxLines="2"
+                    android:layout_marginHorizontal="16dp"
+                    android:lines="3"
+                    android:maxLines="3"
+                    android:minLines="3"
                     android:textColor="@color/card_text_color"
                     android:textSize="16sp"
                     android:textStyle="bold"
+                    app:layout_constraintBottom_toTopOf="@id/item_min_price_text"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/item_image"
-                    app:layout_constraintBottom_toTopOf="@id/item_min_price_text"
                     tools:text="Some item description" />
 
                 <com.google.android.material.textview.MaterialTextView
@@ -73,9 +71,9 @@
                     android:text="@string/min_price"
                     android:textColor="@color/card_text_color"
                     android:textSize="14sp"
-                    app:layout_constraintTop_toBottomOf="@id/item_description"
                     app:layout_constraintBottom_toTopOf="@id/item_price"
-                    app:layout_constraintStart_toStartOf="parent" />
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/item_description" />
 
                 <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/item_shop_name"
@@ -111,12 +109,12 @@
                     tools:ignore="TextContrastCheck" />
 
                 <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/item_price_weight"
+                    android:id="@+id/item_weight"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/kg"
                     android:textColor="#888888"
-                    android:textSize="18sp"
+                    android:textSize="14sp"
                     app:layout_constraintBottom_toTopOf="@id/item_buy_button"
                     app:layout_constraintEnd_toEndOf="parent"
                     tools:ignore="TextContrastCheck" />
@@ -125,9 +123,8 @@
                     android:id="@+id/item_buy_button"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="7dp"
+                    android:layout_marginHorizontal="7dp"
                     android:layout_marginTop="5dp"
-                    android:layout_marginEnd="7dp"
                     android:layout_marginBottom="8dp"
                     android:text="@string/buy"
                     app:layout_constraintBottom_toBottomOf="parent"

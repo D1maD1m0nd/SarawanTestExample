@@ -16,19 +16,19 @@ class MainViewModel @Inject constructor(
         compositeDisposable.add(
             interactor.getData(word, isOnline)
                 .subscribeOn(schedulerProvider.io)
-                .observeOn(schedulerProvider.ui)
-                .doOnSubscribe { stateLiveData.value = AppState.Loading }
+                .observeOn(schedulerProvider.io)
+                .doOnSubscribe { stateLiveData.postValue(AppState.Loading) }
                 .subscribeWith(getObserver())
         )
     }
 
     private fun getObserver() = object : DisposableObserver<AppState>() {
         override fun onNext(appState: AppState) {
-            stateLiveData.value = appState
+            stateLiveData.postValue(appState)
         }
 
         override fun onError(e: Throwable) {
-            stateLiveData.value = AppState.Error(e)
+            stateLiveData.postValue(AppState.Error(e))
         }
 
         override fun onComplete() = Unit
