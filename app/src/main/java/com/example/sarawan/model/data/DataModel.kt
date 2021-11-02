@@ -2,12 +2,12 @@ package com.example.sarawan.model.data
 
 import com.google.gson.annotations.SerializedName
 
-class DataModel(
-    @field:SerializedName("id") val id: Int?,
-    @field:SerializedName("price") val price: Float?,
-    @field:SerializedName("name") val itemDescription: String?,
-    @field:SerializedName("picture") val pictureUrl: String?,
-    @field:SerializedName("discount") val discount: Int?,
-    @field:SerializedName("shop") val shop: String?,
-    @field:SerializedName("weight") val weight: String?,
+data class DataModel(
+    @SerializedName("id") val id: Int?,
+    @SerializedName("price") val price: Float?,
+    @SerializedName("name") val itemDescription: String?,
+    @SerializedName("picture") val pictureUrl: String?,
+    @SerializedName("discount") val discount: Int?,
+    @SerializedName("shop") val shop: String?,
+    @SerializedName("weight") val weight: String?,
 )

@@ -15,4 +15,6 @@
     <string name="russia">Россия</string>
     <string name="lenta_shop">ЛЕНТА</string>
     <string name="default_sum">000,00 ₽</string>
+    <string name="search_in_sarafan">Искать в сарафане</string>
+    <string name="find_text">Найти</string>
 </resources>
