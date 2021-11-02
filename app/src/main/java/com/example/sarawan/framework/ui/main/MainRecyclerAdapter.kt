@@ -9,11 +9,6 @@ import coil.request.Disposable
 import coil.request.ImageRequest
 import com.example.sarawan.databinding.ListItemCardBinding
 import com.example.sarawan.model.data.DataModel
-import android.view.ViewTreeObserver.OnGlobalLayoutListener
-
-import android.view.ViewTreeObserver
-
-
 
 
 class MainRecyclerAdapter(
@@ -50,8 +45,8 @@ class MainRecyclerAdapter(
 
         fun bind(data: DataModel) {
             if (layoutPosition != RecyclerView.NO_POSITION) {
-                binding.itemPrice.text =
-                    data.price.toString().substring(0, data.price.toString().lastIndexOf(".") + 3)
+                binding.itemPrice.text = data.price.toString().plus("00")
+                    .substring(0, data.price.toString().lastIndexOf(".") + 3)
                 binding.itemShopName.text = data.shop
                 binding.itemWeight.text = data.weight
                 binding.itemDescription.text = data.itemDescription
