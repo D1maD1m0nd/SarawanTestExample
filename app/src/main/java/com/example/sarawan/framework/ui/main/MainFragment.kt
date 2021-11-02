@@ -68,7 +68,7 @@ class MainFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        checkOnlineStatus()
+        //checkOnlineStatus()
         initRecyclerAdapter()
         initFab()
 
@@ -84,8 +84,8 @@ class MainFragment : Fragment() {
         binding.mainRecyclerView.adapter = adapter
         viewModel.getStateLiveData().observe(viewLifecycleOwner) { appState ->
             when (appState) {
-                is AppState.Success -> {
-                    adapter?.setData(appState.data)
+                is AppState.Success<*> -> {
+                    adapter?.setData(appState.data as List<DataModel>?)
                 }
                 is AppState.Error -> Unit
                 AppState.Loading -> Unit
