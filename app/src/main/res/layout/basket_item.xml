@@ -1,76 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="220dp"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_gravity="center_horizontal"
-    android:layout_marginTop="27dp"
     android:layout_marginStart="20dp"
-    android:layout_marginEnd="20dp">
+    android:layout_marginTop="27dp"
+    android:layout_marginEnd="20dp"
+    android:layout_marginBottom="30dp">
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/title_product_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2sp"
+        android:alpha=".87"
+        android:fontFamily="@font/montserrat_medium"
+        android:shadowColor="@color/black"
+        android:shadowDx="0.87"
+        android:shadowDy="2"
+        android:shadowRadius="1"
         android:text="@string/default_product_title"
         android:textColor="@color/black_product_title"
         android:textSize="@dimen/title_product_text_size"
-        android:fontFamily="@font/montserrat_medium"
-        android:alpha=".87"
-        android:layout_marginTop="2sp"
-        android:shadowColor="@color/black"
-        android:shadowRadius="1"
-        android:shadowDy="2"
-        android:shadowDx="0.87"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-      />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/properties_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2sp"
+        android:fontFamily="@font/montserrat_regular"
         android:text="@string/product_sample_properties"
         android:textColor="@color/black_product_title"
         android:textSize="@dimen/sub_text_font_size"
-        android:fontFamily="@font/montserrat_regular"
-        android:layout_marginTop="2sp"
         android:textStyle="normal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/title_product_text_view" />
+
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/trash_image_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="4sp"
+        android:layout_marginEnd="5sp"
         android:src="@drawable/trash_bascket"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="4sp"
-        android:layout_marginEnd="5sp"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/product_image_view"
         android:layout_width="174dp"
         android:layout_height="104dp"
         android:layout_marginTop="12dp"
-        android:src="@drawable/product_sample_img"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/properties_text_view" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/product_company_text_view"
-        android:textColor="@color/black"
-        android:textSize="@dimen/shop_info_font_size"
-        android:fontFamily="@font/montserrat_regular"
-        android:textStyle="normal"
-        android:shadowColor="@color/black_product_title"
-        android:shadowDx="0.87"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/product_company_owner"
-        android:layout_marginTop="12dp"
         android:layout_marginStart="24dp"
+        android:layout_marginTop="12dp"
+        android:fontFamily="@font/montserrat_regular"
+        android:shadowColor="@color/black_product_title"
+        android:shadowDx="0.87"
+        android:text="@string/product_company_owner"
+        android:textColor="@color/black"
+        android:textSize="@dimen/shop_info_font_size"
+        android:textStyle="normal"
         app:layout_constraintStart_toEndOf="@+id/product_image_view"
         app:layout_constraintTop_toBottomOf="@+id/properties_text_view" />
 
@@ -78,14 +78,14 @@
         android:id="@+id/product_country_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="4dp"
         android:fontFamily="@font/montserrat_regular"
         android:shadowColor="@color/black_product_title"
         android:shadowDx="0.87"
         android:text="@string/russia"
         android:textColor="@color/black"
         android:textSize="@dimen/shop_info_font_size"
-        android:layout_marginTop="4dp"
-        android:layout_marginStart="24dp"
         app:layout_constraintStart_toEndOf="@+id/product_image_view"
         app:layout_constraintTop_toBottomOf="@+id/product_company_text_view" />
 
@@ -120,40 +120,39 @@
     <androidx.appcompat.widget.AppCompatImageButton
         android:id="@+id/plus_image_button"
         style="@style/TextAppearance.AppCompat.Widget.Button.Inverse"
+        android:layout_marginStart="12dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
-        android:background="null"
+        android:background="@null"
         android:src="@drawable/plus_ic"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/materialTextView"
-        app:layout_constraintTop_toBottomOf="@+id/product_image_view"
-        app:layout_constraintVertical_bias="0.609" />
+        app:layout_constraintStart_toEndOf="@+id/counter_text_view"
+        app:layout_constraintTop_toBottomOf="@+id/product_image_view" />
 
     <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/materialTextView"
-        android:text="1"
-        android:textSize="18sp"
-        android:textColor="@color/black"
-        android:fontFamily="@font/montserrat_semi_bold"
+        android:id="@+id/counter_text_view"
         android:layout_width="32dp"
         android:layout_height="32dp"
-        android:layout_marginBottom="9dp"
         android:layout_marginStart="12dp"
-        android:inputType="number"
         android:background="@drawable/rectangle_black_shape"
+        android:fontFamily="@font/montserrat_semi_bold"
         android:gravity="center"
+        android:inputType="number"
+        android:text="1"
+        android:textColor="@color/black"
+        android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/minus_image_button" />
+        app:layout_constraintStart_toEndOf="@+id/minus_image_button"
+        app:layout_constraintTop_toBottomOf="@+id/product_image_view" />
 
     <androidx.appcompat.widget.AppCompatImageButton
         android:id="@+id/minus_image_button"
         style="@style/TextAppearance.AppCompat.Widget.Button.Inverse"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="null"
+        android:background="@null"
         android:src="@drawable/minus_ic"
-        app:layout_constraintBottom_toBottomOf="@+id/materialTextView"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/materialTextView" />
+        app:layout_constraintTop_toBottomOf="@+id/product_image_view" />
 </androidx.constraintlayout.widget.ConstraintLayout>
