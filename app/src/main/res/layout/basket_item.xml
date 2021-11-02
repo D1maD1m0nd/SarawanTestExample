@@ -108,13 +108,13 @@
         android:id="@+id/sum__text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="28dp"
         android:fontFamily="@font/montserrat_semi_bold"
         android:text="@string/default_sum"
         android:textColor="@color/black"
         android:textSize="@dimen/title_product_text_size"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/plus_image_button"
+
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/product_shop_text_view"
         app:layout_constraintTop_toBottomOf="@+id/product_image_view" />
 
     <androidx.appcompat.widget.AppCompatImageButton
@@ -122,11 +122,29 @@
         style="@style/TextAppearance.AppCompat.Widget.Button.Inverse"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
         android:background="null"
         android:src="@drawable/plus_ic"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/product_image_view" />
+        app:layout_constraintStart_toEndOf="@+id/materialTextView"
+        app:layout_constraintTop_toBottomOf="@+id/product_image_view"
+        app:layout_constraintVertical_bias="0.609" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/materialTextView"
+        android:text="1"
+        android:textSize="18sp"
+        android:textColor="@color/black"
+        android:fontFamily="@font/montserrat_semi_bold"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginBottom="9dp"
+        android:layout_marginStart="12dp"
+        android:inputType="number"
+        android:background="@drawable/rectangle_black_shape"
+        android:gravity="center"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/minus_image_button" />
 
     <androidx.appcompat.widget.AppCompatImageButton
         android:id="@+id/minus_image_button"
@@ -135,8 +153,7 @@
         android:layout_height="wrap_content"
         android:background="null"
         android:src="@drawable/minus_ic"
-
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/plus_image_button"
-        app:layout_constraintTop_toBottomOf="@+id/product_image_view" />
+        app:layout_constraintBottom_toBottomOf="@+id/materialTextView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/materialTextView" />
 </androidx.constraintlayout.widget.ConstraintLayout>
