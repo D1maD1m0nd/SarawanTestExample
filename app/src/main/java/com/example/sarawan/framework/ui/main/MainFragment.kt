@@ -5,9 +5,11 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.GridLayout
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.GridLayoutManager
 import coil.ImageLoader
 import com.example.sarawan.databinding.FragmentMainBinding
 import com.example.sarawan.framework.viewModel.MainViewModel
@@ -66,20 +68,18 @@ class MainFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        networkStatus
-            .isOnlineSingle()
-            .observeOn(schedulerProvider.io)
-            .subscribeOn(schedulerProvider.io)
-            .subscribe({ isOnline ->
-                this.isOnline = isOnline
-                if (isOnline) Toast.makeText(context, "You now Online", Toast.LENGTH_SHORT).show()
-//                else Toast.makeText(context, "You are Offline!", Toast.LENGTH_SHORT).show()
-            },
-                {
-                    Log.d("Test", it.message.toString())
-                }
-            )
+        checkOnlineStatus()
+        initRecyclerAdapter()
+        initFab()
 
+        viewModel.search("test", isOnline)
+    }
+
+    private fun initFab() {
+        binding.fabPrice.text = "100 ₽"
+    }
+
+    private fun initRecyclerAdapter() {
         adapter = MainRecyclerAdapter(onListItemClickListener, listOf(), imageLoader)
         binding.mainRecyclerView.adapter = adapter
         viewModel.getStateLiveData().observe(viewLifecycleOwner) { appState ->
@@ -91,7 +91,27 @@ class MainFragment : Fragment() {
                 AppState.Loading -> Unit
             }
         }
-        viewModel.search("test", isOnline)
+        binding.mainRecyclerView.setOnScrollChangeListener { _, _, scrollY, _, _ ->
+
+            if ((binding.mainRecyclerView.layoutManager as GridLayoutManager).findFirstCompletelyVisibleItemPosition() == 0) binding.topBar.visibility = View.VISIBLE
+            else binding.topBar.visibility = View.GONE
+        }
+    }
+
+    private fun checkOnlineStatus() {
+        networkStatus
+            .isOnlineSingle()
+            .observeOn(schedulerProvider.io)
+            .subscribeOn(schedulerProvider.io)
+            .subscribe({ isOnline ->
+                this.isOnline = isOnline
+                if (isOnline) Toast.makeText(context, "You now Online", Toast.LENGTH_SHORT).show()
+    //                else Toast.makeText(context, "You are Offline!", Toast.LENGTH_SHORT).show()
+            },
+                {
+                    Log.d("Test", it.message.toString())
+                }
+            )
     }
 
     companion object {

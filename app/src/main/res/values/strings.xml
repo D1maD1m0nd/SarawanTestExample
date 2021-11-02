@@ -9,4 +9,6 @@
     <string name="price_text">₽</string>
     <string name="kg">Кг</string>
     <string name="min_price">Мин. цена:</string>
+    <string name="search_in_sarafan">Искать в сарафане</string>
+    <string name="find_text">Найти</string>
 </resources>

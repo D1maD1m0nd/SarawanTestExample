@@ -17,9 +17,14 @@
         <entry key="..\:/Desktop/Android/sarawan_Android/app/src/main/res/drawable/ic_speech_bubble.xml" value="0.37083333333333335" />
         <entry key="..\:/Desktop/Android/sarawan_Android/app/src/main/res/drawable/ic_vegetables.xml" value="0.37083333333333335" />
         <entry key="..\:/Desktop/Android/sarawan_Android/app/src/main/res/drawable/icon.xml" value="0.37083333333333335" />
+        <entry key="..\:/Desktop/Android/sarawan_Android/app/src/main/res/drawable/logo_top_bar.xml" value="0.21354166666666666" />
+        <entry key="..\:/Desktop/Android/sarawan_Android/app/src/main/res/drawable/main_screen_app_bar_selector.xml" value="0.21354166666666666" />
+        <entry key="..\:/Desktop/Android/sarawan_Android/app/src/main/res/drawable/mic_icon.xml" value="0.21354166666666666" />
+        <entry key="..\:/Desktop/Android/sarawan_Android/app/src/main/res/drawable/search_border.xml" value="0.21354166666666666" />
+        <entry key="..\:/Desktop/Android/sarawan_Android/app/src/main/res/drawable/search_icon.xml" value="0.21354166666666666" />
         <entry key="..\:/Desktop/Android/sarawan_Android/app/src/main/res/layout/activity_main.xml" value="0.24954710144927536" />
         <entry key="..\:/Desktop/Android/sarawan_Android/app/src/main/res/layout/fragment_main.xml" value="0.33" />
-        <entry key="..\:/Desktop/Android/sarawan_Android/app/src/main/res/layout/list_item_card.xml" value="0.25" />
+        <entry key="..\:/Desktop/Android/sarawan_Android/app/src/main/res/layout/list_item_card.xml" value="0.33" />
         <entry key="..\:/Desktop/Android/sarawan_Android/app/src/main/res/menu/bottom_menu.xml" value="0.3546875" />
         <entry key="..\:/Sarawan/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.3651041666666667" />
         <entry key="..\:/Sarawan/app/src/main/res/drawable/bottom_nav_selector.xml" value="0.3651041666666667" />

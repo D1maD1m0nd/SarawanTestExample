@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    android:padding="2dp">
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/discount"
@@ -18,51 +18,44 @@
         tools:ignore="TextContrastCheck"
         tools:text="-30%" />
 
-    <FrameLayout
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/item_card"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_margin="8dp">
 
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/item_card"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_margin="8dp">
+            android:orientation="vertical"
+            android:paddingHorizontal="16dp">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <ImageView
+                android:id="@+id/item_image"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:paddingHorizontal="16dp">
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:scaleType="fitCenter"
+                tools:ignore="ContentDescription,ImageContrastCheck"
+                tools:src="@drawable/test_card_img" />
 
-                <ImageView
-                    android:id="@+id/item_image"
-                    android:layout_width="0dp"
-                    app:layout_constraintHorizontal_weight="1"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:scaleType="fitCenter"
-                    app:layout_constraintBottom_toTopOf="@id/item_description"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:ignore="ContentDescription"
-                    tools:src="@drawable/test_card_img" />
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/item_description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:lines="3"
+                android:maxLines="3"
+                android:minLines="3"
+                android:textColor="@color/card_text_color"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                tools:text="Some item description" />
 
-                <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/item_description"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="16dp"
-                    android:lines="3"
-                    android:maxLines="3"
-                    android:minLines="3"
-                    android:textColor="@color/card_text_color"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    app:layout_constraintBottom_toTopOf="@id/item_min_price_text"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/item_image"
-                    tools:text="Some item description" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
 
                 <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/item_min_price_text"
@@ -70,10 +63,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/min_price"
                     android:textColor="@color/card_text_color"
-                    android:textSize="14sp"
-                    app:layout_constraintBottom_toTopOf="@id/item_price"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/item_description" />
+                    android:textSize="14sp" />
 
                 <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/item_shop_name"
@@ -81,9 +71,13 @@
                     android:layout_height="wrap_content"
                     android:textColor="@color/card_text_color"
                     android:textSize="14sp"
-                    app:layout_constraintBottom_toTopOf="@id/item_price"
-                    app:layout_constraintStart_toEndOf="@id/item_min_price_text"
                     tools:text="АШАН" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
                 <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/item_price"
@@ -91,8 +85,6 @@
                     android:layout_height="wrap_content"
                     android:textColor="@color/secondary_orange"
                     android:textSize="18sp"
-                    app:layout_constraintBottom_toTopOf="@id/item_buy_button"
-                    app:layout_constraintStart_toStartOf="parent"
                     tools:ignore="TextContrastCheck"
                     tools:text="20" />
 
@@ -104,35 +96,34 @@
                     android:text="@string/price_text"
                     android:textColor="@color/secondary_orange"
                     android:textSize="18sp"
-                    app:layout_constraintBottom_toTopOf="@id/item_buy_button"
-                    app:layout_constraintStart_toEndOf="@id/item_price"
                     tools:ignore="TextContrastCheck" />
+
+                <Space
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
 
                 <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/item_weight"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/kg"
+                    android:layout_gravity="bottom"
                     android:textColor="#888888"
                     android:textSize="14sp"
-                    app:layout_constraintBottom_toTopOf="@id/item_buy_button"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    tools:ignore="TextContrastCheck" />
+                    tools:ignore="TextContrastCheck"
+                    tools:text="@string/kg" />
+            </LinearLayout>
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/item_buy_button"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="7dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="8dp"
-                    android:text="@string/buy"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    tools:ignore="TextContrastCheck,TouchTargetSizeCheck" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/item_buy_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="7dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="8dp"
+                android:text="@string/buy"
+                tools:ignore="TextContrastCheck,TouchTargetSizeCheck" />
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
-        </com.google.android.material.card.MaterialCardView>
-    </FrameLayout>
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
 </FrameLayout>
