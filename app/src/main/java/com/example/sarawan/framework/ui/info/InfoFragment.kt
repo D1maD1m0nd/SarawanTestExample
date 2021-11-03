@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import com.example.sarawan.R
 import com.example.sarawan.databinding.FragmentInfoBinding
 
 class InfoFragment : Fragment() {
@@ -55,7 +56,12 @@ class InfoFragment : Fragment() {
     }
 
     private fun showHowWorking() {
-        Toast.makeText(context, "how working", Toast.LENGTH_SHORT).show()
+        activity?.supportFragmentManager?.apply {
+            beginTransaction()
+                .replace(R.id.nav_fragment, InfoHowFragment.newInstance())
+                .addToBackStack(null)
+                .commit()
+        }
     }
 
     private fun showReviews() {
