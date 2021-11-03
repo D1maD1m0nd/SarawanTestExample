@@ -1,4 +1,4 @@
-package com.example.sarawan.framework.viewModel
+package com.example.sarawan.framework.ui.basket.viewModel
 
 import com.example.sarawan.framework.MainInteractor
 import com.example.sarawan.framework.ui.base.BaseViewModel
@@ -7,21 +7,10 @@ import com.example.sarawan.rx.ISchedulerProvider
 import io.reactivex.rxjava3.observers.DisposableObserver
 import javax.inject.Inject
 
-class MainViewModel @Inject constructor(
+class BasketViewModel @Inject constructor(
     private val interactor: MainInteractor,
     private val schedulerProvider: ISchedulerProvider
 ) : BaseViewModel<AppState>() {
-
-    fun search(word: String, isOnline: Boolean) {
-        compositeDisposable.add(
-            interactor.getData(word, isOnline)
-                .subscribeOn(schedulerProvider.io)
-                .observeOn(schedulerProvider.io)
-                .doOnSubscribe { stateLiveData.postValue(AppState.Loading) }
-                .subscribeWith(getObserver())
-        )
-    }
-
     private fun getObserver() = object : DisposableObserver<AppState>() {
         override fun onNext(appState: AppState) {
             stateLiveData.postValue(appState)

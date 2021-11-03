@@ -5,8 +5,16 @@
     <string name="title_basket">Корзина</string>
     <string name="title_profile">Профиль</string>
     <string name="information">Информация</string>
-    <string name="buy">Buy</string>
+    <string name="buy">Купить</string>
     <string name="price_text">₽</string>
-    <string name="kg">kg</string>
-    <string name="min_price">Min. price:</string>
+    <string name="kg">Кг</string>
+    <string name="min_price">Мин. цена:</string>
+    <string name="default_product_title">Грибы шампиньоны свежие</string>
+    <string name="product_sample_properties">уп. 600г</string>
+    <string name="product_company_owner">Горзеленхоз</string>
+    <string name="russia">Россия</string>
+    <string name="lenta_shop">ЛЕНТА</string>
+    <string name="default_sum">000,00 ₽</string>
+    <string name="search_in_sarafan">Искать в сарафане</string>
+    <string name="find_text">Найти</string>
 </resources>
