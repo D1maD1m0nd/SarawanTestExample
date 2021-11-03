@@ -1,6 +1,7 @@
 package com.example.sarawan.app
 
 import android.app.Application
+import androidx.navigation.NavController
 import com.example.sarawan.di.component.DaggerAppComponent
 import com.example.sarawan.di.modules.AppModule
 import dagger.android.AndroidInjector
@@ -25,4 +26,8 @@ class App : Application(), HasAndroidInjector {
             .build()
             .inject(this)
     }
+    companion object{
+        lateinit var navController : NavController
+    }
+
 }
