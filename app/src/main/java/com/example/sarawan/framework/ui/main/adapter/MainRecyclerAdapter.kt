@@ -1,4 +1,4 @@
-package com.example.sarawan.framework.ui.main
+package com.example.sarawan.framework.ui.main.adapter
 
 import android.view.LayoutInflater
 import android.view.View
@@ -10,17 +10,30 @@ import coil.request.ImageRequest
 import com.example.sarawan.databinding.ListItemCardBinding
 import com.example.sarawan.model.data.DataModel
 
-
 class MainRecyclerAdapter(
     private var onListItemClickListener: OnListItemClickListener,
-    private var data: List<DataModel>,
+    private val data: MutableList<DataModel>,
     private val imageLoader: ImageLoader
 ) : RecyclerView.Adapter<MainRecyclerAdapter.RecyclerItemViewHolder>() {
 
     fun setData(data: List<DataModel>?) {
+        data?.let { dataList ->
+            dataList.forEach {
+                setData(it)
+            }
+        }
+    }
+
+    fun setData(vararg data: DataModel?) {
+        data.forEach {
+            setData(it)
+        }
+    }
+
+    fun setData(data: DataModel?) {
         data?.let {
-            this.data = it
-            notifyDataSetChanged()
+            this.data.add(it)
+            notifyItemInserted(this.data.size)
         }
     }
 

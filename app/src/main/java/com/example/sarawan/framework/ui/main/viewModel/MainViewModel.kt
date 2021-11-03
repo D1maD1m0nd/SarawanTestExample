@@ -1,4 +1,4 @@
-package com.example.sarawan.framework.viewModel
+package com.example.sarawan.framework.ui.main.viewModel
 
 import com.example.sarawan.framework.MainInteractor
 import com.example.sarawan.framework.ui.base.BaseViewModel
