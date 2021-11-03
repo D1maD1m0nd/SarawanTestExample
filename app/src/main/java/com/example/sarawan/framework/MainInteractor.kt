@@ -2,13 +2,13 @@ package com.example.sarawan.framework
 
 import com.example.sarawan.model.data.AppState
 import com.example.sarawan.model.data.DataModel
-import com.example.sarawan.model.repository.Repository
+import com.example.sarawan.model.datasource.DataSource
 import io.reactivex.rxjava3.core.Observable
 import javax.inject.Inject
 
 class MainInteractor @Inject constructor(
-    private val remoteRepository: Repository<List<DataModel>>,
-    private val localRepository: Repository<List<DataModel>>
+    private val remoteRepository: DataSource<List<DataModel>>,
+    private val localRepository: DataSource<List<DataModel>>
 ) : Interactor<AppState> {
 
     override fun getData(word: String, fromRemoteSource: Boolean): Observable<AppState> {

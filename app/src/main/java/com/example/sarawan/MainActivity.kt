@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
+import com.example.sarawan.app.App.Companion.navController
 import com.example.sarawan.databinding.ActivityMainBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.android.AndroidInjection
@@ -22,7 +23,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun initNavigation() {
         val navView: BottomNavigationView = binding.bottomNavigationView
-        val navController = findNavController(R.id.nav_fragment)
+        navController = findNavController(R.id.nav_fragment)
         navView.setupWithNavController(navController)
     }
 }

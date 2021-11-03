@@ -5,16 +5,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
-import coil.request.Disposable
-import coil.request.ImageRequest
 import com.example.sarawan.R
 import com.example.sarawan.databinding.BasketItemBinding
-import com.example.sarawan.databinding.ListItemCardBinding
-import com.example.sarawan.framework.ui.main.MainRecyclerAdapter
 import com.example.sarawan.model.data.BasketDataModel
-import com.example.sarawan.model.data.DataModel
 
-class BasketAdapter(val data : MutableList<BasketDataModel> = ArrayList(DEFAULT_CAPACITY)) : RecyclerView.Adapter<BasketAdapter.RecyclerItemViewHolder>() {
+class BasketAdapter(val data: MutableList<BasketDataModel> = ArrayList(DEFAULT_CAPACITY)) :
+    RecyclerView.Adapter<BasketAdapter.RecyclerItemViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerItemViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(
@@ -26,9 +22,11 @@ class BasketAdapter(val data : MutableList<BasketDataModel> = ArrayList(DEFAULT_
             view
         )
     }
-    fun setData(data : List<BasketDataModel>) {
+
+    fun setData(data: List<BasketDataModel>) {
         this.data.addAll(data)
     }
+
     override fun onBindViewHolder(holder: RecyclerItemViewHolder, position: Int) {
         holder.bind(data[position])
     }
@@ -39,11 +37,11 @@ class BasketAdapter(val data : MutableList<BasketDataModel> = ArrayList(DEFAULT_
     inner class RecyclerItemViewHolder(private val view: View) :
         RecyclerView.ViewHolder(view) {
         private val binding = BasketItemBinding.bind(view)
-        fun bind(data: BasketDataModel){
+        fun bind(data: BasketDataModel) {
             fillCard(data)
         }
 
-        private fun fillCard(data: BasketDataModel) = with(binding){
+        private fun fillCard(data: BasketDataModel) = with(binding) {
             titleProductTextView.text = data.name
             propertiesTextView.text = data.weight
             productCompanyTextView.text = data.company
@@ -53,7 +51,8 @@ class BasketAdapter(val data : MutableList<BasketDataModel> = ArrayList(DEFAULT_
             productImageView.load(R.drawable.product_sample_img)
         }
     }
-    companion object{
+
+    companion object {
         private val TAG = BasketAdapter::class.java.simpleName
         private const val DEFAULT_CAPACITY = 100
     }
