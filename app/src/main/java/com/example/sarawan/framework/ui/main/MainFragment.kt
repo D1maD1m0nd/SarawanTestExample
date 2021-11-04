@@ -84,8 +84,8 @@ class MainFragment : Fragment() {
         binding.mainRecyclerView.adapter = adapter
         viewModel.getStateLiveData().observe(viewLifecycleOwner) { appState ->
             when (appState) {
-                is AppState.Success<*> -> {
-                    adapter?.setData(appState.data as List<DataModel>?)
+                is AppState.Success -> {
+                    adapter?.setData(appState.data)
                 }
                 is AppState.Error -> Unit
                 AppState.Loading -> Unit

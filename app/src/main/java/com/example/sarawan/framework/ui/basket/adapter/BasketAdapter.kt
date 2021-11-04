@@ -8,8 +8,9 @@ import coil.load
 import com.example.sarawan.R
 import com.example.sarawan.databinding.BasketItemBinding
 import com.example.sarawan.model.data.BasketDataModel
+import com.example.sarawan.model.data.DataModel
 
-class BasketAdapter(val data: MutableList<BasketDataModel> = ArrayList(DEFAULT_CAPACITY)) :
+class BasketAdapter(private val data: MutableList<DataModel> = ArrayList(DEFAULT_CAPACITY)) :
     RecyclerView.Adapter<BasketAdapter.RecyclerItemViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerItemViewHolder {
@@ -23,9 +24,11 @@ class BasketAdapter(val data: MutableList<BasketDataModel> = ArrayList(DEFAULT_C
         )
     }
 
-    fun setData(data: List<BasketDataModel>) {
+    fun setData(data: List<DataModel>) {
         this.data.addAll(data)
     }
+
+    fun getData() = data
 
     override fun onBindViewHolder(holder: RecyclerItemViewHolder, position: Int) {
         holder.bind(data[position])
@@ -37,12 +40,12 @@ class BasketAdapter(val data: MutableList<BasketDataModel> = ArrayList(DEFAULT_C
     inner class RecyclerItemViewHolder(private val view: View) :
         RecyclerView.ViewHolder(view) {
         private val binding = BasketItemBinding.bind(view)
-        fun bind(data: BasketDataModel) {
+        fun bind(data: DataModel) {
             fillCard(data)
         }
 
-        private fun fillCard(data: BasketDataModel) = with(binding) {
-            titleProductTextView.text = data.name
+        private fun fillCard(data: DataModel) = with(binding) {
+            titleProductTextView.text = data.itemDescription
             propertiesTextView.text = data.weight
             productCompanyTextView.text = data.company
             productCountryTextView.text = data.country
