@@ -8,6 +8,8 @@ import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import com.example.sarawan.R
+import com.example.sarawan.app.App
+import com.example.sarawan.app.App.Companion.navController
 import com.example.sarawan.databinding.FragmentInfoBinding
 
 class InfoFragment : Fragment() {
@@ -26,46 +28,21 @@ class InfoFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initViews()
-        //это для тестирования, потом уберем
-        initTempToggleButton()
-    }
-
-    private fun initTempToggleButton() = with(binding) {
-        infoToggleButton.setOnClickListener {
-            if (infoRegisteredLayout.isVisible) {
-                infoRegisteredLayout.visibility = View.GONE
-                infoSignUpLayout.visibility = View.VISIBLE
-            } else {
-                infoRegisteredLayout.visibility = View.VISIBLE
-                infoSignUpLayout.visibility = View.GONE
-            }
-        }
     }
 
     private fun initViews() = with(binding) {
         infoHowWorkingLayout.setOnClickListener { showHowWorking() }
-        infoReviewsLayout.setOnClickListener { showReviews() }
         infoSupportLayout.setOnClickListener { showSupport() }
         infoAboutLayout.setOnClickListener { showAbout() }
         //несмотря на то, что обработчик на весь лейаут, нажатие на кнопки не работает
         //поэтому вешаю и на них обработчики те же
         infoHowWorkingButton.setOnClickListener { showHowWorking() }
-        infoReviewsButton.setOnClickListener { showReviews() }
         infoSupportButton.setOnClickListener { showSupport() }
         infoAboutButton.setOnClickListener { showAbout() }
     }
 
     private fun showHowWorking() {
-        activity?.supportFragmentManager?.apply {
-            beginTransaction()
-                .replace(R.id.nav_fragment, InfoHowFragment.newInstance())
-                .addToBackStack(null)
-                .commit()
-        }
-    }
-
-    private fun showReviews() {
-        Toast.makeText(context, "reviews", Toast.LENGTH_SHORT).show()
+        navController.navigate(R.id.infoHowFragment)
     }
 
     private fun showSupport() {
@@ -73,7 +50,7 @@ class InfoFragment : Fragment() {
     }
 
     private fun showAbout() {
-        Toast.makeText(context, "about", Toast.LENGTH_SHORT).show()
+        navController.navigate(R.id.infoAboutFragment)
     }
 
     override fun onDestroy() {

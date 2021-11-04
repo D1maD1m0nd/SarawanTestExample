@@ -6,18 +6,18 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.sarawan.app.App
-import com.example.sarawan.databinding.FragmentInfoHowBinding
+import com.example.sarawan.databinding.FragmentInfoAboutBinding
 import com.example.sarawan.framework.INavigation
 
-class InfoHowFragment : Fragment(), INavigation {
+class InfoAboutFragment : Fragment(), INavigation {
 
-    private var _binding: FragmentInfoHowBinding? = null
+    private var _binding: FragmentInfoAboutBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View = FragmentInfoHowBinding
+    ): View = FragmentInfoAboutBinding
         .inflate(inflater, container, false)
         .also { _binding = it }
         .root
@@ -28,7 +28,7 @@ class InfoHowFragment : Fragment(), INavigation {
     }
 
     private fun initViews() = with(binding) {
-        infoHowBackButton.setOnClickListener { onFragmentBackStack() }
+        infoAboutBackButton.setOnClickListener { onFragmentBackStack() }
     }
 
     override fun onDestroy() {
@@ -43,6 +43,6 @@ class InfoHowFragment : Fragment(), INavigation {
     override fun onFragmentNext() = Unit
 
     companion object {
-        fun newInstance() = InfoHowFragment()
+        fun newInstance() = InfoAboutFragment()
     }
 }
