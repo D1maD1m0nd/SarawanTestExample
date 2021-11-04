@@ -10,4 +10,6 @@ data class DataModel(
     @SerializedName("discount") val discount: Int?,
     @SerializedName("shop") val shop: String?,
     @SerializedName("weight") val weight: String?,
+    @SerializedName("country") val country: String?,
+    @SerializedName("company") val company: String?,
 )

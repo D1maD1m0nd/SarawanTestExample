@@ -2,8 +2,9 @@ package com.example.sarawan.framework.ui.basket.adapter
 
 import androidx.recyclerview.widget.DiffUtil
 import com.example.sarawan.model.data.BasketDataModel
+import com.example.sarawan.model.data.DataModel
 
-class DiffUtilsBasket(private val oldList: List<BasketDataModel>, private val newList: List<BasketDataModel>) :
+class DiffUtilsBasket(private val oldList: List<DataModel>, private val newList: List<DataModel>) :
     DiffUtil.Callback() {
     override fun getOldListSize(): Int {
         return oldList.size

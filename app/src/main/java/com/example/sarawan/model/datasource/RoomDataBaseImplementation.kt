@@ -39,7 +39,9 @@ class RoomDataBaseImplementation @Inject constructor(
                     R.drawable.test_card_img.toString(),
                     getRandomDiscount(),
                     "АШАН",
-                    "100г"
+                    "100г",
+                    "Россия",
+                    "Сарафан"
                 )
             )
         }
