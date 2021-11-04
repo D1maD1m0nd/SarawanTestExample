@@ -2,7 +2,8 @@ package com.example.sarawan.di.modules
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.sarawan.framework.viewModel.MainViewModel
+import com.example.sarawan.framework.ui.basket.viewModel.BasketViewModel
+import com.example.sarawan.framework.ui.main.viewModel.MainViewModel
 import dagger.Binds
 import dagger.MapKey
 import dagger.Module
@@ -19,6 +20,11 @@ abstract class ViewModelModule {
     @ViewModelKey(MainViewModel::class)
     @IntoMap
     protected abstract fun mainViewModel(mainViewModel: MainViewModel): ViewModel
+
+    @Binds
+    @ViewModelKey(BasketViewModel::class)
+    @IntoMap
+    protected abstract fun basketViewModel(basketViewModel: BasketViewModel): ViewModel
 }
 
 @Target(

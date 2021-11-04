@@ -5,14 +5,14 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.GridLayout
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.GridLayoutManager
 import coil.ImageLoader
+import com.example.sarawan.MainActivity
 import com.example.sarawan.databinding.FragmentMainBinding
-import com.example.sarawan.framework.viewModel.MainViewModel
+import com.example.sarawan.framework.ui.main.adapter.MainRecyclerAdapter
+import com.example.sarawan.framework.ui.main.viewModel.MainViewModel
 import com.example.sarawan.model.data.AppState
 import com.example.sarawan.model.data.DataModel
 import com.example.sarawan.rx.ISchedulerProvider
@@ -80,21 +80,16 @@ class MainFragment : Fragment() {
     }
 
     private fun initRecyclerAdapter() {
-        adapter = MainRecyclerAdapter(onListItemClickListener, listOf(), imageLoader)
+        adapter = MainRecyclerAdapter(onListItemClickListener, mutableListOf(), imageLoader)
         binding.mainRecyclerView.adapter = adapter
         viewModel.getStateLiveData().observe(viewLifecycleOwner) { appState ->
             when (appState) {
-                is AppState.Success<*> -> {
-                    adapter?.setData(appState.data as List<DataModel>?)
+                is AppState.Success -> {
+                    adapter?.setData(appState.data)
                 }
                 is AppState.Error -> Unit
                 AppState.Loading -> Unit
             }
-        }
-        binding.mainRecyclerView.setOnScrollChangeListener { _, _, scrollY, _, _ ->
-
-            if ((binding.mainRecyclerView.layoutManager as GridLayoutManager).findFirstCompletelyVisibleItemPosition() == 0) binding.topBar.visibility = View.VISIBLE
-            else binding.topBar.visibility = View.GONE
         }
     }
 
@@ -106,12 +101,18 @@ class MainFragment : Fragment() {
             .subscribe({ isOnline ->
                 this.isOnline = isOnline
                 if (isOnline) Toast.makeText(context, "You now Online", Toast.LENGTH_SHORT).show()
-    //                else Toast.makeText(context, "You are Offline!", Toast.LENGTH_SHORT).show()
+                else Toast.makeText(context, "You are Offline!", Toast.LENGTH_SHORT).show()
             },
                 {
                     Log.d("Test", it.message.toString())
                 }
             )
+    }
+
+    override fun onDestroy() {
+        _binding = null
+        (activity as MainActivity).setSupportActionBar(null)
+        super.onDestroy()
     }
 
     companion object {

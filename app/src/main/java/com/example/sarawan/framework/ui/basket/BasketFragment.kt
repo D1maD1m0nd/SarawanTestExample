@@ -13,7 +13,6 @@ import com.example.sarawan.databinding.FragmentMainBinding
 import com.example.sarawan.framework.ui.basket.adapter.BasketAdapter
 import com.example.sarawan.framework.ui.basket.adapter.DiffUtilsBasket
 import com.example.sarawan.framework.ui.basket.viewModel.BasketViewModel
-import com.example.sarawan.framework.viewModel.MainViewModel
 import com.example.sarawan.model.data.AppState
 import com.example.sarawan.model.data.BasketDataModel
 import com.example.sarawan.model.data.DataModel
@@ -41,14 +40,16 @@ class BasketFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentBasketBinding.inflate(inflater, container, false)
+        viewModel.getStateLiveData().observe(viewLifecycleOwner) { appState ->
+            setState(appState)
+        }
         return binding.root
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initRcView()
-        viewModel.getStateLiveData().observe(viewLifecycleOwner) { appState ->
-            setState(appState)
-        }
+
+        viewModel.search("test", false)
     }
 
     private fun initRcView() = with(binding) {
@@ -57,8 +58,8 @@ class BasketFragment : Fragment() {
     }
     private fun setState(appState: AppState) {
         when (appState) {
-            is AppState.Success<*> -> {
-                val data = appState.data as List<BasketDataModel>
+            is AppState.Success -> {
+                val data = appState.data
                 diffData(data)
             }
             is AppState.Error -> Unit
@@ -66,8 +67,8 @@ class BasketFragment : Fragment() {
         }
     }
 
-    private fun diffData(newList : List<BasketDataModel>) {
-        val oldList = adapter.data
+    private fun diffData(newList : List<DataModel>) {
+        val oldList = adapter.getData()
         val utils = DiffUtilsBasket(oldList, newList)
         val diffResult = DiffUtil.calculateDiff(utils)
         adapter.setData(newList)

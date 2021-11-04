@@ -4,8 +4,6 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.example.sarawan.framework.viewModel.MainViewModel
-import com.example.sarawan.model.data.AppState
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
 

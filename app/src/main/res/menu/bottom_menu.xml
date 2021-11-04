@@ -4,7 +4,10 @@
         android:id="@+id/mainFragment"
         android:icon="@drawable/ic_home"
         android:title="@string/title_home" />
-
+    <item
+        android:id="@+id/catalogFragment"
+        android:icon="@drawable/catalog_ic"
+        android:title="@string/catalog" />
     <item
         android:id="@+id/basketFragment"
         android:icon="@drawable/ic_black_basket"
