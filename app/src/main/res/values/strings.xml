@@ -4,7 +4,7 @@
     <string name="title_home">Главная</string>
     <string name="title_basket">Корзина</string>
     <string name="title_profile">Профиль</string>
-    <string name="information">Информация</string>
+    <string name="information">Инфо</string>
     <string name="buy">Купить</string>
     <string name="price_text">₽</string>
     <string name="kg">Кг</string>
@@ -17,4 +17,5 @@
     <string name="default_sum">000,00 ₽</string>
     <string name="search_in_sarafan">Искать в сарафане</string>
     <string name="find_text">Найти</string>
+    <string name="catalog">Каталог</string>
 </resources>
