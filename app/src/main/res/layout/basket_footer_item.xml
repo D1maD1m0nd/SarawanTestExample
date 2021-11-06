@@ -80,4 +80,99 @@
         android:layout_marginTop="14dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/cost_title_order_text_view" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/delivery"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/montserrat_medium"
+        android:text="@string/delivery"
+        android:textColor="@color/black"
+        android:textSize="@dimen/basket_title_28"
+        android:layout_marginTop="65dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/sub_info_product_text_view" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/address_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:drawableEnd="@drawable/arrow"
+        android:gravity="start"
+        android:text="@string/Address"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        android:fontFamily="@font/montserrat_regular"
+        android:paddingStart="0dp"
+        android:layout_marginTop="24dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/delivery"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/time_delivery_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:drawableEnd="@drawable/arrow"
+        android:gravity="start"
+        android:paddingStart="0dp"
+        android:text="@string/time_delivery"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        android:fontFamily="@font/montserrat_regular"
+        android:layout_marginTop="32dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/address_button"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/payment_event_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:drawableEnd="@drawable/arrow"
+        android:gravity="start"
+        android:paddingStart="0dp"
+        android:text="@string/payment_method"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        android:fontFamily="@font/montserrat_regular"
+        android:layout_marginTop="32dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/time_delivery_button" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/result_payment_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/montserrat_medium"
+        android:text="@string/result_payment"
+        android:textSize="24sp"
+        android:textColor="@color/black"
+        android:layout_marginTop="45dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/payment_event_button" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/result_value_payment_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/montserrat_medium"
+        android:text="@string/default_sum"
+        android:textColor="@color/black"
+        android:textSize="24sp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/result_payment_text_view" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/set_order_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/set_order"
+        android:layout_marginTop="35dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/result_payment_text_view" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

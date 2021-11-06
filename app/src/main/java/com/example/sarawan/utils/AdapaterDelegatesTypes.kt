@@ -43,6 +43,7 @@ object AdapterDelegatesTypes {
     ){
         bind {
             binding.costValueTextView.text = String.format("%.2f", item.price)
+            binding.resultValuePaymentTextView.text = String.format("%.2f", item.price)
         }
     }
 }
