@@ -3,4 +3,8 @@
     <dimen name="title_product_text_size">18sp</dimen>
     <dimen name="sub_text_font_size">14sp</dimen>
     <dimen name="shop_info_font_size">16sp</dimen>
+    <dimen name="basket_title_28">28sp</dimen>
+    <dimen name="cost_order_20">20sp</dimen>
+    <dimen name="margin_result_basket_20">20dp</dimen>
+    <dimen name="margin_26">26dp</dimen>
 </resources>

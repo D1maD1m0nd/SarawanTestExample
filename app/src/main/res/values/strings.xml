@@ -18,4 +18,16 @@
     <string name="search_in_sarafan">Искать в сарафане</string>
     <string name="find_text">Найти</string>
     <string name="catalog">Каталог</string>
+    <string name="weight_order">Вес заказа:</string>
+    <string name="default_weight">00,00 кг</string>
+    <string name="cost_order">Стоимость заказа</string>
+    <string name="sub_info_basket">Стоимость весового товара может быть пересчитана</string>
+    <string name="clear">Очистить</string>
+    <string name="delivery">Доставка</string>
+    <string name="Address">Адрес</string>
+    <string name="time_delivery">Время доставки</string>
+    <string name="payment_method">Способ оплаты</string>
+    <string name="result_payment">Итого к оплате:</string>
+    <string name="set_order">Оформить заказ</string>
+
 </resources>

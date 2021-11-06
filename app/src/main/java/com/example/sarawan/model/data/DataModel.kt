@@ -1,5 +1,6 @@
 package com.example.sarawan.model.data
 
+import com.example.sarawan.model.data.DelegatesModel.BasketListItem
 import com.google.gson.annotations.SerializedName
 
 data class DataModel(
@@ -12,4 +13,4 @@ data class DataModel(
     @SerializedName("weight") val weight: String?,
     @SerializedName("country") val country: String?,
     @SerializedName("company") val company: String?,
-)
+) : BasketListItem
