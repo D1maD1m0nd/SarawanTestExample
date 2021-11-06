@@ -9,12 +9,10 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.sarawan.databinding.FragmentBasketBinding
-import com.example.sarawan.databinding.FragmentMainBinding
 import com.example.sarawan.framework.ui.basket.adapter.BasketAdapter
 import com.example.sarawan.framework.ui.basket.adapter.DiffUtilsBasket
 import com.example.sarawan.framework.ui.basket.viewModel.BasketViewModel
 import com.example.sarawan.model.data.AppState
-import com.example.sarawan.model.data.BasketDataModel
 import com.example.sarawan.model.data.DataModel
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
