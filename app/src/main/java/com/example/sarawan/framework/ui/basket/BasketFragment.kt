@@ -6,14 +6,15 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.sarawan.databinding.FragmentBasketBinding
-import com.example.sarawan.framework.ui.basket.adapter.BasketAdapter
-import com.example.sarawan.framework.ui.basket.adapter.DiffUtilsBasket
 import com.example.sarawan.framework.ui.basket.viewModel.BasketViewModel
 import com.example.sarawan.model.data.AppState
-import com.example.sarawan.model.data.DataModel
+import com.example.sarawan.model.data.DelegatesModel.BasketFooter
+import com.example.sarawan.model.data.DelegatesModel.BasketHeader
+import com.example.sarawan.model.data.DelegatesModel.BasketListItem
+import com.example.sarawan.utils.AdapterDelegatesTypes
+import com.hannesdorfmann.adapterdelegates4.ListDelegationAdapter
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
 
@@ -23,7 +24,18 @@ class BasketFragment : Fragment() {
     lateinit var viewModelFactory: ViewModelProvider.Factory
     private var _binding: FragmentBasketBinding? = null
     private val binding get() = _binding!!
-    private val adapter = BasketAdapter()
+    private val adapter = ListDelegationAdapter(
+        AdapterDelegatesTypes.headerDelegateViewBindingViewHolder,
+        AdapterDelegatesTypes.itemDelegateViewBindingViewHolder,
+        AdapterDelegatesTypes.footerDelegateViewBindingViewHolder,
+    )
+    //основной список для отображения
+    private val list : MutableList<BasketListItem> = ArrayList(
+        listOf(
+            BasketHeader(0),
+            BasketFooter(0.0, 0.0),
+        )
+    )
     private val viewModel: BasketViewModel by lazy {
         viewModelFactory.create(BasketViewModel::class.java)
     }
@@ -58,20 +70,16 @@ class BasketFragment : Fragment() {
         when (appState) {
             is AppState.Success -> {
                 val data = appState.data
-                diffData(data)
+                val countAdapter = list.size - 1
+                list.addAll(countAdapter,data)
+                adapter.items = list
+                adapter.notifyDataSetChanged()
             }
             is AppState.Error -> Unit
             AppState.Loading -> Unit
         }
     }
 
-    private fun diffData(newList : List<DataModel>) {
-        val oldList = adapter.getData()
-        val utils = DiffUtilsBasket(oldList, newList)
-        val diffResult = DiffUtil.calculateDiff(utils)
-        adapter.setData(newList)
-        diffResult.dispatchUpdatesTo(adapter)
-    }
     override fun onDestroyView() {
         _binding = null
         super.onDestroyView()

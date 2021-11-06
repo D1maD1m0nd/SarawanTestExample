@@ -2,9 +2,9 @@ package com.example.sarawan.utils
 
 import coil.load
 import com.example.sarawan.R
+import com.example.sarawan.databinding.BasketFooterItemBinding
+import com.example.sarawan.databinding.BasketHeaderItemBinding
 import com.example.sarawan.databinding.BasketItemBinding
-import com.example.sarawan.databinding.FooterItemBinding
-import com.example.sarawan.databinding.HeaderItemBinding
 import com.example.sarawan.model.data.DataModel
 import com.example.sarawan.model.data.DelegatesModel.BasketFooter
 import com.example.sarawan.model.data.DelegatesModel.BasketHeader
@@ -12,8 +12,8 @@ import com.example.sarawan.model.data.DelegatesModel.BasketListItem
 import com.hannesdorfmann.adapterdelegates4.dsl.adapterDelegateViewBinding
 
 object AdapterDelegatesTypes {
-    val headerDelegateViewBindingViewHolder = adapterDelegateViewBinding<BasketHeader, BasketListItem, HeaderItemBinding>(
-        { layoutInflater, root -> HeaderItemBinding.inflate(layoutInflater, root, false) }
+    val headerDelegateViewBindingViewHolder = adapterDelegateViewBinding<BasketHeader, BasketListItem, BasketHeaderItemBinding>(
+        { layoutInflater, root -> BasketHeaderItemBinding.inflate(layoutInflater, root, false) }
     ){
         bind {
            //todo
@@ -30,15 +30,16 @@ object AdapterDelegatesTypes {
                 productCompanyTextView.text = item.company
                 productCountryTextView.text = item.country
                 productShopTextView.text = item.shop
-                sumTextView.text = item.price.toString()
+                sumTextView.text = String.format("%.2f", item.price)
                 productImageView.load(R.drawable.product_sample_img)
+
             }
 
         }
     }
 
-    val footerDelegateViewBindingViewHolder = adapterDelegateViewBinding<BasketFooter, BasketListItem, FooterItemBinding>(
-        { layoutInflater, root -> FooterItemBinding.inflate(layoutInflater, root, false) }
+    val footerDelegateViewBindingViewHolder = adapterDelegateViewBinding<BasketFooter, BasketListItem, BasketFooterItemBinding>(
+        { layoutInflater, root -> BasketFooterItemBinding.inflate(layoutInflater, root, false) }
     ){
         bind {
             //todo
