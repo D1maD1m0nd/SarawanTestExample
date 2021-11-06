@@ -16,7 +16,7 @@ object AdapterDelegatesTypes {
         { layoutInflater, root -> BasketHeaderItemBinding.inflate(layoutInflater, root, false) }
     ){
         bind {
-           //todo
+           binding.counterProductTextView.text = String.format("В корзине %d товара", item.counter)
         }
     }
 
@@ -42,7 +42,8 @@ object AdapterDelegatesTypes {
         { layoutInflater, root -> BasketFooterItemBinding.inflate(layoutInflater, root, false) }
     ){
         bind {
-            //todo
+            binding.costValueTextView.text = String.format("%.2f", item.price)
+            binding.resultValuePaymentTextView.text = String.format("%.2f", item.price)
         }
     }
 }

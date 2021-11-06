@@ -23,5 +23,11 @@
     <string name="cost_order">Стоимость заказа</string>
     <string name="sub_info_basket">Стоимость весового товара может быть пересчитана</string>
     <string name="clear">Очистить</string>
+    <string name="delivery">Доставка</string>
+    <string name="Address">Адрес</string>
+    <string name="time_delivery">Время доставки</string>
+    <string name="payment_method">Способ оплаты</string>
+    <string name="result_payment">Итого к оплате:</string>
+    <string name="set_order">Оформить заказ</string>
 
 </resources>

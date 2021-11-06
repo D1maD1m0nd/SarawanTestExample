@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.sarawan.databinding.FragmentBasketBinding
 import com.example.sarawan.framework.ui.basket.viewModel.BasketViewModel
 import com.example.sarawan.model.data.AppState
+import com.example.sarawan.model.data.DataModel
 import com.example.sarawan.model.data.DelegatesModel.BasketFooter
 import com.example.sarawan.model.data.DelegatesModel.BasketHeader
 import com.example.sarawan.model.data.DelegatesModel.BasketListItem
@@ -71,6 +72,8 @@ class BasketFragment : Fragment() {
             is AppState.Success -> {
                 val data = appState.data
                 val countAdapter = list.size - 1
+                setFooterData(data)
+                setHeaderData(data)
                 list.addAll(countAdapter,data)
                 adapter.items = list
                 adapter.notifyDataSetChanged()
@@ -79,7 +82,20 @@ class BasketFragment : Fragment() {
             AppState.Loading -> Unit
         }
     }
+    private fun setFooterData(data : List<DataModel>) {
+        val footer = (list.last() as BasketFooter)
+        footer.apply {
+            weight = 10.0
+            price = sumPrice(data)
+        }
+    }
 
+    private fun setHeaderData(data : List<DataModel>) {
+        val header = (list.first() as BasketHeader)
+        header.counter = data.size
+    }
+
+    private fun sumPrice(data : List<DataModel>) = data.sumOf { it.price!!.toDouble() }
     override fun onDestroyView() {
         _binding = null
         super.onDestroyView()
