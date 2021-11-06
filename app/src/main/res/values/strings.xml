@@ -18,4 +18,10 @@
     <string name="search_in_sarafan">Искать в сарафане</string>
     <string name="find_text">Найти</string>
     <string name="catalog">Каталог</string>
+    <string name="weight_order">Вес заказа:</string>
+    <string name="default_weight">00,00 кг</string>
+    <string name="cost_order">Стоимость заказа</string>
+    <string name="sub_info_basket">Стоимость весового товара может быть пересчитана</string>
+    <string name="clear">Очистить</string>
+
 </resources>

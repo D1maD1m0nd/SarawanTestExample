@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_marginStart="@dimen/margin_result_basket_20"
+    android:layout_marginEnd="@dimen/margin_result_basket_20"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/materialButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/clear"
+        android:textSize="@dimen/sub_text_font_size"
+        android:background="@android:color/transparent"
+        android:textColor="@color/light_gray_clear_button"
+        android:gravity="start"
+        android:paddingStart="5dp"
+        android:paddingEnd="5dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/weight_title_order_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/montserrat_medium"
+        android:text="@string/weight_order"
+        android:textColor="@color/black"
+        android:textSize="@dimen/shop_info_font_size"
+        android:layout_marginTop="26dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/materialButton" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/weight_value_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="17dp"
+        android:fontFamily="@font/montserrat_medium"
+        android:text="@string/default_weight"
+        android:textColor="@color/black"
+        android:textSize="@dimen/shop_info_font_size"
+        app:layout_constraintStart_toEndOf="@+id/weight_title_order_text_view"
+        app:layout_constraintTop_toTopOf="@+id/weight_title_order_text_view" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/cost_title_order_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/montserrat_medium"
+        android:text="@string/cost_order"
+        android:textColor="@color/black"
+        android:textSize="@dimen/cost_order_20"
+        android:layout_marginTop="12dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/weight_title_order_text_view" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/cost_value_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/montserrat_medium"
+        android:text="@string/default_sum"
+        android:textColor="@color/black"
+        android:textSize="@dimen/cost_order_20"
+        android:layout_marginStart="20dp"
+        app:layout_constraintStart_toEndOf="@+id/cost_title_order_text_view"
+        app:layout_constraintTop_toTopOf="@+id/cost_title_order_text_view" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/sub_info_product_text_view"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:maxWidth="300dp"
+        android:fontFamily="@font/montserrat_regular"
+        android:text="@string/sub_info_basket"
+        android:textColor="@color/light_black"
+        android:textSize="@dimen/sub_text_font_size"
+        android:layout_marginTop="14dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cost_title_order_text_view" />
+</androidx.constraintlayout.widget.ConstraintLayout>
