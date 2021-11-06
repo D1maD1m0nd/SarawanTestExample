@@ -7,7 +7,6 @@ import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.example.sarawan.R
 import com.example.sarawan.databinding.BasketItemBinding
-import com.example.sarawan.model.data.BasketDataModel
 import com.example.sarawan.model.data.DataModel
 
 class BasketAdapter(private val data: MutableList<DataModel> = ArrayList(DEFAULT_CAPACITY)) :
