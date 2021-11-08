@@ -15,4 +15,6 @@
     <color name = "card_text_color">#0D0D0D</color>
     <color name="black_product_title">#DE000000</color>
     <color name="text_grey">#888888</color>
+    <color name="light_black">#99000000</color>
+    <color name="light_gray_clear_button">#80000000</color>
 </resources>
