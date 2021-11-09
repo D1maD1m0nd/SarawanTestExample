@@ -1,15 +1,23 @@
 package com.example.sarawan.framework.ui.main
 
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.appcompat.content.res.AppCompatResources
+import androidx.core.content.ContextCompat
+import androidx.core.content.getSystemService
+import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import coil.ImageLoader
 import com.example.sarawan.MainActivity
+import com.example.sarawan.R
 import com.example.sarawan.databinding.FragmentMainBinding
 import com.example.sarawan.framework.ui.main.adapter.MainRecyclerAdapter
 import com.example.sarawan.framework.ui.main.viewModel.MainViewModel
@@ -70,13 +78,83 @@ class MainFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         //checkOnlineStatus()
         initRecyclerAdapter()
-        initFab()
+        initSearchField()
 
         viewModel.search("test", isOnline)
     }
 
-    private fun initFab() {
-        binding.fabPrice.text = "100 ₽"
+    private fun initSearchField() {
+        initSearchInput()
+        initSearchButton()
+        initMicButton()
+    }
+
+    private fun initMicButton() {
+        binding.micButton.setOnClickListener {
+            Thread {
+                Thread.sleep(3000)
+                binding.root.post { makeSearch() }
+            }.run()
+        }
+    }
+
+    private fun initSearchButton() {
+        binding.searchButton.setOnClickListener {
+            makeSearch()
+        }
+    }
+
+    private fun initSearchInput() {
+
+        val startIcon =  binding.searchField.startIconDrawable
+
+        binding.searchField.editText?.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                binding.searchField.editText?.setTextColor(Color.BLACK)
+                binding.searchField.startIconDrawable = null
+                if (binding.searchField.editText?.text.toString() == getString(R.string.search_in_sarafan)) {
+                    binding.searchField.editText?.setText("")
+                } else binding.clearText.visibility = View.VISIBLE
+            } else {
+                binding.searchField.editText?.setTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.text_grey
+                    )
+                )
+                if (binding.searchField.editText?.text.toString() == "") {
+                    binding.searchField.editText?.setText(getString(R.string.search_in_sarafan))
+                    binding.searchField.startIconDrawable = startIcon
+                }
+                binding.clearText.visibility = View.INVISIBLE
+            }
+        }
+
+        binding.searchField.editText?.doOnTextChanged { _, _, _, count ->
+            if (count > 0) binding.clearText.visibility = View.VISIBLE
+            else binding.clearText.visibility = View.INVISIBLE
+        }
+
+        binding.clearText.setOnClickListener {
+            binding.searchField.editText?.setText("")
+            binding.searchField.startIconDrawable = startIcon
+            binding.clearText.visibility = View.INVISIBLE
+        }
+
+        binding.searchField.editText?.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                makeSearch()
+                return@setOnEditorActionListener true
+            }
+            false
+        }
+    }
+
+    private fun makeSearch() {
+        activity?.getSystemService<InputMethodManager>()
+            ?.hideSoftInputFromWindow(binding.searchField.windowToken, 0)
+        binding.searchField.clearFocus()
+        viewModel.search("test", isOnline)
     }
 
     private fun initRecyclerAdapter() {
@@ -86,6 +164,8 @@ class MainFragment : Fragment() {
             when (appState) {
                 is AppState.Success -> {
                     adapter?.setData(appState.data)
+                    binding.topBarLayout.setExpanded(true, true)
+                    binding.mainRecyclerView.smoothScrollToPosition(0)
                 }
                 is AppState.Error -> Unit
                 AppState.Loading -> Unit
