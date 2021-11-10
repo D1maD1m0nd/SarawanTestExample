@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
-import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
 import androidx.core.content.getSystemService
 import androidx.core.widget.doOnTextChanged
@@ -54,7 +53,7 @@ class MainFragment : Fragment() {
     private val onListItemClickListener: MainRecyclerAdapter.OnListItemClickListener =
         object : MainRecyclerAdapter.OnListItemClickListener {
             override fun onItemClick(data: DataModel) {
-                Toast.makeText(context, data.itemDescription, Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, data.quantity.toString(), Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -106,15 +105,15 @@ class MainFragment : Fragment() {
 
     private fun initSearchInput() {
 
-        val startIcon =  binding.searchField.startIconDrawable
-
         binding.searchField.editText?.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
                 binding.searchField.editText?.setTextColor(Color.BLACK)
-                binding.searchField.startIconDrawable = null
                 if (binding.searchField.editText?.text.toString() == getString(R.string.search_in_sarafan)) {
                     binding.searchField.editText?.setText("")
-                } else binding.clearText.visibility = View.VISIBLE
+                } else {
+                    binding.clearText.visibility = View.VISIBLE
+                    binding.micButton.visibility = View.INVISIBLE
+                }
             } else {
                 binding.searchField.editText?.setTextColor(
                     ContextCompat.getColor(
@@ -124,21 +123,26 @@ class MainFragment : Fragment() {
                 )
                 if (binding.searchField.editText?.text.toString() == "") {
                     binding.searchField.editText?.setText(getString(R.string.search_in_sarafan))
-                    binding.searchField.startIconDrawable = startIcon
                 }
                 binding.clearText.visibility = View.INVISIBLE
+                binding.micButton.visibility = View.VISIBLE
             }
         }
 
         binding.searchField.editText?.doOnTextChanged { _, _, _, count ->
-            if (count > 0) binding.clearText.visibility = View.VISIBLE
-            else binding.clearText.visibility = View.INVISIBLE
+            if (count > 0) {
+                binding.clearText.visibility = View.VISIBLE
+                binding.micButton.visibility = View.INVISIBLE
+            } else {
+                binding.clearText.visibility = View.INVISIBLE
+                binding.micButton.visibility = View.VISIBLE
+            }
         }
 
         binding.clearText.setOnClickListener {
             binding.searchField.editText?.setText("")
-            binding.searchField.startIconDrawable = startIcon
             binding.clearText.visibility = View.INVISIBLE
+            binding.micButton.visibility = View.VISIBLE
         }
 
         binding.searchField.editText?.setOnEditorActionListener { _, actionId, _ ->

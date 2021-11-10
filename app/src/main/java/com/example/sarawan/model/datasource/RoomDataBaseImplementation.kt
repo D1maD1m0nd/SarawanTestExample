@@ -33,7 +33,7 @@ class RoomDataBaseImplementation @Inject constructor(
         for (i in 0..50) {
             result.add(
                 DataModel(
-                    i,
+                    i.toLong(),
                     getRandomPrice(),
                     "Some very long description",
                     R.drawable.test_card_img.toString(),
@@ -41,7 +41,8 @@ class RoomDataBaseImplementation @Inject constructor(
                     "АШАН",
                     "100г",
                     "Россия",
-                    "Сарафан"
+                    "Сарафан",
+                    getRandomDiscount().toLong()
                 )
             )
         }
