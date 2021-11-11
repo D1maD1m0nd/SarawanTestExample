@@ -54,6 +54,7 @@ class ProfileFragment : Fragment() {
     }
 
     private fun showAddress() {
+        App.navController.navigate(R.id.profileAddressFragment)
     }
 
     private fun showPhone() {

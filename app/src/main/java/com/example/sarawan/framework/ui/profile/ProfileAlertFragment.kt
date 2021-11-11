@@ -6,18 +6,18 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.sarawan.app.App
-import com.example.sarawan.databinding.FragmentProfileNameBinding
+import com.example.sarawan.databinding.FragmentProfileAlertBinding
 import com.example.sarawan.framework.INavigation
 
-class ProfileNameFragment : Fragment(), INavigation {
+class ProfileAlertFragment : Fragment(), INavigation {
 
-    private var _binding: FragmentProfileNameBinding? = null
+    private var _binding: FragmentProfileAlertBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View = FragmentProfileNameBinding
+    ): View = FragmentProfileAlertBinding
         .inflate(inflater, container, false)
         .also { _binding = it }
         .root
@@ -28,11 +28,7 @@ class ProfileNameFragment : Fragment(), INavigation {
     }
 
     private fun initViews() = with(binding) {
-        profileNameBackButton.setOnClickListener { onFragmentBackStack() }
-        profileNameSaveButton.setOnClickListener { saveData() }
-    }
-
-    private fun saveData() {
+        profileAlertOkButton.setOnClickListener { onFragmentBackStack() }
     }
 
     override fun onDestroy() {
