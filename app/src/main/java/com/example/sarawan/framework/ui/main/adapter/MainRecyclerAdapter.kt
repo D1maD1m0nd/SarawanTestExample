@@ -58,8 +58,7 @@ class MainRecyclerAdapter(
 
         fun bind(data: DataModel) {
             if (layoutPosition != RecyclerView.NO_POSITION) {
-                binding.itemPrice.text = data.price.toString().plus("00")
-                    .substring(0, data.price.toString().lastIndexOf(".") + 3)
+                binding.itemPrice.text = String.format("%.2f", data.price)
                 binding.itemShopName.text = data.shop
                 binding.itemWeight.text = data.weight
                 binding.itemDescription.text = data.itemDescription
@@ -71,18 +70,53 @@ class MainRecyclerAdapter(
                 disposable = imageLoader.enqueue(
                     ImageRequest.Builder(binding.root.context)
                         .data(data.pictureUrl?.toInt())
+//                        .placeholder(R.drawable.logo_top_bar)
                         .target(binding.itemImage)
                         .build()
                 )
 
-                itemView.setOnClickListener { openInNewWindow(data) }
+                var quantity = data.quantity ?: 0
+                data.quantity = quantity
+
+                if (quantity > 0) {
+                    binding.itemBuyButton.visibility = View.GONE
+                    binding.itemQuantityLayout.visibility = View.VISIBLE
+                    binding.itemQuantity.text = quantity.toString()
+                }
+
+                binding.itemBuyButton.setOnClickListener {
+                    binding.itemBuyButton.visibility = View.GONE
+                    binding.itemQuantityLayout.visibility = View.VISIBLE
+                    quantity = 1
+                    data.quantity = quantity
+                    binding.itemQuantity.text = data.quantity.toString()
+                    changeQuantity(data)
+                }
+
+                binding.minusButton.setOnClickListener {
+                    quantity -= 1
+                    data.quantity = quantity
+                    if (quantity <= 0) {
+                        binding.itemBuyButton.visibility = View.VISIBLE
+                        binding.itemQuantityLayout.visibility = View.GONE
+                    }
+                    binding.itemQuantity.text = quantity.toString()
+                    changeQuantity(data)
+                }
+
+                binding.plusButton.setOnClickListener {
+                    quantity += 1
+                    data.quantity = quantity
+                    binding.itemQuantity.text = quantity.toString()
+                    changeQuantity(data)
+                }
             }
         }
 
         fun cancelTask() = disposable?.dispose()
     }
 
-    private fun openInNewWindow(listItemData: DataModel) {
+    private fun changeQuantity(listItemData: DataModel) {
         onListItemClickListener.onItemClick(listItemData)
     }
 
