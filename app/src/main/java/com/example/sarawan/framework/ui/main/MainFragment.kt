@@ -2,7 +2,6 @@ package com.example.sarawan.framework.ui.main
 
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -75,11 +74,11 @@ class MainFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        //checkOnlineStatus()
+        checkOnlineStatus()
         initRecyclerAdapter()
         initSearchField()
 
-        viewModel.search("test", isOnline)
+        if (savedInstanceState == null) viewModel.search("test", isOnline)
     }
 
     private fun initSearchField() {
@@ -159,17 +158,22 @@ class MainFragment : Fragment() {
             ?.hideSoftInputFromWindow(binding.searchField.windowToken, 0)
         binding.searchField.clearFocus()
         viewModel.search("test", isOnline)
+        if (!isOnline) binding.root.post {
+            Toast.makeText(context, "You are Offline! Get Results from Cache", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun initRecyclerAdapter() {
-        adapter = MainRecyclerAdapter(onListItemClickListener, mutableListOf(), imageLoader)
+        if (adapter == null) {
+            adapter = MainRecyclerAdapter(onListItemClickListener, mutableListOf(), imageLoader)
+        }
         binding.mainRecyclerView.adapter = adapter
         viewModel.getStateLiveData().observe(viewLifecycleOwner) { appState ->
             when (appState) {
                 is AppState.Success -> {
                     adapter?.setData(appState.data)
                     binding.topBarLayout.setExpanded(true, true)
-                    binding.mainRecyclerView.smoothScrollToPosition(0)
+                    binding.mainRecyclerView.scrollToPosition(0)
                 }
                 is AppState.Error -> Unit
                 AppState.Loading -> Unit
@@ -179,18 +183,12 @@ class MainFragment : Fragment() {
 
     private fun checkOnlineStatus() {
         networkStatus
-            .isOnlineSingle()
+            .isOnline()
             .observeOn(schedulerProvider.io)
             .subscribeOn(schedulerProvider.io)
-            .subscribe({ isOnline ->
+            .subscribe { isOnline ->
                 this.isOnline = isOnline
-                if (isOnline) Toast.makeText(context, "You now Online", Toast.LENGTH_SHORT).show()
-                else Toast.makeText(context, "You are Offline!", Toast.LENGTH_SHORT).show()
-            },
-                {
-                    Log.d("Test", it.message.toString())
-                }
-            )
+            }
     }
 
     override fun onDestroy() {
