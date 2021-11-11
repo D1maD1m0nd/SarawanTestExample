@@ -4,12 +4,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
-import com.example.sarawan.app.App
+import android.view.WindowManager
+import androidx.fragment.app.DialogFragment
 import com.example.sarawan.databinding.FragmentProfileNameBinding
-import com.example.sarawan.framework.INavigation
 
-class ProfileNameFragment : Fragment(), INavigation {
+class ProfileNameFragment : DialogFragment() {
 
     private var _binding: FragmentProfileNameBinding? = null
     private val binding get() = _binding!!
@@ -24,11 +23,15 @@ class ProfileNameFragment : Fragment(), INavigation {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        dialog?.window?.attributes?.apply {
+            width = WindowManager.LayoutParams.MATCH_PARENT
+            height = WindowManager.LayoutParams.MATCH_PARENT
+        }
         initViews()
     }
 
     private fun initViews() = with(binding) {
-        profileNameBackButton.setOnClickListener { onFragmentBackStack() }
+        profileNameBackButton.setOnClickListener { dismiss() }
         profileNameSaveButton.setOnClickListener { saveData() }
     }
 
@@ -40,13 +43,7 @@ class ProfileNameFragment : Fragment(), INavigation {
         _binding = null
     }
 
-    override fun onFragmentBackStack() {
-        App.navController.popBackStack()
-    }
-
-    override fun onFragmentNext() = Unit
-
     companion object {
-        fun newInstance() = ProfileFragment()
+        fun newInstance() = ProfileNameFragment()
     }
 }

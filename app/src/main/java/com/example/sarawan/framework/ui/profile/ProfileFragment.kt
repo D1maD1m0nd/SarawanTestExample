@@ -6,8 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.example.sarawan.R
-import com.example.sarawan.app.App
 import com.example.sarawan.databinding.FragmentProfileBinding
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
@@ -54,14 +52,14 @@ class ProfileFragment : Fragment() {
     }
 
     private fun showAddress() {
-        App.navController.navigate(R.id.profileAddressFragment)
+        ProfileAddressFragment.newInstance().show(childFragmentManager, null)
     }
 
     private fun showPhone() {
     }
 
     private fun showName() {
-        App.navController.navigate(R.id.profileNameFragment)
+        ProfileNameFragment.newInstance().show(childFragmentManager, null)
     }
 
     override fun onDestroy() {

@@ -4,13 +4,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
-import com.example.sarawan.R
-import com.example.sarawan.app.App
+import android.view.WindowManager
+import androidx.fragment.app.DialogFragment
 import com.example.sarawan.databinding.FragmentProfileAddressBinding
-import com.example.sarawan.framework.INavigation
 
-class ProfileAddressFragment : Fragment(), INavigation {
+class ProfileAddressFragment : DialogFragment() {
 
     private var _binding: FragmentProfileAddressBinding? = null
     private val binding get() = _binding!!
@@ -25,17 +23,21 @@ class ProfileAddressFragment : Fragment(), INavigation {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        dialog?.window?.attributes?.apply {
+            width = WindowManager.LayoutParams.MATCH_PARENT
+            height = WindowManager.LayoutParams.MATCH_PARENT
+        }
         initViews()
     }
 
     private fun initViews() = with(binding) {
-        profileAddressBackButton.setOnClickListener { onFragmentBackStack() }
+        profileAddressBackButton.setOnClickListener { dismiss() }
         profileAddressSaveButton.setOnClickListener { saveData() }
         profileCityTextView.setOnClickListener { showAlert() }
     }
 
     private fun showAlert() {
-        App.navController.navigate(R.id.profileAlertFragment)
+        ProfileAlertFragment.newInstance().show(childFragmentManager, null)
     }
 
     private fun saveData() {
@@ -46,13 +48,7 @@ class ProfileAddressFragment : Fragment(), INavigation {
         _binding = null
     }
 
-    override fun onFragmentBackStack() {
-        App.navController.popBackStack()
-    }
-
-    override fun onFragmentNext() = Unit
-
     companion object {
-        fun newInstance() = ProfileFragment()
+        fun newInstance() = ProfileAddressFragment()
     }
 }
