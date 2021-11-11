@@ -45,4 +45,9 @@
         android:id="@+id/infoSupportFragment"
         android:name="com.example.sarawan.framework.ui.info.InfoSupportFragment"
         android:label="fragment_info_support"/>
+    <fragment
+        android:id="@+id/profileNameFragment"
+        android:name="com.example.sarawan.framework.ui.profile.ProfileNameFragment"
+        android:label="fragment_profile_name"
+        tools:layout="@layout/fragment_profile_name" />
 </navigation>
