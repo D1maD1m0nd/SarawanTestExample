@@ -45,19 +45,4 @@
         android:id="@+id/infoSupportFragment"
         android:name="com.example.sarawan.framework.ui.info.InfoSupportFragment"
         android:label="fragment_info_support" />
-    <fragment
-        android:id="@+id/profileNameFragment"
-        android:name="com.example.sarawan.framework.ui.profile.ProfileNameFragment"
-        android:label="fragment_profile_name"
-        tools:layout="@layout/fragment_profile_name" />
-    <fragment
-        android:id="@+id/profileAddressFragment"
-        android:name="com.example.sarawan.framework.ui.profile.ProfileAddressFragment"
-        android:label="fragment_profile_address"
-        tools:layout="@layout/fragment_profile_address" />
-    <fragment
-        android:id="@+id/profileAlertFragment"
-        android:name="com.example.sarawan.framework.ui.profile.ProfileAlertFragment"
-        android:label="fragment_profile_alert"
-        tools:layout="@layout/fragment_profile_alert" />
 </navigation>
