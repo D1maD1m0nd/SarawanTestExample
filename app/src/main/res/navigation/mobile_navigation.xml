@@ -18,7 +18,7 @@
     <fragment
         android:id="@+id/infoFragment"
         android:name="com.example.sarawan.framework.ui.info.InfoFragment"
-        android:label="fragment_info"/>
+        android:label="fragment_info" />
     <fragment
         android:id="@+id/basketFragment"
         android:name="com.example.sarawan.framework.ui.basket.BasketFragment"
@@ -28,7 +28,7 @@
         android:id="@+id/catalogFragment"
         android:name="com.example.sarawan.framework.ui.catalog.CatalogFragment"
         android:label="fragment_catalog"
-        tools:layout="@layout/fragment_catalog" >
+        tools:layout="@layout/fragment_catalog">
         <action
             android:id="@+id/action_catalogFragment_to_profileFragment"
             app:destination="@id/profileFragment" />
@@ -36,13 +36,28 @@
     <fragment
         android:id="@+id/infoHowFragment"
         android:name="com.example.sarawan.framework.ui.info.InfoHowFragment"
-        android:label="fragment_info_how"/>
+        android:label="fragment_info_how" />
     <fragment
         android:id="@+id/infoAboutFragment"
         android:name="com.example.sarawan.framework.ui.info.InfoAboutFragment"
-        android:label="fragment_info_about"/>
+        android:label="fragment_info_about" />
     <fragment
         android:id="@+id/infoSupportFragment"
         android:name="com.example.sarawan.framework.ui.info.InfoSupportFragment"
-        android:label="fragment_info_support"/>
+        android:label="fragment_info_support" />
+    <fragment
+        android:id="@+id/profileNameFragment"
+        android:name="com.example.sarawan.framework.ui.profile.ProfileNameFragment"
+        android:label="fragment_profile_name"
+        tools:layout="@layout/fragment_profile_name" />
+    <fragment
+        android:id="@+id/profileAddressFragment"
+        android:name="com.example.sarawan.framework.ui.profile.ProfileAddressFragment"
+        android:label="fragment_profile_address"
+        tools:layout="@layout/fragment_profile_address" />
+    <fragment
+        android:id="@+id/profileAlertFragment"
+        android:name="com.example.sarawan.framework.ui.profile.ProfileAlertFragment"
+        android:label="fragment_profile_alert"
+        tools:layout="@layout/fragment_profile_alert" />
 </navigation>
