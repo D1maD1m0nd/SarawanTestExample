@@ -45,13 +45,11 @@ class MainActivity : AppCompatActivity() {
     private fun observeOnlineStatus() {
         networkStatus
             .isOnline()
-            .observeOn(schedulerProvider.io)
             .subscribeOn(schedulerProvider.io)
+            .observeOn(schedulerProvider.ui)
             .subscribe { isOnline ->
                 val message = if (isOnline) "You now Online" else "You are Offline!"
-                runOnUiThread {
-                    Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
-                }
+                Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
             }
     }
 
@@ -59,7 +57,7 @@ class MainActivity : AppCompatActivity() {
         if (navController.currentDestination?.id == R.id.mainFragment) {
             checkExit()
         } else {
-           navController.popBackStack()
+            super.onBackPressed()
         }
         lastTimeBackPressed = System.currentTimeMillis()
     }
