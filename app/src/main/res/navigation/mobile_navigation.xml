@@ -18,7 +18,7 @@
     <fragment
         android:id="@+id/infoFragment"
         android:name="com.example.sarawan.framework.ui.info.InfoFragment"
-        android:label="fragment_info"/>
+        android:label="fragment_info" />
     <fragment
         android:id="@+id/basketFragment"
         android:name="com.example.sarawan.framework.ui.basket.BasketFragment"
@@ -28,7 +28,7 @@
         android:id="@+id/catalogFragment"
         android:name="com.example.sarawan.framework.ui.catalog.CatalogFragment"
         android:label="fragment_catalog"
-        tools:layout="@layout/fragment_catalog" >
+        tools:layout="@layout/fragment_catalog">
         <action
             android:id="@+id/action_catalogFragment_to_profileFragment"
             app:destination="@id/profileFragment" />
@@ -36,6 +36,15 @@
     <fragment
         android:id="@+id/infoHowFragment"
         android:name="com.example.sarawan.framework.ui.info.InfoHowFragment"
+        android:label="fragment_info_how" />
+    <fragment
+        android:id="@+id/infoAboutFragment"
+        android:name="com.example.sarawan.framework.ui.info.InfoAboutFragment"
+        android:label="fragment_info_about" />
+    <fragment
+        android:id="@+id/infoSupportFragment"
+        android:name="com.example.sarawan.framework.ui.info.InfoSupportFragment"
+        android:label="fragment_info_support" />
         android:label="fragment_info_how"/>
     <fragment
         android:id="@+id/infoAboutFragment"
