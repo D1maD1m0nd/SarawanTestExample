@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 @Entity
 data class RoomDataModel(
 
-    @PrimaryKey val id: Int,
+    @PrimaryKey val id: Long,
     val price: Float?,
     val word: String?
 )

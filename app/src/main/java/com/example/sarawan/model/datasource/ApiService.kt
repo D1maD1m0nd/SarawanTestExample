@@ -7,6 +7,6 @@ import retrofit2.http.Query
 
 interface ApiService {
 
-    @GET("")
+    @GET("http:/")
     fun search(@Query("") wordToSearch: String): Observable<List<DataModel>>
 }

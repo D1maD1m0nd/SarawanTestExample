@@ -6,6 +6,7 @@
     android:layout_height="match_parent">
 
     <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/top_bar_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?colorOnPrimary">
@@ -28,13 +29,13 @@
                 tools:ignore="ContentDescription" />
         </com.google.android.material.appbar.MaterialToolbar>
 
-        <FrameLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/search_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingHorizontal="20dp"
-            android:paddingBottom="8dp"
-            android:paddingTop="4dp">
+            android:paddingTop="4dp"
+            android:paddingBottom="8dp">
 
             <ImageView
                 android:layout_width="match_parent"
@@ -43,47 +44,87 @@
                 android:src="@drawable/search_border"
                 tools:ignore="ContentDescription,ImageContrastCheck" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
+            <ImageView
+                android:id="@+id/search_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/search_icon"
+                android:paddingStart="10dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="ContentDescription,RtlSymmetry" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/search_field"
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:orientation="horizontal">
+                android:paddingStart="7dp"
+                app:boxStrokeWidth="0dp"
+                app:boxStrokeWidthFocused="0dp"
+                app:hintEnabled="false"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/clear_text"
+                app:layout_constraintStart_toEndOf="@id/search_icon"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="RtlSymmetry">
 
-                <com.google.android.material.textfield.TextInputLayout
-                    android:layout_width="0dp"
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    app:boxStrokeWidth="0dp"
-                    app:boxStrokeWidthFocused="0dp"
-                    app:hintEnabled="false">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:background="@android:color/transparent"
-                        android:drawableStart="@drawable/search_icon"
-                        android:drawableEnd="@drawable/mic_icon"
-                        android:drawablePadding="10dp"
-                        android:imeOptions="actionSearch"
-                        android:inputType="textShortMessage|textLongMessage|textAutoCorrect|text|textAutoComplete"
-                        android:lines="1"
-                        android:maxLines="1"
-                        android:padding="0dp"
-                        android:text="@string/search_in_sarafan"
-                        android:textColor="@color/text_grey"
-                        android:textSize="14sp"
-                        tools:ignore="TouchTargetSizeCheck,TextContrastCheck" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <com.google.android.material.button.MaterialButton
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center_vertical"
-                    android:text="@string/find_text"
-                    android:textSize="16sp"
+                    android:background="@android:color/transparent"
+                    android:imeOptions="actionSearch"
+                    android:inputType="textShortMessage|textLongMessage|textAutoCorrect|text|textAutoComplete"
+                    android:lines="1"
+                    android:maxLines="1"
+                    android:padding="0dp"
+                    android:paddingStart="0dp"
+                    android:paddingTop="0dp"
+                    android:paddingEnd="0dp"
+                    android:paddingBottom="0dp"
+                    android:text="@string/search_in_sarafan"
+                    android:textColor="@color/text_grey"
+                    android:textSize="14sp"
                     tools:ignore="TouchTargetSizeCheck,TextContrastCheck" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-            </LinearLayout>
-        </FrameLayout>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/search_button"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:text="@string/find_text"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                tools:ignore="TouchTargetSizeCheck,TextContrastCheck" />
+
+            <ImageButton
+                android:id="@+id/clear_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:src="@android:drawable/ic_notification_clear_all"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/search_button"
+                app:layout_constraintStart_toEndOf="@id/search_field"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="ContentDescription,SpeakableTextPresentCheck,TouchTargetSizeCheck,ImageContrastCheck" />
+
+            <ImageButton
+                android:id="@+id/mic_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:paddingHorizontal="12dp"
+                android:src="@drawable/mic_icon"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/search_button"
+                app:layout_constraintStart_toEndOf="@id/search_field"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="ContentDescription,SpeakableTextPresentCheck,TouchTargetSizeCheck,TouchTargetSizeCheck" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.recyclerview.widget.RecyclerView
@@ -97,24 +138,4 @@
         app:spanCount="2"
         tools:listitem="@layout/list_item_card" />
 
-    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-        android:id="@+id/fab_price"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_marginEnd="22dp"
-        android:layout_marginBottom="22dp"
-        android:backgroundTint="@color/secondary_orange"
-        android:gravity="center"
-        android:paddingStart="30dp"
-        android:paddingLeft="30dp"
-        android:paddingTop="15dp"
-        android:paddingEnd="30dp"
-        android:paddingRight="30dp"
-        android:paddingBottom="15dp"
-        android:textColor="?colorOnPrimary"
-        android:textSize="16sp"
-        app:elevation="4dp"
-        tools:ignore="TextContrastCheck"
-        tools:text="100 ₽" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
