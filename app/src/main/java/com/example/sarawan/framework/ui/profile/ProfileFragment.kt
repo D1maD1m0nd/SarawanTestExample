@@ -56,6 +56,7 @@ class ProfileFragment : Fragment() {
     }
 
     private fun showPhone() {
+        ProfilePhoneFragment.newInstance().show(childFragmentManager, null)
     }
 
     private fun showName() {
