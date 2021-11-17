@@ -231,6 +231,16 @@
                             android:textColor="@color/black"
                             android:textSize="16sp" />
 
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom"
+                        android:layout_margin="12dp"
+                        android:fontFamily="@font/montserrat_regular"
+                        android:text="Оформите подписку и экономьте время, создавая готовые корзины для любых случаев."
+                        android:textColor="@color/black"
+                        android:textSize="16sp" />
+
                     </androidx.appcompat.widget.LinearLayoutCompat>
 
                 </com.google.android.material.card.MaterialCardView>

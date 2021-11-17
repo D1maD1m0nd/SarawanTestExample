@@ -1,181 +1,131 @@
 package com.example.sarawan.framework.ui.main.adapter
 
-import android.annotation.SuppressLint
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import coil.ImageLoader
-import com.example.sarawan.databinding.ListItemButtonBinding
+import coil.request.Disposable
+import coil.request.ImageRequest
 import com.example.sarawan.databinding.ListItemCardBinding
-import com.example.sarawan.framework.ui.main.viewHolder.ButtonHolder
-import com.example.sarawan.framework.ui.main.viewHolder.CommonCardsViewHolder
-import com.example.sarawan.framework.ui.main.viewHolder.StringHolder
-import com.example.sarawan.framework.ui.main.viewHolder.TopCardsViewHolder
 import com.example.sarawan.model.data.DataModel
-import com.google.android.material.textview.MaterialTextView
 
 class MainRecyclerAdapter(
     private var onListItemClickListener: OnListItemClickListener,
-    private val imageLoader: ImageLoader,
-    private val callback: () -> Unit
-) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    private val data: MutableList<DataModel>,
+    private val imageLoader: ImageLoader
+) : RecyclerView.Adapter<MainRecyclerAdapter.RecyclerItemViewHolder>() {
 
-    private val displayData: MutableList<DataModel> = mutableListOf()
-    private val topData: MutableList<DataModel> = mutableListOf()
-
-    private val topRecyclerAdapter =
-        TopRecyclerAdapter(onListItemClickListener, imageLoader) { measuredHeight: Int ->
-            recyclerHeight = measuredHeight
-            callback()
-        }
-    private lateinit var innerRecycler: RecyclerView
-
-    @SuppressLint("NotifyDataSetChanged")
     fun setData(data: List<DataModel>?) {
-        if (data == null) return
-        topData.clear()
-        topData.addAll(data.filter { it.cardType == CardType.TOP.type })
-        displayData.clear()
-        displayData.add(
-            DataModel(
-                itemDescription = "Выгодные предложения",
-                price = 28F,
-                discount = 0,
-                cardType = CardType.STRING.type
-            )
-        )
-        displayData.add(DataModel(cardType = CardType.TOP.type))
-        displayData.add(
-            DataModel(
-                itemDescription = "Посмотреть еще",
-                cardType = CardType.BUTTON.type
-            )
-        )
-        notifyDataSetChanged()
-        val commonData = data.filter { it.cardType == CardType.COMMON.type }
-        commonData.forEach {
+        data?.let { dataList ->
+            dataList.forEach {
+                setData(it)
+            }
+        }
+    }
+
+    fun setData(vararg data: DataModel?) {
+        data.forEach {
             setData(it)
         }
-        if (commonData.size % 2 != 0) setData(DataModel(cardType = CardType.EMPTY.type))
-        displayData.add(
-            DataModel(
-                itemDescription = "Наши партнеры",
-                id = Color.WHITE.toLong(),
-                price = 28F,
-                discount = 1,
-                cardType = CardType.STRING.type
-            )
+    }
+
+    fun setData(data: DataModel?) {
+        data?.let {
+            this.data.add(it)
+            notifyItemInserted(this.data.size)
+        }
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerItemViewHolder {
+        return RecyclerItemViewHolder(
+            ListItemCardBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         )
     }
 
-    private fun setData(data: DataModel?) {
-        data?.let {
-            if (it.cardType == CardType.COMMON.type) {
-                displayData.add(it)
-                notifyItemInserted(displayData.size)
-            }
-        }
+    override fun onBindViewHolder(holder: RecyclerItemViewHolder, position: Int) {
+        holder.bind(data[position])
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return when (viewType) {
-            CardType.COMMON.type -> CommonCardsViewHolder(
-                ListItemCardBinding.inflate(
-                    LayoutInflater.from(parent.context),
-                    parent,
-                    false
-                ),
-                imageLoader,
-                onListItemClickListener
-            )
-            CardType.TOP.type -> {
-                innerRecycler = RecyclerView(parent.context)
-                innerRecycler.layoutManager =
-                    LinearLayoutManager(parent.context, LinearLayoutManager.HORIZONTAL, false)
+    override fun getItemCount(): Int {
+        return data.size
+    }
 
+    inner class RecyclerItemViewHolder(private val binding: ListItemCardBinding) :
+        RecyclerView.ViewHolder(binding.root) {
 
-                TopCardsViewHolder(innerRecycler, topRecyclerAdapter)
-            }
-            CardType.STRING.type -> StringHolder(MaterialTextView(parent.context))
-            CardType.BUTTON.type -> ButtonHolder(
-                ListItemButtonBinding.inflate(
-                    LayoutInflater.from(parent.context),
-                    parent,
-                    false
+        private var disposable: Disposable? = null
+
+        fun bind(data: DataModel) {
+            if (layoutPosition != RecyclerView.NO_POSITION) {
+                binding.itemPrice.text = String.format("%.2f", data.price)
+                binding.itemShopName.text = data.shop
+                binding.itemWeight.text = data.weight
+                binding.itemDescription.text = data.itemDescription
+
+                val discount = data.discount
+                if (discount != null) "-${discount}%".also { binding.discount.text = it }
+                else binding.discount.visibility = View.GONE
+
+                disposable = imageLoader.enqueue(
+                    ImageRequest.Builder(binding.root.context)
+                        .data(data.pictureUrl?.toInt())
+//                        .placeholder(R.drawable.logo_top_bar)
+                        .target(binding.itemImage)
+                        .build()
                 )
-            )
-            else -> throw RuntimeException("No Such viewType: $viewType")
+
+                var quantity = data.quantity ?: 0
+                data.quantity = quantity
+
+                if (quantity > 0) {
+                    binding.itemBuyButton.visibility = View.GONE
+                    binding.itemQuantityLayout.visibility = View.VISIBLE
+                    binding.itemQuantity.text = quantity.toString()
+                }
+
+                binding.itemBuyButton.setOnClickListener {
+                    binding.itemBuyButton.visibility = View.GONE
+                    binding.itemQuantityLayout.visibility = View.VISIBLE
+                    quantity = 1
+                    data.quantity = quantity
+                    binding.itemQuantity.text = data.quantity.toString()
+                    changeQuantity(data)
+                }
+
+                binding.minusButton.setOnClickListener {
+                    quantity -= 1
+                    data.quantity = quantity
+                    if (quantity <= 0) {
+                        binding.itemBuyButton.visibility = View.VISIBLE
+                        binding.itemQuantityLayout.visibility = View.GONE
+                    }
+                    binding.itemQuantity.text = quantity.toString()
+                    changeQuantity(data)
+                }
+
+                binding.plusButton.setOnClickListener {
+                    quantity += 1
+                    data.quantity = quantity
+                    binding.itemQuantity.text = quantity.toString()
+                    changeQuantity(data)
+                }
+            }
         }
+
+        fun cancelTask() = disposable?.dispose()
     }
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        when (getItemViewType(position)) {
-            CardType.COMMON.type -> {
-                holder as CommonCardsViewHolder
-                holder.bind(displayData[position])
-            }
-            CardType.TOP.type -> {
-                if (recyclerHeight > 0) {
-                    holder.itemView.layoutParams = ViewGroup.LayoutParams(
-                        LinearLayout.LayoutParams.MATCH_PARENT,
-                        recyclerHeight
-                    )
-                }
-                holder.itemView.post {
-                    holder as TopCardsViewHolder
-                    holder.bind(topData)
-                }
-            }
-            CardType.STRING.type -> {
-                holder as StringHolder
-                holder.bind(displayData[position])
-            }
-            CardType.BUTTON.type -> {
-                holder as ButtonHolder
-                holder.bind(displayData[position])
-            }
-            CardType.EMPTY.type -> {
-                holder as CommonCardsViewHolder
-                holder.itemView.visibility = View.INVISIBLE
-            }
-            else -> throw RuntimeException("No binder for holder: $holder")
-        }
-    }
-
-    override fun getItemCount(): Int = displayData.size
-
-    override fun getItemViewType(position: Int): Int {
-        return displayData[position].cardType ?: -1
+    private fun changeQuantity(listItemData: DataModel) {
+        onListItemClickListener.onItemClick(listItemData)
     }
 
     interface OnListItemClickListener {
         fun onItemClick(data: DataModel)
     }
 
-    interface CancellableHolder {
-        fun cancelTask()
-    }
-
-    override fun onViewRecycled(holder: RecyclerView.ViewHolder) {
-        if (holder is CancellableHolder) {
-            holder.cancelTask()
-        }
+    override fun onViewRecycled(holder: RecyclerItemViewHolder) {
+        holder.cancelTask()
         super.onViewRecycled(holder)
     }
-
-    companion object {
-        private var recyclerHeight = 0
-    }
-}
-
-enum class CardType(val type: Int) {
-    TOP(0),
-    COMMON(1),
-    STRING(2),
-    BUTTON(3),
-    EMPTY(4)
 }

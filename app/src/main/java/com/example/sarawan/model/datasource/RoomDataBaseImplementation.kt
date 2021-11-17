@@ -5,7 +5,6 @@ import com.example.sarawan.model.data.DataModel
 import com.example.sarawan.model.datasource.db.SarawanDatabase
 import com.example.sarawan.utils.convertDataModelToRoomModel
 import io.reactivex.rxjava3.core.Observable
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class RoomDataBaseImplementation @Inject constructor(
@@ -20,7 +19,7 @@ class RoomDataBaseImplementation @Inject constructor(
 //            db.searchDao.getByWord(word.lowercase())?.map {
 //                convertRoomModelToDataModel(it)
 //            }
-        }.delay(2, TimeUnit.SECONDS)
+        }
     }
 
     override fun saveData(dataSet: List<DataModel>) {
@@ -43,8 +42,7 @@ class RoomDataBaseImplementation @Inject constructor(
                     "100г",
                     "Россия",
                     "Сарафан",
-                    getRandomDiscount().toLong(),
-                    (Math.random()*2).toInt()
+                    getRandomDiscount().toLong()
                 )
             )
         }
