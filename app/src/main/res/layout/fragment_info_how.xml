@@ -91,37 +91,6 @@
                             android:textSize="16sp" />
 
                     </androidx.appcompat.widget.LinearLayoutCompat>
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_marginTop="35dp"
-                        android:background="@drawable/black_list" />
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical">
-
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal"
-                            android:layout_marginTop="35dp"
-                            android:background="@drawable/black_list" />
-
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="bottom"
-                            android:layout_margin="12dp"
-                            android:fontFamily="@font/montserrat_regular"
-                            android:text="Выберите продукты в каталоге. Система сама подберет вам самые выгодные предложения."
-                            android:textColor="@color/black"
-                            android:textSize="16sp" />
-
-                    </androidx.appcompat.widget.LinearLayoutCompat>
-
 
                 </com.google.android.material.card.MaterialCardView>
 
@@ -171,38 +140,6 @@
 
                     </androidx.appcompat.widget.LinearLayoutCompat>
 
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_marginTop="30dp"
-                        android:background="@drawable/black_car" />
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical">
-
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal"
-                            android:layout_marginTop="30dp"
-                            android:background="@drawable/black_car" />
-
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="bottom"
-                            android:layout_margin="12dp"
-                            android:fontFamily="@font/montserrat_regular"
-                            android:text="Оформите доставку на ближайшее время или нужную дату. Привезем ваш заказ в указанный срок."
-                            android:textColor="@color/black"
-                            android:textSize="16sp" />
-
-                    </androidx.appcompat.widget.LinearLayoutCompat>
-
-
                 </com.google.android.material.card.MaterialCardView>
 
             </FrameLayout>
@@ -226,6 +163,7 @@
                     android:layout_marginTop="40dp"
                     android:layout_marginEnd="90dp"
                     app:strokeColor="#D6D6D6">
+
                     <androidx.appcompat.widget.LinearLayoutCompat
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -247,8 +185,11 @@
                         android:text="Оформите подписку и экономьте время, создавая готовые корзины для любых случаев."
                         android:textColor="@color/black"
                         android:textSize="16sp" />
+
                     </androidx.appcompat.widget.LinearLayoutCompat>
+
                 </com.google.android.material.card.MaterialCardView>
+
             </FrameLayout>
 
             <Space
