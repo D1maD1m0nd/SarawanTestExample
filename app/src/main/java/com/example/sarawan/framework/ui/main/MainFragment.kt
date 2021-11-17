@@ -1,5 +1,6 @@
 package com.example.sarawan.framework.ui.main
 
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -7,16 +8,15 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.core.content.getSystemService
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.GridLayoutManager.SpanSizeLookup
 import coil.ImageLoader
 import com.example.sarawan.MainActivity
+import com.example.sarawan.R
 import com.example.sarawan.databinding.FragmentMainBinding
-import com.example.sarawan.framework.ui.main.adapter.CardType
 import com.example.sarawan.framework.ui.main.adapter.MainRecyclerAdapter
 import com.example.sarawan.framework.ui.main.viewModel.MainViewModel
 import com.example.sarawan.model.data.AppState
@@ -24,9 +24,7 @@ import com.example.sarawan.model.data.DataModel
 import com.example.sarawan.rx.ISchedulerProvider
 import com.example.sarawan.utils.NetworkStatus
 import dagger.android.support.AndroidSupportInjection
-import java.util.*
 import javax.inject.Inject
-
 
 class MainFragment : Fragment() {
 
@@ -63,8 +61,6 @@ class MainFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         AndroidSupportInjection.inject(this)
-
-        if (savedInstanceState == null) viewModel.search("test", isOnline)
     }
 
     override fun onCreateView(
@@ -81,6 +77,8 @@ class MainFragment : Fragment() {
         checkOnlineStatus()
         initRecyclerAdapter()
         initSearchField()
+
+        if (savedInstanceState == null) viewModel.search("test", isOnline)
     }
 
     private fun initSearchField() {
@@ -108,9 +106,23 @@ class MainFragment : Fragment() {
 
         binding.searchField.editText?.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
-                binding.clearText.visibility = View.VISIBLE
-                binding.micButton.visibility = View.INVISIBLE
+                binding.searchField.editText?.setTextColor(Color.BLACK)
+                if (binding.searchField.editText?.text.toString() == getString(R.string.search_in_sarafan)) {
+                    binding.searchField.editText?.setText("")
+                } else {
+                    binding.clearText.visibility = View.VISIBLE
+                    binding.micButton.visibility = View.INVISIBLE
+                }
             } else {
+                binding.searchField.editText?.setTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.text_grey
+                    )
+                )
+                if (binding.searchField.editText?.text.toString() == "") {
+                    binding.searchField.editText?.setText(getString(R.string.search_in_sarafan))
+                }
                 binding.clearText.visibility = View.INVISIBLE
                 binding.micButton.visibility = View.VISIBLE
             }
@@ -128,6 +140,8 @@ class MainFragment : Fragment() {
 
         binding.clearText.setOnClickListener {
             binding.searchField.editText?.setText("")
+            binding.clearText.visibility = View.INVISIBLE
+            binding.micButton.visibility = View.VISIBLE
         }
 
         binding.searchField.editText?.setOnEditorActionListener { _, actionId, _ ->
@@ -144,32 +158,15 @@ class MainFragment : Fragment() {
             ?.hideSoftInputFromWindow(binding.searchField.windowToken, 0)
         binding.searchField.clearFocus()
         viewModel.search("test", isOnline)
-        if (!isOnline) Toast.makeText(
-            context,
-            "You are Offline! Get Results from Cache",
-            Toast.LENGTH_SHORT
-        ).show()
+        if (!isOnline) binding.root.post {
+            Toast.makeText(context, "You are Offline! Get Results from Cache", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun initRecyclerAdapter() {
         if (adapter == null) {
-            adapter = MainRecyclerAdapter(onListItemClickListener, imageLoader) {
-                binding.loadingLayout.visibility = View.GONE
-            }
+            adapter = MainRecyclerAdapter(onListItemClickListener, mutableListOf(), imageLoader)
         }
-        (binding.mainRecyclerView.layoutManager as GridLayoutManager).spanSizeLookup =
-            object : SpanSizeLookup() {
-                override fun getSpanSize(position: Int): Int {
-                    return when (adapter!!.getItemViewType(position)) {
-                        CardType.TOP.type -> 2
-                        CardType.COMMON.type -> 1
-                        CardType.STRING.type -> 2
-                        CardType.BUTTON.type -> 2
-                        CardType.EMPTY.type -> 1
-                        else -> -1
-                    }
-                }
-            }
         binding.mainRecyclerView.adapter = adapter
         viewModel.getStateLiveData().observe(viewLifecycleOwner) { appState ->
             when (appState) {
@@ -179,7 +176,7 @@ class MainFragment : Fragment() {
                     binding.mainRecyclerView.scrollToPosition(0)
                 }
                 is AppState.Error -> Unit
-                AppState.Loading -> binding.loadingLayout.visibility = View.VISIBLE
+                AppState.Loading -> Unit
             }
         }
     }
