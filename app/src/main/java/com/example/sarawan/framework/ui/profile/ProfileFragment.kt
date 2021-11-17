@@ -19,12 +19,12 @@ class ProfileFragment : Fragment() {
     private val binding get() = _binding!!
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater, container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View = FragmentProfileBinding
-        .inflate(inflater, container, false)
-        .also { _binding = it }
-        .root
+            .inflate(inflater, container, false)
+            .also { _binding = it }
+            .root
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
