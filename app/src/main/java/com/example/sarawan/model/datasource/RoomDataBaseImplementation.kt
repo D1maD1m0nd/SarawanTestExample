@@ -45,6 +45,7 @@ class RoomDataBaseImplementation @Inject constructor(
                     "Сарафан",
                     getRandomDiscount().toLong(),
                     (Math.random()*2).toInt()
+
                 )
             )
         }
