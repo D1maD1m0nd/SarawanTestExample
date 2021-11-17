@@ -1,221 +1,181 @@
 package com.example.sarawan.framework.ui.main.adapter
 
+import android.annotation.SuppressLint
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-import androidx.core.content.ContextCompat
+import android.widget.LinearLayout
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import coil.ImageLoader
-import coil.request.Disposable
-import coil.request.ImageRequest
-import com.example.sarawan.R
+import com.example.sarawan.databinding.ListItemButtonBinding
 import com.example.sarawan.databinding.ListItemCardBinding
+import com.example.sarawan.framework.ui.main.viewHolder.ButtonHolder
+import com.example.sarawan.framework.ui.main.viewHolder.CommonCardsViewHolder
+import com.example.sarawan.framework.ui.main.viewHolder.StringHolder
+import com.example.sarawan.framework.ui.main.viewHolder.TopCardsViewHolder
 import com.example.sarawan.model.data.DataModel
 import com.google.android.material.textview.MaterialTextView
-import java.util.*
 
 class MainRecyclerAdapter(
     private var onListItemClickListener: OnListItemClickListener,
-    private val data: LinkedList<DataModel>,
-    private val imageLoader: ImageLoader
+    private val imageLoader: ImageLoader,
+    private val callback: () -> Unit
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    init {
-        data.push(DataModel(itemDescription = "Выгодные предложения"))
-    }
+    private val displayData: MutableList<DataModel> = mutableListOf()
+    private val topData: MutableList<DataModel> = mutableListOf()
 
-    fun setData(data: List<DataModel>?) {
-        data?.let { dataList ->
-            dataList.forEach {
-                setData(it)
-            }
+    private val topRecyclerAdapter =
+        TopRecyclerAdapter(onListItemClickListener, imageLoader) { measuredHeight: Int ->
+            recyclerHeight = measuredHeight
+            callback()
         }
-    }
+    private lateinit var innerRecycler: RecyclerView
 
-    fun setData(vararg data: DataModel?) {
-        data.forEach {
+    @SuppressLint("NotifyDataSetChanged")
+    fun setData(data: List<DataModel>?) {
+        if (data == null) return
+        topData.clear()
+        topData.addAll(data.filter { it.cardType == CardType.TOP.type })
+        displayData.clear()
+        displayData.add(
+            DataModel(
+                itemDescription = "Выгодные предложения",
+                price = 28F,
+                discount = 0,
+                cardType = CardType.STRING.type
+            )
+        )
+        displayData.add(DataModel(cardType = CardType.TOP.type))
+        displayData.add(
+            DataModel(
+                itemDescription = "Посмотреть еще",
+                cardType = CardType.BUTTON.type
+            )
+        )
+        notifyDataSetChanged()
+        val commonData = data.filter { it.cardType == CardType.COMMON.type }
+        commonData.forEach {
             setData(it)
         }
+        if (commonData.size % 2 != 0) setData(DataModel(cardType = CardType.EMPTY.type))
+        displayData.add(
+            DataModel(
+                itemDescription = "Наши партнеры",
+                id = Color.WHITE.toLong(),
+                price = 28F,
+                discount = 1,
+                cardType = CardType.STRING.type
+            )
+        )
     }
 
-    fun setData(data: DataModel?) {
+    private fun setData(data: DataModel?) {
         data?.let {
-            if (it.isTopCard == true) {
-                this.data.add(1, it)
-                notifyItemInserted(1)
-            } else {
-                this.data.add(it)
-                notifyItemInserted(this.data.size)
+            if (it.cardType == CardType.COMMON.type) {
+                displayData.add(it)
+                notifyItemInserted(displayData.size)
             }
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
-            TYPE_COMMON -> CommonCardsViewHolder(
+            CardType.COMMON.type -> CommonCardsViewHolder(
                 ListItemCardBinding.inflate(
-                    LayoutInflater.from(
-                        parent.context
-                    ), parent, false
-                )
+                    LayoutInflater.from(parent.context),
+                    parent,
+                    false
+                ),
+                imageLoader,
+                onListItemClickListener
             )
-            TYPE_TOP -> TopCardsViewHolder(
-                ListItemCardBinding.inflate(
+            CardType.TOP.type -> {
+                innerRecycler = RecyclerView(parent.context)
+                innerRecycler.layoutManager =
+                    LinearLayoutManager(parent.context, LinearLayoutManager.HORIZONTAL, false)
+
+
+                TopCardsViewHolder(innerRecycler, topRecyclerAdapter)
+            }
+            CardType.STRING.type -> StringHolder(MaterialTextView(parent.context))
+            CardType.BUTTON.type -> ButtonHolder(
+                ListItemButtonBinding.inflate(
                     LayoutInflater.from(parent.context),
                     parent,
                     false
                 )
             )
-            TYPE_STRING -> StringHolder(MaterialTextView(parent.context))
             else -> throw RuntimeException("No Such viewType: $viewType")
         }
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        when {
-            getItemViewType(position) == TYPE_COMMON -> {
+        when (getItemViewType(position)) {
+            CardType.COMMON.type -> {
                 holder as CommonCardsViewHolder
-                holder.bind(data[position])
+                holder.bind(displayData[position])
             }
-            getItemViewType(position) == TYPE_TOP -> {
-                holder as TopCardsViewHolder
-                holder.bind(data[position])
+            CardType.TOP.type -> {
+                if (recyclerHeight > 0) {
+                    holder.itemView.layoutParams = ViewGroup.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        recyclerHeight
+                    )
+                }
+                holder.itemView.post {
+                    holder as TopCardsViewHolder
+                    holder.bind(topData)
+                }
             }
-            getItemViewType(position) == TYPE_STRING -> {
+            CardType.STRING.type -> {
                 holder as StringHolder
-                holder.bind(data[position])
+                holder.bind(displayData[position])
+            }
+            CardType.BUTTON.type -> {
+                holder as ButtonHolder
+                holder.bind(displayData[position])
+            }
+            CardType.EMPTY.type -> {
+                holder as CommonCardsViewHolder
+                holder.itemView.visibility = View.INVISIBLE
             }
             else -> throw RuntimeException("No binder for holder: $holder")
         }
     }
 
-    override fun getItemCount(): Int {
-        return data.size
-    }
+    override fun getItemCount(): Int = displayData.size
 
     override fun getItemViewType(position: Int): Int {
-        return when (data[position].isTopCard) {
-            true -> TYPE_TOP
-            false -> TYPE_COMMON
-            else -> TYPE_STRING
-        }
-    }
-
-    inner class StringHolder(private val view: View) : RecyclerView.ViewHolder(view) {
-        fun bind(data: DataModel) {
-            (view as TextView).text = data.itemDescription
-            view.setBackgroundColor(
-                ContextCompat.getColor(
-                    view.context,
-                    R.color.top_card_background
-                )
-            )
-
-        }
-    }
-
-    inner class CommonCardsViewHolder(binding: ListItemCardBinding) : CardItemViewHolder(binding)
-
-    inner class TopCardsViewHolder(private val binding: ListItemCardBinding) :
-        CardItemViewHolder(binding) {
-        override fun bind(data: DataModel) {
-            super.bind(data)
-            binding.root.setBackgroundColor(
-                ContextCompat.getColor(
-                    binding.root.context,
-                    R.color.top_card_background
-                )
-            )
-        }
-    }
-
-    abstract inner class CardItemViewHolder(private val binding: ListItemCardBinding) :
-        RecyclerView.ViewHolder(binding.root) {
-
-        private var disposable: Disposable? = null
-
-        open fun bind(data: DataModel) {
-            if (layoutPosition != RecyclerView.NO_POSITION) {
-                var quantity = data.quantity ?: 0
-                data.quantity = quantity
-
-                with(binding) {
-
-                    if (quantity > 0) {
-                        itemBuyButton.visibility = View.GONE
-                        itemQuantityLayout.visibility = View.VISIBLE
-                        itemQuantity.text = quantity.toString()
-                    }
-
-                    itemPrice.text = String.format("%.2f", data.price)
-                    itemShopName.text = data.shop
-                    itemWeight.text = data.weight
-                    itemDescription.text = data.itemDescription
-
-                    itemBuyButton.setOnClickListener {
-                        itemBuyButton.visibility = View.GONE
-                        itemQuantityLayout.visibility = View.VISIBLE
-                        quantity = 1
-                        data.quantity = quantity
-                        itemQuantity.text = data.quantity.toString()
-                        changeQuantity(data)
-                    }
-
-                    minusButton.setOnClickListener {
-                        quantity -= 1
-                        data.quantity = quantity
-                        if (quantity <= 0) {
-                            itemBuyButton.visibility = View.VISIBLE
-                            itemQuantityLayout.visibility = View.GONE
-                        }
-                        itemQuantity.text = quantity.toString()
-                        changeQuantity(data)
-                    }
-
-                    plusButton.setOnClickListener {
-                        quantity += 1
-                        data.quantity = quantity
-                        itemQuantity.text = quantity.toString()
-                        changeQuantity(data)
-                    }
-                }
-
-                val discount = data.discount
-                if (discount != null) "-${discount}%".also { binding.discount.text = it }
-                else binding.discount.visibility = View.GONE
-
-                disposable = imageLoader.enqueue(
-                    ImageRequest.Builder(binding.root.context)
-                        .data(data.pictureUrl?.toInt())
-//                        .placeholder(R.drawable.logo_top_bar)
-                        .target(binding.itemImage)
-                        .build()
-                )
-            }
-        }
-
-        open fun cancelTask() = disposable?.dispose()
-    }
-
-    private fun changeQuantity(listItemData: DataModel) {
-        onListItemClickListener.onItemClick(listItemData)
+        return displayData[position].cardType ?: -1
     }
 
     interface OnListItemClickListener {
         fun onItemClick(data: DataModel)
     }
 
+    interface CancellableHolder {
+        fun cancelTask()
+    }
+
     override fun onViewRecycled(holder: RecyclerView.ViewHolder) {
-        if (holder is CardItemViewHolder) {
+        if (holder is CancellableHolder) {
             holder.cancelTask()
         }
         super.onViewRecycled(holder)
     }
 
     companion object {
-        const val TYPE_TOP = 0
-        const val TYPE_COMMON = 1
-        const val TYPE_STRING = 2
+        private var recyclerHeight = 0
     }
+}
+
+enum class CardType(val type: Int) {
+    TOP(0),
+    COMMON(1),
+    STRING(2),
+    BUTTON(3),
+    EMPTY(4)
 }
