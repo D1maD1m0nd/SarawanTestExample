@@ -14,5 +14,5 @@ data class DataModel(
     @SerializedName("country") val country: String? = null,
     @SerializedName("company") val company: String? = null,
     @SerializedName("quantity") var quantity: Long? = null,
-    @SerializedName("topCard") val isTopCard: Boolean? = null,
+    @SerializedName("cardType") val cardType: Int? = null,
 ) : BasketListItem

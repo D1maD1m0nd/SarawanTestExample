@@ -11,9 +11,12 @@ import androidx.core.content.getSystemService
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.GridLayoutManager.SpanSizeLookup
 import coil.ImageLoader
 import com.example.sarawan.MainActivity
 import com.example.sarawan.databinding.FragmentMainBinding
+import com.example.sarawan.framework.ui.main.adapter.CardType
 import com.example.sarawan.framework.ui.main.adapter.MainRecyclerAdapter
 import com.example.sarawan.framework.ui.main.viewModel.MainViewModel
 import com.example.sarawan.model.data.AppState
@@ -23,8 +26,6 @@ import com.example.sarawan.utils.NetworkStatus
 import dagger.android.support.AndroidSupportInjection
 import java.util.*
 import javax.inject.Inject
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.GridLayoutManager.SpanSizeLookup
 
 
 class MainFragment : Fragment() {
@@ -62,6 +63,8 @@ class MainFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         AndroidSupportInjection.inject(this)
+
+        if (savedInstanceState == null) viewModel.search("test", isOnline)
     }
 
     override fun onCreateView(
@@ -78,8 +81,6 @@ class MainFragment : Fragment() {
         checkOnlineStatus()
         initRecyclerAdapter()
         initSearchField()
-
-        if (savedInstanceState == null) viewModel.search("test", isOnline)
     }
 
     private fun initSearchField() {
@@ -152,18 +153,23 @@ class MainFragment : Fragment() {
 
     private fun initRecyclerAdapter() {
         if (adapter == null) {
-            adapter = MainRecyclerAdapter(onListItemClickListener, LinkedList(), imageLoader)
-        }
-        (binding.mainRecyclerView.layoutManager as GridLayoutManager).spanSizeLookup = object : SpanSizeLookup() {
-            override fun getSpanSize(position: Int): Int {
-                return when (adapter!!.getItemViewType(position)) {
-                    MainRecyclerAdapter.TYPE_TOP -> 1
-                    MainRecyclerAdapter.TYPE_COMMON -> 1
-                    MainRecyclerAdapter.TYPE_STRING -> 2
-                    else -> -1
-                }
+            adapter = MainRecyclerAdapter(onListItemClickListener, imageLoader) {
+                binding.loadingLayout.visibility = View.GONE
             }
         }
+        (binding.mainRecyclerView.layoutManager as GridLayoutManager).spanSizeLookup =
+            object : SpanSizeLookup() {
+                override fun getSpanSize(position: Int): Int {
+                    return when (adapter!!.getItemViewType(position)) {
+                        CardType.TOP.type -> 2
+                        CardType.COMMON.type -> 1
+                        CardType.STRING.type -> 2
+                        CardType.BUTTON.type -> 2
+                        CardType.EMPTY.type -> 1
+                        else -> -1
+                    }
+                }
+            }
         binding.mainRecyclerView.adapter = adapter
         viewModel.getStateLiveData().observe(viewLifecycleOwner) { appState ->
             when (appState) {
@@ -173,7 +179,7 @@ class MainFragment : Fragment() {
                     binding.mainRecyclerView.scrollToPosition(0)
                 }
                 is AppState.Error -> Unit
-                AppState.Loading -> Unit
+                AppState.Loading -> binding.loadingLayout.visibility = View.VISIBLE
             }
         }
     }
