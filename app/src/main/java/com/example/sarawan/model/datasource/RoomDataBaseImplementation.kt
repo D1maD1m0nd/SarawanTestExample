@@ -42,7 +42,8 @@ class RoomDataBaseImplementation @Inject constructor(
                     "100г",
                     "Россия",
                     "Сарафан",
-                    getRandomDiscount().toLong()
+                    getRandomDiscount().toLong(),
+                    Math.random()>0.9
                 )
             )
         }
