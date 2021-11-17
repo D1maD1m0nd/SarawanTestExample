@@ -108,7 +108,7 @@ class MainRecyclerAdapter(
             view.setBackgroundColor(
                 ContextCompat.getColor(
                     view.context,
-                    R.color.top_card_background
+                    R.color.adjective_green
                 )
             )
 
@@ -124,7 +124,7 @@ class MainRecyclerAdapter(
             binding.root.setBackgroundColor(
                 ContextCompat.getColor(
                     binding.root.context,
-                    R.color.top_card_background
+                    R.color.adjective_green
                 )
             )
         }
