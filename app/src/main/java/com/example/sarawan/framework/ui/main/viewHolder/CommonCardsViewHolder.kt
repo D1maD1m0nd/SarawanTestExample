@@ -1,6 +1,5 @@
 package com.example.sarawan.framework.ui.main.viewHolder
 
-import android.view.ScrollCaptureCallback
 import android.view.View
 import coil.ImageLoader
 import com.example.sarawan.databinding.ListItemCardBinding

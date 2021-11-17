@@ -3,7 +3,6 @@ package com.example.sarawan.framework.ui.main.viewHolder
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.sarawan.R
-import com.example.sarawan.framework.ui.main.adapter.MainRecyclerAdapter
 import com.example.sarawan.framework.ui.main.adapter.TopRecyclerAdapter
 import com.example.sarawan.model.data.DataModel
 
