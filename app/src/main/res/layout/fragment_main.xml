@@ -48,8 +48,8 @@
                 android:id="@+id/search_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingStart="10dp"
                 android:src="@drawable/search_icon"
+                android:paddingStart="10dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -73,7 +73,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@android:color/transparent"
-                    android:hint="@string/search_in_sarafan"
                     android:imeOptions="actionSearch"
                     android:inputType="textShortMessage|textLongMessage|textAutoCorrect|text|textAutoComplete"
                     android:lines="1"
@@ -83,7 +82,8 @@
                     android:paddingTop="0dp"
                     android:paddingEnd="0dp"
                     android:paddingBottom="0dp"
-                    android:textColor="@color/card_text_color"
+                    android:text="@string/search_in_sarafan"
+                    android:textColor="@color/text_grey"
                     android:textSize="14sp"
                     tools:ignore="TouchTargetSizeCheck,TextContrastCheck" />
             </com.google.android.material.textfield.TextInputLayout>
@@ -131,29 +131,11 @@
         android:id="@+id/main_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="10dp"
         android:overScrollMode="never"
         app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         app:spanCount="2"
         tools:listitem="@layout/list_item_card" />
-
-    <FrameLayout
-        android:id="@+id/loading_layout"
-        android:elevation="1dp"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/white"
-        android:scaleType="fitStart"
-        tools:visibility="gone"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
-        <ProgressBar
-            android:id="@+id/loadingIcon"
-            style="?android:attr/progressBarStyleLarge"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center" />
-
-    </FrameLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
