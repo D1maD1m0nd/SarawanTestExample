@@ -231,6 +231,7 @@
                             android:textColor="@color/black"
                             android:textSize="16sp" />
 
+
                     <androidx.appcompat.widget.AppCompatTextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
