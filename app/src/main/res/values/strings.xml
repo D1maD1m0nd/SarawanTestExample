@@ -45,7 +45,6 @@
     <string name="save_text">Сохранить</string>
     <string name="pay_courier_cash">Наличные курьеру</string>
     <string name="pay_courier_card">Картой курьеру</string>
-    <string name="info_how_working">Как мы работаем</string>
     <string name="info_how_choice_products">Выберите продукты в каталоге. Система сама подберет вам самые выгодные предложения.</string>
     <string name="info_how_order_delivery">Оформите доставку на ближайшее время или нужную дату. Привезем ваш заказ в указанный срок.</string>
     <string name="info_how_subscribe">Оформите подписку и экономьте время, создавая готовые корзины для любых случаев.</string>
@@ -58,7 +57,6 @@
     <string name="info_how_working">Как мы работаем</string>
     <string name="info_reviews">Отзывы</string>
     <string name="info_support">Служба поддержки</string>
-    <string name="info_about">О проекте</string>
     <string name="info_foo_toggle">toggle</string>
     <string name="info_about">О проекте</string>
     <string name="info_about_us">О нас</string>
@@ -72,7 +70,6 @@
     <string name="info_about_compare_prices">Система сравнивает цены в разных магазинах и выбирает товар с самой низкой ценой по городу</string>
     <string name="info_about_fast_delivery">Быстрая доставка</string>
     <string name="info_about_fast_delivery_text">Ваши любимые продукты из разных магазинов города будут на вашем столе уже завтра</string>
-    <string name="info_support">Служба поддержки</string>
     <string name="info_support_foo_phone">+ 7 123 456 87</string>
     <string name="profile_title">Профиль</string>
     <string name="profile_add_name">Добавить имя</string>
