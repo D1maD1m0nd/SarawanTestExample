@@ -169,8 +169,10 @@
         android:id="@+id/set_order_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/set_order"
         android:layout_marginTop="35dp"
+        android:text="@string/set_order"
+        android:layout_marginBottom="@dimen/cost_order_20"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/result_payment_text_view" />

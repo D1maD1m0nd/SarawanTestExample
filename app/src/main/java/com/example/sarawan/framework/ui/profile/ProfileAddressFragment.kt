@@ -33,7 +33,7 @@ class ProfileAddressFragment : DialogFragment() {
     private fun initViews() = with(binding) {
         profileAddressBackButton.setOnClickListener { dismiss() }
         profileAddressSaveButton.setOnClickListener { saveData() }
-        profileCityTextView.setOnClickListener { showAlert() }
+        profileAddressCityTextView.setOnClickListener { showAlert() }
     }
 
     private fun showAlert() {

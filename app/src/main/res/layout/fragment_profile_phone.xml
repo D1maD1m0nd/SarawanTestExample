@@ -51,18 +51,21 @@
                 android:textColor="@color/black"
                 android:textSize="18sp" />
 
-            <androidx.appcompat.widget.AppCompatEditText
-                android:id="@+id/profile_phone_edit_text"
+            <com.example.sarawan.framework.ui.profile.MaskedEditText
+                android:id="@+id/profile_phone_masked_edit_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="40dp"
                 android:layout_marginTop="20dp"
                 android:background="@drawable/rounded_edit_text"
-                android:fontFamily="@font/montserrat_regular"
-                android:padding="12dp"
+                android:fontFamily="@font/montserrat_medium"
                 android:inputType="phone"
+                android:lines="1"
+                android:padding="12dp"
                 android:textColor="@color/black"
-                android:textSize="14sp" />
+                android:textSize="16sp"
+                app:mask="+7 (999) 999-99-99"
+                app:placeholder="_" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/profile_phone_send_button"
