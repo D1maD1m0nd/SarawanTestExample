@@ -32,7 +32,7 @@
             android:layout_marginStart="30dp"
             android:layout_weight="10"
             android:fontFamily="@font/montserrat_medium"
-            android:text="О проекте"
+            android:text="@string/info_about"
             android:textColor="@color/black"
             android:textSize="28sp" />
 
@@ -62,7 +62,7 @@
                     android:layout_gravity="center_vertical"
                     android:layout_margin="15dp"
                     android:fontFamily="@font/montserrat_medium"
-                    android:text="О нас"
+                    android:text="@string/info_about_us"
                     android:textColor="@color/black"
                     android:textSize="28sp" />
 
@@ -75,7 +75,7 @@
                     android:layout_marginEnd="15dp"
                     android:layout_marginBottom="20dp"
                     android:fontFamily="@font/montserrat_regular"
-                    android:text="Мы хотим, чтобы у вас оставалось больше времени на то, что вы любите. С нашим сервисом вам не придется отвлекаться на походы по магазинам, вы сможете сосредоточиться на своей семье и любимом деле. А все нужные продукты вам доставит Сарафан."
+                    android:text="@string/info_about_text"
                     android:textColor="@color/black"
                     android:textSize="16sp" />
 
@@ -87,7 +87,7 @@
                 android:layout_gravity="center_vertical"
                 android:layout_marginTop="30dp"
                 android:fontFamily="@font/montserrat_medium"
-                android:text="Наши преимущества"
+                android:text="@string/info_about_features"
                 android:textColor="@color/black"
                 android:textSize="28sp" />
 
@@ -118,7 +118,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:fontFamily="@font/montserrat_semi_bold"
-                        android:text="Широкий ассортимент"
+                        android:text="@string/info_about_wide_range"
                         android:textColor="@color/black"
                         android:textSize="18sp" />
 
@@ -128,7 +128,7 @@
                         android:layout_gravity="center_vertical"
                         android:layout_marginTop="10dp"
                         android:fontFamily="@font/montserrat_regular"
-                        android:text="На сайте представлены все крупные торговые сети"
+                        android:text="@string/info_about_many_retails"
                         android:textColor="@color/black"
                         android:textSize="16sp" />
 
@@ -163,7 +163,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:fontFamily="@font/montserrat_semi_bold"
-                        android:text="Только свежие продукты"
+                        android:text="@string/info_about_fresh_products"
                         android:textColor="@color/black"
                         android:textSize="18sp" />
 
@@ -173,7 +173,7 @@
                         android:layout_gravity="center_vertical"
                         android:layout_marginTop="10dp"
                         android:fontFamily="@font/montserrat_regular"
-                        android:text="Обязательная проверка качества перед доставкой"
+                        android:text="@string/info_about_test_quality"
                         android:textColor="@color/black"
                         android:textSize="16sp" />
 
@@ -208,7 +208,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:fontFamily="@font/montserrat_semi_bold"
-                        android:text="Экономия средств"
+                        android:text="@string/info_about_cost_savings"
                         android:textColor="@color/black"
                         android:textSize="18sp" />
 
@@ -218,7 +218,7 @@
                         android:layout_gravity="center_vertical"
                         android:layout_marginTop="10dp"
                         android:fontFamily="@font/montserrat_regular"
-                        android:text="Система сравнивает цены в разных магазинах и выбирает товар с самой низкой ценой по городу   "
+                        android:text="@string/info_about_compare_prices"
                         android:textColor="@color/black"
                         android:textSize="16sp" />
 
@@ -253,7 +253,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:fontFamily="@font/montserrat_semi_bold"
-                        android:text="Быстрая доставка"
+                        android:text="@string/info_about_fast_delivery"
                         android:textColor="@color/black"
                         android:textSize="18sp" />
 
@@ -263,7 +263,7 @@
                         android:layout_gravity="center_vertical"
                         android:layout_marginTop="10dp"
                         android:fontFamily="@font/montserrat_regular"
-                        android:text="Ваши любимые продукты из разных магазинов города будут на вашем столе уже завтра  "
+                        android:text="@string/info_about_fast_delivery_text"
                         android:textColor="@color/black"
                         android:textSize="16sp" />
 

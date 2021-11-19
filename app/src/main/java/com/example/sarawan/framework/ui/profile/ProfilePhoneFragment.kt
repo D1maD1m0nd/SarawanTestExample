@@ -22,12 +22,12 @@ class ProfilePhoneFragment : DialogFragment() {
     private val binding get() = _binding!!
 
     override fun onCreateView(
-            inflater: LayoutInflater, container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View = FragmentProfilePhoneBinding
-            .inflate(inflater, container, false)
-            .also { _binding = it }
-            .root
+        .inflate(inflater, container, false)
+        .also { _binding = it }
+        .root
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -42,18 +42,22 @@ class ProfilePhoneFragment : DialogFragment() {
         profilePhoneSendButton.setOnClickListener { sendCode() }
         profilePhoneAgreementTextView.setOnClickListener { showAgreement() }
         profilePhoneCheckbox.setOnClickListener { toggleCheckBox() }
-        toggleCheckBox()
 
+        initAgreementTextView()
+        toggleCheckBox()
+    }
+
+    private fun initAgreementTextView() = with(binding) {
         val spannable = SpannableString(getString(R.string.profile_phone_user_agreement))
         spannable.setSpan(
-                ForegroundColorSpan(Color.BLACK),
-                0, 38,
-                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+            ForegroundColorSpan(Color.BLACK),
+            0, 38,
+            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
         )
         spannable.setSpan(
-                UnderlineSpan(),
-                37, spannable.length,
-                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+            UnderlineSpan(),
+            38, spannable.length,
+            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
         )
         profilePhoneAgreementTextView.text = spannable
     }
@@ -65,12 +69,12 @@ class ProfilePhoneFragment : DialogFragment() {
 
     private fun showAgreement() {
         Toast.makeText(context, "Показать пользовательское соглашение!", Toast.LENGTH_SHORT)
-                .show()
+            .show()
     }
 
     private fun sendCode() {
         Toast.makeText(context, "Отправить код в СМС!", Toast.LENGTH_SHORT)
-                .show()
+            .show()
     }
 
     override fun onDestroy() {

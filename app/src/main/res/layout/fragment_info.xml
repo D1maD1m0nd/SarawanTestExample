@@ -13,10 +13,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:layout_marginTop="50dp"
         android:layout_marginStart="20dp"
+        android:layout_marginTop="50dp"
         android:fontFamily="@font/montserrat_medium"
-        android:text="Инфо"
+        android:text="@string/info_info"
         android:textColor="@color/black"
         android:textSize="28sp" />
 
@@ -64,7 +64,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/montserrat_regular"
-                            android:text="Ирина Ивановна"
+                            android:text="@string/info_foo_user"
                             android:textColor="@color/black"
                             android:textSize="16sp" />
 
@@ -74,7 +74,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"
                             android:fontFamily="@font/montserrat_regular"
-                            android:text="+7 000 00 00 00"
+                            android:text="@string/info_foo_phone"
                             android:textColor="@color/black"
                             android:textSize="12sp" />
 
@@ -99,7 +99,7 @@
                     android:layout_marginTop="8dp"
                     android:layout_marginEnd="15dp"
                     android:fontFamily="@font/montserrat_medium"
-                    android:text="Войдите или зарегистрируйтесь"
+                    android:text="@string/info_enter_or_register"
                     android:textColor="@color/black"
                     android:textSize="28sp" />
 
@@ -110,7 +110,7 @@
                     android:layout_marginTop="13dp"
                     android:layout_marginEnd="15dp"
                     android:fontFamily="@font/montserrat_regular"
-                    android:text="Чтобы делать покупки и отслеживать заказы необходимо зарегистрироваться"
+                    android:text="@string/info_register_to_buy"
                     android:textColor="@color/black"
                     android:textSize="16sp" />
 
@@ -128,7 +128,7 @@
                     android:letterSpacing="0.01"
                     android:paddingTop="8dp"
                     android:paddingBottom="8dp"
-                    android:text="Зарегистрироваться"
+                    android:text="@string/info_to_register"
                     android:textAllCaps="false"
                     android:textColor="@color/white"
                     android:textSize="16sp"
@@ -159,7 +159,7 @@
                         android:layout_gravity="center_vertical"
                         android:layout_weight="10"
                         android:fontFamily="@font/montserrat_regular"
-                        android:text="Как мы работаем"
+                        android:text="@string/info_how_working"
                         android:textColor="@color/black"
                         android:textSize="16sp" />
 
@@ -189,7 +189,7 @@
                         android:layout_gravity="center_vertical"
                         android:layout_weight="10"
                         android:fontFamily="@font/montserrat_regular"
-                        android:text="Отзывы"
+                        android:text="@string/info_reviews"
                         android:textColor="@color/black"
                         android:textSize="16sp" />
 
@@ -218,7 +218,7 @@
                         android:layout_gravity="center_vertical"
                         android:layout_weight="10"
                         android:fontFamily="@font/montserrat_regular"
-                        android:text="Служба поддержки"
+                        android:text="@string/info_support"
                         android:textColor="@color/black"
                         android:textSize="16sp" />
 
@@ -247,7 +247,7 @@
                         android:layout_gravity="center_vertical"
                         android:layout_weight="10"
                         android:fontFamily="@font/montserrat_regular"
-                        android:text="О проекте"
+                        android:text="@string/info_about"
                         android:textColor="@color/black"
                         android:textSize="16sp" />
 
@@ -270,8 +270,8 @@
                 android:layout_gravity="center"
                 android:layout_marginTop="100dp"
                 android:backgroundTint="@color/material_on_background_disabled"
-                android:visibility="gone"
-                android:text="toggle" />
+                android:text="@string/info_foo_toggle"
+                android:visibility="gone" />
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 
