@@ -4,11 +4,15 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.sarawan.databinding.FragmentBasketBinding
+import com.example.sarawan.framework.ui.basket.modals.DeliveryTimeFragment
+import com.example.sarawan.framework.ui.basket.modals.PaymentMethodFragment
 import com.example.sarawan.framework.ui.basket.viewModel.BasketViewModel
+import com.example.sarawan.framework.ui.profile.ProfileAddressFragment
 import com.example.sarawan.model.data.AppState
 import com.example.sarawan.model.data.DataModel
 import com.example.sarawan.model.data.DelegatesModel.BasketFooter
@@ -25,11 +29,17 @@ class BasketFragment : Fragment() {
     lateinit var viewModelFactory: ViewModelProvider.Factory
     private var _binding: FragmentBasketBinding? = null
     private val binding get() = _binding!!
+    private val itemClickListener =  object : ItemClickListener {
+        override fun showModal(fragment: DialogFragment) {
+            showModalDialog(fragment)
+        }
+    }
     private val adapter = ListDelegationAdapter(
         AdapterDelegatesTypes.headerDelegateViewBindingViewHolder,
         AdapterDelegatesTypes.itemDelegateViewBindingViewHolder,
-        AdapterDelegatesTypes.footerDelegateViewBindingViewHolder,
+        AdapterDelegatesTypes.footerDelegateViewBindingViewHolder(itemClickListener),
     )
+
     //основной список для отображения
     private val list : MutableList<BasketListItem> = ArrayList(
         listOf(
@@ -102,5 +112,14 @@ class BasketFragment : Fragment() {
     }
     companion object {
         fun newInstance() = BasketFragment()
+    }
+
+    private fun showModalDialog(fragment: DialogFragment) {
+        when(fragment) {
+            is DeliveryTimeFragment -> DeliveryTimeFragment.newInstance().show(childFragmentManager, null)
+            is ProfileAddressFragment -> ProfileAddressFragment.newInstance().show(childFragmentManager, null)
+            is PaymentMethodFragment -> PaymentMethodFragment.newInstance().show(childFragmentManager, null)
+            else -> Unit
+        }
     }
 }
