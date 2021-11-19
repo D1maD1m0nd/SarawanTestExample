@@ -24,12 +24,13 @@ object AdapterDelegatesTypes {
         }
     }
 
-    val itemDelegateViewBindingViewHolder = adapterDelegateViewBinding<DataModel, BasketListItem, BasketItemBinding>(
+    fun itemDelegateViewBindingViewHolder(itemClickListener : ItemClickListener) = adapterDelegateViewBinding<DataModel, BasketListItem, BasketItemBinding>(
         { layoutInflater, root -> BasketItemBinding.inflate(layoutInflater, root, false) }
     ){
         bind {
             binding.apply {
                 var counter = counterTextView.text.toString().toInt()
+                val range = 1..99
                 titleProductTextView.text = item.itemDescription
                 propertiesTextView.text = item.weight.toString()
                 productCompanyTextView.text = item.company
@@ -39,15 +40,19 @@ object AdapterDelegatesTypes {
                 productImageView.load(R.drawable.product_sample_img)
                 plusImageButton.setOnClickListener {
                     ++counter
-                    if(counter in 1..99) {
+                    if(counter in range) {
                         counterTextView.text = counter.toString()
                     }
                 }
                 minusImageButton.setOnClickListener {
                     --counter
-                    if(counter in 1..99) {
+                    if(counter in range) {
                         counterTextView.text = counter.toString()
                     }
+                }
+
+                trashImageButton.setOnClickListener {
+                    itemClickListener.deleteItem(item, absoluteAdapterPosition)
                 }
             }
         }
@@ -62,13 +67,13 @@ object AdapterDelegatesTypes {
                 costValueTextView.text = String.format("%.2f", item.price)
                 resultValuePaymentTextView.text = String.format("%.2f", item.price)
                 timeDeliveryButton.setOnClickListener{
-                    itemClickListener.showModal(DeliveryTimeFragment())
+                    itemClickListener.showModal(DeliveryTimeFragment.newInstance())
                 }
                 addressButton.setOnClickListener {
-                    itemClickListener.showModal(ProfileAddressFragment())
+                    itemClickListener.showModal(ProfileAddressFragment.newInstance())
                 }
                 paymentEventButton.setOnClickListener {
-                    itemClickListener.showModal(PaymentMethodFragment());
+                    itemClickListener.showModal(PaymentMethodFragment.newInstance());
                 }
             }
         }
