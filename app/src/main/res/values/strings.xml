@@ -33,5 +33,10 @@
     <string name="profile_phone_send_sms">Получить СМС с кодом</string>
     <string name="profile_phone_welcome">Добро пожаловать!</string>
     <string name="profile_phone_enter_number">Введите номер телефона, чтобы войти или зарегистрироваться.</string>
+    <string name="faster">Как можно скорее</string>
+    <string name="by_the_time">Ко времени</string>
+    <string name="save_text">Сохранить</string>
+    <string name="pay_courier_cash">Наличные курьеру</string>
+    <string name="pay_courier_card">Картой курьеру</string>
 
 </resources>
