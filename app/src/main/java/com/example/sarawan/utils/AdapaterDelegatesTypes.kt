@@ -5,6 +5,10 @@ import com.example.sarawan.R
 import com.example.sarawan.databinding.BasketFooterItemBinding
 import com.example.sarawan.databinding.BasketHeaderItemBinding
 import com.example.sarawan.databinding.BasketItemBinding
+import com.example.sarawan.framework.ui.basket.ItemClickListener
+import com.example.sarawan.framework.ui.basket.modals.DeliveryTimeFragment
+import com.example.sarawan.framework.ui.basket.modals.PaymentMethodFragment
+import com.example.sarawan.framework.ui.profile.ProfileAddressFragment
 import com.example.sarawan.model.data.DataModel
 import com.example.sarawan.model.data.DelegatesModel.BasketFooter
 import com.example.sarawan.model.data.DelegatesModel.BasketHeader
@@ -25,25 +29,48 @@ object AdapterDelegatesTypes {
     ){
         bind {
             binding.apply {
+                var counter = counterTextView.text.toString().toInt()
                 titleProductTextView.text = item.itemDescription
-                propertiesTextView.text = item.weight
+                propertiesTextView.text = item.weight.toString()
                 productCompanyTextView.text = item.company
                 productCountryTextView.text = item.country
                 productShopTextView.text = item.shop
                 sumTextView.text = String.format("%.2f", item.price)
                 productImageView.load(R.drawable.product_sample_img)
-
+                plusImageButton.setOnClickListener {
+                    ++counter
+                    if(counter in 1..99) {
+                        counterTextView.text = counter.toString()
+                    }
+                }
+                minusImageButton.setOnClickListener {
+                    --counter
+                    if(counter in 1..99) {
+                        counterTextView.text = counter.toString()
+                    }
+                }
             }
-
         }
     }
 
-    val footerDelegateViewBindingViewHolder = adapterDelegateViewBinding<BasketFooter, BasketListItem, BasketFooterItemBinding>(
+
+    fun footerDelegateViewBindingViewHolder(itemClickListener : ItemClickListener) = adapterDelegateViewBinding<BasketFooter, BasketListItem, BasketFooterItemBinding>(
         { layoutInflater, root -> BasketFooterItemBinding.inflate(layoutInflater, root, false) }
     ){
         bind {
-            binding.costValueTextView.text = String.format("%.2f", item.price)
-            binding.resultValuePaymentTextView.text = String.format("%.2f", item.price)
+            binding.apply {
+                costValueTextView.text = String.format("%.2f", item.price)
+                resultValuePaymentTextView.text = String.format("%.2f", item.price)
+                timeDeliveryButton.setOnClickListener{
+                    itemClickListener.showModal(DeliveryTimeFragment())
+                }
+                addressButton.setOnClickListener {
+                    itemClickListener.showModal(ProfileAddressFragment())
+                }
+                paymentEventButton.setOnClickListener {
+                    itemClickListener.showModal(PaymentMethodFragment());
+                }
+            }
         }
     }
 }

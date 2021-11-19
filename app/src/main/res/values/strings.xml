@@ -40,5 +40,10 @@
     <string name="profile_address_street">Улица</string>
     <string name="profile_address_city">Город Москва</string>
     <string name="profile_address_title">Адрес</string>
+    <string name="faster">Как можно скорее</string>
+    <string name="by_the_time">Ко времени</string>
+    <string name="save_text">Сохранить</string>
+    <string name="pay_courier_cash">Наличные курьеру</string>
+    <string name="pay_courier_card">Картой курьеру</string>
 
 </resources>

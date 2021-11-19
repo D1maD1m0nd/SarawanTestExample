@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import coil.ImageLoader
 import com.example.sarawan.databinding.ListItemCardBinding
 import com.example.sarawan.framework.ui.main.viewHolder.CardItemViewHolder
-import com.example.sarawan.model.data.DataModel
+import com.example.sarawan.model.data.MainScreenDataModel
 
 class TopRecyclerAdapter(
     private var onListItemClickListener: MainRecyclerAdapter.OnListItemClickListener,
@@ -15,10 +15,10 @@ class TopRecyclerAdapter(
     private val callback: (measuredHeight: Int) -> Unit
 ) : RecyclerView.Adapter<CardItemViewHolder>() {
 
-    private val displayData: MutableList<DataModel> = mutableListOf()
+    private val displayData: MutableList<MainScreenDataModel> = mutableListOf()
 
     @SuppressLint("NotifyDataSetChanged")
-    fun setData(data: List<DataModel>?) {
+    fun setData(data: List<MainScreenDataModel>?) {
         displayData.clear()
         if (data == null) return
         displayData.addAll(data)
