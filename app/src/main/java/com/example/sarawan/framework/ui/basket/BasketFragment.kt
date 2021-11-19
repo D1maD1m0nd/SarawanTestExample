@@ -99,8 +99,8 @@ class BasketFragment : Fragment() {
     private fun setFooterData(data : List<DataModel>) {
         val footer = (list.last() as BasketFooter)
         footer.apply {
-            weight = 10.0
-            price = sumPrice(data)
+            weight = BasketAdapter.calculateWeight(data)
+            price = BasketAdapter.calculateSum(data)
         }
     }
 
@@ -109,7 +109,6 @@ class BasketFragment : Fragment() {
         header.counter = data.size
     }
 
-    private fun sumPrice(data : List<DataModel>) = data.sumOf { it.price!!.toDouble() }
     override fun onDestroyView() {
         _binding = null
         super.onDestroyView()
@@ -127,6 +126,8 @@ class BasketFragment : Fragment() {
     private fun deleteItemRcView(pos : Int) {
         adapter.items = list
         adapter.notifyItemRemoved(pos)
+        adapter.updateHeader()
+        adapter.updateFooter()
     }
     companion object {
         fun newInstance() = BasketFragment()

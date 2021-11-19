@@ -36,7 +36,7 @@ object AdapterDelegatesTypes {
                 productCompanyTextView.text = item.company
                 productCountryTextView.text = item.country
                 productShopTextView.text = item.shop
-                sumTextView.text = String.format("%.2f", item.price)
+                sumTextView.text = String.format("%.2f ₽", item.price)
                 productImageView.load(R.drawable.product_sample_img)
                 plusImageButton.setOnClickListener {
                     ++counter
@@ -64,8 +64,9 @@ object AdapterDelegatesTypes {
     ){
         bind {
             binding.apply {
-                costValueTextView.text = String.format("%.2f", item.price)
-                resultValuePaymentTextView.text = String.format("%.2f", item.price)
+                costValueTextView.text = String.format("%.2f ₽", item.price)
+                resultValuePaymentTextView.text = String.format("%.2f ₽", item.price)
+                weightValueTextView.text = item.weight.toString()
                 timeDeliveryButton.setOnClickListener{
                     itemClickListener.showModal(DeliveryTimeFragment.newInstance())
                 }
