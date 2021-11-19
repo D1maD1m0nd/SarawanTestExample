@@ -31,7 +31,7 @@ object AdapterDelegatesTypes {
             binding.apply {
                 var counter = counterTextView.text.toString().toInt()
                 titleProductTextView.text = item.itemDescription
-                propertiesTextView.text = item.weight
+                propertiesTextView.text = item.weight.toString()
                 productCompanyTextView.text = item.company
                 productCountryTextView.text = item.country
                 productShopTextView.text = item.shop

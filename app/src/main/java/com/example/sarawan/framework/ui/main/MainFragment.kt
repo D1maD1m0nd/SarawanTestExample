@@ -20,7 +20,7 @@ import com.example.sarawan.framework.ui.main.adapter.CardType
 import com.example.sarawan.framework.ui.main.adapter.MainRecyclerAdapter
 import com.example.sarawan.framework.ui.main.viewModel.MainViewModel
 import com.example.sarawan.model.data.AppState
-import com.example.sarawan.model.data.DataModel
+import com.example.sarawan.model.data.MainScreenDataModel
 import com.example.sarawan.rx.ISchedulerProvider
 import com.example.sarawan.utils.NetworkStatus
 import dagger.android.support.AndroidSupportInjection
@@ -53,7 +53,7 @@ class MainFragment : Fragment() {
 
     private val onListItemClickListener: MainRecyclerAdapter.OnListItemClickListener =
         object : MainRecyclerAdapter.OnListItemClickListener {
-            override fun onItemClick(data: DataModel) {
+            override fun onItemClick(data: MainScreenDataModel) {
                 Toast.makeText(context, data.quantity.toString(), Toast.LENGTH_SHORT).show()
             }
         }
@@ -166,6 +166,7 @@ class MainFragment : Fragment() {
                         CardType.STRING.type -> 2
                         CardType.BUTTON.type -> 2
                         CardType.EMPTY.type -> 1
+                        CardType.PARTNERS.type -> 2
                         else -> -1
                     }
                 }
@@ -173,8 +174,13 @@ class MainFragment : Fragment() {
         binding.mainRecyclerView.adapter = adapter
         viewModel.getStateLiveData().observe(viewLifecycleOwner) { appState ->
             when (appState) {
-                is AppState.Success -> {
-                    adapter?.setData(appState.data)
+                is AppState.Success<*> -> {
+                    val data = appState.data as List<MainScreenDataModel>
+                    if (data.isNullOrEmpty()) {
+                        binding.loadingLayout.visibility = View.GONE
+                    } else {
+                        adapter?.setData(data, binding.searchField.editText?.text.isNullOrEmpty())
+                    }
                     binding.topBarLayout.setExpanded(true, true)
                     binding.mainRecyclerView.scrollToPosition(0)
                 }

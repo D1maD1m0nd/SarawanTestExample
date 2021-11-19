@@ -61,7 +61,7 @@ class BasketFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentBasketBinding.inflate(inflater, container, false)
-        viewModel.getStateLiveData().observe(viewLifecycleOwner) { appState ->
+        viewModel.getStateLiveData().observe(viewLifecycleOwner) { appState: AppState<*> ->
             setState(appState)
         }
         return binding.root
@@ -77,10 +77,10 @@ class BasketFragment : Fragment() {
         cardContainerRcView.layoutManager = LinearLayoutManager(context)
         cardContainerRcView.adapter = adapter
     }
-    private fun setState(appState: AppState) {
+    private fun setState(appState: AppState<*>) {
         when (appState) {
-            is AppState.Success -> {
-                val data = appState.data
+            is AppState.Success<*> -> {
+                val data = appState.data as List<DataModel>
                 val countAdapter = list.size - 1
                 setFooterData(data)
                 setHeaderData(data)
