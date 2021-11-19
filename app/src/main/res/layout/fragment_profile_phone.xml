@@ -61,6 +61,7 @@
                 android:fontFamily="@font/montserrat_regular"
                 android:padding="12dp"
                 android:inputType="phone"
+                android:lines="1"
                 android:textColor="@color/black"
                 android:textSize="14sp" />
 
