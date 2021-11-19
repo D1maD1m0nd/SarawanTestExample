@@ -32,7 +32,7 @@
             android:layout_marginStart="30dp"
             android:layout_weight="10"
             android:fontFamily="@font/montserrat_medium"
-            android:text="Служба поддержки"
+            android:text="@string/info_support"
             android:textColor="@color/black"
             android:textSize="28sp" />
 
@@ -44,7 +44,7 @@
         android:layout_gravity="center_vertical"
         android:layout_margin="20dp"
         android:fontFamily="@font/montserrat_medium"
-        android:text="+ 7 123 456 87"
+        android:text="@string/info_support_foo_phone"
         android:textColor="@color/black"
         android:textSize="18sp" />
 
