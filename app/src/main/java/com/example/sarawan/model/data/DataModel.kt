@@ -4,7 +4,7 @@ import com.example.sarawan.model.data.DelegatesModel.BasketListItem
 import com.google.gson.annotations.SerializedName
 
 data class DataModel(
-    @SerializedName("id") val id: Long? = null,
+    @SerializedName("id") override val id: Long,
     @SerializedName("price") val price: Float? = null,
     @SerializedName("name") val itemDescription: String? = null,
     @SerializedName("picture") val pictureUrl: String? = null,
