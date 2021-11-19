@@ -1,8 +1,8 @@
 package com.example.sarawan.model.data
 
-sealed class AppState {
+sealed interface AppState<T> {
 
-    data class Success(val data: List<DataModel>) : AppState()
-    data class Error(val error: Throwable?) : AppState()
-    object Loading : AppState()
+    data class Success<T>(val data: List<T>) : AppState<T>
+    data class Error(val error: Throwable?) : AppState<Nothing>
+    object Loading : AppState<Nothing>
 }

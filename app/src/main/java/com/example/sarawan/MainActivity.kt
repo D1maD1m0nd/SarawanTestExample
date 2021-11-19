@@ -40,6 +40,17 @@ class MainActivity : AppCompatActivity() {
         val navView: BottomNavigationView = binding.bottomNavigationView
         navController = findNavController(R.id.nav_fragment)
         navView.setupWithNavController(navController)
+        navView.setOnItemSelectedListener {
+            if (it.itemId == R.id.profileFragment) {
+                Toast.makeText(this, "Switched to profile", Toast.LENGTH_SHORT).show()
+                // тут можно вызвать попап при проверке сохранненго номера телефона или токена вместо навигации
+                navController.navigate(it.itemId)
+                // тут можно возвращать false чтобы не выделять отмеченный элемент
+                return@setOnItemSelectedListener true
+            }
+            navController.navigate(it.itemId)
+            true
+        }
     }
 
     private fun observeOnlineStatus() {

@@ -83,7 +83,6 @@
                     android:paddingTop="0dp"
                     android:paddingEnd="0dp"
                     android:paddingBottom="0dp"
-                    android:hint="@string/search_in_sarafan"
                     android:textColor="@color/card_text_color"
                     android:textSize="14sp"
                     tools:ignore="TouchTargetSizeCheck,TextContrastCheck" />

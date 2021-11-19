@@ -2,6 +2,8 @@ package com.example.sarawan.framework.ui.main.adapter
 
 import android.annotation.SuppressLint
 import android.graphics.Color
+import android.graphics.Typeface
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,11 +13,8 @@ import androidx.recyclerview.widget.RecyclerView
 import coil.ImageLoader
 import com.example.sarawan.databinding.ListItemButtonBinding
 import com.example.sarawan.databinding.ListItemCardBinding
-import com.example.sarawan.framework.ui.main.viewHolder.ButtonHolder
-import com.example.sarawan.framework.ui.main.viewHolder.CommonCardsViewHolder
-import com.example.sarawan.framework.ui.main.viewHolder.StringHolder
-import com.example.sarawan.framework.ui.main.viewHolder.TopCardsViewHolder
-import com.example.sarawan.model.data.DataModel
+import com.example.sarawan.framework.ui.main.viewHolder.*
+import com.example.sarawan.model.data.MainScreenDataModel
 import com.google.android.material.textview.MaterialTextView
 
 class MainRecyclerAdapter(
@@ -24,35 +23,54 @@ class MainRecyclerAdapter(
     private val callback: () -> Unit
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    private val displayData: MutableList<DataModel> = mutableListOf()
-    private val topData: MutableList<DataModel> = mutableListOf()
+    private val displayData: MutableList<MainScreenDataModel> = mutableListOf()
+    private val topData: MutableList<MainScreenDataModel> = mutableListOf()
+    private val partnersData: MutableList<MainScreenDataModel> = mutableListOf()
 
     private val topRecyclerAdapter =
         TopRecyclerAdapter(onListItemClickListener, imageLoader) { measuredHeight: Int ->
             recyclerHeight = measuredHeight
             callback()
         }
-    private lateinit var innerRecycler: RecyclerView
+    private lateinit var topCardsRecycler: RecyclerView
+
+    private val partnersRecyclerAdapter = PartnersRecyclerAdapter(imageLoader)
+    private lateinit var partnersCardsRecycler: RecyclerView
 
     @SuppressLint("NotifyDataSetChanged")
-    fun setData(data: List<DataModel>?) {
+    fun setData(data: List<MainScreenDataModel>?, isRecommended: Boolean) {
         if (data == null) return
         topData.clear()
-        topData.addAll(data.filter { it.cardType == CardType.TOP.type })
         displayData.clear()
+        partnersData.clear()
+        topData.addAll(data.filter { it.cardType == CardType.TOP.type })
+        partnersData.addAll(data.filter { it.cardType == CardType.PARTNERS.type })
         displayData.add(
-            DataModel(
+            MainScreenDataModel(
                 itemDescription = "Выгодные предложения",
-                price = 28F,
-                discount = 0,
+                fontSize = 28F,
+                padding = arrayListOf(0, 32, 0, 14),
+                gravity = Gravity.CENTER,
                 cardType = CardType.STRING.type
             )
         )
-        displayData.add(DataModel(cardType = CardType.TOP.type))
+        displayData.add(MainScreenDataModel(cardType = CardType.TOP.type))
         displayData.add(
-            DataModel(
+            MainScreenDataModel(
                 itemDescription = "Посмотреть еще",
                 cardType = CardType.BUTTON.type
+            )
+        )
+        displayData.add(
+            MainScreenDataModel(
+                itemDescription = if (isRecommended) "Мы рекомендуем" else null,
+                fontSize = if (isRecommended) 18F else 0F,
+                backgroundColor = Color.WHITE,
+                padding = if (isRecommended) arrayListOf(13, 24, 0, 14)
+                else arrayListOf(13, 10, 0, 0),
+                gravity = Gravity.START,
+                fontType = Typeface.BOLD,
+                cardType = CardType.STRING.type
             )
         )
         notifyDataSetChanged()
@@ -60,19 +78,21 @@ class MainRecyclerAdapter(
         commonData.forEach {
             setData(it)
         }
-        if (commonData.size % 2 != 0) setData(DataModel(cardType = CardType.EMPTY.type))
+        if (commonData.size % 2 != 0) setData(MainScreenDataModel(cardType = CardType.EMPTY.type))
         displayData.add(
-            DataModel(
-                itemDescription = "Наши партнеры",
-                id = Color.WHITE.toLong(),
-                price = 28F,
-                discount = 1,
+            MainScreenDataModel(
+                itemDescription = "Наши магазины",
+                backgroundColor = Color.WHITE,
+                padding = arrayListOf(13, 32, 0, 8),
+                fontSize = 28F,
+                gravity = Gravity.START,
                 cardType = CardType.STRING.type
             )
         )
+        displayData.add(MainScreenDataModel(cardType = CardType.PARTNERS.type))
     }
 
-    private fun setData(data: DataModel?) {
+    private fun setData(data: MainScreenDataModel?) {
         data?.let {
             if (it.cardType == CardType.COMMON.type) {
                 displayData.add(it)
@@ -93,12 +113,22 @@ class MainRecyclerAdapter(
                 onListItemClickListener
             )
             CardType.TOP.type -> {
-                innerRecycler = RecyclerView(parent.context)
-                innerRecycler.layoutManager =
+                topCardsRecycler = RecyclerView(parent.context)
+                topCardsRecycler.layoutManager =
                     LinearLayoutManager(parent.context, LinearLayoutManager.HORIZONTAL, false)
-
-
-                TopCardsViewHolder(innerRecycler, topRecyclerAdapter)
+                TopCardsViewHolder(topCardsRecycler, topRecyclerAdapter)
+            }
+            CardType.PARTNERS.type -> {
+                partnersCardsRecycler = RecyclerView(parent.context)
+                partnersCardsRecycler.layoutManager =
+                    LinearLayoutManager(parent.context, LinearLayoutManager.HORIZONTAL, false)
+                val params = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                )
+                params.setMargins(0, 0, 0, 100)
+                partnersCardsRecycler.layoutParams = params
+                PartnersViewHolder(partnersCardsRecycler, partnersRecyclerAdapter)
             }
             CardType.STRING.type -> StringHolder(MaterialTextView(parent.context))
             CardType.BUTTON.type -> ButtonHolder(
@@ -130,6 +160,10 @@ class MainRecyclerAdapter(
                     holder.bind(topData)
                 }
             }
+            CardType.PARTNERS.type -> {
+                holder as PartnersViewHolder
+                holder.bind(partnersData)
+            }
             CardType.STRING.type -> {
                 holder as StringHolder
                 holder.bind(displayData[position])
@@ -153,7 +187,7 @@ class MainRecyclerAdapter(
     }
 
     interface OnListItemClickListener {
-        fun onItemClick(data: DataModel)
+        fun onItemClick(data: MainScreenDataModel)
     }
 
     interface CancellableHolder {
@@ -177,5 +211,6 @@ enum class CardType(val type: Int) {
     COMMON(1),
     STRING(2),
     BUTTON(3),
-    EMPTY(4)
+    EMPTY(4),
+    PARTNERS(5)
 }

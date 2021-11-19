@@ -45,7 +45,7 @@ class BasketAdapter(private val data: MutableList<DataModel> = ArrayList(DEFAULT
 
         private fun fillCard(data: DataModel) = with(binding) {
             titleProductTextView.text = data.itemDescription
-            propertiesTextView.text = data.weight
+            propertiesTextView.text = data.weight.toString()
             productCompanyTextView.text = data.company
             productCountryTextView.text = data.country
             productShopTextView.text = data.shop
