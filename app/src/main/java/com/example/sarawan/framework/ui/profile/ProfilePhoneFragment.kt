@@ -42,8 +42,12 @@ class ProfilePhoneFragment : DialogFragment() {
         profilePhoneSendButton.setOnClickListener { sendCode() }
         profilePhoneAgreementTextView.setOnClickListener { showAgreement() }
         profilePhoneCheckbox.setOnClickListener { toggleCheckBox() }
-        toggleCheckBox()
 
+        initAgreementTextView()
+        toggleCheckBox()
+    }
+
+    private fun initAgreementTextView() = with(binding) {
         val spannable = SpannableString(getString(R.string.profile_phone_user_agreement))
         spannable.setSpan(
             ForegroundColorSpan(Color.BLACK),
@@ -52,7 +56,7 @@ class ProfilePhoneFragment : DialogFragment() {
         )
         spannable.setSpan(
             UnderlineSpan(),
-            37, spannable.length,
+            38, spannable.length,
             Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
         )
         profilePhoneAgreementTextView.text = spannable
