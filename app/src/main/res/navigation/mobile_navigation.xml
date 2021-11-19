@@ -33,6 +33,7 @@
             android:id="@+id/action_catalogFragment_to_profileFragment"
             app:destination="@id/profileFragment" />
     </fragment>
+
     <fragment
         android:id="@+id/infoHowFragment"
         android:name="com.example.sarawan.framework.ui.info.InfoHowFragment"
@@ -42,19 +43,12 @@
         android:id="@+id/infoAboutFragment"
         android:name="com.example.sarawan.framework.ui.info.InfoAboutFragment"
         android:label="fragment_info_about" />
+
     <fragment
         android:id="@+id/infoSupportFragment"
         android:name="com.example.sarawan.framework.ui.info.InfoSupportFragment"
-        android:label="fragment_info_support" />
-        android:label="fragment_info_how"/>
-    <fragment
-        android:id="@+id/infoAboutFragment"
-        android:name="com.example.sarawan.framework.ui.info.InfoAboutFragment"
-        android:label="fragment_info_about" />
-    <fragment
-        android:id="@+id/infoSupportFragment"
-        android:name="com.example.sarawan.framework.ui.info.InfoSupportFragment"
-        android:label="fragment_info_support" />
+        android:label="fragment_info_how" />
+
     <fragment
         android:id="@+id/profileNameFragment"
         android:name="com.example.sarawan.framework.ui.profile.ProfileNameFragment"

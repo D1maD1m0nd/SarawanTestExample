@@ -10,7 +10,7 @@ data class DataModel(
     @SerializedName("picture") val pictureUrl: String? = null,
     @SerializedName("discount") val discount: Int? = null,
     @SerializedName("shop") val shop: String? = null,
-    @SerializedName("weight") val weight: String? = null,
+    @SerializedName("weight") val weight: Int? = null,
     @SerializedName("country") val country: String? = null,
     @SerializedName("company") val company: String? = null,
     @SerializedName("quantity") var quantity: Long? = null,

@@ -5,6 +5,7 @@ import coil.ImageLoader
 import com.example.sarawan.databinding.ListItemCardBinding
 import com.example.sarawan.framework.ui.main.adapter.MainRecyclerAdapter
 import com.example.sarawan.model.data.DataModel
+import com.example.sarawan.model.data.MainScreenDataModel
 
 class CommonCardsViewHolder(
     private val binding: ListItemCardBinding,
@@ -12,7 +13,7 @@ class CommonCardsViewHolder(
     listener: MainRecyclerAdapter.OnListItemClickListener
 ) : CardItemViewHolder(binding, imageLoader, listener) {
 
-    override fun bind(data: DataModel) {
+    override fun bind(data: MainScreenDataModel) {
         super.bind(data)
         binding.discount.visibility = View.GONE
     }

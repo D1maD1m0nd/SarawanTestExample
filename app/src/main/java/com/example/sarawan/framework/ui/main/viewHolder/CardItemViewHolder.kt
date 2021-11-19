@@ -7,7 +7,7 @@ import coil.request.Disposable
 import coil.request.ImageRequest
 import com.example.sarawan.databinding.ListItemCardBinding
 import com.example.sarawan.framework.ui.main.adapter.MainRecyclerAdapter
-import com.example.sarawan.model.data.DataModel
+import com.example.sarawan.model.data.MainScreenDataModel
 
 abstract class CardItemViewHolder(
     private val binding: ListItemCardBinding,
@@ -17,7 +17,7 @@ abstract class CardItemViewHolder(
 
     private var disposable: Disposable? = null
 
-    open fun bind(data: DataModel) {
+    open fun bind(data: MainScreenDataModel) {
         if (layoutPosition != RecyclerView.NO_POSITION) {
             var quantity = data.quantity ?: 0
             data.quantity = quantity
@@ -32,7 +32,7 @@ abstract class CardItemViewHolder(
 
                 itemPrice.text = String.format("%.2f", data.price)
                 itemShopName.text = data.shop
-                itemWeight.text = data.weight
+                "${data.weight.toString()}г".also { itemWeight.text = it }
                 itemDescription.text = data.itemDescription
 
                 itemBuyButton.setOnClickListener {
