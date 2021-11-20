@@ -1,6 +1,7 @@
 package com.example.sarawan.di.modules
 
 import android.content.Context
+import com.example.sarawan.BuildConfig
 import com.example.sarawan.model.datasource.ApiService
 import com.example.sarawan.utils.AndroidNetworkStatus
 import com.example.sarawan.utils.NetworkStatus
@@ -22,6 +23,15 @@ class NetworkModule {
     fun getHttpClient(): OkHttpClient {
         val httpClient = OkHttpClient.Builder()
         httpClient.addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
+        httpClient.addInterceptor { chain ->
+            val original = chain.request()
+            val request = original.newBuilder()
+                .header("Authorization", TOKEN)
+                .method(original.method, original.body)
+                .build()
+
+            chain.proceed(request)
+        }
         return httpClient.build()
     }
 
@@ -37,6 +47,7 @@ class NetworkModule {
     fun getApiService(retrofit: Retrofit): ApiService = retrofit.create(ApiService::class.java)
 
     companion object {
-        private const val BASE_URL = "https://ya.ru"
+        private const val BASE_URL = "https://dev.sarawan.ru/"
+        private const val TOKEN = "Token ${BuildConfig.USER_TOKEN}"
     }
 }
