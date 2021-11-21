@@ -49,6 +49,19 @@ class DeliveryTimeFragment : DialogFragment() {
             showDatePicker()
         }
     }
+    private fun showTimePicker() {
+        val picker = MaterialTimePicker.Builder()
+            .setTimeFormat(TimeFormat.CLOCK_24H)
+            .setInputMode(INPUT_MODE_KEYBOARD)
+            .setTitleText(getString(R.string.select_time_delivery))
+            .build()
+        picker.addOnDismissListener {
+            val hour = picker.hour.toString()
+            val time = picker.minute.toString()
+            setTime(hour, time)
+        }
+        picker.show(parentFragmentManager, "TIME_PICKER")
+    }
     private fun showDatePicker() {
         val picker =
             MaterialDatePicker.Builder.datePicker()
@@ -67,27 +80,17 @@ class DeliveryTimeFragment : DialogFragment() {
         }
         picker.show(parentFragmentManager, "DATE PICKER")
     }
-
-    private fun showTimePicker() {
-        val picker = MaterialTimePicker.Builder()
-                .setTimeFormat(TimeFormat.CLOCK_24H)
-                .setInputMode(INPUT_MODE_KEYBOARD)
-                .setTitleText(getString(R.string.select_time_delivery))
-                .build()
-        picker.addOnDismissListener {
-            val hour = picker.hour
-            val time = picker.minute
-            setTime(hour, time)
-        }
-        picker.show(parentFragmentManager, "TIME_PICKER")
+    private fun setTime(hour : String, minute : String) {
+        val formatHour = if (hour.length > 1) hour else "0${hour}"
+        val formatMinute = if (minute.length > 1) minute else "0${minute}"
+        val time = "$formatHour:$formatMinute"
+        binding.timeEditText.setText(time, TextView.BufferType.EDITABLE)
     }
+
     private fun setDate(date : String) {
         binding.dateEditText.setText(date, TextView.BufferType.EDITABLE)
     }
-    private fun setTime(hour : Int, minute : Int) {
-        val time = "$hour:$minute"
-        binding.timeEditText.setText(time, TextView.BufferType.EDITABLE)
-    }
+
     override fun onDestroyView() {
         _binding = null
         super.onDestroyView()
