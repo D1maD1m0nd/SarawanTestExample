@@ -95,12 +95,12 @@
 
     <com.example.sarawan.framework.ui.profile.MaskedEditText
         android:id="@+id/time_edit_text"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:inputType="time"
-        app:layout_constraintBottom_toBottomOf="@+id/date_edit_text"
         android:padding="15dp"
+        app:layout_constraintBottom_toBottomOf="@+id/date_edit_text"
         app:layout_constraintEnd_toStartOf="@+id/time_image_button"
         app:layout_constraintTop_toBottomOf="@+id/chipGroup"
         app:mask="99:99"

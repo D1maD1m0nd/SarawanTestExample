@@ -49,6 +49,20 @@ class DeliveryTimeFragment : DialogFragment() {
             showDatePicker()
         }
     }
+    private fun showTimePicker() {
+        val picker = MaterialTimePicker.Builder()
+            .setTimeFormat(TimeFormat.CLOCK_24H)
+            .setInputMode(INPUT_MODE_KEYBOARD)
+            .setTitleText(getString(R.string.select_time_delivery))
+            .build()
+        picker.addOnPositiveButtonClickListener {
+            val hour = picker.hour.toString()
+            val minute = picker.minute.toString()
+            val time = formatTime(hour, minute)
+            setTime(time)
+        }
+        picker.show(parentFragmentManager, "TIME_PICKER")
+    }
     private fun showDatePicker() {
         val picker =
             MaterialDatePicker.Builder.datePicker()
@@ -57,37 +71,35 @@ class DeliveryTimeFragment : DialogFragment() {
 
         // set listener when date is selected
         picker.addOnPositiveButtonClickListener {
-
             // Create calendar object and set the date to be that returned from selection
             val calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
             calendar.time = Date(it)
-            val date = "${calendar.get(Calendar.DAY_OF_MONTH)}- " +
-                    "${calendar.get(Calendar.MONTH) + 1}-${calendar.get(Calendar.YEAR)}"
+            val day = "${calendar.get(Calendar.DAY_OF_MONTH)}"
+            val month = "${calendar.get(Calendar.MONTH) + 1}"
+            val year =  "${calendar.get(Calendar.YEAR)}"
+            val date =  formatDate(day, month, year)
             setDate(date)
         }
         picker.show(parentFragmentManager, "DATE PICKER")
     }
-
-    private fun showTimePicker() {
-        val picker = MaterialTimePicker.Builder()
-                .setTimeFormat(TimeFormat.CLOCK_24H)
-                .setInputMode(INPUT_MODE_KEYBOARD)
-                .setTitleText(getString(R.string.select_time_delivery))
-                .build()
-        picker.addOnDismissListener {
-            val hour = picker.hour
-            val time = picker.minute
-            setTime(hour, time)
-        }
-        picker.show(parentFragmentManager, "TIME_PICKER")
+    private fun setTime(time : String) {
+        binding.timeEditText.setText(time, TextView.BufferType.EDITABLE)
+    }
+    private fun formatTime(hour: String, minute: String) : String{
+        val formatHour = if (hour.length > 1) hour else "0${hour}"
+        val formatMinute = if (minute.length > 1) minute else "0${minute}"
+        return "$formatHour $formatMinute"
     }
     private fun setDate(date : String) {
         binding.dateEditText.setText(date, TextView.BufferType.EDITABLE)
     }
-    private fun setTime(hour : Int, minute : Int) {
-        val time = "$hour:$minute"
-        binding.timeEditText.setText(time, TextView.BufferType.EDITABLE)
+
+    private fun formatDate(day : String, month: String, year : String ) : String{
+        val formatDay = if (day.length > 1) day else "0$day"
+        val formatMonth = if (month.length > 1) month else "0$month"
+        return "$formatDay $formatMonth $year"
     }
+
     override fun onDestroyView() {
         _binding = null
         super.onDestroyView()
