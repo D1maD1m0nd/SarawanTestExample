@@ -55,7 +55,7 @@ class DeliveryTimeFragment : DialogFragment() {
             .setInputMode(INPUT_MODE_KEYBOARD)
             .setTitleText(getString(R.string.select_time_delivery))
             .build()
-        picker.addOnDismissListener {
+        picker.addOnPositiveButtonClickListener {
             val hour = picker.hour.toString()
             val time = picker.minute.toString()
             setTime(hour, time)
@@ -70,7 +70,6 @@ class DeliveryTimeFragment : DialogFragment() {
 
         // set listener when date is selected
         picker.addOnPositiveButtonClickListener {
-
             // Create calendar object and set the date to be that returned from selection
             val calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
             calendar.time = Date(it)
