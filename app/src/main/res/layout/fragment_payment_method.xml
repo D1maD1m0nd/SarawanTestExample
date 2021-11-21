@@ -15,6 +15,7 @@
         android:src="@drawable/arrow_back"
         android:layout_marginStart="20dp"
         android:layout_marginTop="20dp"
+        android:padding="10dp"
         app:layout_constraintBottom_toBottomOf="@+id/payment_method_text_view"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -47,10 +48,10 @@
 
     <com.google.android.material.chip.ChipGroup
         android:id="@+id/chipGroup"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="21dp"
+        android:layout_marginTop="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/payment_method_text_view2"
         app:singleSelection="true">
@@ -71,7 +72,7 @@
         <com.google.android.material.chip.Chip
             android:id="@+id/time_chip"
             style="@style/Widget.MaterialComponents.Chip.Choice"
-            android:layout_width="150dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:checkable="true"
             android:clickable="true"

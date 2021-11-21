@@ -124,10 +124,12 @@ class BasketFragment : Fragment() {
     }
 
     private fun deleteItemRcView(pos : Int) {
-        adapter.items = list
-        adapter.notifyItemRemoved(pos)
-        adapter.updateHeader()
-        adapter.updateFooter()
+        adapter.apply {
+            items = list
+            notifyItemRemoved(pos)
+            updateHeader()
+            updateFooter()
+        }
     }
     companion object {
         fun newInstance() = BasketFragment()
