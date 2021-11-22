@@ -64,7 +64,8 @@
         android:text="@string/default_sum"
         android:textColor="@color/black"
         android:textSize="@dimen/cost_order_20"
-        android:layout_marginStart="20dp"
+
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/cost_title_order_text_view"
         app:layout_constraintTop_toTopOf="@+id/cost_title_order_text_view" />
 
@@ -161,16 +162,18 @@
         android:text="@string/default_sum"
         android:textColor="@color/black"
         android:textSize="24sp"
-        android:layout_marginEnd="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/result_payment_text_view" />
+
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/result_payment_text_view" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/set_order_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
         android:text="@string/set_order"
-        android:layout_marginTop="35dp"
+        android:layout_marginBottom="@dimen/cost_order_20"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/result_payment_text_view" />

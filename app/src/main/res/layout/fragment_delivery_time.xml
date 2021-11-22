@@ -34,12 +34,12 @@
 
     <com.google.android.material.chip.ChipGroup
         android:id="@+id/chipGroup"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="48dp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/materialTextView"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="48dp"
         app:singleSelection="true">
 
         <com.google.android.material.chip.Chip
@@ -58,17 +58,65 @@
         <com.google.android.material.chip.Chip
             android:id="@+id/time_chip"
             style="@style/Widget.MaterialComponents.Chip.Choice"
-            android:layout_width="150dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:checkable="true"
             android:clickable="true"
             android:focusable="true"
-            android:textAlignment="center"
             android:text="@string/by_the_time"
+            android:textAlignment="center"
             android:textColor="@color/text_color_chip_state_list"
             app:chipBackgroundColor="@color/background_color_chip_state_list" />
     </com.google.android.material.chip.ChipGroup>
 
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/date_image_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@null"
+        android:padding="10dp"
+        android:src="@drawable/ic_baseline_calendar_today_24"
+        app:layout_constraintBottom_toBottomOf="@+id/date_edit_text"
+        app:layout_constraintStart_toEndOf="@+id/date_edit_text"
+        app:layout_constraintTop_toTopOf="@+id/date_edit_text" />
+
+    <com.example.sarawan.framework.ui.profile.MaskedEditText
+        android:id="@+id/date_edit_text"
+        android:layout_marginTop="@dimen/cost_order_20"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="15dp"
+        android:inputType="date"
+        app:layout_constraintStart_toStartOf="@+id/chipGroup"
+        app:layout_constraintTop_toBottomOf="@+id/chipGroup"
+        app:mask="99.99.9999"
+        app:placeholder="_" />
+
+    <com.example.sarawan.framework.ui.profile.MaskedEditText
+        android:id="@+id/time_edit_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:inputType="time"
+        android:padding="15dp"
+        app:layout_constraintBottom_toBottomOf="@+id/date_edit_text"
+        app:layout_constraintEnd_toStartOf="@+id/time_image_button"
+        app:layout_constraintTop_toBottomOf="@+id/chipGroup"
+        app:mask="99:99"
+        app:placeholder="_" />
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/time_image_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@null"
+        android:padding="10dp"
+        android:src="@drawable/ic_baseline_access_time_24"
+        app:layout_constraintBottom_toBottomOf="@+id/time_edit_text"
+        app:layout_constraintEnd_toEndOf="@+id/chipGroup"
+
+        app:layout_constraintTop_toTopOf="@+id/time_edit_text" />
     <com.google.android.material.button.MaterialButton
         android:id="@+id/profile_address_save_button"
         style="@style/Widget.MaterialComponents.Button.OutlinedButton"

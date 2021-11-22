@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.sarawan.databinding.FragmentBasketBinding
+import com.example.sarawan.framework.ui.basket.adapter.BasketAdapter
 import com.example.sarawan.framework.ui.basket.modals.DeliveryTimeFragment
 import com.example.sarawan.framework.ui.basket.modals.PaymentMethodFragment
 import com.example.sarawan.framework.ui.basket.viewModel.BasketViewModel
@@ -18,8 +19,6 @@ import com.example.sarawan.model.data.DataModel
 import com.example.sarawan.model.data.DelegatesModel.BasketFooter
 import com.example.sarawan.model.data.DelegatesModel.BasketHeader
 import com.example.sarawan.model.data.DelegatesModel.BasketListItem
-import com.example.sarawan.utils.AdapterDelegatesTypes
-import com.hannesdorfmann.adapterdelegates4.ListDelegationAdapter
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
 
@@ -29,24 +28,25 @@ class BasketFragment : Fragment() {
     lateinit var viewModelFactory: ViewModelProvider.Factory
     private var _binding: FragmentBasketBinding? = null
     private val binding get() = _binding!!
+    //основной список для отображения
+    private val list : MutableList<BasketListItem> = ArrayList(
+        listOf(
+            BasketHeader(),
+            BasketFooter(),
+        )
+    )
+
     private val itemClickListener =  object : ItemClickListener {
         override fun showModal(fragment: DialogFragment) {
             showModalDialog(fragment)
         }
-    }
-    private val adapter = ListDelegationAdapter(
-        AdapterDelegatesTypes.headerDelegateViewBindingViewHolder,
-        AdapterDelegatesTypes.itemDelegateViewBindingViewHolder,
-        AdapterDelegatesTypes.footerDelegateViewBindingViewHolder(itemClickListener),
-    )
 
-    //основной список для отображения
-    private val list : MutableList<BasketListItem> = ArrayList(
-        listOf(
-            BasketHeader(0),
-            BasketFooter(0.0, 0.0),
-        )
-    )
+        override fun deleteItem(item : BasketListItem, pos : Int) {
+            list.remove(item)
+            deleteItemRcView(pos)
+        }
+    }
+    private val adapter = BasketAdapter(itemClickListener)
     private val viewModel: BasketViewModel by lazy {
         viewModelFactory.create(BasketViewModel::class.java)
     }
@@ -80,23 +80,27 @@ class BasketFragment : Fragment() {
     private fun setState(appState: AppState<*>) {
         when (appState) {
             is AppState.Success<*> -> {
-                val data = appState.data as List<DataModel>
-                val countAdapter = list.size - 1
-                setFooterData(data)
-                setHeaderData(data)
-                list.addAll(countAdapter,data)
-                adapter.items = list
-                adapter.notifyDataSetChanged()
+                appState.data as List<DataModel>
+                initDataRcView(appState.data)
             }
             is AppState.Error -> Unit
             AppState.Loading -> Unit
         }
     }
+
+    private fun initDataRcView(data: List<DataModel>) {
+        val countAdapter = list.size - 1
+        setFooterData(data)
+        setHeaderData(data)
+        list.addAll(countAdapter,data)
+        adapter.items = list
+    }
+
     private fun setFooterData(data : List<DataModel>) {
         val footer = (list.last() as BasketFooter)
         footer.apply {
-            weight = 10.0
-            price = sumPrice(data)
+            weight = BasketAdapter.calculateWeight(data)
+            price = BasketAdapter.calculateSum(data)
         }
     }
 
@@ -105,21 +109,29 @@ class BasketFragment : Fragment() {
         header.counter = data.size
     }
 
-    private fun sumPrice(data : List<DataModel>) = data.sumOf { it.price!!.toDouble() }
     override fun onDestroyView() {
         _binding = null
         super.onDestroyView()
     }
-    companion object {
-        fun newInstance() = BasketFragment()
-    }
 
     private fun showModalDialog(fragment: DialogFragment) {
         when(fragment) {
-            is DeliveryTimeFragment -> DeliveryTimeFragment.newInstance().show(childFragmentManager, null)
-            is ProfileAddressFragment -> ProfileAddressFragment.newInstance().show(childFragmentManager, null)
-            is PaymentMethodFragment -> PaymentMethodFragment.newInstance().show(childFragmentManager, null)
+            is DeliveryTimeFragment -> fragment.show(childFragmentManager, null)
+            is ProfileAddressFragment -> fragment.show(childFragmentManager, null)
+            is PaymentMethodFragment -> fragment.show(childFragmentManager, null)
             else -> Unit
         }
+    }
+
+    private fun deleteItemRcView(pos : Int) {
+        adapter.apply {
+            items = list
+            notifyItemRemoved(pos)
+            updateHeader()
+            updateFooter()
+        }
+    }
+    companion object {
+        fun newInstance() = BasketFragment()
     }
 }
