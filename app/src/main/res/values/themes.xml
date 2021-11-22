@@ -16,6 +16,8 @@
         <item name="materialButtonStyle">@style/Widget.App.Button</item>
         <item name="android:fontFamily">@font/montserrat_regular</item>
         <item name="android:windowLightStatusBar">true</item>
+        <item name="android:datePickerDialogTheme">@style/Dialog.Theme</item>
+        <item name="materialTimePickerTheme">@style/Dialog.Theme</item>
     </style>
 
     <style name="Widget.App.CardView" parent="Widget.MaterialComponents.CardView">
@@ -54,5 +56,11 @@
         <item name="strokeColor">@color/primary_green</item>
         <item name="cornerRadius">10dp</item>
         <item name="android:minHeight">34dp</item>
+    </style>
+
+    <style name="Dialog.Theme" parent="Theme.AppCompat.Light.Dialog">
+        <item name="colorPrimary">@color/primary_green</item>
+        <item name="colorPrimaryDark">@color/primary_green</item>
+        <item name="colorAccent">@color/primary_green</item>
     </style>
 </resources>
