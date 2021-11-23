@@ -11,10 +11,11 @@ import com.example.sarawan.rx.ISchedulerProvider
 import com.example.sarawan.utils.NetworkStatus
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.android.AndroidInjection
+import io.reactivex.rxjava3.subjects.BehaviorSubject
 import javax.inject.Inject
 import kotlin.system.exitProcess
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), FabChanger {
 
     @Inject
     lateinit var networkStatus: NetworkStatus
@@ -26,6 +27,7 @@ class MainActivity : AppCompatActivity() {
 
     private var isBackShown = false
     private var lastTimeBackPressed: Long = 0
+    private val totalPrice: BehaviorSubject<Float> = BehaviorSubject.create()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,12 +36,27 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         initNavigation()
         observeOnlineStatus()
+        initFAB()
+    }
+
+    private fun initFAB() {
+        binding.fabPrice.setOnClickListener {
+            navController.navigate(R.id.basketFragment)
+        }
+
+        totalPrice.subscribe { price ->
+            if (price > 0) {
+                "${price.toInt()} ₽".also { binding.fabPrice.text = it }
+                binding.fabPrice.show()
+            } else binding.fabPrice.hide()
+        }
     }
 
     private fun initNavigation() {
         val navView: BottomNavigationView = binding.bottomNavigationView
         navController = findNavController(R.id.nav_fragment)
         navView.setupWithNavController(navController)
+
         navView.setOnItemSelectedListener {
             if (it.itemId == R.id.profileFragment) {
                 Toast.makeText(this, "Switched to profile", Toast.LENGTH_SHORT).show()
@@ -50,6 +67,11 @@ class MainActivity : AppCompatActivity() {
             }
             navController.navigate(it.itemId)
             true
+        }
+
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            if (destination.id == R.id.basketFragment) binding.fabPrice.hide()
+            else if (totalPrice.value != 0f) binding.fabPrice.show()
         }
     }
 
@@ -81,8 +103,21 @@ class MainActivity : AppCompatActivity() {
         isBackShown = true
     }
 
+    override fun putPrice(price: Float) {
+        totalPrice.onNext(price)
+    }
+
+    override fun changePrice(price: Float) {
+        totalPrice.onNext(totalPrice.value + price)
+    }
+
     companion object {
 
         private const val BACK_BUTTON_EXIT_DELAY = 3000
     }
+}
+
+interface FabChanger {
+    fun putPrice(price: Float)
+    fun changePrice(price: Float)
 }

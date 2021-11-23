@@ -4,7 +4,6 @@ import android.view.View
 import coil.ImageLoader
 import com.example.sarawan.databinding.ListItemCardBinding
 import com.example.sarawan.framework.ui.main.adapter.MainRecyclerAdapter
-import com.example.sarawan.model.data.DataModel
 import com.example.sarawan.model.data.MainScreenDataModel
 
 class CommonCardsViewHolder(

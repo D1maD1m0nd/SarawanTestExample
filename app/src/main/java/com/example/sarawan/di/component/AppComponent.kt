@@ -22,7 +22,8 @@ import javax.inject.Singleton
         CacheModule::class,
         AppModule::class,
         NetworkModule::class,
-        ImageModule::class
+        ImageModule::class,
+        SharedModule::class
     ]
 )
 @Singleton

@@ -1,4 +1,4 @@
-package com.example.sarawan.model.data.DelegatesModel
+package com.example.sarawan.model.data.delegatesModel
 
 import java.util.*
 

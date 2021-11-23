@@ -1,10 +1,11 @@
 package com.example.sarawan.model.datasource
 
-import io.reactivex.rxjava3.core.Observable
+import com.example.sarawan.model.data.Query
+import io.reactivex.rxjava3.core.Single
 
 interface DataSource<T> {
 
-    fun getData(word: String): Observable<T>
+    fun getData(query: Query): Single<T>
 
     fun saveData(dataSet: T)
 }
