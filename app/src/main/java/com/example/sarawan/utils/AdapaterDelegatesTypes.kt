@@ -9,10 +9,10 @@ import com.example.sarawan.framework.ui.basket.ItemClickListener
 import com.example.sarawan.framework.ui.basket.modals.DeliveryTimeFragment
 import com.example.sarawan.framework.ui.basket.modals.PaymentMethodFragment
 import com.example.sarawan.framework.ui.profile.ProfileAddressFragment
-import com.example.sarawan.model.data.DataModel
 import com.example.sarawan.model.data.DelegatesModel.BasketFooter
 import com.example.sarawan.model.data.DelegatesModel.BasketHeader
 import com.example.sarawan.model.data.DelegatesModel.BasketListItem
+import com.example.sarawan.model.data.ProductsItem
 import com.hannesdorfmann.adapterdelegates4.dsl.adapterDelegateViewBinding
 
 object AdapterDelegatesTypes {
@@ -24,29 +24,33 @@ object AdapterDelegatesTypes {
         }
     }
 
-    fun itemDelegateViewBindingViewHolder(itemClickListener : ItemClickListener) = adapterDelegateViewBinding<DataModel, BasketListItem, BasketItemBinding>(
+    fun itemDelegateViewBindingViewHolder(itemClickListener : ItemClickListener) = adapterDelegateViewBinding<ProductsItem, BasketListItem, BasketItemBinding>(
         { layoutInflater, root -> BasketItemBinding.inflate(layoutInflater, root, false) }
     ){
         bind {
             binding.apply {
-                var counter = counterTextView.text.toString().toInt()
-                val range = 1..99
-                titleProductTextView.text = item.itemDescription
-                propertiesTextView.text = item.weight.toString()
-                productCompanyTextView.text = item.company
-                productCountryTextView.text = item.country
-                productShopTextView.text = item.shop
-                sumTextView.text = String.format("%.2f ₽", item.price)
+                item.product?.let {
+                    titleProductTextView.text = it.product?.name
+                    propertiesTextView.text = it.product?.unitQuantity
+                    productCompanyTextView.text = "Растишка"
+                    productCountryTextView.text = "Россия"
+                    productShopTextView.text = it.product?.store
+                    sumTextView.text = String.format("%s ₽", it.price)
+                    counterTextView.text = item.quantity.toString()
+                }
                 productImageView.load(R.drawable.product_sample_img)
+
+                var counter = counterTextView.text.toString().toInt()
+                val range = 0..99
                 plusImageButton.setOnClickListener {
-                    ++counter
                     if(counter in range) {
+                        ++counter
                         counterTextView.text = counter.toString()
                     }
                 }
                 minusImageButton.setOnClickListener {
-                    --counter
                     if(counter in range) {
+                        --counter
                         counterTextView.text = counter.toString()
                     }
                 }
