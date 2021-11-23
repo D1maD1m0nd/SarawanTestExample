@@ -1,7 +1,9 @@
 package com.example.sarawan.model.datasource
 
+import com.example.sarawan.model.data.Basket
 import com.example.sarawan.model.data.DataModel
 import io.reactivex.rxjava3.core.Observable
+import retrofit2.Call
 import retrofit2.http.*
 
 interface ApiService {
@@ -10,47 +12,35 @@ interface ApiService {
     fun search(@Query("") wordToSearch: String): Observable<List<DataModel>>
 
     /**
-     * Получение рекомендуемых продуктов
-     */
-    @GET("favorite_products/")
-    fun getFavoriteProducts()
-
-    /**
-     * Получение продуктов с скидкой
-     */
-    @GET("discount_products/")
-    fun getDiscountProducts()
-
-    /**
      * Получение категорий
      */
-    @GET("categories/")
+    @GET("api/categories/")
     fun getCategories()
 
     /**
      * Получение списка продуктов
      * @param page номер страницы
      */
-    @GET("products/")
+    @GET("api/products/")
     fun getProducts(@Query("page") page : Int)
 
     /**
      * Получение продукта по Id
      * @param id - id продукта
      */
-    @GET("products/{id}/")
+    @GET("api/products/{id}/")
     fun getProduct(@Path("id") id : Long)
 
     /**
      * Получение корзины пользователя
      */
-    @GET("basket/")
-    fun getBasket()
+    @GET("api/basket/")
+    fun getBasket() : Call<Basket>
 
     /**
      * Добавление продукта в корзину
      */
-    @POST("basket/")
+    @POST("api/basket/")
     fun addProductBasket()
 
     /**
