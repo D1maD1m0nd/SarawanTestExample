@@ -1,7 +1,7 @@
 package com.example.sarawan.framework.ui.basket.adapter
 
 import androidx.recyclerview.widget.DiffUtil
-import com.example.sarawan.model.data.DelegatesModel.BasketListItem
+import com.example.sarawan.model.data.delegatesModel.BasketListItem
 
 open class BasketDiffUtilItemCallback : DiffUtil.ItemCallback<BasketListItem>() {
     override fun areItemsTheSame(

@@ -30,7 +30,7 @@ abstract class CardItemViewHolder(
                     itemQuantity.text = quantity.toString()
                 }
 
-                itemPrice.text = String.format("%.2f", data.price)
+                itemPrice.text = String.format("%.2f", (data.price))
                 itemShopName.text = data.shop
                 "${data.weight.toString()}г".also { itemWeight.text = it }
                 itemDescription.text = data.itemDescription
@@ -41,7 +41,7 @@ abstract class CardItemViewHolder(
                     quantity = 1
                     data.quantity = quantity
                     itemQuantity.text = data.quantity.toString()
-                    listener.onItemClick(data)
+                    listener.onItemClick(data, 1)
                 }
 
                 minusButton.setOnClickListener {
@@ -52,14 +52,14 @@ abstract class CardItemViewHolder(
                         itemQuantityLayout.visibility = View.GONE
                     }
                     itemQuantity.text = quantity.toString()
-                    listener.onItemClick(data)
+                    listener.onItemClick(data, -1)
                 }
 
                 plusButton.setOnClickListener {
                     quantity += 1
                     data.quantity = quantity
                     itemQuantity.text = quantity.toString()
-                    listener.onItemClick(data)
+                    listener.onItemClick(data, 1)
                 }
             }
 
@@ -69,7 +69,7 @@ abstract class CardItemViewHolder(
 
             disposable = imageLoader.enqueue(
                 ImageRequest.Builder(binding.root.context)
-                    .data(data.pictureUrl?.toInt())
+                    .data(data.pictureUrl)
 //                        .placeholder(R.drawable.logo_top_bar)
                     .target(binding.itemImage)
                     .build()

@@ -6,7 +6,6 @@ import android.net.Network
 import android.net.NetworkRequest
 import androidx.core.content.getSystemService
 import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.subjects.BehaviorSubject
 import javax.inject.Inject
 
@@ -15,7 +14,6 @@ class AndroidNetworkStatus @Inject constructor(context: Context) : NetworkStatus
     private val statusSubject: BehaviorSubject<Boolean> = BehaviorSubject.create()
 
     init {
-        statusSubject.onNext(false)
 
         val connectivityManager = context.getSystemService<ConnectivityManager>()
         val request = NetworkRequest.Builder().build()
@@ -42,9 +40,5 @@ class AndroidNetworkStatus @Inject constructor(context: Context) : NetworkStatus
 
     override fun isOnline(): Observable<Boolean> {
         return statusSubject
-    }
-
-    override fun isOnlineSingle(): Single<Boolean> {
-        return statusSubject.first(false)
     }
 }
