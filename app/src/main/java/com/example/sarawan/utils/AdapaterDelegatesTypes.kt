@@ -41,15 +41,14 @@ object AdapterDelegatesTypes {
                 productImageView.load(R.drawable.product_sample_img)
 
                 var counter = counterTextView.text.toString().toInt()
-                val range = 0..99
                 plusImageButton.setOnClickListener {
-                    if(counter in range) {
+                    if(counter in 0..99) {
                         ++counter
                         counterTextView.text = counter.toString()
                     }
                 }
                 minusImageButton.setOnClickListener {
-                    if(counter in range) {
+                    if(counter in  1..99) {
                         --counter
                         counterTextView.text = counter.toString()
                     }
