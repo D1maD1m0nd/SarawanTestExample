@@ -15,15 +15,19 @@ import com.example.sarawan.framework.ui.basket.modals.PaymentMethodFragment
 import com.example.sarawan.framework.ui.basket.viewModel.BasketViewModel
 import com.example.sarawan.framework.ui.profile.ProfileAddressFragment
 import com.example.sarawan.model.data.AppState
-import com.example.sarawan.model.data.DataModel
+import com.example.sarawan.model.data.Basket
 import com.example.sarawan.model.data.DelegatesModel.BasketFooter
 import com.example.sarawan.model.data.DelegatesModel.BasketHeader
 import com.example.sarawan.model.data.DelegatesModel.BasketListItem
+import com.example.sarawan.model.data.ProductsItem
+import com.example.sarawan.model.datasource.ApiService
+import com.example.sarawan.model.datasource.repository.RepositoryImpl
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
 
 class BasketFragment : Fragment() {
-
+    @Inject
+    lateinit var api : ApiService
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
     private var _binding: FragmentBasketBinding? = null
@@ -69,8 +73,11 @@ class BasketFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initRcView()
-
-        viewModel.search("test", false)
+        viewModel.apply {
+            repository = RepositoryImpl(api)
+            search("test", false)
+            getBasket()
+        }
     }
 
     private fun initRcView() = with(binding) {
@@ -79,24 +86,37 @@ class BasketFragment : Fragment() {
     }
     private fun setState(appState: AppState<*>) {
         when (appState) {
-            is AppState.Success<*> -> {
-                appState.data as List<DataModel>
-                initDataRcView(appState.data)
+            is AppState.BasketSuccess -> {
+                val data = appState.data
+                initDataRcView(data)
             }
             is AppState.Error -> Unit
             AppState.Loading -> Unit
+            else -> {}
         }
     }
 
-    private fun initDataRcView(data: List<DataModel>) {
+    private fun convertToProductsItem(products: List<ProductsItem?>?) : List<ProductsItem>{
+        val newList = mutableListOf<ProductsItem>()
+        products?.let { l ->
+            newList.addAll(l.mapNotNull {
+                it
+            })
+        }
+        return newList;
+
+
+    }
+    private fun initDataRcView(data: Basket) {
         val countAdapter = list.size - 1
-        setFooterData(data)
-        setHeaderData(data)
-        list.addAll(countAdapter,data)
+        val products = convertToProductsItem(data.products)
+        setFooterData(products)
+        setHeaderData(products)
+        list.addAll(countAdapter,products)
         adapter.items = list
     }
 
-    private fun setFooterData(data : List<DataModel>) {
+    private fun setFooterData(data : List<ProductsItem>) {
         val footer = (list.last() as BasketFooter)
         footer.apply {
             weight = BasketAdapter.calculateWeight(data)
@@ -104,7 +124,7 @@ class BasketFragment : Fragment() {
         }
     }
 
-    private fun setHeaderData(data : List<DataModel>) {
+    private fun setHeaderData(data : List<ProductsItem>) {
         val header = (list.first() as BasketHeader)
         header.counter = data.size
     }
