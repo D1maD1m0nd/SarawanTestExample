@@ -21,7 +21,7 @@ data class BasketProduct(
     @field:Json(name="is_favorite") val isFavorite: Any? = null,
     @field:Json(name="name") val name: String? = null,
     @field:Json(name="price_type") val priceType: String? = null,
-    @field:Json(name="id") val id: Int? = null,
+    @field:Json(name="id") val id: Long? = null,
     @field:Json(name="unit_quantity") val unitQuantity: String? = null
 )
 

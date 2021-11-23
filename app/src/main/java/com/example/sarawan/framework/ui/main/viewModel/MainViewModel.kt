@@ -34,17 +34,33 @@ class MainViewModel @Inject constructor(
     }
 
     fun getStartData(isOnline: Boolean) {
+        val discount = interactor.getData(Query.Get.Products.DiscountProducts, isOnline)
+        val popular = interactor.getData(Query.Get.Products.PopularProducts, isOnline)
+        val basket = interactor.getData(Query.Get.Basket, isOnline)
         compositeDisposable.add(
-            interactor.getData(Query.Get.Products.DiscountProducts, isOnline)
+            discount.zipWith(popular) { discountData, popularData ->
+                val data: MutableList<MainScreenDataModel> = mutableListOf()
+                discountData.forEach {
+                    data.add(convertFromProduct(it as Product))
+                }
+                popularData.forEach {
+                    data.add(convertFromProduct(it as Product))
+                }
+                getRandomPicturesAsPartners(data)
+                data.sortedByDescending { it.discount }
+            }.zipWith(basket) { data, basketData ->
+                data.forEach { mainScreenData ->
+                    (basketData as List<ProductsItem>).forEach { basketSingleData ->
+                        if (mainScreenData.id == basketSingleData.id)
+                            mainScreenData.quantity = basketSingleData.quantity
+                    }
+                }
+                data
+            }
                 .subscribeOn(schedulerProvider.io)
                 .observeOn(schedulerProvider.io)
-                .subscribe({ dataList ->
-                    val data: MutableList<MainScreenDataModel> = mutableListOf()
-                    dataList.forEach {
-                        data.add(convertFromProduct(it as Product))
-                    }
-                    getRandomPicturesAsPartners(data)
-                    stateLiveData.postValue(AppState.Success(data))
+                .subscribe({
+                    stateLiveData.postValue(AppState.Success(it))
                 }, {
                     stateLiveData.postValue(AppState.Error(it))
                 })
