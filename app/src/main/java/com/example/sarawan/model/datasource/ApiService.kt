@@ -2,6 +2,7 @@ package com.example.sarawan.model.datasource
 
 import com.example.sarawan.model.data.Basket
 import com.example.sarawan.model.data.Product
+import com.example.sarawan.model.data.ProductsUpdate
 import com.example.sarawan.model.data.Response
 import io.reactivex.rxjava3.core.Single
 import retrofit2.http.*
@@ -62,5 +63,5 @@ interface ApiService {
      * Обновление продукта
      */
     @PUT("basket/{id}/")
-    fun updateBasketProduct(@Path("id") id: Long)
+    fun updateBasketProduct(@Path("id") id: Int, @Body productItem : ProductsUpdate) : Single<Basket>
 }

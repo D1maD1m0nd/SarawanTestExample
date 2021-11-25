@@ -25,3 +25,20 @@ data class StorePrice(
 data class Image(
     @field: Json(name = "image") val image: String
 )
+
+
+data class ProductsUpdate(
+
+    @Json(name="products")
+    val products: List<ProductShortItem>
+)
+
+data class ProductShortItem(
+
+    @Json(name="product")
+    val product: Int,
+
+    @Json(name="quantity")
+    val quantity: Int
+)
+

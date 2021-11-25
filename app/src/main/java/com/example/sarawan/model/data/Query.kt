@@ -23,7 +23,7 @@ sealed interface Query {
     sealed interface Put : Query {
 
         sealed interface Basket : Put {
-            data class Update(val id: String): Basket
+            data class Update(val id: Int, val products : ProductsUpdate ): Basket
         }
     }
 }

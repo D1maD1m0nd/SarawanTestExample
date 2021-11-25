@@ -3,6 +3,7 @@ package com.example.sarawan.framework.ui.basket.viewModel
 import com.example.sarawan.framework.MainInteractor
 import com.example.sarawan.framework.ui.base.BaseViewModel
 import com.example.sarawan.model.data.AppState
+import com.example.sarawan.model.data.ProductsUpdate
 import com.example.sarawan.model.data.Query
 import com.example.sarawan.rx.ISchedulerProvider
 import javax.inject.Inject
@@ -15,6 +16,20 @@ class BasketViewModel @Inject constructor(
     fun getBasket() {
         compositeDisposable.add(
             interactor.getData(Query.Get.Basket, true)
+                .subscribeOn(schedulerProvider.io)
+                .observeOn(schedulerProvider.io)
+                .doOnSubscribe { stateLiveData.postValue(AppState.Loading) }
+                .subscribe({
+                    stateLiveData.postValue(AppState.Success(it))
+                }, {
+                    stateLiveData.postValue(AppState.Error(it))
+                })
+        )
+    }
+
+    fun updateBasket(idBasket : Int, products : ProductsUpdate) {
+        compositeDisposable.add(
+            interactor.getData(Query.Put.Basket.Update(idBasket, products), true)
                 .subscribeOn(schedulerProvider.io)
                 .observeOn(schedulerProvider.io)
                 .doOnSubscribe { stateLiveData.postValue(AppState.Loading) }
