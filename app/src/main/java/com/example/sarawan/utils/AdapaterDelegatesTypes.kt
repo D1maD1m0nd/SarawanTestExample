@@ -50,7 +50,7 @@ object AdapterDelegatesTypes {
                     }
                 }
                 minusImageButton.setOnClickListener {
-                    if(counter in  1..99) {
+                    if(counter in  1..100) {
                         --counter
                         item.quantity = counter
                         itemClickListener.update()
