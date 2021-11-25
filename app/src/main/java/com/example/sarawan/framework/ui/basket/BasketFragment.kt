@@ -81,6 +81,7 @@ class BasketFragment : Fragment() {
     }
 
     private fun initRcView() = with(binding) {
+        cardContainerRcView.itemAnimator?.changeDuration = 0;
         cardContainerRcView.layoutManager = LinearLayoutManager(context)
         cardContainerRcView.adapter = adapter
     }
@@ -94,16 +95,6 @@ class BasketFragment : Fragment() {
             is AppState.Error -> Unit
             AppState.Loading -> Unit
         }
-    }
-
-    private fun convertToProductsItem(products: List<ProductsItem?>?): List<ProductsItem> {
-        val newList = mutableListOf<ProductsItem>()
-        products?.let { l ->
-            newList.addAll(l.mapNotNull {
-                it
-            })
-        }
-        return newList
     }
 
     private fun initDataRcView(data: List<ProductsItem>) {
@@ -141,8 +132,7 @@ class BasketFragment : Fragment() {
         adapter.apply {
             items = list
             notifyItemRemoved(pos)
-            updateHeader()
-            updateFooter()
+            updateHolders()
         }
     }
 
@@ -153,6 +143,7 @@ class BasketFragment : Fragment() {
         }
 
         viewModel.updateBasket(basketId, ProductsUpdate(items))
+        adapter.updateHolders()
     }
 
     override fun onDestroyView() {
