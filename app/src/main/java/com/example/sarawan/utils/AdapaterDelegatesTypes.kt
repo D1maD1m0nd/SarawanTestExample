@@ -34,7 +34,7 @@ object AdapterDelegatesTypes {
                     propertiesTextView.text = it.basketProduct?.unitQuantity
                     productCompanyTextView.text = "Растишка"
                     productCountryTextView.text = "Россия"
-                    productShopTextView.text = it.basketProduct?.store
+                    productShopTextView.text = it.store
                     sumTextView.text = String.format("%s ₽", it.price)
                     counterTextView.text = item.quantity.toString()
                 }
