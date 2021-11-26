@@ -126,7 +126,7 @@ class MainRecyclerAdapter(
                     LinearLayout.LayoutParams.MATCH_PARENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT
                 )
-                params.setMargins(0, 0, 0, 100)
+                params.setMargins(0, 0, 0, 140)
                 partnersCardsRecycler.layoutParams = params
                 PartnersViewHolder(partnersCardsRecycler, partnersRecyclerAdapter)
             }
@@ -187,7 +187,7 @@ class MainRecyclerAdapter(
     }
 
     interface OnListItemClickListener {
-        fun onItemClick(data: MainScreenDataModel)
+        fun onItemClick(data: MainScreenDataModel, diff: Int)
     }
 
     interface CancellableHolder {

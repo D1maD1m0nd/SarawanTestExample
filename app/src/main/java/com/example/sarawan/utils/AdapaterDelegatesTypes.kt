@@ -9,10 +9,10 @@ import com.example.sarawan.framework.ui.basket.ItemClickListener
 import com.example.sarawan.framework.ui.basket.modals.DeliveryTimeFragment
 import com.example.sarawan.framework.ui.basket.modals.PaymentMethodFragment
 import com.example.sarawan.framework.ui.profile.ProfileAddressFragment
-import com.example.sarawan.model.data.DelegatesModel.BasketFooter
-import com.example.sarawan.model.data.DelegatesModel.BasketHeader
-import com.example.sarawan.model.data.DelegatesModel.BasketListItem
 import com.example.sarawan.model.data.ProductsItem
+import com.example.sarawan.model.data.delegatesModel.BasketFooter
+import com.example.sarawan.model.data.delegatesModel.BasketHeader
+import com.example.sarawan.model.data.delegatesModel.BasketListItem
 import com.hannesdorfmann.adapterdelegates4.dsl.adapterDelegateViewBinding
 
 object AdapterDelegatesTypes {
@@ -29,12 +29,12 @@ object AdapterDelegatesTypes {
     ){
         bind {
             binding.apply {
-                item.product?.let {
-                    titleProductTextView.text = it.product?.name
-                    propertiesTextView.text = it.product?.unitQuantity
+                item.basketProduct?.let {
+                    titleProductTextView.text = it.basketProduct?.name
+                    propertiesTextView.text = it.basketProduct?.unitQuantity
                     productCompanyTextView.text = "Растишка"
                     productCountryTextView.text = "Россия"
-                    productShopTextView.text = it.product?.store
+                    productShopTextView.text = it.store
                     sumTextView.text = String.format("%s ₽", it.price)
                     counterTextView.text = item.quantity.toString()
                 }
@@ -44,12 +44,16 @@ object AdapterDelegatesTypes {
                 plusImageButton.setOnClickListener {
                     if(counter in 0..99) {
                         ++counter
+                        item.quantity = counter
+                        itemClickListener.update()
                         counterTextView.text = counter.toString()
                     }
                 }
                 minusImageButton.setOnClickListener {
-                    if(counter in  1..99) {
+                    if(counter in  1..100) {
                         --counter
+                        item.quantity = counter
+                        itemClickListener.update()
                         counterTextView.text = counter.toString()
                     }
                 }
