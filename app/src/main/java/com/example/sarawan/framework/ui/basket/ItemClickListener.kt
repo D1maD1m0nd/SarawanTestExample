@@ -5,5 +5,6 @@ import com.example.sarawan.model.data.delegatesModel.BasketListItem
 
 interface ItemClickListener {
     fun showModal(fragment : DialogFragment)
+    fun update()
     fun deleteItem(item : BasketListItem, pos : Int)
 }

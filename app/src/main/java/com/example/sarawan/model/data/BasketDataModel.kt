@@ -26,9 +26,8 @@ data class BasketProduct(
 )
 
 data class ProductsItem(
-
     @field:Json(name="product") val basketProduct: BasketProduct? = null,
-    @field:Json(name="quantity") val quantity: Int? = null,
+    @field:Json(name="quantity") var quantity: Int? = null,
     @field:Json(name="basket_product_id") val basketProductId: Int? = null
 
 ) : BasketListItem {
