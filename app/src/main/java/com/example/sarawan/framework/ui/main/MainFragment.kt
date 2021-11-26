@@ -15,8 +15,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.GridLayoutManager.SpanSizeLookup
 import coil.ImageLoader
-import com.example.sarawan.FabChanger
-import com.example.sarawan.MainActivity
+import com.example.sarawan.activity.FabChanger
+import com.example.sarawan.activity.MainActivity
 import com.example.sarawan.databinding.FragmentMainBinding
 import com.example.sarawan.framework.ui.main.adapter.CardType
 import com.example.sarawan.framework.ui.main.adapter.MainRecyclerAdapter
@@ -28,7 +28,6 @@ import com.example.sarawan.utils.NetworkStatus
 import dagger.android.support.AndroidSupportInjection
 import java.util.*
 import javax.inject.Inject
-
 
 class MainFragment : Fragment() {
 
@@ -60,6 +59,7 @@ class MainFragment : Fragment() {
             override fun onItemClick(data: MainScreenDataModel, diff: Int) {
                 data.price?.let {
                     fabChanger?.changePrice(it * diff)
+                    viewModel.saveData(data, isOnline)
                 }
             }
         }
@@ -182,16 +182,11 @@ class MainFragment : Fragment() {
             when (appState) {
                 is AppState.Success<*> -> {
                     val data = appState.data as List<MainScreenDataModel>
-                    var price = 0f
-                    data.forEach {
-                        if (it.price != null && it.quantity != null) price += (it.price * it.quantity!!)
-                    }
                     if (data.isNullOrEmpty()) {
                         binding.loadingLayout.visibility = View.GONE
                     } else {
                         adapter?.setData(data, binding.searchField.editText?.text.isNullOrEmpty())
                     }
-                    fabChanger?.putPrice(price)
                     binding.topBarLayout.setExpanded(true, true)
                     binding.mainRecyclerView.scrollToPosition(0)
                 }

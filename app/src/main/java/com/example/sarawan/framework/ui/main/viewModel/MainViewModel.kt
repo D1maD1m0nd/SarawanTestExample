@@ -25,14 +25,23 @@ class MainViewModel @Inject constructor(
                 .subscribe({ dataList ->
                     val data: MutableList<MainScreenDataModel> = mutableListOf()
                     dataList.forEach {
-                        data.add(convertFromProduct(it as Product))
+                        data.add((it as Product).convertToMainScreenDataModel())
                     }
                     getRandomPicturesAsPartners(data)
                     stateLiveData.postValue(AppState.Success(data))
-                }, {
-                    stateLiveData.postValue(AppState.Error(it))
-                })
+                },
+                    { stateLiveData.postValue(AppState.Error(it)) }
+                )
         )
+    }
+
+    fun saveData(data: MainScreenDataModel, isOnline: Boolean) {
+        basketID?.let { basket ->
+            val products = listOf(data.convertToProductShortItem())
+            interactor.getData(Query.Put.Basket.Update(basket, ProductsUpdate(products)), isOnline)
+        }
+        if (basketID == null) stateLiveData.value =
+            AppState.Error(RuntimeException("Should init BasketID first"))
     }
 
     fun getStartData(isOnline: Boolean) {
@@ -43,15 +52,15 @@ class MainViewModel @Inject constructor(
             discount.zipWith(popular) { discountData, popularData ->
                 val data: MutableList<MainScreenDataModel> = mutableListOf()
                 discountData.forEach {
-                    data.add(convertFromProduct(it as Product))
+                    data.add((it as Product).convertToMainScreenDataModel())
                 }
                 popularData.forEach {
-                    data.add(convertFromProduct(it as Product))
+                    data.add((it as Product).convertToMainScreenDataModel())
                 }
                 getRandomPicturesAsPartners(data)
                 data.sortedByDescending { it.discount }
             }.zipWith(basket) { data, basketData ->
-                val basketObject = (basketData as List<Basket>)[0]
+                val basketObject = (basketData as List<Basket>).first()
                 basketID = basketObject.basketId
                 data.forEach { mainScreenData ->
                     basketObject.products?.forEach { basketSingleData ->
@@ -63,11 +72,10 @@ class MainViewModel @Inject constructor(
             }
                 .subscribeOn(schedulerProvider.io)
                 .observeOn(schedulerProvider.io)
-                .subscribe({
-                    stateLiveData.postValue(AppState.Success(it))
-                }, {
-                    stateLiveData.postValue(AppState.Error(it))
-                })
+                .subscribe(
+                    { stateLiveData.postValue(AppState.Success(it)) },
+                    { stateLiveData.postValue(AppState.Error(it)) }
+                )
         )
     }
 

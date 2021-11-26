@@ -1,12 +1,16 @@
-package com.example.sarawan
+package com.example.sarawan.activity
 
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
+import com.example.sarawan.R
 import com.example.sarawan.app.App.Companion.navController
 import com.example.sarawan.databinding.ActivityMainBinding
+import com.example.sarawan.model.data.AppState
+import com.example.sarawan.model.data.ProductsItem
 import com.example.sarawan.rx.ISchedulerProvider
 import com.example.sarawan.utils.NetworkStatus
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -23,6 +27,13 @@ class MainActivity : AppCompatActivity(), FabChanger {
     @Inject
     lateinit var schedulerProvider: ISchedulerProvider
 
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
+
+    private val viewModel: ActivityViewModel by lazy {
+        viewModelFactory.create(ActivityViewModel::class.java)
+    }
+
     private lateinit var binding: ActivityMainBinding
 
     private var isBackShown = false
@@ -37,6 +48,16 @@ class MainActivity : AppCompatActivity(), FabChanger {
         initNavigation()
         observeOnlineStatus()
         initFAB()
+        viewModel.getStateLiveData().observe(this) { appState: AppState<*> ->
+            updateFab(appState)
+        }
+    }
+
+    private fun updateFab(appState: AppState<*>) {
+        if (appState is AppState.Success<*>) {
+            val data = appState.data as List<ProductsItem>
+            putPrice(data.sumOf { it.basketProduct?.price!!.toDouble() * it.quantity!! }.toFloat())
+        }
     }
 
     private fun initFAB() {
@@ -71,7 +92,7 @@ class MainActivity : AppCompatActivity(), FabChanger {
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
             if (destination.id == R.id.basketFragment) binding.fabPrice.hide()
-            else if (totalPrice.value != 0f) binding.fabPrice.show()
+            else viewModel.getBasket()
         }
     }
 

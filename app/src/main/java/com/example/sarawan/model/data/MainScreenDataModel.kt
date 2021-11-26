@@ -21,20 +21,27 @@ data class MainScreenDataModel(
     val padding: ArrayList<Int>? = null,
 )
 
-fun convertFromProduct(product: Product): MainScreenDataModel {
+fun Product.convertToMainScreenDataModel(): MainScreenDataModel {
     return MainScreenDataModel(
-        price = product.store_prices?.get(0)?.price?.toFloat(),
-        itemDescription = product.name,
-        pictureUrl = product.images?.get(0)?.image,
-        discount = product.store_prices?.get(0)?.discount,
-        shop = product.store_prices?.get(0)?.store,
-        cardType = when (product.store_prices?.get(0)?.discount) {
+        id = id,
+        price = store_prices?.get(0)?.price?.toFloat(),
+        itemDescription = name,
+        pictureUrl = images?.get(0)?.image,
+        discount = store_prices?.get(0)?.discount,
+        shop = store_prices?.get(0)?.store,
+        cardType = when (store_prices?.get(0)?.discount) {
             is Int -> {
-                if (product.store_prices[0].discount > 0) CardType.TOP.type
+                if (store_prices[0].discount > 0) CardType.TOP.type
                 else CardType.COMMON.type
             }
             else -> CardType.EMPTY.type
         }
     )
+}
 
+fun MainScreenDataModel.convertToProductShortItem(): ProductShortItem {
+    return ProductShortItem(
+        product = id?.toInt() ?: 0,
+        quantity = quantity ?: 0
+    )
 }
