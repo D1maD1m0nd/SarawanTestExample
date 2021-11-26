@@ -14,6 +14,8 @@ class MainViewModel @Inject constructor(
     private val schedulerProvider: ISchedulerProvider
 ) : BaseViewModel<AppState<*>>() {
 
+    private var basketID: Int? = null
+
     fun search(word: String, isOnline: Boolean) {
         compositeDisposable.add(
             interactor.getData(Query.Get.Products.ProductName(word), isOnline)
@@ -49,8 +51,10 @@ class MainViewModel @Inject constructor(
                 getRandomPicturesAsPartners(data)
                 data.sortedByDescending { it.discount }
             }.zipWith(basket) { data, basketData ->
+                val basketObject = (basketData as List<Basket>)[0]
+                basketID = basketObject.basketId
                 data.forEach { mainScreenData ->
-                    (basketData as List<ProductsItem>).forEach { basketSingleData ->
+                    basketObject.products?.forEach { basketSingleData ->
                         if (mainScreenData.id == basketSingleData.id)
                             mainScreenData.quantity = basketSingleData.quantity
                     }

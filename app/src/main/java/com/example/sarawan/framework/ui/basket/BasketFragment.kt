@@ -142,7 +142,7 @@ class BasketFragment : Fragment() {
             it.toUpdateProduct()
         }
 
-        viewModel.updateBasket(basketId, ProductsUpdate(items))
+        viewModel.updateBasket(ProductsUpdate(items))
         adapter.updateHolders()
     }
 
@@ -150,8 +150,8 @@ class BasketFragment : Fragment() {
         _binding = null
         super.onDestroyView()
     }
+
     companion object {
         fun newInstance() = BasketFragment()
-        var basketId = 0;
     }
 }
