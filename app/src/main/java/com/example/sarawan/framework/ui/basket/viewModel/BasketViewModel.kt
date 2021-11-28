@@ -41,6 +41,15 @@ class BasketViewModel @Inject constructor(
             AppState.Error(RuntimeException("Should init BasketID first"))
     }
 
+    fun deleteBasketProduct(id : Int) {
+        compositeDisposable.add(
+            interactor.getData(Query.Delete.Basket.Delete(id), true)
+                .subscribeOn(schedulerProvider.io)
+                .observeOn(schedulerProvider.io)
+                .doOnSubscribe { stateLiveData.postValue(AppState.Loading) }
+                .subscribeWith(getObserver())
+        )
+    }
     private fun getObserver() = object : DisposableSingleObserver<List<*>>() {
         override fun onSuccess(result: List<*>) {
             val basket = result.first() as Basket

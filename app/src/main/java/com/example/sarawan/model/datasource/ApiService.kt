@@ -64,4 +64,10 @@ interface ApiService {
      */
     @PUT("basket/{id}/")
     fun updateBasketProduct(@Path("id") id: Int, @Body productItem : ProductsUpdate) : Single<Basket>
+
+    /**
+     * Удаление продукта из корзины
+     */
+    @DELETE("basket_product/{id}/")
+    fun deleteBasketProduct(@Path("id") id : Int) : Single<Basket>
 }

@@ -26,4 +26,10 @@ sealed interface Query {
             data class Update(val id: Int, val products : ProductsUpdate ): Basket
         }
     }
+
+    sealed interface Delete : Query {
+        sealed interface Basket : Delete {
+            data class Delete(val id: Int) : Basket
+        }
+    }
 }
