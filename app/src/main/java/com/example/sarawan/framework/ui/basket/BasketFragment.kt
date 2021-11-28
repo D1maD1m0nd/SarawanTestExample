@@ -47,9 +47,9 @@ class BasketFragment : Fragment() {
             updateBasket()
         }
 
-        override fun deleteItem(item: BasketListItem, pos: Int) {
+        override fun deleteItem(basketId: Int, pos: Int, item : BasketListItem) {
             list.remove(item)
-            deleteItemRcView(pos)
+            deleteBasketItem(pos, basketId)
         }
     }
     private val adapter = BasketAdapter(itemClickListener)
@@ -128,12 +128,13 @@ class BasketFragment : Fragment() {
         }
     }
 
-    private fun deleteItemRcView(pos: Int) {
+    private fun deleteBasketItem(pos: Int, basketItemId: Int ) {
         adapter.apply {
             items = list
             notifyItemRemoved(pos)
             updateHolders()
         }
+        viewModel.deleteBasketProduct(basketItemId)
     }
 
     private fun updateBasket() {
