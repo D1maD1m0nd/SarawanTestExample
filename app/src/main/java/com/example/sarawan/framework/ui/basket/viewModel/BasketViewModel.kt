@@ -28,13 +28,17 @@ class BasketViewModel @Inject constructor(
     }
 
     fun updateBasket(products: ProductsUpdate) {
-        basketID?.let {
+        basketID?.let { id ->
             compositeDisposable.add(
-                interactor.getData(Query.Put.Basket.Update(it, products), true)
+                interactor.getData(Query.Put.Basket.Update(id, products), true)
                     .subscribeOn(schedulerProvider.io)
                     .observeOn(schedulerProvider.io)
                     .doOnSubscribe { stateLiveData.postValue(AppState.Loading) }
-                    .subscribeWith(getObserver())
+                    .subscribe({
+                        stateLiveData.postValue(AppState.Success(it))
+                    }, {
+                        stateLiveData.postValue(AppState.Error(it))
+                    })
             )
         }
         if (basketID == null) stateLiveData.value =
