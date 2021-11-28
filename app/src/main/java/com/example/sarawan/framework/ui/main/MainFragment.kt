@@ -1,5 +1,6 @@
 package com.example.sarawan.framework.ui.main
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -14,7 +15,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.GridLayoutManager.SpanSizeLookup
 import coil.ImageLoader
-import com.example.sarawan.MainActivity
+import com.example.sarawan.activity.FabChanger
+import com.example.sarawan.activity.MainActivity
 import com.example.sarawan.databinding.FragmentMainBinding
 import com.example.sarawan.framework.ui.main.adapter.CardType
 import com.example.sarawan.framework.ui.main.adapter.MainRecyclerAdapter
@@ -26,7 +28,6 @@ import com.example.sarawan.utils.NetworkStatus
 import dagger.android.support.AndroidSupportInjection
 import java.util.*
 import javax.inject.Inject
-
 
 class MainFragment : Fragment() {
 
@@ -49,22 +50,27 @@ class MainFragment : Fragment() {
         viewModelFactory.create(MainViewModel::class.java)
     }
 
+    private var fabChanger: FabChanger? = null
+
     private var adapter: MainRecyclerAdapter? = null
 
     private val onListItemClickListener: MainRecyclerAdapter.OnListItemClickListener =
         object : MainRecyclerAdapter.OnListItemClickListener {
-            override fun onItemClick(data: MainScreenDataModel) {
-                Toast.makeText(context, data.quantity.toString(), Toast.LENGTH_SHORT).show()
+            override fun onItemClick(data: MainScreenDataModel, diff: Int) {
+                data.price?.let {
+                    fabChanger?.changePrice(it * diff)
+                    viewModel.saveData(data, isOnline)
+                }
             }
         }
 
-    private var isOnline = false
+    private var isOnline = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         AndroidSupportInjection.inject(this)
 
-        if (savedInstanceState == null) viewModel.search("test", isOnline)
+        if (savedInstanceState == null) viewModel.getStartData(isOnline)
     }
 
     override fun onCreateView(
@@ -109,20 +115,20 @@ class MainFragment : Fragment() {
         binding.searchField.editText?.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
                 binding.clearText.visibility = View.VISIBLE
-                binding.micButton.visibility = View.INVISIBLE
+//                binding.micButton.visibility = View.INVISIBLE
             } else {
                 binding.clearText.visibility = View.INVISIBLE
-                binding.micButton.visibility = View.VISIBLE
+//                binding.micButton.visibility = View.VISIBLE
             }
         }
 
         binding.searchField.editText?.doOnTextChanged { _, _, _, count ->
             if (count > 0) {
                 binding.clearText.visibility = View.VISIBLE
-                binding.micButton.visibility = View.INVISIBLE
+//                binding.micButton.visibility = View.INVISIBLE
             } else {
                 binding.clearText.visibility = View.INVISIBLE
-                binding.micButton.visibility = View.VISIBLE
+//                binding.micButton.visibility = View.VISIBLE
             }
         }
 
@@ -198,6 +204,16 @@ class MainFragment : Fragment() {
             .subscribe { isOnline ->
                 this.isOnline = isOnline
             }
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        fabChanger = context as FabChanger
+    }
+
+    override fun onDetach() {
+        fabChanger = null
+        super.onDetach()
     }
 
     override fun onDestroy() {

@@ -1,6 +1,5 @@
 package com.example.sarawan.di.modules
 
-import com.example.sarawan.model.data.DataModel
 import com.example.sarawan.model.datasource.ApiService
 import com.example.sarawan.model.datasource.DataSource
 import com.example.sarawan.model.datasource.RetrofitImplementation
@@ -17,14 +16,14 @@ class DataSourceModule {
     @Provides
     @Singleton
     @Named(NAME_REMOTE)
-    internal fun provideRemoteDataSource(apiService: ApiService): DataSource<List<DataModel>> {
+    internal fun provideRemoteDataSource(apiService: ApiService): DataSource<List<*>> {
         return RetrofitImplementation(apiService)
     }
 
     @Provides
     @Singleton
     @Named(NAME_LOCAL)
-    internal fun provideLocalDataSource(db: SarawanDatabase): DataSource<List<DataModel>> {
+    internal fun provideLocalDataSource(db: SarawanDatabase): DataSource<List<*>> {
         return RoomDataBaseImplementation(db)
     }
 

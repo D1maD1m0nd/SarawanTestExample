@@ -1,10 +1,10 @@
 package com.example.sarawan.framework.ui.basket.adapter
 
 import com.example.sarawan.framework.ui.basket.ItemClickListener
-import com.example.sarawan.model.data.DataModel
-import com.example.sarawan.model.data.DelegatesModel.BasketFooter
-import com.example.sarawan.model.data.DelegatesModel.BasketHeader
-import com.example.sarawan.model.data.DelegatesModel.BasketListItem
+import com.example.sarawan.model.data.ProductsItem
+import com.example.sarawan.model.data.delegatesModel.BasketFooter
+import com.example.sarawan.model.data.delegatesModel.BasketHeader
+import com.example.sarawan.model.data.delegatesModel.BasketListItem
 import com.example.sarawan.utils.AdapterDelegatesTypes
 import com.hannesdorfmann.adapterdelegates4.AsyncListDifferDelegationAdapter
 
@@ -16,34 +16,33 @@ class BasketAdapter(itemClickListener: ItemClickListener) : AsyncListDifferDeleg
         delegatesManager.addDelegate(AdapterDelegatesTypes.footerDelegateViewBindingViewHolder(itemClickListener))
     }
 
-    fun updateHeader() {
+    private fun updateHeader() {
         val header = items.first() as BasketHeader
         header.counter = items.count {
-            it is DataModel
+            it is ProductsItem
         }
-        notifyItemChanged(0)
+        notifyItemChanged(FIRST_POSITION)
     }
 
-    fun updateFooter() {
+    private fun updateFooter() {
         val footer = items.last() as BasketFooter
         val dataModelList = filterDataModel()
         footer.price = calculateSum(dataModelList)
         footer.weight = calculateWeight(dataModelList)
         notifyItemChanged(itemCount - 1)
     }
-    private fun filterDataModel() : List<DataModel> = items.filterIsInstance<DataModel>()
+
+    fun updateHolders() {
+        updateHeader()
+        updateFooter()
+    }
+    private fun filterDataModel() : List<ProductsItem> = items.filterIsInstance<ProductsItem>()
     companion object {
-        fun calculateSum(data : List<DataModel>) =
-            data.map {
-                it
-            }.sumOf {
-                it.price!!.toDouble()
+        private const val FIRST_POSITION = 0
+        fun calculateSum(data : List<ProductsItem>) : Double = data.sumOf {
+                it.basketProduct?.price!!.toDouble() * it.quantity!!
             }
-        fun calculateWeight(data : List<DataModel>) =
-            data.map {
-                it
-            }.sumOf {
-                it.weight!!.toDouble()
-            }
+
+        fun calculateWeight(data : List<ProductsItem>) = 0.0
     }
 }
