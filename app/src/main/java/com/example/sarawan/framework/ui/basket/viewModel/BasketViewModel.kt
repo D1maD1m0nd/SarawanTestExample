@@ -28,9 +28,9 @@ class BasketViewModel @Inject constructor(
     }
 
     fun updateBasket(products: ProductsUpdate) {
-        basketID?.let {
+        basketID?.let { id ->
             compositeDisposable.add(
-                interactor.getData(Query.Put.Basket.Update(it, products), true)
+                interactor.getData(Query.Put.Basket.Update(id, products), true)
                     .subscribeOn(schedulerProvider.io)
                     .observeOn(schedulerProvider.io)
                     .doOnSubscribe { stateLiveData.postValue(AppState.Loading) }
@@ -50,7 +50,7 @@ class BasketViewModel @Inject constructor(
         }
 
         override fun onError(e: Throwable) {
-            stateLiveData.value = AppState.Error(e)
+            stateLiveData.postValue(AppState.Error(e))
         }
     }
 }
