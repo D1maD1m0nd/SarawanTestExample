@@ -34,11 +34,7 @@ class BasketViewModel @Inject constructor(
                     .subscribeOn(schedulerProvider.io)
                     .observeOn(schedulerProvider.io)
                     .doOnSubscribe { stateLiveData.postValue(AppState.Loading) }
-                    .subscribe({
-                        stateLiveData.postValue(AppState.Success(it))
-                    }, {
-                        stateLiveData.postValue(AppState.Error(it))
-                    })
+                    .subscribeWith(getObserver())
             )
         }
         if (basketID == null) stateLiveData.value =
@@ -54,7 +50,7 @@ class BasketViewModel @Inject constructor(
         }
 
         override fun onError(e: Throwable) {
-            stateLiveData.value = AppState.Error(e)
+            stateLiveData.postValue(AppState.Error(e))
         }
     }
 }
