@@ -24,14 +24,14 @@ data class MainScreenDataModel(
 fun Product.convertToMainScreenDataModel(): MainScreenDataModel {
     return MainScreenDataModel(
         id = id,
-        price = store_prices?.get(0)?.price?.toFloat(),
+        price = store_prices?.first()?.price?.toFloat(),
         itemDescription = name,
-        pictureUrl = images?.get(0)?.image,
-        discount = store_prices?.get(0)?.discount,
-        shop = store_prices?.get(0)?.store,
-        cardType = when (store_prices?.get(0)?.discount) {
+        pictureUrl = images?.first()?.image,
+        discount = store_prices?.first()?.discount,
+        shop = store_prices?.first()?.store,
+        cardType = when (store_prices?.first()?.discount) {
             is Int -> {
-                if (store_prices[0].discount > 0) CardType.TOP.type
+                if (store_prices.first().discount > 0) CardType.TOP.type
                 else CardType.COMMON.type
             }
             else -> CardType.EMPTY.type

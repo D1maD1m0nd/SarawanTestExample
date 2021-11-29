@@ -108,11 +108,8 @@ class MainActivity : AppCompatActivity(), FabChanger {
     }
 
     override fun onBackPressed() {
-        if (navController.currentDestination?.id == R.id.mainFragment) {
-            checkExit()
-        } else {
-            super.onBackPressed()
-        }
+        if (navController.currentDestination?.id == R.id.mainFragment) checkExit()
+        else super.onBackPressed()
         lastTimeBackPressed = System.currentTimeMillis()
     }
 

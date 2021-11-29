@@ -35,7 +35,7 @@ class ActivityViewModel @Inject constructor(
         }
 
         override fun onError(e: Throwable) {
-            stateLiveData.value = AppState.Error(e)
+            stateLiveData.postValue(AppState.Error(e))
         }
     }
 }

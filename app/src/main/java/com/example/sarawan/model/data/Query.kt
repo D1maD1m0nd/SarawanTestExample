@@ -17,19 +17,21 @@ sealed interface Query {
 
     sealed interface Post : Query {
 
-        object Basket : Post
+        sealed interface Basket : Post {
+            data class Put(val products: ProductsUpdate) : Basket
+        }
     }
 
     sealed interface Put : Query {
 
         sealed interface Basket : Put {
-            data class Update(val id: Int, val products : ProductsUpdate ): Basket
+            data class Update(val id: Int, val products: ProductsUpdate) : Basket
         }
     }
 
     sealed interface Delete : Query {
         sealed interface Basket : Delete {
-            data class Delete(val id: Int) : Basket
+            data class Remove(val id: Int) : Basket
         }
     }
 }

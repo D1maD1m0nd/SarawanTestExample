@@ -43,7 +43,7 @@ class BasketViewModel @Inject constructor(
 
     fun deleteBasketProduct(id : Int) {
         compositeDisposable.add(
-            interactor.getData(Query.Delete.Basket.Delete(id), true)
+            interactor.getData(Query.Delete.Basket.Remove(id), true)
                 .subscribeOn(schedulerProvider.io)
                 .observeOn(schedulerProvider.io)
                 .doOnSubscribe { stateLiveData.postValue(AppState.Loading) }
