@@ -8,6 +8,8 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.sarawan.R
+import com.example.sarawan.app.App.Companion.navController
 import com.example.sarawan.databinding.FragmentBasketBinding
 import com.example.sarawan.framework.ui.basket.adapter.BasketAdapter
 import com.example.sarawan.framework.ui.basket.modals.DeliveryTimeFragment
@@ -51,6 +53,10 @@ class BasketFragment : Fragment() {
             list.remove(item)
             deleteBasketItem(pos, basketId)
         }
+
+        override fun openProductCard(productId : Int) {
+            showProductFragment(productId)
+        }
     }
     private val adapter = BasketAdapter(itemClickListener)
     private val viewModel: BasketViewModel by lazy {
@@ -90,7 +96,9 @@ class BasketFragment : Fragment() {
         when (appState) {
             is AppState.Success<*> -> {
                 val data = appState.data as List<ProductsItem>
-                initDataRcView(data)
+                if(list.count() < LIMIT){
+                    initDataRcView(data)
+                }
             }
             is AppState.Error -> Unit
             AppState.Loading -> Unit
@@ -146,7 +154,11 @@ class BasketFragment : Fragment() {
         viewModel.updateBasket(ProductsUpdate(items))
         adapter.updateHolders()
     }
-
+    private fun showProductFragment(idProduct: Int) {
+        val bundle = Bundle()
+        bundle.putInt(PRODUCT_ID, idProduct)
+        navController.navigate(R.id.productCardFragment,bundle)
+    }
     override fun onDestroyView() {
         _binding = null
         super.onDestroyView()
@@ -154,5 +166,7 @@ class BasketFragment : Fragment() {
 
     companion object {
         fun newInstance() = BasketFragment()
+        const val PRODUCT_ID = "PRODUCT_ID"
+        private const val LIMIT = 3
     }
 }

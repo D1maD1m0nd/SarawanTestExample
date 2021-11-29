@@ -7,4 +7,5 @@ interface ItemClickListener {
     fun showModal(fragment : DialogFragment)
     fun update()
     fun deleteItem(basketId : Int, pos : Int, item : BasketListItem)
+    fun openProductCard(productId : Int)
 }
