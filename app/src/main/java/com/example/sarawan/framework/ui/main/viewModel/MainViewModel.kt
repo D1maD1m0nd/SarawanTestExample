@@ -28,6 +28,7 @@ class MainViewModel @Inject constructor(
                         data.add((it as Product).convertToMainScreenDataModel())
                     }
                     getRandomPicturesAsPartners(data)
+                    data.sortedByDescending { it.discount }
                     stateLiveData.postValue(AppState.Success(data))
                 },
                     { stateLiveData.postValue(AppState.Error(it)) }
@@ -35,10 +36,25 @@ class MainViewModel @Inject constructor(
         )
     }
 
-    fun saveData(data: MainScreenDataModel, isOnline: Boolean) {
-        basketID?.let { basket ->
-            val products = listOf(data.convertToProductShortItem())
-            interactor.getData(Query.Put.Basket.Update(basket, ProductsUpdate(products)), isOnline)
+    fun saveData(data: MainScreenDataModel, isOnline: Boolean, isNewItem: Boolean) {
+        val products = listOf(data.convertToProductShortItem())
+        if (isNewItem) compositeDisposable.add(
+            interactor
+                .getData(Query.Post.Basket.Put(ProductsUpdate(products)), isOnline)
+                .subscribeOn(schedulerProvider.io)
+                .observeOn(schedulerProvider.io)
+                .subscribe({
+                    basketID = (it as List<Basket>).first().basketId
+                }, { stateLiveData.postValue(AppState.Error(it)) })
+        )
+        else basketID?.let { basket ->
+            compositeDisposable.add(
+                interactor
+                    .getData(Query.Put.Basket.Update(basket, ProductsUpdate(products)), isOnline)
+                    .subscribeOn(schedulerProvider.io)
+                    .observeOn(schedulerProvider.io)
+                    .subscribe({}, { stateLiveData.postValue(AppState.Error(it)) })
+            )
         }
         if (basketID == null) stateLiveData.value =
             AppState.Error(RuntimeException("Should init BasketID first"))
@@ -64,7 +80,7 @@ class MainViewModel @Inject constructor(
                 basketID = basketObject.basketId
                 data.forEach { mainScreenData ->
                     basketObject.products?.forEach { basketSingleData ->
-                        if (mainScreenData.id == basketSingleData.id)
+                        if (mainScreenData.id == basketSingleData.basketProduct?.basketProduct?.id)
                             mainScreenData.quantity = basketSingleData.quantity
                     }
                 }

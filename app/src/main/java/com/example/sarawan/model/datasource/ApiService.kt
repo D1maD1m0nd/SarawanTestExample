@@ -57,7 +57,7 @@ interface ApiService {
      * Добавление продукта в корзину
      */
     @POST("basket/")
-    fun addProductBasket()
+    fun putBasketProduct(@Body productItem : ProductsUpdate) : Single<Basket>
 
     /**
      * Обновление продукта

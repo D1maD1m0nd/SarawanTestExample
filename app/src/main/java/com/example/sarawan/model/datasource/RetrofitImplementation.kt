@@ -1,6 +1,5 @@
 package com.example.sarawan.model.datasource
 
-import com.example.sarawan.model.data.ProductsItem
 import com.example.sarawan.model.data.Query
 import io.reactivex.rxjava3.core.Single
 import javax.inject.Inject
@@ -42,7 +41,9 @@ class RetrofitImplementation @Inject constructor(private val apiService: ApiServ
 
             is Query.Post -> when (query) {
 
-                Query.Post.Basket -> Single.fromCallable { listOf<ProductsItem>() }
+                is Query.Post.Basket.Put -> apiService
+                    .putBasketProduct(query.products)
+                    .map { listOf(it) }
             }
 
             is Query.Put -> when (query) {
@@ -53,7 +54,8 @@ class RetrofitImplementation @Inject constructor(private val apiService: ApiServ
             }
 
             is Query.Delete -> when (query) {
-                is Query.Delete.Basket.Delete -> apiService
+
+                is Query.Delete.Basket.Remove -> apiService
                     .deleteBasketProduct(query.id)
                     .map { listOf(it) }
             }

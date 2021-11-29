@@ -45,22 +45,24 @@ class MainRecyclerAdapter(
         partnersData.clear()
         topData.addAll(data.filter { it.cardType == CardType.TOP.type })
         partnersData.addAll(data.filter { it.cardType == CardType.PARTNERS.type })
-        displayData.add(
-            MainScreenDataModel(
-                itemDescription = "Выгодные предложения",
-                fontSize = 28F,
-                padding = arrayListOf(0, 32, 0, 14),
-                gravity = Gravity.CENTER,
-                cardType = CardType.STRING.type
+        if (topData.isNotEmpty()) {
+            displayData.add(
+                MainScreenDataModel(
+                    itemDescription = "Выгодные предложения",
+                    fontSize = 28F,
+                    padding = arrayListOf(0, 32, 0, 14),
+                    gravity = Gravity.CENTER,
+                    cardType = CardType.STRING.type
+                )
             )
-        )
-        displayData.add(MainScreenDataModel(cardType = CardType.TOP.type))
-        displayData.add(
-            MainScreenDataModel(
-                itemDescription = "Посмотреть еще",
-                cardType = CardType.BUTTON.type
+            displayData.add(MainScreenDataModel(cardType = CardType.TOP.type))
+            displayData.add(
+                MainScreenDataModel(
+                    itemDescription = "Посмотреть еще",
+                    cardType = CardType.BUTTON.type
+                )
             )
-        )
+        } else callback()
         displayData.add(
             MainScreenDataModel(
                 itemDescription = if (isRecommended) "Мы рекомендуем" else null,
@@ -187,7 +189,7 @@ class MainRecyclerAdapter(
     }
 
     interface OnListItemClickListener {
-        fun onItemClick(data: MainScreenDataModel, diff: Int)
+        fun onItemClick(data: MainScreenDataModel, diff: Int, isNewItem: Boolean)
     }
 
     interface CancellableHolder {

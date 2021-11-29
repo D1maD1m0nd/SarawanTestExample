@@ -56,10 +56,10 @@ class MainFragment : Fragment() {
 
     private val onListItemClickListener: MainRecyclerAdapter.OnListItemClickListener =
         object : MainRecyclerAdapter.OnListItemClickListener {
-            override fun onItemClick(data: MainScreenDataModel, diff: Int) {
+            override fun onItemClick(data: MainScreenDataModel, diff: Int, isNewItem: Boolean) {
                 data.price?.let {
                     fabChanger?.changePrice(it * diff)
-                    viewModel.saveData(data, isOnline)
+                    viewModel.saveData(data, isOnline, isNewItem)
                 }
             }
         }
@@ -149,7 +149,7 @@ class MainFragment : Fragment() {
         activity?.getSystemService<InputMethodManager>()
             ?.hideSoftInputFromWindow(binding.searchField.windowToken, 0)
         binding.searchField.clearFocus()
-        viewModel.search("test", isOnline)
+        viewModel.search(binding.searchField.editText?.text.toString(), isOnline)
         if (!isOnline) Toast.makeText(
             context,
             "You are Offline! Get Results from Cache",
