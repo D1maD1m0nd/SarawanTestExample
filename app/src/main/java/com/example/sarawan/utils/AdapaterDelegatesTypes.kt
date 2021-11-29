@@ -39,6 +39,7 @@ object AdapterDelegatesTypes {
                     counterTextView.text = item.quantity.toString()
                 }
                 productImageView.load(R.drawable.product_sample_img)
+
                 var counter = counterTextView.text.toString().toInt()
                 plusImageButton.setOnClickListener {
                     if(counter in 0..99) {
@@ -61,6 +62,12 @@ object AdapterDelegatesTypes {
                     val basketId = item.basketProductId
                     basketId?.let {
                         itemClickListener.deleteItem(basketId, absoluteAdapterPosition, item)
+                    }
+                }
+
+                infoContainerConstraintLayout.setOnClickListener {
+                    item.basketProduct?.productStoreId?.let{
+                        itemClickListener.openProductCard(it)
                     }
                 }
             }
