@@ -30,7 +30,17 @@ class ProfileSuccessFragment : DialogFragment() {
     }
 
     private fun initViews() = with(binding) {
-        profileSuccessOkButton.setOnClickListener { dismiss() }
+        profileSuccessOkButton.setOnClickListener { closeAllDialogs() }
+    }
+
+    private fun closeAllDialogs() {
+        val manager = requireActivity().supportFragmentManager
+        for (fragment in manager.fragments) {
+            if (fragment is DialogFragment) {
+                fragment.dismiss()
+            }
+        }
+        dismiss()
     }
 
     override fun onDestroy() {
