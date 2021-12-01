@@ -1,15 +1,18 @@
 package com.example.sarawan.model.data
 
 import androidx.annotation.ColorInt
+import com.example.sarawan.framework.ui.main.adapter.CardType
 
 data class MainScreenDataModel(
-    val price: Float? = null,
+
+    val id: Long? = null,
     val itemDescription: String? = null,
-    val pictureUrl: String? = null,
+    var quantity: Int? = null,
     val discount: Int? = null,
     val shop: String? = null,
-    val weight: Int? = null,
-    var quantity: Long? = null,
+    val weight: String? = null,
+    val pictureUrl: String? = null,
+    val price: Float? = null,
     val cardType: Int? = null,
     val fontSize: Float? = null,
     val gravity: Int? = null,
@@ -18,15 +21,27 @@ data class MainScreenDataModel(
     val padding: ArrayList<Int>? = null,
 )
 
-fun convertFromDataModel(dataModel: DataModel): MainScreenDataModel {
+fun Product.convertToMainScreenDataModel(): MainScreenDataModel {
     return MainScreenDataModel(
-        price = dataModel.price,
-        itemDescription = dataModel.itemDescription,
-        pictureUrl = dataModel.pictureUrl,
-        discount = dataModel.discount,
-        shop = dataModel.shop,
-        weight = dataModel.weight,
-        quantity = dataModel.quantity,
-        cardType = dataModel.cardType,
+        id = id,
+        price = store_prices?.first()?.price?.toFloat(),
+        itemDescription = name,
+        pictureUrl = images?.first()?.image,
+        discount = store_prices?.first()?.discount,
+        shop = store_prices?.first()?.store,
+        cardType = when (store_prices?.first()?.discount) {
+            is Int -> {
+                if (store_prices.first().discount > 0) CardType.TOP.type
+                else CardType.COMMON.type
+            }
+            else -> CardType.EMPTY.type
+        }
+    )
+}
+
+fun MainScreenDataModel.convertToProductShortItem(): ProductShortItem {
+    return ProductShortItem(
+        product = id?.toInt() ?: 0,
+        quantity = quantity ?: 0
     )
 }

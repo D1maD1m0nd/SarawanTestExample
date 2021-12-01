@@ -1,9 +1,11 @@
 package com.example.sarawan.framework.ui.basket
 
 import androidx.fragment.app.DialogFragment
-import com.example.sarawan.model.data.DelegatesModel.BasketListItem
+import com.example.sarawan.model.data.delegatesModel.BasketListItem
 
 interface ItemClickListener {
     fun showModal(fragment : DialogFragment)
-    fun deleteItem(item : BasketListItem, pos : Int)
+    fun update()
+    fun deleteItem(basketId : Int, pos : Int, item : BasketListItem)
+    fun openProductCard(productId : Int)
 }

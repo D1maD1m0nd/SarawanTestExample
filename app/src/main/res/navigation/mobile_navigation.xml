@@ -64,4 +64,9 @@
         android:name="com.example.sarawan.framework.ui.profile.ProfileAlertFragment"
         android:label="fragment_profile_alert"
         tools:layout="@layout/fragment_profile_alert" />
+    <fragment
+        android:id="@+id/productCardFragment"
+        android:name="com.example.sarawan.framework.ui.product_card.ProductCardFragment"
+        android:label="fragment_product_card"
+        tools:layout="@layout/fragment_product_card" />
 </navigation>

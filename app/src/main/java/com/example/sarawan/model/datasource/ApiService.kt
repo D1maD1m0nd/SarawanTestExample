@@ -1,25 +1,31 @@
 package com.example.sarawan.model.datasource
 
-import com.example.sarawan.model.data.DataModel
-import io.reactivex.rxjava3.core.Observable
+import com.example.sarawan.model.data.Basket
+import com.example.sarawan.model.data.Product
+import com.example.sarawan.model.data.ProductsUpdate
+import com.example.sarawan.model.data.Response
+import io.reactivex.rxjava3.core.Single
 import retrofit2.http.*
 
 interface ApiService {
 
-    @GET("http:/")
-    fun search(@Query("") wordToSearch: String): Observable<List<DataModel>>
-
     /**
-     * Получение рекомендуемых продуктов
+     * Получение продукта по имени
      */
-    @GET("favorite_products/")
-    fun getFavoriteProducts()
+    @GET("products/")
+    fun search(@Query("product_name") productName: String): Single<Response>
 
     /**
      * Получение продуктов с скидкой
      */
-    @GET("discount_products/")
-    fun getDiscountProducts()
+    @GET("products/")
+    fun getDiscountProducts(@Query("discount_products") discountProducts: Boolean = true): Single<Response>
+
+    /**
+     * Получение популярных продуктов
+     */
+    @GET("products/")
+    fun getPopularProducts(@Query("popular_products") popularProducts: Boolean = true): Single<Response>
 
     /**
      * Получение категорий
@@ -32,30 +38,36 @@ interface ApiService {
      * @param page номер страницы
      */
     @GET("products/")
-    fun getProducts(@Query("page") page : Int)
+    fun getProducts(@Query("page") page: Int): Single<Response>
 
     /**
      * Получение продукта по Id
      * @param id - id продукта
      */
     @GET("products/{id}/")
-    fun getProduct(@Path("id") id : Long)
+    fun getProduct(@Path("id") id: Long): Single<Product>
 
     /**
      * Получение корзины пользователя
      */
     @GET("basket/")
-    fun getBasket()
+    fun getBasket(): Single<Basket>
 
     /**
      * Добавление продукта в корзину
      */
     @POST("basket/")
-    fun addProductBasket()
+    fun putBasketProduct(@Body productItem : ProductsUpdate) : Single<Basket>
 
     /**
      * Обновление продукта
      */
-    @PUT("/api/basket/{id}/")
-    fun updateBasketProduct(@Path("id") id : Long)
+    @PUT("basket/{id}/")
+    fun updateBasketProduct(@Path("id") id: Int, @Body productItem : ProductsUpdate) : Single<Basket>
+
+    /**
+     * Удаление продукта из корзины
+     */
+    @DELETE("basket_product/{id}/")
+    fun deleteBasketProduct(@Path("id") id : Int) : Single<Basket>
 }

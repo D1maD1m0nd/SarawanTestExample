@@ -1,8 +1,9 @@
 package com.example.sarawan.framework
 
-import io.reactivex.rxjava3.core.Observable
+import com.example.sarawan.model.data.Query
+import io.reactivex.rxjava3.core.Single
 
 interface Interactor<T> {
 
-    fun getData(word: String, fromRemoteSource: Boolean): Observable<T>
+    fun getData(query: Query, fromRemoteSource: Boolean): Single<T>
 }

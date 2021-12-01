@@ -1,16 +1,15 @@
-package com.example.sarawan.framework.ui.basket.viewModel
+package com.example.sarawan.activity
 
 import com.example.sarawan.framework.MainInteractor
 import com.example.sarawan.framework.ui.base.BaseViewModel
 import com.example.sarawan.model.data.AppState
 import com.example.sarawan.model.data.Basket
-import com.example.sarawan.model.data.ProductsUpdate
 import com.example.sarawan.model.data.Query
 import com.example.sarawan.rx.ISchedulerProvider
 import io.reactivex.rxjava3.observers.DisposableSingleObserver
 import javax.inject.Inject
 
-class BasketViewModel @Inject constructor(
+class ActivityViewModel @Inject constructor(
     private val interactor: MainInteractor,
     private val schedulerProvider: ISchedulerProvider
 ) : BaseViewModel<AppState<*>>() {
@@ -27,29 +26,6 @@ class BasketViewModel @Inject constructor(
         )
     }
 
-    fun updateBasket(products: ProductsUpdate) {
-        basketID?.let { id ->
-            compositeDisposable.add(
-                interactor.getData(Query.Put.Basket.Update(id, products), true)
-                    .subscribeOn(schedulerProvider.io)
-                    .observeOn(schedulerProvider.io)
-                    .doOnSubscribe { stateLiveData.postValue(AppState.Loading) }
-                    .subscribeWith(getObserver())
-            )
-        }
-        if (basketID == null) stateLiveData.value =
-            AppState.Error(RuntimeException("Should init BasketID first"))
-    }
-
-    fun deleteBasketProduct(id : Int) {
-        compositeDisposable.add(
-            interactor.getData(Query.Delete.Basket.Remove(id), true)
-                .subscribeOn(schedulerProvider.io)
-                .observeOn(schedulerProvider.io)
-                .doOnSubscribe { stateLiveData.postValue(AppState.Loading) }
-                .subscribeWith(getObserver())
-        )
-    }
     private fun getObserver() = object : DisposableSingleObserver<List<*>>() {
         override fun onSuccess(result: List<*>) {
             val basket = result.first() as Basket
