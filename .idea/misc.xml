@@ -54,6 +54,9 @@
         <entry key="..\:/KotlinProjects/sarawan_Android_2/app/src/main/res/drawable/icon.xml" value="0.26666666666666666" />
         <entry key="..\:/KotlinProjects/sarawan_Android_2/app/src/main/res/drawable/minus_ic.xml" value="0.2604166666666667" />
         <entry key="..\:/KotlinProjects/sarawan_Android_2/app/src/main/res/drawable/plus_ic.xml" value="0.2635416666666667" />
+        <entry key="..\:/KotlinProjects/sarawan_Android_2/app/src/main/res/drawable/rectangle_black_shape.xml" value="0.30833333333333335" />
+        <entry key="..\:/KotlinProjects/sarawan_Android_2/app/src/main/res/drawable/rectangle_gray_shape.xml" value="0.3203125" />
+        <entry key="..\:/KotlinProjects/sarawan_Android_2/app/src/main/res/drawable/rectangle_red_shape.xml" value="0.30833333333333335" />
         <entry key="..\:/KotlinProjects/sarawan_Android_2/app/src/main/res/drawable/rounded_edit_text.xml" value="0.31875" />
         <entry key="..\:/KotlinProjects/sarawan_Android_2/app/src/main/res/drawable/social_facebook_ic.xml" value="0.2604166666666667" />
         <entry key="..\:/KotlinProjects/sarawan_Android_2/app/src/main/res/drawable/social_instagram_ic.xml" value="0.2604166666666667" />
@@ -77,38 +80,16 @@
         <entry key="..\:/KotlinProjects/sarawan_Android_2/app/src/main/res/layout/fragment_profile.xml" value="0.2784615384615385" />
         <entry key="..\:/KotlinProjects/sarawan_Android_2/app/src/main/res/layout/fragment_profile_address.xml" value="0.2828125" />
         <entry key="..\:/KotlinProjects/sarawan_Android_2/app/src/main/res/layout/fragment_profile_alert.xml" value="0.3026041666666667" />
+        <entry key="..\:/KotlinProjects/sarawan_Android_2/app/src/main/res/layout/fragment_profile_code.xml" value="0.315625" />
         <entry key="..\:/KotlinProjects/sarawan_Android_2/app/src/main/res/layout/fragment_profile_name.xml" value="0.27589743589743587" />
         <entry key="..\:/KotlinProjects/sarawan_Android_2/app/src/main/res/layout/fragment_profile_phone.xml" value="0.33" />
+        <entry key="..\:/KotlinProjects/sarawan_Android_2/app/src/main/res/layout/fragment_profile_success.xml" value="0.3015625" />
         <entry key="..\:/KotlinProjects/sarawan_Android_2/app/src/main/res/layout/list_item_card.xml" value="0.28802083333333334" />
         <entry key="..\:/KotlinProjects/sarawan_Android_2/app/src/main/res/menu/bottom_menu.xml" value="0.2921875" />
         <entry key="..\:/KotlinProjects/sarawan_Android_2/app/src/main/res/xml/rounded_edit_text.xml" value="0.3067708333333333" />
         <entry key="..\:/Sarawan/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.3651041666666667" />
         <entry key="..\:/Sarawan/app/src/main/res/drawable/icon.xml" value="0.3651041666666667" />
         <entry key="..\:/Sarawan/app/src/main/res/xml/network_security_config.xml" value="0.3489583333333333" />
-        <entry key="..\:/sarawan_Android/app/src/main/res/drawable/ic_baseline_access_time_24.xml" value="0.3651041666666667" />
-        <entry key="..\:/sarawan_Android/app/src/main/res/drawable/ic_baseline_calendar_today_24.xml" value="0.3651041666666667" />
-        <entry key="..\:/sarawan_Android/app/src/main/res/drawable/product_image_card.xml" value="0.3651041666666667" />
-        <entry key="..\:/sarawan_Android/app/src/main/res/layout/activity_main.xml" value="0.3489583333333333" />
-        <entry key="..\:/sarawan_Android/app/src/main/res/layout/basket_footer_item.xml" value="0.3398148148148148" />
-        <entry key="..\:/sarawan_Android/app/src/main/res/layout/basket_header_item.xml" value="0.3398148148148148" />
-        <entry key="..\:/sarawan_Android/app/src/main/res/layout/basket_item.xml" value="0.33" />
-        <entry key="..\:/sarawan_Android/app/src/main/res/layout/fragment_basket.xml" value="0.25" />
-        <entry key="..\:/sarawan_Android/app/src/main/res/layout/fragment_catalog.xml" value="0.3398148148148148" />
-        <entry key="..\:/sarawan_Android/app/src/main/res/layout/fragment_delivery_time.xml" value="0.25" />
-        <entry key="..\:/sarawan_Android/app/src/main/res/layout/fragment_info.xml" value="0.19537037037037036" />
-        <entry key="..\:/sarawan_Android/app/src/main/res/layout/fragment_info_about.xml" value="0.3489583333333333" />
-        <entry key="..\:/sarawan_Android/app/src/main/res/layout/fragment_info_how.xml" value="0.20462962962962963" />
-        <entry key="..\:/sarawan_Android/app/src/main/res/layout/fragment_info_support.xml" value="0.3489583333333333" />
-        <entry key="..\:/sarawan_Android/app/src/main/res/layout/fragment_main.xml" value="0.33" />
-        <entry key="..\:/sarawan_Android/app/src/main/res/layout/fragment_payment_method.xml" value="0.25" />
-        <entry key="..\:/sarawan_Android/app/src/main/res/layout/fragment_product_card.xml" value="0.3489583333333333" />
-        <entry key="..\:/sarawan_Android/app/src/main/res/layout/fragment_profile_address.xml" value="0.1" />
-        <entry key="..\:/sarawan_Android/app/src/main/res/layout/fragment_profile_alert.xml" value="0.3489583333333333" />
-        <entry key="..\:/sarawan_Android/app/src/main/res/layout/fragment_profile_name.xml" value="0.20462962962962963" />
-        <entry key="..\:/sarawan_Android/app/src/main/res/layout/fragment_profile_phone.xml" value="0.20462962962962963" />
-        <entry key="..\:/sarawan_Android/app/src/main/res/layout/fragment_time_picker.xml" value="0.3489583333333333" />
-        <entry key="..\:/sarawan_Android/app/src/main/res/layout/list_item_button.xml" value="0.3489583333333333" />
-        <entry key="..\:/sarawan_Android/app/src/main/res/layout/test.xml" value="0.3489583333333333" />
       </map>
     </option>
   </component>

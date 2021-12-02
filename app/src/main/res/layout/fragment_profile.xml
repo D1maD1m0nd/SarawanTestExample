@@ -86,6 +86,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:background="@color/white"
+                    android:visibility="invisible"
                     android:src="@drawable/arrow_right" />
 
             </androidx.appcompat.widget.LinearLayoutCompat>
