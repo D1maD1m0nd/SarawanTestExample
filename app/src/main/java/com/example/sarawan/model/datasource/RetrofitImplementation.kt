@@ -37,6 +37,10 @@ class RetrofitImplementation @Inject constructor(private val apiService: ApiServ
                 Query.Get.Basket -> apiService
                     .getBasket()
                     .map { listOf(it) }
+
+                Query.Get.Category -> apiService
+                    .getCategories()
+                    .map { it as List<*> }
             }
 
             is Query.Post -> when (query) {

@@ -1,0 +1,85 @@
+package com.example.sarawan.framework.ui.catalog.adapter
+
+import android.annotation.SuppressLint
+import android.graphics.Color
+import android.graphics.Typeface
+import android.view.Gravity
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
+import com.example.sarawan.databinding.CatalogListItemBinding
+import com.example.sarawan.framework.ui.base.mainCatalog.BaseMainCatalogAdapter
+import com.example.sarawan.framework.ui.base.mainCatalog.CardType
+import com.example.sarawan.framework.ui.catalog.viewHolder.ListItemHolder
+import com.example.sarawan.framework.ui.main.viewHolder.StringHolder
+import com.example.sarawan.model.data.MainScreenDataModel
+import com.google.android.material.textview.MaterialTextView
+
+class CatalogRecyclerAdapter(
+    private var onListItemClickListener: OnListItemClickListener
+) : BaseMainCatalogAdapter() {
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun setData(data: List<MainScreenDataModel>?, callback: () -> Unit) {
+        if (data == null) {
+            callback()
+            return
+        }
+        displayData.clear()
+        displayData.add(
+            MainScreenDataModel(
+                itemDescription = "Каталог",
+                fontSize = 28f,
+                backgroundColor = Color.WHITE,
+                cardType = CardType.TOP.type,
+                gravity = Gravity.START,
+                fontType = Typeface.BOLD,
+                padding = arrayListOf(20, 24, 0, 8),
+            )
+        )
+        displayData.addAll(data)
+        displayData.add(
+            MainScreenDataModel(
+                cardType = CardType.TOP.type,
+                backgroundColor = Color.WHITE,
+//                padding = arrayListOf(0, 75, 0, 0),
+                fontSize = 28f
+            )
+        )
+        notifyDataSetChanged()
+        callback()
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        return when (viewType) {
+            CardType.STRING.type -> ListItemHolder(
+                CatalogListItemBinding.inflate(
+                    LayoutInflater.from(parent.context),
+                    parent,
+                    false
+                ),
+                onListItemClickListener
+            )
+            CardType.TOP.type -> StringHolder(MaterialTextView(parent.context))
+            else -> throw RuntimeException("No Such viewType: $viewType")
+        }
+    }
+
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        when (getItemViewType(position)) {
+            CardType.STRING.type -> {
+                holder as ListItemHolder
+                holder.bind(displayData[position])
+            }
+            CardType.TOP.type -> {
+                holder as StringHolder
+                holder.bind(displayData[position])
+            }
+            else -> throw RuntimeException("No binder for holder: $holder")
+        }
+    }
+
+    interface OnListItemClickListener {
+        fun onItemClick(data: MainScreenDataModel)
+    }
+}

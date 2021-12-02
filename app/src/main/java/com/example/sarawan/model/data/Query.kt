@@ -13,6 +13,8 @@ sealed interface Query {
         }
 
         object Basket : Get
+
+        object Category : Get
     }
 
     sealed interface Post : Query {
