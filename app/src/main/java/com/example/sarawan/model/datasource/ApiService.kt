@@ -11,32 +11,34 @@ interface ApiService {
      * Получение продукта по имени
      */
     @GET("products/")
-    fun search(@Query("product_name") productName: String): Single<Response>
+    fun search(
+        @Query("product_name") productName: String,
+        @Query("page") page: Int
+    ): Single<Response>
 
     /**
      * Получение продуктов с скидкой
      */
     @GET("products/")
-    fun getDiscountProducts(@Query("discount_products") discountProducts: Boolean = true): Single<Response>
+    fun getDiscountProducts(
+        @Query("discount_products") discountProducts: Boolean = true,
+        @Query("page") page: Int
+    ): Single<Response>
 
     /**
      * Получение популярных продуктов
      */
     @GET("products/")
-    fun getPopularProducts(@Query("popular_products") popularProducts: Boolean = true): Single<Response>
+    fun getPopularProducts(
+        @Query("popular_products") popularProducts: Boolean = true,
+        @Query("page") page: Int
+    ): Single<Response>
 
     /**
      * Получение категорий
      */
     @GET("categories/")
     fun getCategories(): Single<List<CategoryDataModel>>
-
-    /**
-     * Получение списка продуктов
-     * @param page номер страницы
-     */
-    @GET("products/")
-    fun getProducts(@Query("page") page: Int): Single<Response>
 
     /**
      * Получение продукта по Id

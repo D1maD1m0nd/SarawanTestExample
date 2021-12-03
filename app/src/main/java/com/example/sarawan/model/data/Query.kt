@@ -5,10 +5,9 @@ sealed interface Query {
     sealed interface Get : Query {
 
         sealed interface Products : Get {
-            data class ProductName(val productName: String) : Products
-            object DiscountProducts : Products
-            object PopularProducts : Products
-            data class Page(val page: Int) : Products
+            data class ProductName(val productName: String, val page: Int = 1) : Products
+            data class DiscountProducts(val page: Int = 1) : Products
+            data class PopularProducts(val page: Int = 1) : Products
             data class Id(val id: Long) : Products
         }
 

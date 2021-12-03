@@ -12,8 +12,8 @@ class MainViewModel @Inject constructor(
 ) : BaseMainCatalogViewModel(interactor, schedulerProvider) {
 
     override fun getStartData(isOnline: Boolean) {
-        val discount = interactor.getData(Query.Get.Products.DiscountProducts, isOnline)
-        val popular = interactor.getData(Query.Get.Products.PopularProducts, isOnline)
+        val discount = interactor.getData(Query.Get.Products.DiscountProducts(), isOnline)
+        val popular = interactor.getData(Query.Get.Products.PopularProducts(), isOnline)
         val basket = interactor.getData(Query.Get.Basket, isOnline)
         compositeDisposable.add(
             discount.zipWith(popular) { discountData, popularData ->
