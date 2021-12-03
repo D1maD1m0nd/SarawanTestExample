@@ -149,7 +149,6 @@
         tools:visibility="gone">
 
         <ProgressBar
-            android:id="@+id/loadingIcon"
             style="?android:attr/progressBarStyleLarge"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
