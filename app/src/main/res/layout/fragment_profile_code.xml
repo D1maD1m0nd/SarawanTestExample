@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/profile_code_root_view"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:background="@color/white"
     android:orientation="vertical"
     tools:context="framework.ui.profile.ProfileCodeFragment">
@@ -197,6 +197,11 @@
                 android:text="@string/profile_code_code_sent"
                 android:textColor="@color/black"
                 android:textSize="18sp" />
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/profile_code_timer_text_view"
