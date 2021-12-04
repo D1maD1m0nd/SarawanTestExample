@@ -110,49 +110,17 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/delivery"/>
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/time_delivery_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
-        android:drawableEnd="@drawable/arrow"
-        android:gravity="start"
-        android:paddingStart="0dp"
-        android:text="@string/time_delivery"
-        android:textColor="@color/black"
-        android:textSize="16sp"
-        android:fontFamily="@font/montserrat_regular"
-        android:layout_marginTop="32dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/address_button"/>
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/payment_event_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
-        android:drawableEnd="@drawable/arrow"
-        android:gravity="start"
-        android:paddingStart="0dp"
-        android:text="@string/payment_method"
-        android:textColor="@color/black"
-        android:textSize="16sp"
-        android:fontFamily="@font/montserrat_regular"
-        android:layout_marginTop="32dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/time_delivery_button" />
-
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/result_payment_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/montserrat_medium"
         android:text="@string/result_payment"
+        android:textColor="@color/secondary_orange"
         android:textSize="24sp"
-        android:textColor="@color/black"
         android:layout_marginTop="45dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/payment_event_button" />
+        app:layout_constraintTop_toBottomOf="@+id/address_button" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/result_value_payment_text_view"
@@ -160,7 +128,7 @@
         android:layout_height="wrap_content"
         android:fontFamily="@font/montserrat_medium"
         android:text="@string/default_sum"
-        android:textColor="@color/black"
+        android:textColor="@color/secondary_orange"
         android:textSize="24sp"
 
         app:layout_constraintStart_toStartOf="parent"

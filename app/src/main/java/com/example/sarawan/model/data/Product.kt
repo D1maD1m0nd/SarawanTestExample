@@ -6,6 +6,7 @@ data class Response(
     @field: Json(name = "results") val results: List<Product>
 )
 
+
 data class Product(
     @field: Json(name = "id") val id: Long? = null,
     @field: Json(name = "images") val images: List<Image>? = null,
@@ -13,6 +14,7 @@ data class Product(
     @field: Json(name = "price_type") val price_type: String? = null,
     @field: Json(name = "store_prices") val store_prices: List<StorePrice>? = null,
     @field: Json(name = "unit_quantity") val unit_quantity: String? = null,
+    @field: Json(name = "description") val description: String? = null,
 )
 
 data class StorePrice(

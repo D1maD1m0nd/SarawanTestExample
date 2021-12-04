@@ -1,4 +1,4 @@
-package com.example.sarawan.framework.ui.basket.modals
+package com.example.sarawan.framework.ui.modals
 
 import android.os.Bundle
 import android.view.LayoutInflater

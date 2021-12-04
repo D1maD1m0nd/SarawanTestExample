@@ -12,9 +12,9 @@ import com.example.sarawan.R
 import com.example.sarawan.app.App.Companion.navController
 import com.example.sarawan.databinding.FragmentBasketBinding
 import com.example.sarawan.framework.ui.basket.adapter.BasketAdapter
-import com.example.sarawan.framework.ui.basket.modals.DeliveryTimeFragment
-import com.example.sarawan.framework.ui.basket.modals.PaymentMethodFragment
 import com.example.sarawan.framework.ui.basket.viewModel.BasketViewModel
+import com.example.sarawan.framework.ui.modals.DeliveryTimeFragment
+import com.example.sarawan.framework.ui.modals.PaymentMethodFragment
 import com.example.sarawan.framework.ui.profile.ProfileAddressFragment
 import com.example.sarawan.model.data.AppState
 import com.example.sarawan.model.data.ProductsItem
@@ -156,7 +156,7 @@ class BasketFragment : Fragment() {
     }
     private fun showProductFragment(idProduct: Int) {
         val bundle = Bundle()
-        bundle.putInt(PRODUCT_ID, idProduct)
+        bundle.putLong(PRODUCT_ID, idProduct.toLong())
         navController.navigate(R.id.productCardFragment,bundle)
     }
     override fun onDestroyView() {

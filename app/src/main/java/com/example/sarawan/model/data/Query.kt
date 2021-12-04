@@ -10,6 +10,7 @@ sealed interface Query {
             object PopularProducts : Products
             data class Page(val page: Int) : Products
             data class Id(val id: Long) : Products
+            data class SimilarProducts(val id : Long) : Products
         }
 
         object Basket : Get

@@ -28,6 +28,11 @@ interface ApiService {
     fun getPopularProducts(@Query("popular_products") popularProducts: Boolean = true): Single<Response>
 
     /**
+     * Получение похожих продуктов
+     */
+    @GET("products/")
+    fun getSimilarProducts(@Query("similar_product") storeId: Long) : Single<Response>
+    /**
      * Получение категорий
      */
     @GET("categories/")
