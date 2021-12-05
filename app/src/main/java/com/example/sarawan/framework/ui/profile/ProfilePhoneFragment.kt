@@ -33,6 +33,7 @@ class ProfilePhoneFragment : DialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         dialog?.window?.attributes?.apply {
             width = WindowManager.LayoutParams.MATCH_PARENT
+            height = WindowManager.LayoutParams.MATCH_PARENT
         }
         initViews()
     }
@@ -73,8 +74,7 @@ class ProfilePhoneFragment : DialogFragment() {
     }
 
     private fun sendCode() {
-        Toast.makeText(context, "Отправить код в СМС!", Toast.LENGTH_SHORT)
-            .show()
+        ProfileCodeFragment.newInstance().show(childFragmentManager, null)
     }
 
     override fun onDestroy() {

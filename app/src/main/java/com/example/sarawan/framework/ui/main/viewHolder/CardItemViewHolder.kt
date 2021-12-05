@@ -41,7 +41,7 @@ abstract class CardItemViewHolder(
                     quantity = 1
                     data.quantity = quantity
                     itemQuantity.text = data.quantity.toString()
-                    listener.onItemClick(data, 1)
+                    listener.onItemClick(data, 1, true)
                 }
 
                 minusButton.setOnClickListener {
@@ -52,14 +52,14 @@ abstract class CardItemViewHolder(
                         itemQuantityLayout.visibility = View.GONE
                     }
                     itemQuantity.text = quantity.toString()
-                    listener.onItemClick(data, -1)
+                    listener.onItemClick(data, -1, false)
                 }
 
                 plusButton.setOnClickListener {
                     quantity += 1
                     data.quantity = quantity
                     itemQuantity.text = quantity.toString()
-                    listener.onItemClick(data, 1)
+                    listener.onItemClick(data, 1, false)
                 }
             }
 

@@ -28,7 +28,7 @@
         android:id="@+id/catalogFragment"
         android:name="com.example.sarawan.framework.ui.catalog.CatalogFragment"
         android:label="fragment_catalog"
-        tools:layout="@layout/fragment_catalog">
+        tools:layout="@layout/fragment_main">
         <action
             android:id="@+id/action_catalogFragment_to_profileFragment"
             app:destination="@id/profileFragment" />
@@ -64,4 +64,9 @@
         android:name="com.example.sarawan.framework.ui.profile.ProfileAlertFragment"
         android:label="fragment_profile_alert"
         tools:layout="@layout/fragment_profile_alert" />
+    <fragment
+        android:id="@+id/productCardFragment"
+        android:name="com.example.sarawan.framework.ui.product_card.ProductCardFragment"
+        android:label="fragment_product_card"
+        tools:layout="@layout/fragment_product_card" />
 </navigation>

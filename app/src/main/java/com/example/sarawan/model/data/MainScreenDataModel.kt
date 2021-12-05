@@ -1,7 +1,7 @@
 package com.example.sarawan.model.data
 
 import androidx.annotation.ColorInt
-import com.example.sarawan.framework.ui.main.adapter.CardType
+import com.example.sarawan.framework.ui.base.mainCatalog.CardType
 
 data class MainScreenDataModel(
 
@@ -18,20 +18,21 @@ data class MainScreenDataModel(
     val gravity: Int? = null,
     val fontType: Int? = null,
     @ColorInt val backgroundColor: Int? = null,
+    @ColorInt val textColor: Int? = null,
     val padding: ArrayList<Int>? = null,
 )
 
-fun Product.convertToMainScreenDataModel(): MainScreenDataModel {
+fun Product.toMainScreenDataModel(): MainScreenDataModel {
     return MainScreenDataModel(
         id = id,
-        price = store_prices?.get(0)?.price?.toFloat(),
+        price = store_prices?.first()?.price?.toFloat(),
         itemDescription = name,
-        pictureUrl = images?.get(0)?.image,
-        discount = store_prices?.get(0)?.discount,
-        shop = store_prices?.get(0)?.store,
-        cardType = when (store_prices?.get(0)?.discount) {
+        pictureUrl = images?.first()?.image,
+        discount = store_prices?.first()?.discount,
+        shop = store_prices?.first()?.store,
+        cardType = when (store_prices?.first()?.discount) {
             is Int -> {
-                if (store_prices[0].discount > 0) CardType.TOP.type
+                if (store_prices.first().discount > 0) CardType.TOP.type
                 else CardType.COMMON.type
             }
             else -> CardType.EMPTY.type
@@ -39,7 +40,7 @@ fun Product.convertToMainScreenDataModel(): MainScreenDataModel {
     )
 }
 
-fun MainScreenDataModel.convertToProductShortItem(): ProductShortItem {
+fun MainScreenDataModel.toProductShortItem(): ProductShortItem {
     return ProductShortItem(
         product = id?.toInt() ?: 0,
         quantity = quantity ?: 0

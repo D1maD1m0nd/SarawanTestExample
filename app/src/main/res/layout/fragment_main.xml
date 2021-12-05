@@ -60,9 +60,9 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:paddingStart="7dp"
-                app:hintEnabled="false"
                 app:boxStrokeWidth="0dp"
                 app:boxStrokeWidthFocused="0dp"
+                app:hintEnabled="false"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/clear_text"
                 app:layout_constraintStart_toEndOf="@id/search_icon"
@@ -118,11 +118,11 @@
                 android:background="@android:color/transparent"
                 android:paddingHorizontal="12dp"
                 android:src="@drawable/mic_icon"
+                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/search_button"
                 app:layout_constraintStart_toEndOf="@id/search_field"
                 app:layout_constraintTop_toTopOf="parent"
-                android:visibility="gone"
                 tools:ignore="ContentDescription,SpeakableTextPresentCheck,TouchTargetSizeCheck,TouchTargetSizeCheck" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -133,23 +133,22 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:overScrollMode="never"
-        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        app:spanCount="2"
-        tools:listitem="@layout/list_item_card" />
+        tools:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+        tools:listitem="@layout/list_item_card"
+        tools:spanCount="2" />
 
     <FrameLayout
         android:id="@+id/loading_layout"
-        android:elevation="1dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/white"
+        android:elevation="1dp"
         android:scaleType="fitStart"
-        tools:visibility="gone"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        tools:visibility="gone">
 
         <ProgressBar
-            android:id="@+id/loadingIcon"
             style="?android:attr/progressBarStyleLarge"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

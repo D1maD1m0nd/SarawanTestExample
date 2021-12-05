@@ -1,11 +1,9 @@
 package com.example.sarawan.model.datasource
 
-import com.example.sarawan.model.data.Basket
-import com.example.sarawan.model.data.Product
-import com.example.sarawan.model.data.ProductsUpdate
-import com.example.sarawan.model.data.Response
+import com.example.sarawan.model.data.*
 import io.reactivex.rxjava3.core.Single
 import retrofit2.http.*
+import retrofit2.http.Query
 
 interface ApiService {
 
@@ -13,32 +11,39 @@ interface ApiService {
      * Получение продукта по имени
      */
     @GET("products/")
-    fun search(@Query("product_name") productName: String): Single<Response>
+    fun search(
+        @Query("product_name") productName: String,
+        @Query("page") page: Int
+    ): Single<Response>
 
     /**
      * Получение продуктов с скидкой
      */
     @GET("products/")
-    fun getDiscountProducts(@Query("discount_products") discountProducts: Boolean = true): Single<Response>
+    fun getDiscountProducts(
+        @Query("discount_products") discountProducts: Boolean = true,
+        @Query("page") page: Int
+    ): Single<Response>
 
     /**
      * Получение популярных продуктов
      */
     @GET("products/")
-    fun getPopularProducts(@Query("popular_products") popularProducts: Boolean = true): Single<Response>
+    fun getPopularProducts(
+        @Query("popular_products") popularProducts: Boolean = true,
+        @Query("page") page: Int
+    ): Single<Response>
 
+    /**
+     * Получение похожих продуктов
+     */
+    @GET("products/")
+    fun getSimilarProducts(@Query("similar_product") storeId: Long) : Single<Response>
     /**
      * Получение категорий
      */
     @GET("categories/")
-    fun getCategories()
-
-    /**
-     * Получение списка продуктов
-     * @param page номер страницы
-     */
-    @GET("products/")
-    fun getProducts(@Query("page") page: Int): Single<Response>
+    fun getCategories(): Single<List<CategoryDataModel>>
 
     /**
      * Получение продукта по Id
@@ -57,11 +62,17 @@ interface ApiService {
      * Добавление продукта в корзину
      */
     @POST("basket/")
-    fun addProductBasket()
+    fun putBasketProduct(@Body productItem: ProductsUpdate): Single<Basket>
 
     /**
      * Обновление продукта
      */
     @PUT("basket/{id}/")
-    fun updateBasketProduct(@Path("id") id: Int, @Body productItem : ProductsUpdate) : Single<Basket>
+    fun updateBasketProduct(@Path("id") id: Int, @Body productItem: ProductsUpdate): Single<Basket>
+
+    /**
+     * Удаление продукта из корзины
+     */
+    @DELETE("basket_product/{id}/")
+    fun deleteBasketProduct(@Path("id") id: Int): Single<Basket>
 }

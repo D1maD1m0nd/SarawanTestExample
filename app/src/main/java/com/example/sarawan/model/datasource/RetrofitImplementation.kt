@@ -1,6 +1,5 @@
 package com.example.sarawan.model.datasource
 
-import com.example.sarawan.model.data.ProductsItem
 import com.example.sarawan.model.data.Query
 import io.reactivex.rxjava3.core.Single
 import javax.inject.Inject
@@ -14,41 +13,53 @@ class RetrofitImplementation @Inject constructor(private val apiService: ApiServ
             is Query.Get -> when (query) {
 
                 is Query.Get.Products -> when (query) {
-                    Query.Get.Products.DiscountProducts -> apiService
-                        .getDiscountProducts()
+                    is Query.Get.Products.DiscountProducts -> apiService
+                        .getDiscountProducts(page = query.page)
                         .map { it.results }
 
                     is Query.Get.Products.Id -> apiService
                         .getProduct(query.id)
                         .map { listOf(it) }
 
-                    is Query.Get.Products.Page -> apiService
-                        .getProducts(query.page)
-                        .map { it.results }
-
-                    Query.Get.Products.PopularProducts -> apiService
-                        .getPopularProducts()
+                    is Query.Get.Products.PopularProducts -> apiService
+                        .getPopularProducts(page = query.page)
                         .map { it.results }
 
                     is Query.Get.Products.ProductName -> apiService
-                        .search(query.productName)
+                        .search(query.productName, query.page)
+                        .map { it.results }
+                    is Query.Get.Products.SimilarProducts -> apiService
+                        .getSimilarProducts(query.id)
                         .map { it.results }
                 }
 
                 Query.Get.Basket -> apiService
                     .getBasket()
                     .map { listOf(it) }
+
+                Query.Get.Category -> apiService
+                    .getCategories()
+                    .map { it as List<*> }
             }
 
             is Query.Post -> when (query) {
 
-                Query.Post.Basket -> Single.fromCallable { listOf<ProductsItem>() }
+                is Query.Post.Basket.Put -> apiService
+                    .putBasketProduct(query.products)
+                    .map { listOf(it) }
             }
 
             is Query.Put -> when (query) {
 
                 is Query.Put.Basket.Update -> apiService
                     .updateBasketProduct(query.id, query.products)
+                    .map { listOf(it) }
+            }
+
+            is Query.Delete -> when (query) {
+
+                is Query.Delete.Basket.Remove -> apiService
+                    .deleteBasketProduct(query.id)
                     .map { listOf(it) }
             }
         }

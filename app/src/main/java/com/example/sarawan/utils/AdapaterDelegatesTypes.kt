@@ -5,9 +5,6 @@ import com.example.sarawan.R
 import com.example.sarawan.databinding.BasketFooterItemBinding
 import com.example.sarawan.databinding.BasketHeaderItemBinding
 import com.example.sarawan.databinding.BasketItemBinding
-import com.example.sarawan.framework.ui.basket.ItemClickListener
-import com.example.sarawan.framework.ui.basket.modals.DeliveryTimeFragment
-import com.example.sarawan.framework.ui.basket.modals.PaymentMethodFragment
 import com.example.sarawan.framework.ui.profile.ProfileAddressFragment
 import com.example.sarawan.model.data.ProductsItem
 import com.example.sarawan.model.data.delegatesModel.BasketFooter
@@ -59,7 +56,16 @@ object AdapterDelegatesTypes {
                 }
 
                 trashImageButton.setOnClickListener {
-                    itemClickListener.deleteItem(item, absoluteAdapterPosition)
+                    val basketId = item.basketProductId
+                    basketId?.let {
+                        itemClickListener.deleteItem(basketId, absoluteAdapterPosition, item)
+                    }
+                }
+
+                infoContainerConstraintLayout.setOnClickListener {
+                    item.basketProduct?.productStoreId?.let{
+                        itemClickListener.openProductCard(it)
+                    }
                 }
             }
         }
@@ -74,14 +80,8 @@ object AdapterDelegatesTypes {
                 costValueTextView.text = String.format("%.2f ₽", item.price)
                 resultValuePaymentTextView.text = String.format("%.2f ₽", item.price)
                 weightValueTextView.text = item.weight.toString()
-                timeDeliveryButton.setOnClickListener{
-                    itemClickListener.showModal(DeliveryTimeFragment.newInstance())
-                }
                 addressButton.setOnClickListener {
                     itemClickListener.showModal(ProfileAddressFragment.newInstance())
-                }
-                paymentEventButton.setOnClickListener {
-                    itemClickListener.showModal(PaymentMethodFragment.newInstance());
                 }
             }
         }

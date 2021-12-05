@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/profile_code_root_view"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical"
+    tools:context="framework.ui.profile.ProfileCodeFragment">
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/profile_code_close_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+        android:background="@color/white"
+        android:src="@drawable/close" />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/profile_code_enter_code_text_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginTop="30dp"
+                android:fontFamily="@font/montserrat_semi_bold"
+                android:gravity="center_horizontal"
+                android:text="@string/profile_code_enter_code_from_sms"
+                android:textColor="@color/black"
+                android:textSize="18sp" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/profile_code_wrong_code_text_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginTop="30dp"
+                android:fontFamily="@font/montserrat_semi_bold"
+                android:gravity="center_horizontal"
+                android:text="@string/profile_code_wrong_code"
+                android:textColor="@color/black"
+                android:textSize="18sp" />
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="60dp"
+                android:layout_marginTop="30dp"
+                android:orientation="horizontal">
+
+                <androidx.appcompat.widget.AppCompatEditText
+                    android:id="@+id/profile_code_code_1_text_view"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/rectangle_red_shape"
+                    android:gravity="center"
+                    android:inputType="number"
+                    android:maxLength="1"
+                    android:paddingVertical="10dp"
+                    android:textColor="@color/black"
+                    android:textSize="20sp"
+                    tools:text="1" />
+
+                <androidx.appcompat.widget.AppCompatEditText
+                    android:id="@+id/profile_code_code_2_text_view"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/rectangle_red_shape"
+                    android:gravity="center"
+                    android:inputType="number"
+                    android:maxLength="1"
+                    android:paddingVertical="10dp"
+                    android:textSize="20sp"
+                    tools:text="1" />
+
+                <androidx.appcompat.widget.AppCompatEditText
+                    android:id="@+id/profile_code_code_3_text_view"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/rectangle_red_shape"
+                    android:gravity="center"
+                    android:inputType="number"
+                    android:maxLength="1"
+                    android:paddingVertical="10dp"
+                    android:textSize="20sp"
+                    tools:text="1" />
+
+                <androidx.appcompat.widget.AppCompatEditText
+                    android:id="@+id/profile_code_code_4_text_view"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/rectangle_red_shape"
+                    android:gravity="center"
+                    android:inputType="number"
+                    android:maxLength="1"
+                    android:paddingVertical="10dp"
+                    android:textSize="20sp"
+                    tools:text="1" />
+
+                <androidx.appcompat.widget.AppCompatEditText
+                    android:id="@+id/profile_code_code_5_text_view"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/rectangle_red_shape"
+                    android:gravity="center"
+                    android:inputType="number"
+                    android:maxLength="1"
+                    android:paddingVertical="10dp"
+                    android:textSize="20sp"
+                    tools:text="1" />
+
+                <androidx.appcompat.widget.AppCompatEditText
+                    android:id="@+id/profile_code_code_6_text_view"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/rectangle_red_shape"
+                    android:gravity="center"
+                    android:inputType="number"
+                    android:maxLength="1"
+                    android:paddingVertical="10dp"
+                    android:textSize="20sp"
+                    tools:text="1" />
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/profile_code_send_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center|bottom"
+                android:layout_marginTop="25dp"
+                android:backgroundTint="@color/primary_green"
+                android:fontFamily="@font/montserrat_semi_bold"
+                android:letterSpacing="0.01"
+                android:paddingStart="15dp"
+                android:paddingTop="10dp"
+                android:paddingEnd="15dp"
+                android:paddingBottom="10dp"
+                android:text="@string/profile_code_send_code"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                app:cornerRadius="10dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/profile_code_no_send_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center|bottom"
+                android:layout_marginTop="25dp"
+                android:backgroundTint="#FFB3DBC1"
+                android:fontFamily="@font/montserrat_semi_bold"
+                android:letterSpacing="0.01"
+                android:paddingStart="15dp"
+                android:paddingTop="10dp"
+                android:paddingEnd="15dp"
+                android:paddingBottom="10dp"
+                android:text="@string/profile_code_send_code"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                app:cornerRadius="10dp" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/profile_code_sent_text_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginHorizontal="30dp"
+                android:layout_marginTop="20dp"
+                android:fontFamily="@font/montserrat_regular"
+                android:gravity="center_horizontal"
+                android:text="@string/profile_code_code_sent"
+                android:textColor="@color/black"
+                android:textSize="18sp" />
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/profile_code_timer_text_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="20dp"
+                android:fontFamily="@font/montserrat_regular"
+                android:gravity="center_horizontal"
+                android:text="@string/profile_code_re_request_code_in"
+                android:textColor="@color/black"
+                android:textSize="18sp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/profile_code_request_again_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center|bottom"
+                android:layout_marginTop="25dp"
+                android:layout_marginBottom="25dp"
+                android:backgroundTint="@color/primary_green"
+                android:fontFamily="@font/montserrat_semi_bold"
+                android:letterSpacing="0.01"
+                android:paddingHorizontal="15dp"
+                android:paddingTop="5dp"
+                android:paddingBottom="10dp"
+                android:text="@string/profile_code_request_again"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                app:cornerRadius="10dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/profile_code_no_request_again_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center|bottom"
+                android:layout_marginTop="25dp"
+                android:layout_marginBottom="25dp"
+                android:backgroundTint="#FFB3DBC1"
+                android:fontFamily="@font/montserrat_semi_bold"
+                android:letterSpacing="0.01"
+                android:paddingHorizontal="15dp"
+                android:paddingTop="5dp"
+                android:paddingBottom="10dp"
+                android:text="@string/profile_code_request_again"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                app:cornerRadius="10dp" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.appcompat.widget.LinearLayoutCompat>

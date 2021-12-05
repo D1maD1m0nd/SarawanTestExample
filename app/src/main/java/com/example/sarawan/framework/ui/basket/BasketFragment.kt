@@ -8,11 +8,13 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.sarawan.R
+import com.example.sarawan.app.App.Companion.navController
 import com.example.sarawan.databinding.FragmentBasketBinding
 import com.example.sarawan.framework.ui.basket.adapter.BasketAdapter
-import com.example.sarawan.framework.ui.basket.modals.DeliveryTimeFragment
-import com.example.sarawan.framework.ui.basket.modals.PaymentMethodFragment
 import com.example.sarawan.framework.ui.basket.viewModel.BasketViewModel
+import com.example.sarawan.framework.ui.modals.DeliveryTimeFragment
+import com.example.sarawan.framework.ui.modals.PaymentMethodFragment
 import com.example.sarawan.framework.ui.profile.ProfileAddressFragment
 import com.example.sarawan.model.data.AppState
 import com.example.sarawan.model.data.ProductsItem
@@ -20,6 +22,7 @@ import com.example.sarawan.model.data.ProductsUpdate
 import com.example.sarawan.model.data.delegatesModel.BasketFooter
 import com.example.sarawan.model.data.delegatesModel.BasketHeader
 import com.example.sarawan.model.data.delegatesModel.BasketListItem
+import com.example.sarawan.utils.ItemClickListener
 import com.example.sarawan.utils.toUpdateProduct
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
@@ -47,9 +50,17 @@ class BasketFragment : Fragment() {
             updateBasket()
         }
 
-        override fun deleteItem(item: BasketListItem, pos: Int) {
+        override fun deleteItem(basketId: Int, pos: Int, item : BasketListItem) {
             list.remove(item)
-            deleteItemRcView(pos)
+            deleteBasketItem(pos, basketId)
+        }
+
+        override fun openProductCard(productId : Int) {
+            showProductFragment(productId)
+        }
+
+        override fun changeVisible(pos : Int) {
+            TODO("Not yet implemented")
         }
     }
     private val adapter = BasketAdapter(itemClickListener)
@@ -90,7 +101,9 @@ class BasketFragment : Fragment() {
         when (appState) {
             is AppState.Success<*> -> {
                 val data = appState.data as List<ProductsItem>
-                initDataRcView(data)
+                if(list.count() < LIMIT){
+                    initDataRcView(data)
+                }
             }
             is AppState.Error -> Unit
             AppState.Loading -> Unit
@@ -128,12 +141,13 @@ class BasketFragment : Fragment() {
         }
     }
 
-    private fun deleteItemRcView(pos: Int) {
+    private fun deleteBasketItem(pos: Int, basketItemId: Int ) {
         adapter.apply {
             items = list
             notifyItemRemoved(pos)
             updateHolders()
         }
+        viewModel.deleteBasketProduct(basketItemId)
     }
 
     private fun updateBasket() {
@@ -145,7 +159,11 @@ class BasketFragment : Fragment() {
         viewModel.updateBasket(ProductsUpdate(items))
         adapter.updateHolders()
     }
-
+    private fun showProductFragment(idProduct: Int) {
+        val bundle = Bundle()
+        bundle.putLong(PRODUCT_ID, idProduct.toLong())
+        navController.navigate(R.id.productCardFragment,bundle)
+    }
     override fun onDestroyView() {
         _binding = null
         super.onDestroyView()
@@ -153,5 +171,7 @@ class BasketFragment : Fragment() {
 
     companion object {
         fun newInstance() = BasketFragment()
+        const val PRODUCT_ID = "PRODUCT_ID"
+        private const val LIMIT = 3
     }
 }

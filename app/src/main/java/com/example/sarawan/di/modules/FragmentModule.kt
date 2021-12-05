@@ -1,7 +1,9 @@
 package com.example.sarawan.di.modules
 
 import com.example.sarawan.framework.ui.basket.BasketFragment
+import com.example.sarawan.framework.ui.catalog.CatalogFragment
 import com.example.sarawan.framework.ui.main.MainFragment
+import com.example.sarawan.framework.ui.product_card.ProductCardFragment
 import com.example.sarawan.framework.ui.profile.ProfileFragment
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
@@ -13,7 +15,13 @@ abstract class FragmentModule {
     abstract fun contributeMainFragment(): MainFragment
 
     @ContributesAndroidInjector
+    abstract fun contributeCatalogFragment(): CatalogFragment
+
+    @ContributesAndroidInjector
     abstract fun contributeBasketFragment(): BasketFragment
+
+    @ContributesAndroidInjector
+    abstract fun contributeProductCardFragment(): ProductCardFragment
 
     @ContributesAndroidInjector
     abstract fun contributeProfileFragment(): ProfileFragment
