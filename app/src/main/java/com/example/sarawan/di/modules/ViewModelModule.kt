@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.sarawan.activity.ActivityViewModel
 import com.example.sarawan.framework.ui.basket.viewModel.BasketViewModel
+import com.example.sarawan.framework.ui.catalog.viewModel.CatalogViewModel
+import com.example.sarawan.framework.ui.category.viewModel.CategoryViewModel
 import com.example.sarawan.framework.ui.main.viewModel.MainViewModel
 import com.example.sarawan.framework.ui.product_card.viewModel.ProductCardViewModel
 import dagger.Binds
@@ -37,6 +39,16 @@ abstract class ViewModelModule {
     @ViewModelKey(ActivityViewModel::class)
     @IntoMap
     protected abstract fun activityViewModel(activityViewModel: ActivityViewModel): ViewModel
+
+    @Binds
+    @ViewModelKey(CatalogViewModel::class)
+    @IntoMap
+    protected abstract fun catalogViewModel(catalogViewModel: CatalogViewModel): ViewModel
+
+    @Binds
+    @ViewModelKey(CategoryViewModel::class)
+    @IntoMap
+    protected abstract fun categoryViewModel(categoryViewModel: CategoryViewModel): ViewModel
 }
 
 @Target(

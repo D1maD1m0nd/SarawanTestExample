@@ -73,8 +73,7 @@ class ProfilePhoneFragment : DialogFragment() {
     }
 
     private fun sendCode() {
-        Toast.makeText(context, "Отправить код в СМС!", Toast.LENGTH_SHORT)
-            .show()
+        ProfileCodeFragment.newInstance().show(childFragmentManager, null)
     }
 
     override fun onDestroy() {

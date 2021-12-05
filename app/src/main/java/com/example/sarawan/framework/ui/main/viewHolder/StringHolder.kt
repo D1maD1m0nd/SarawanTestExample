@@ -25,7 +25,7 @@ class StringHolder(private val view: MaterialTextView) :
             data.fontType?.let {
                 setTypeface(typeface, it)
             }
-            setTextColor(resources.getColor(R.color.card_text_color, null))
+            setTextColor(resources.getColor(data.textColor ?: R.color.card_text_color, null))
         }
     }
 }

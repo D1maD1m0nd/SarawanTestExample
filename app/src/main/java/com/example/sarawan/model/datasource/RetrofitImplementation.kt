@@ -13,24 +13,20 @@ class RetrofitImplementation @Inject constructor(private val apiService: ApiServ
             is Query.Get -> when (query) {
 
                 is Query.Get.Products -> when (query) {
-                    Query.Get.Products.DiscountProducts -> apiService
-                        .getDiscountProducts()
+                    is Query.Get.Products.DiscountProducts -> apiService
+                        .getDiscountProducts(page = query.page)
                         .map { it.results }
 
                     is Query.Get.Products.Id -> apiService
                         .getProduct(query.id)
                         .map { listOf(it) }
 
-                    is Query.Get.Products.Page -> apiService
-                        .getProducts(query.page)
-                        .map { it.results }
-
-                    Query.Get.Products.PopularProducts -> apiService
-                        .getPopularProducts()
+                    is Query.Get.Products.PopularProducts -> apiService
+                        .getPopularProducts(page = query.page)
                         .map { it.results }
 
                     is Query.Get.Products.ProductName -> apiService
-                        .search(query.productName)
+                        .search(query.productName, query.page)
                         .map { it.results }
                     is Query.Get.Products.SimilarProducts -> apiService
                         .getSimilarProducts(query.id)
@@ -40,6 +36,10 @@ class RetrofitImplementation @Inject constructor(private val apiService: ApiServ
                 Query.Get.Basket -> apiService
                     .getBasket()
                     .map { listOf(it) }
+
+                Query.Get.Category -> apiService
+                    .getCategories()
+                    .map { it as List<*> }
             }
 
             is Query.Post -> when (query) {

@@ -1,7 +1,7 @@
 package com.example.sarawan.model.data
 
 import androidx.annotation.ColorInt
-import com.example.sarawan.framework.ui.main.adapter.CardType
+import com.example.sarawan.framework.ui.base.mainCatalog.CardType
 
 data class MainScreenDataModel(
 
@@ -18,10 +18,11 @@ data class MainScreenDataModel(
     val gravity: Int? = null,
     val fontType: Int? = null,
     @ColorInt val backgroundColor: Int? = null,
+    @ColorInt val textColor: Int? = null,
     val padding: ArrayList<Int>? = null,
 )
 
-fun Product.convertToMainScreenDataModel(): MainScreenDataModel {
+fun Product.toMainScreenDataModel(): MainScreenDataModel {
     return MainScreenDataModel(
         id = id,
         price = store_prices?.first()?.price?.toFloat(),
@@ -39,7 +40,7 @@ fun Product.convertToMainScreenDataModel(): MainScreenDataModel {
     )
 }
 
-fun MainScreenDataModel.convertToProductShortItem(): ProductShortItem {
+fun MainScreenDataModel.toProductShortItem(): ProductShortItem {
     return ProductShortItem(
         product = id?.toInt() ?: 0,
         quantity = quantity ?: 0
