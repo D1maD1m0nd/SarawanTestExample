@@ -22,6 +22,11 @@ sealed interface Query {
         sealed interface Basket : Post {
             data class Put(val products: ProductsUpdate) : Basket
         }
+
+        sealed interface User : Post {
+            data class NewUser(val user : UserRegistration) : User
+            data class Sms(val user : UserRegistration) : User
+        }
     }
 
     sealed interface Put : Query {

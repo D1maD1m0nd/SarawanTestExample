@@ -47,7 +47,7 @@ class NetworkModule {
     fun getApiService(retrofit: Retrofit): ApiService = retrofit.create(ApiService::class.java)
 
     companion object {
-        private const val BASE_URL = "https://dev.sarawan.ru/api/"
+        private const val BASE_URL = "https://dev.sarawan.ru/"
         private const val TOKEN = "Token ${BuildConfig.USER_TOKEN}"
     }
 }

@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.sarawan.databinding.FragmentProfileBinding
+import com.example.sarawan.framework.ui.profile.phone_fragment.ProfilePhoneFragment
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
 

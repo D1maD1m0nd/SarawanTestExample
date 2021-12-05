@@ -1,4 +1,4 @@
-package com.example.sarawan.framework.ui.profile
+package com.example.sarawan.framework.ui.profile.phone_fragment
 
 import android.graphics.Color
 import android.os.Bundle
@@ -13,20 +13,39 @@ import android.view.WindowManager
 import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
+import androidx.lifecycle.ViewModelProvider
 import com.example.sarawan.R
 import com.example.sarawan.databinding.FragmentProfilePhoneBinding
+import com.example.sarawan.framework.ui.profile.ProfileCodeFragment
+import com.example.sarawan.framework.ui.profile.phone_fragment.viewModel.ProfilePhoneViewModel
+import com.example.sarawan.model.data.AppState
+import com.example.sarawan.model.data.UserRegistration
+import dagger.android.support.AndroidSupportInjection
+import javax.inject.Inject
 
 class ProfilePhoneFragment : DialogFragment() {
-
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
+    private val viewModel: ProfilePhoneViewModel by lazy {
+        viewModelFactory.create(ProfilePhoneViewModel::class.java)
+    }
     private var _binding: FragmentProfilePhoneBinding? = null
     private val binding get() = _binding!!
-
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        AndroidSupportInjection.inject(this)
+    }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View = FragmentProfilePhoneBinding
         .inflate(inflater, container, false)
-        .also { _binding = it }
+        .also {
+            viewModel.getStateLiveData().observe(viewLifecycleOwner) { appState: AppState<*> ->
+                setState(appState)
+            }
+            _binding = it
+        }
         .root
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -74,9 +93,46 @@ class ProfilePhoneFragment : DialogFragment() {
     }
 
     private fun sendCode() {
-        ProfileCodeFragment.newInstance().show(childFragmentManager, null)
+        val number = getFormatNumber()
+        if(number.length == 12) {
+            val user = UserRegistration(phoneNumber = number)
+            viewModel.sendSms(user)
+        } else {
+            Toast.makeText(context,"Номер не корректный", Toast.LENGTH_SHORT).show()
+        }
     }
-
+    private fun getFormatNumber() : String{
+        val number = binding.profilePhoneMaskedEditText.text.toString()
+        return number
+            .replace("(", "")
+            .replace(")", "")
+            .replace("_","")
+            .replace("-", "")
+            .replace(" ", "")
+    }
+    private fun setState(appState: AppState<*>) {
+        when (appState) {
+            is AppState.Success<*> -> {
+                appState.data as MutableList<UserRegistration>
+                if(appState.data.isNotEmpty()) {
+                    val result = appState.data.first()
+                    result.success?.let {
+                        if(it) {
+                            ProfileCodeFragment.newInstance().show(childFragmentManager, null)
+                        }
+                    }
+                }
+                ProfileCodeFragment.newInstance().show(childFragmentManager, null)
+            }
+            is AppState.Error -> {
+                Toast.makeText(context,
+                    "При отправке смс кода произошла ошибка, повторите попытку позднее",
+                    Toast.LENGTH_SHORT)
+                    .show()
+            }
+            AppState.Loading -> Unit
+        }
+    }
     override fun onDestroy() {
         super.onDestroy()
         _binding = null

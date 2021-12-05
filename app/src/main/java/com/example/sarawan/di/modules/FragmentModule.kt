@@ -5,6 +5,7 @@ import com.example.sarawan.framework.ui.catalog.CatalogFragment
 import com.example.sarawan.framework.ui.main.MainFragment
 import com.example.sarawan.framework.ui.product_card.ProductCardFragment
 import com.example.sarawan.framework.ui.profile.ProfileFragment
+import com.example.sarawan.framework.ui.profile.phone_fragment.ProfilePhoneFragment
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 
@@ -25,4 +26,7 @@ abstract class FragmentModule {
 
     @ContributesAndroidInjector
     abstract fun contributeProfileFragment(): ProfileFragment
+
+    @ContributesAndroidInjector
+    abstract fun contributeProfilePhoneFragment() : ProfilePhoneFragment
 }
