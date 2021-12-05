@@ -13,7 +13,6 @@ class ProductCardViewModel @Inject constructor(
 ) : BaseViewModel<AppState<*>>(){
     fun getProduct(storeId : Long?) {
         storeId?.let {
-
             compositeDisposable.addAll(
                 interactor.getData(Query.Get.Products.Id(storeId), true)
                     .subscribeOn(schedulerProvider.io)
@@ -32,9 +31,5 @@ class ProductCardViewModel @Inject constructor(
             )
 
         }
-    }
-
-    fun getSimilarProducts() {
-
     }
 }

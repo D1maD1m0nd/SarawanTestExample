@@ -15,6 +15,7 @@ data class Product(
     @field: Json(name = "store_prices") val store_prices: List<StorePrice>? = null,
     @field: Json(name = "unit_quantity") val unit_quantity: String? = null,
     @field: Json(name = "description") val description: String? = null,
+    var visible : Boolean = true
 )
 
 data class StorePrice(

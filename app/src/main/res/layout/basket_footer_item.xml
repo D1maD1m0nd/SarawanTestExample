@@ -111,6 +111,29 @@
         app:layout_constraintTop_toBottomOf="@+id/delivery"/>
 
     <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/dilivery_price_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/montserrat_medium"
+        android:text="@string/dilivery_price"
+        android:textColor="@color/text_grey"
+        android:layout_marginTop="30dp"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/address_button" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/dilivery_price_value_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/montserrat_medium"
+        android:text="@string/default_sum"
+        android:textColor="@color/text_grey"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/dilivery_price_text_view" />
+
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/result_payment_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -118,9 +141,9 @@
         android:text="@string/result_payment"
         android:textColor="@color/secondary_orange"
         android:textSize="24sp"
-        android:layout_marginTop="45dp"
+        android:layout_marginTop="50dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/address_button" />
+        app:layout_constraintTop_toBottomOf="@+id/dilivery_price_value_text_view" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/result_value_payment_text_view"
@@ -130,7 +153,6 @@
         android:text="@string/default_sum"
         android:textColor="@color/secondary_orange"
         android:textSize="24sp"
-
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/result_payment_text_view" />
 

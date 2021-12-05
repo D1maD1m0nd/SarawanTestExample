@@ -1,11 +1,11 @@
 package com.example.sarawan.framework.ui.basket.adapter
 
-import com.example.sarawan.framework.ui.basket.ItemClickListener
 import com.example.sarawan.model.data.ProductsItem
 import com.example.sarawan.model.data.delegatesModel.BasketFooter
 import com.example.sarawan.model.data.delegatesModel.BasketHeader
 import com.example.sarawan.model.data.delegatesModel.BasketListItem
 import com.example.sarawan.utils.AdapterDelegatesTypes
+import com.example.sarawan.utils.ItemClickListener
 import com.hannesdorfmann.adapterdelegates4.AsyncListDifferDelegationAdapter
 
 

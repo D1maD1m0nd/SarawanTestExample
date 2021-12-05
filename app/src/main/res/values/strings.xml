@@ -93,5 +93,6 @@
     <string name="price_other_store">Цена в других магазинах:</string>
     <string name="semilar_products_view">С этим товаром смотрят:</string>
     <string name="description">Описание</string>
+    <string name="dilivery_price">Стоимость доставки</string>
 
 </resources>

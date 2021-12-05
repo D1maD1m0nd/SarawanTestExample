@@ -22,6 +22,7 @@ import com.example.sarawan.model.data.ProductsUpdate
 import com.example.sarawan.model.data.delegatesModel.BasketFooter
 import com.example.sarawan.model.data.delegatesModel.BasketHeader
 import com.example.sarawan.model.data.delegatesModel.BasketListItem
+import com.example.sarawan.utils.ItemClickListener
 import com.example.sarawan.utils.toUpdateProduct
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
@@ -56,6 +57,10 @@ class BasketFragment : Fragment() {
 
         override fun openProductCard(productId : Int) {
             showProductFragment(productId)
+        }
+
+        override fun changeVisible(pos : Int) {
+            TODO("Not yet implemented")
         }
     }
     private val adapter = BasketAdapter(itemClickListener)
