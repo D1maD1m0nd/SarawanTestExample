@@ -2,12 +2,10 @@ package com.example.sarawan.framework.ui.product_card.adapter
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
-import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.sarawan.R
 import com.example.sarawan.databinding.ListItemCardBinding
 import com.example.sarawan.model.data.Product
 import com.example.sarawan.utils.ItemClickListener
@@ -25,26 +23,26 @@ class SimilarAdapter(val itemClickListener: ItemClickListener) : RecyclerView.Ad
         notifyItemChanged(position)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductViewHolder  =
-        ProductViewHolder(
-            LayoutInflater
-            .from(parent.context)
-            .inflate(
-                R.layout.list_item_new,
-                parent,
-                false
-            ))
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductViewHolder {
+        val view = ListItemCardBinding.inflate(
+            LayoutInflater.from(parent.context),
+            parent,
+            false
+        ).apply {
+            root.layoutParams.apply {
+                width = parent.width / 2
+            }
+        }
+        return object : ProductViewHolder(view){}
+    }
 
     override fun onBindViewHolder(holder: ProductViewHolder, position: Int) {
         holder.bind(similarList[position])
     }
 
     override fun getItemCount(): Int = similarList.size
-    override fun getItemId(position: Int): Long {
-        return similarList[position].id!!
-    }
-    inner class ProductViewHolder(item: View) : RecyclerView.ViewHolder(item) {
-        private val binding = ListItemCardBinding.bind(item)
+
+    abstract inner class ProductViewHolder(private val binding: ListItemCardBinding,) : RecyclerView.ViewHolder(binding.root) {
         fun bind(product : Product) = with(binding) {
             val store = product.store_prices?.first()
             discount.visibility = GONE
