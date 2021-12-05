@@ -36,5 +36,7 @@ data class UserRegistration(
     @field:Json(name = "token")
     val token : String? = null,
     @field:Json(name = "user_id")
-    val user_id : Long? = null
+    val user_id : Long? = null,
+	@field:Json(name = "code")
+	val code : Int? = null
 )

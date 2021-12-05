@@ -16,8 +16,8 @@ import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.sarawan.R
 import com.example.sarawan.databinding.FragmentProfilePhoneBinding
-import com.example.sarawan.framework.ui.profile.ProfileCodeFragment
 import com.example.sarawan.framework.ui.profile.phone_fragment.viewModel.ProfilePhoneViewModel
+import com.example.sarawan.framework.ui.profile.sms_code_fragment.ProfileCodeFragment
 import com.example.sarawan.model.data.AppState
 import com.example.sarawan.model.data.UserRegistration
 import dagger.android.support.AndroidSupportInjection
@@ -118,11 +118,11 @@ class ProfilePhoneFragment : DialogFragment() {
                     val result = appState.data.first()
                     result.success?.let {
                         if(it) {
-                            ProfileCodeFragment.newInstance().show(childFragmentManager, null)
+                            val number = binding.profilePhoneMaskedEditText.text.toString()
+                            ProfileCodeFragment.newInstance(number).show(childFragmentManager, null)
                         }
                     }
                 }
-                ProfileCodeFragment.newInstance().show(childFragmentManager, null)
             }
             is AppState.Error -> {
                 Toast.makeText(context,
