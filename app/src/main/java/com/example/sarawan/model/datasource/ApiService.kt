@@ -35,6 +35,11 @@ interface ApiService {
     ): Single<Response>
 
     /**
+     * Получение похожих продуктов
+     */
+    @GET("products/")
+    fun getSimilarProducts(@Query("similar_product") storeId: Long) : Single<Response>
+    /**
      * Получение категорий
      */
     @GET("categories/")

@@ -90,6 +90,10 @@
     <string name="default_count">1 шт.</string>
     <string name="default_store">Ашан</string>
     <string name="add_to_basket">Добавить в корзину</string>
+    <string name="price_other_store">Цена в других магазинах:</string>
+    <string name="semilar_products_view">С этим товаром смотрят:</string>
+    <string name="description">Описание</string>
+    <string name="dilivery_price">Стоимость доставки</string>
     <string name="profile_code_enter_code_from_sms">Введите код из СМС</string>
     <string name="profile_code_send_code">Отправить</string>
     <string name="profile_code_code_sent">Код отправлен на телефон\n</string>
@@ -98,5 +102,4 @@
     <string name="profile_code_wrong_code">Неверный код</string>
     <string name="profile_success_registered">Вы успешно зарегистрировались!</string>
     <string name="profile_success_ok">OK</string>
-
 </resources>

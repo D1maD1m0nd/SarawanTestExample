@@ -6,140 +6,206 @@
     android:layout_height="match_parent"
     tools:context=".framework.ui.product_card.ProductCardFragment">
 
-    <androidx.appcompat.widget.AppCompatImageButton
-        android:id="@+id/product_close_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="end"
-        android:background="@color/white"
-        android:src="@drawable/close"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="10dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_margin="20dp"
-        android:padding="8dp"
+        android:layout_height="match_parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/product_close_button">
+        app:layout_constraintTop_toTopOf="parent">
 
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/title_text_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/montserrat_medium"
-            android:text="Колбаски из говядины"
-            android:textColor="@color/black"
-            android:textSize="28sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/main_image_product_image_view"
-            android:layout_width="260dp"
-            android:layout_height="190dp"
-            android:layout_marginTop="24dp"
-            android:src="@drawable/product"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/title_text_view" />
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/item1_image_product_image_view"
-            android:layout_width="80dp"
-            android:layout_height="60dp"
-            android:layout_marginStart="24dp"
-            android:layout_marginEnd="8dp"
-            android:src="@drawable/product"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/main_image_product_image_view"
-            app:layout_constraintTop_toTopOf="@+id/main_image_product_image_view" />
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/item2_image_product_image_view"
-            android:layout_width="80dp"
-            android:layout_height="60dp"
-            android:src="@drawable/product"
-            app:layout_constraintEnd_toEndOf="@+id/item1_image_product_image_view"
-            app:layout_constraintTop_toBottomOf="@+id/item1_image_product_image_view" />
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/item3_image_product_image_view"
-            android:layout_width="80dp"
-            android:layout_height="60dp"
-            android:src="@drawable/product"
-            app:layout_constraintEnd_toEndOf="@+id/item2_image_product_image_view"
-            app:layout_constraintTop_toBottomOf="@+id/item2_image_product_image_view" />
-
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/price_text_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:fontFamily="@font/montserrat_medium"
-            android:text="@string/default_sum"
-            android:textColor="@color/black"
-            android:textSize="28sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/main_image_product_image_view" />
-
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/count_text_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/montserrat_medium"
-            android:text="@string/default_count"
-            android:textColor="@color/black"
-            android:textSize="14sp"
-            app:layout_constraintBottom_toBottomOf="@+id/price_text_view"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/price_text_view" />
-
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/minimum_price_text_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:fontFamily="@font/montserrat_medium"
-            android:text="@string/min_price"
-            android:textColor="@color/black"
-            android:textSize="12sp"
-            app:layout_constraintStart_toStartOf="@+id/price_text_view"
-            app:layout_constraintTop_toBottomOf="@+id/price_text_view" />
-
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/store_text_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:fontFamily="@font/montserrat_medium"
-            android:text="@string/default_store"
-            android:textColor="@color/black"
-            android:textSize="12sp"
-            app:layout_constraintBottom_toBottomOf="@+id/minimum_price_text_view"
-            app:layout_constraintStart_toEndOf="@+id/minimum_price_text_view"
-            app:layout_constraintTop_toTopOf="@+id/minimum_price_text_view" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/add_basket_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:fontFamily="@font/montserrat_semi_bold"
-            android:letterSpacing="0.01"
-            android:paddingStart="20dp"
-            android:paddingTop="12dp"
-            android:paddingEnd="20dp"
-            android:paddingBottom="12dp"
-            android:text="@string/add_to_basket"
-            android:textSize="16sp"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginBottom="30dp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/store_text_view" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            app:layout_constraintTop_toTopOf="parent">
 
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/product_close_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:background="@color/white"
+                android:src="@drawable/close"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/title_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:fontFamily="@font/montserrat_medium"
+                android:lines="2"
+                android:maxLines="2"
+                android:minLines="1"
+                android:textColor="@color/black"
+                android:textSize="28sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/product_close_button" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/main_image_product_image_view"
+                android:layout_width="match_parent"
+                android:layout_height="190dp"
+                android:layout_marginTop="24dp"
+                android:src="@drawable/product"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/title_text_view" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/price_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:fontFamily="@font/montserrat_medium"
+                android:text="@string/default_sum"
+                android:textColor="@color/black"
+                android:textSize="28sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/main_image_product_image_view" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/count_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:fontFamily="@font/montserrat_medium"
+                android:text="@string/default_count"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="@+id/price_text_view"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/price_text_view" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/minimum_price_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:fontFamily="@font/montserrat_medium"
+                android:text="@string/min_price"
+                android:textColor="@color/black"
+                android:textSize="12sp"
+                app:layout_constraintStart_toStartOf="@+id/price_text_view"
+                app:layout_constraintTop_toBottomOf="@+id/price_text_view" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/store_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:fontFamily="@font/montserrat_medium"
+                android:textColor="@color/black"
+                android:textSize="12sp"
+                app:layout_constraintBottom_toBottomOf="@+id/minimum_price_text_view"
+                app:layout_constraintStart_toEndOf="@+id/minimum_price_text_view"
+                app:layout_constraintTop_toTopOf="@+id/minimum_price_text_view" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/add_basket_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:fontFamily="@font/montserrat_semi_bold"
+                android:letterSpacing="0.01"
+                android:paddingStart="20dp"
+                android:paddingTop="12dp"
+                android:paddingEnd="20dp"
+                android:paddingBottom="12dp"
+                android:text="@string/add_to_basket"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/store_text_view" />
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/card_container_rc_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="30dp"
+                android:layout_marginEnd="16dp"
+                app:layout_constraintEnd_toEndOf="@+id/add_basket_button"
+                app:layout_constraintStart_toStartOf="@+id/add_basket_button"
+                app:layout_constraintTop_toBottomOf="@+id/add_basket_button">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/container_card_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp">
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/title_store_price_text_view"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/montserrat_medium"
+                        android:text="@string/price_other_store"
+                        android:textColor="@color/black"
+                        android:textSize="16sp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/container_store_recycler_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/title_store_price_text_view" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.cardview.widget.CardView>
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/semilar_title_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="30dp"
+                android:fontFamily="@font/montserrat_medium"
+                android:text="@string/semilar_products_view"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                app:fontFamily="@font/montserrat_medium"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/card_container_rc_view" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/similar_product_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/semilar_title_text_view" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/description_title_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="30dp"
+                android:text="@string/description"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/similar_product_recycler_view" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/content_description_text_view"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/description_title_text_view"
+                app:layout_constraintTop_toBottomOf="@+id/description_title_text_view"
+                tools:text="@tools:sample/lorem/random" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>
