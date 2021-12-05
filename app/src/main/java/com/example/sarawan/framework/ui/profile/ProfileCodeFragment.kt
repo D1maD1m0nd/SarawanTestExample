@@ -34,6 +34,7 @@ class ProfileCodeFragment : DialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         dialog?.window?.attributes?.apply {
             width = WindowManager.LayoutParams.MATCH_PARENT
+            height = WindowManager.LayoutParams.MATCH_PARENT
         }
         initViews()
         setTitle()
