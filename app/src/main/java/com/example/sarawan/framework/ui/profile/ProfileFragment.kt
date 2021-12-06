@@ -98,6 +98,8 @@ class ProfileFragment : Fragment() {
                         }
                         is UserDataModel -> {
                             binding.profilePhoneTextView.text =firstItem.phone
+                            val name = formatName(firstItem)
+                            binding.profileNameTextView.text = name
                         }
                     }
                 }
@@ -116,7 +118,13 @@ class ProfileFragment : Fragment() {
         val street = address.street
         val house = address.house
         val roomNum = address.roomNumber
-        return String.format("%s, ул %s, д %s, кв %s", city, street, house, roomNum)
+        return "$city, ул $street, д $house, кв $roomNum"
+    }
+
+    private fun formatName(user : UserDataModel) : String{
+        val firstName = user.firstName
+        val lastName = user.lastName
+        return "$firstName $lastName"
     }
     override fun onDestroy() {
         super.onDestroy()
