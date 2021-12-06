@@ -7,6 +7,8 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.example.sarawan.R
+import com.example.sarawan.app.App.Companion.navController
 import com.example.sarawan.app.App.Companion.sharedPreferences
 import com.example.sarawan.databinding.FragmentProfileBinding
 import com.example.sarawan.framework.ui.profile.address_fragment.ProfileAddressFragment
@@ -36,17 +38,17 @@ class ProfileFragment : Fragment() {
     }
 
     override fun onCreateView(
-            inflater: LayoutInflater, container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View = FragmentProfileBinding
-            .inflate(inflater, container, false)
-            .also {
-                viewModel.getStateLiveData().observe(viewLifecycleOwner) { appState: AppState<*> ->
-                    setState(appState)
-                }
-                _binding = it
+        .inflate(inflater, container, false)
+        .also {
+            viewModel.getStateLiveData().observe(viewLifecycleOwner) { appState: AppState<*> ->
+                setState(appState)
             }
-            .root
+            _binding = it
+        }
+        .root
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -76,44 +78,53 @@ class ProfileFragment : Fragment() {
     }
 
     private fun showPhone() {
-        ProfilePhoneFragment.newInstance().show(requireActivity().supportFragmentManager, null)
+        ProfilePhoneFragment.newInstance { callback() }
+            .show(requireActivity().supportFragmentManager, null)
+    }
+
+    private fun callback() {
+        navController.navigate(R.id.profileFragment)
     }
 
     private fun showName() {
         ProfileNameFragment.newInstance().show(childFragmentManager, null)
     }
-    private fun setState(appState: AppState<*>) = with(binding){
+
+    private fun setState(appState: AppState<*>) = with(binding) {
         when (appState) {
             is AppState.Success<*> -> {
-                if(appState.data.isNotEmpty()) {
-                    when(val firstItem = appState.data.first()) {
+                if (appState.data.isNotEmpty()) {
+                    when (val firstItem = appState.data.first()) {
                         is AddressItem -> {
                             val data = appState.data as MutableList<AddressItem>
                             val primaryAddress = data.findLast { it.primary == true }
                             primaryAddress?.let {
                                 val address = formatAddress(it)
-                                binding.profileAddressTextView.text = address
+                                profileAddressTextView.text = address
                             }
 
                         }
                         is UserDataModel -> {
-                            binding.profilePhoneTextView.text =firstItem.phone
+                            profilePhoneTextView.text = firstItem.phone
                             val name = formatName(firstItem)
-                            binding.profileNameTextView.text = name
+                            profileNameTextView.text = name
                         }
                     }
                 }
             }
             is AppState.Error -> {
-                Toast.makeText(context,
+                Toast.makeText(
+                    context,
                     "При отправке смс кода произошла ошибка, повторите попытку позднее",
-                    Toast.LENGTH_SHORT)
+                    Toast.LENGTH_SHORT
+                )
                     .show()
             }
             AppState.Loading -> Unit
         }
     }
-    private fun formatAddress(address : AddressItem) : String {
+
+    private fun formatAddress(address: AddressItem): String {
         val city = address.city
         val street = address.street
         val house = address.house
@@ -121,11 +132,12 @@ class ProfileFragment : Fragment() {
         return "$city, ул $street, д $house, кв $roomNum"
     }
 
-    private fun formatName(user : UserDataModel) : String{
+    private fun formatName(user: UserDataModel): String {
         val firstName = user.firstName
         val lastName = user.lastName
         return "$firstName $lastName"
     }
+
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
