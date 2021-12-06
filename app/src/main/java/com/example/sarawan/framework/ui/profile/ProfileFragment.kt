@@ -18,6 +18,7 @@ import com.example.sarawan.framework.ui.profile.viewModel.ProfileViewModel
 import com.example.sarawan.model.data.AddressItem
 import com.example.sarawan.model.data.AppState
 import com.example.sarawan.model.data.UserDataModel
+import com.example.sarawan.utils.exstentions.token
 import com.example.sarawan.utils.exstentions.userId
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
@@ -32,6 +33,7 @@ class ProfileFragment : Fragment() {
 
     private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding!!
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         AndroidSupportInjection.inject(this)
@@ -71,6 +73,9 @@ class ProfileFragment : Fragment() {
     }
 
     private fun leave() {
+        sharedPreferences.token = null
+        sharedPreferences.userId = -1
+        navController.navigate(R.id.mainFragment)
     }
 
     private fun showAddress() {
