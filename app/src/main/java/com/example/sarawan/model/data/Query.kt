@@ -15,6 +15,8 @@ sealed interface Query {
         object Basket : Get
 
         object Category : Get
+
+        object Address : Get
     }
 
     sealed interface Post : Query {
@@ -26,6 +28,10 @@ sealed interface Query {
         sealed interface User : Post {
             data class NewUser(val user : UserRegistration) : User
             data class Sms(val user : UserRegistration) : User
+        }
+
+        sealed interface Address : Post {
+            data class NewAddress(val address : AddressItem) : Address
         }
     }
 

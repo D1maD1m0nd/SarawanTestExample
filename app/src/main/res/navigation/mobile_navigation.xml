@@ -56,7 +56,7 @@
         tools:layout="@layout/fragment_profile_name" />
     <fragment
         android:id="@+id/profileAddressFragment"
-        android:name="com.example.sarawan.framework.ui.profile.ProfileAddressFragment"
+        android:name="com.example.sarawan.framework.ui.profile.address_fragment.ProfileAddressFragment"
         android:label="fragment_profile_address"
         tools:layout="@layout/fragment_profile_address" />
     <fragment

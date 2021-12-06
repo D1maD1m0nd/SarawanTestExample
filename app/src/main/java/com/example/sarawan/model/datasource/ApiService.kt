@@ -76,9 +76,24 @@ interface ApiService {
     @DELETE("api/basket_product/{id}/")
     fun deleteBasketProduct(@Path("id") id: Int): Single<Basket>
 
+    /**
+     * Создание пользователя
+     */
     @POST("users/authentication/api/get-token/")
     fun createUser(@Body user : UserRegistration) : Single<UserRegistration>
 
+    /**
+     * Отправка смс
+     */
     @POST("users/authentication/api/sms-send/")
     fun sendSms(@Body user : UserRegistration) : Single<UserRegistration>
+
+    /**
+     * Создание нового адреса
+     */
+    @POST("api/user_address/")
+    fun createAddress(@Body address : AddressItem) : Single<Address>
+
+    @GET("api/user_address/")
+    fun getAddress() : Single<Address>
 }

@@ -15,7 +15,7 @@ import com.example.sarawan.framework.ui.basket.adapter.BasketAdapter
 import com.example.sarawan.framework.ui.basket.viewModel.BasketViewModel
 import com.example.sarawan.framework.ui.modals.DeliveryTimeFragment
 import com.example.sarawan.framework.ui.modals.PaymentMethodFragment
-import com.example.sarawan.framework.ui.profile.ProfileAddressFragment
+import com.example.sarawan.framework.ui.profile.address_fragment.ProfileAddressFragment
 import com.example.sarawan.model.data.AppState
 import com.example.sarawan.model.data.ProductsItem
 import com.example.sarawan.model.data.ProductsUpdate

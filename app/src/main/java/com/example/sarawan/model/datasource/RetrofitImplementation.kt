@@ -40,10 +40,13 @@ class RetrofitImplementation @Inject constructor(private val apiService: ApiServ
                 Query.Get.Category -> apiService
                     .getCategories()
                     .map { it as List<*> }
+
+                Query.Get.Address -> apiService
+                    .getAddress()
+                    .map { listOf(it) }
             }
 
             is Query.Post -> when (query) {
-
                 is Query.Post.Basket.Put -> apiService
                     .putBasketProduct(query.products)
                     .map { listOf(it) }
@@ -52,6 +55,9 @@ class RetrofitImplementation @Inject constructor(private val apiService: ApiServ
                     .map { listOf(it) }
                 is Query.Post.User.NewUser -> apiService
                     .createUser(query.user)
+                    .map { listOf(it) }
+                is Query.Post.Address.NewAddress -> apiService
+                    .createAddress(query.address)
                     .map { listOf(it) }
             }
 
