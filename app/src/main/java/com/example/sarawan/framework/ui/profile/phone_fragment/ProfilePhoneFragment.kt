@@ -24,17 +24,23 @@ import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
 
 class ProfilePhoneFragment : DialogFragment() {
+
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
     private val viewModel: ProfilePhoneViewModel by lazy {
         viewModelFactory.create(ProfilePhoneViewModel::class.java)
     }
+
     private var _binding: FragmentProfilePhoneBinding? = null
     private val binding get() = _binding!!
+
+    private lateinit var callback: () -> Unit
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         AndroidSupportInjection.inject(this)
     }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -94,51 +100,62 @@ class ProfilePhoneFragment : DialogFragment() {
 
     private fun sendCode() {
         val number = getFormatNumber()
-        if(number.length == 12) {
+        if (number.length == 12) {
             val user = UserRegistration(phoneNumber = number)
             viewModel.sendSms(user)
         } else {
-            Toast.makeText(context,"Номер не корректный", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Номер не корректный", Toast.LENGTH_SHORT).show()
         }
     }
-    private fun getFormatNumber() : String{
+
+    private fun getFormatNumber(): String {
         val number = binding.profilePhoneMaskedEditText.text.toString()
         return number
             .replace("(", "")
             .replace(")", "")
-            .replace("_","")
+            .replace("_", "")
             .replace("-", "")
             .replace(" ", "")
     }
+
     private fun setState(appState: AppState<*>) {
         when (appState) {
             is AppState.Success<*> -> {
                 appState.data as MutableList<UserRegistration>
-                if(appState.data.isNotEmpty()) {
+                if (appState.data.isNotEmpty()) {
                     val result = appState.data.first()
                     result.success?.let {
-                        if(it) {
+                        if (it) {
                             val number = binding.profilePhoneMaskedEditText.text.toString()
-                            ProfileCodeFragment.newInstance(number).show(childFragmentManager, null)
+                            ProfileCodeFragment.newInstance(
+                                callback,
+                                number
+                            ).show(childFragmentManager, null)
                         }
                     }
                 }
             }
             is AppState.Error -> {
-                Toast.makeText(context,
+                Toast.makeText(
+                    context,
                     "При отправке смс кода произошла ошибка, повторите попытку позднее",
-                    Toast.LENGTH_SHORT)
+                    Toast.LENGTH_SHORT
+                )
                     .show()
             }
             AppState.Loading -> Unit
         }
     }
+
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
     }
 
     companion object {
-        fun newInstance() = ProfilePhoneFragment()
+        fun newInstance(callback: () -> Unit) =
+            ProfilePhoneFragment().apply {
+                this.callback = callback
+            }
     }
 }

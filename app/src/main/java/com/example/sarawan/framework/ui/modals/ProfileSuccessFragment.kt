@@ -13,6 +13,8 @@ class ProfileSuccessFragment : DialogFragment() {
     private var _binding: FragmentProfileSuccessBinding? = null
     private val binding get() = _binding!!
 
+    private lateinit var callback: () -> Unit
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -41,6 +43,8 @@ class ProfileSuccessFragment : DialogFragment() {
             }
         }
         dismiss()
+
+        callback.invoke()
     }
 
     override fun onDestroy() {
@@ -49,6 +53,9 @@ class ProfileSuccessFragment : DialogFragment() {
     }
 
     companion object {
-        fun newInstance() = ProfileSuccessFragment()
+        fun newInstance(callback: () -> Unit) =
+            ProfileSuccessFragment().apply {
+                this.callback = callback
+            }
     }
 }
