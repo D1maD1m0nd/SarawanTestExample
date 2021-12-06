@@ -12,7 +12,6 @@ import com.example.sarawan.app.App.Companion.sharedPreferences
 import com.example.sarawan.databinding.FragmentProfileAddressBinding
 import com.example.sarawan.framework.ui.modals.ProfileAlertFragment
 import com.example.sarawan.framework.ui.profile.address_fragment.viewModel.ProfileAddressViewModel
-import com.example.sarawan.model.data.Address
 import com.example.sarawan.model.data.AddressItem
 import com.example.sarawan.model.data.AppState
 import com.example.sarawan.utils.exstentions.userId
@@ -88,7 +87,7 @@ class ProfileAddressFragment : DialogFragment() {
     private fun setState(appState: AppState<*>) {
         when (appState) {
             is AppState.Success<*> -> {
-                appState.data as MutableList<Address>
+                Toast.makeText(context, "Сохранение прошло успешно", Toast.LENGTH_SHORT).show()
             }
             is AppState.Error -> {
                 Toast.makeText(context,

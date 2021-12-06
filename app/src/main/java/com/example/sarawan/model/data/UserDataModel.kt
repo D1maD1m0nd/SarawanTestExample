@@ -14,7 +14,7 @@ data class UserDataModel(
 	val lastName: String? = null,
 
 	@field:Json(name="id")
-	val id: Int? = null,
+	val id: Long? = null,
 
 	@field:Json(name="first_name")
 	val firstName: String? = null,
