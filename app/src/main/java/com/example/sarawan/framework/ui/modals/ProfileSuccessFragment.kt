@@ -1,4 +1,4 @@
-package com.example.sarawan.framework.ui.profile
+package com.example.sarawan.framework.ui.modals
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -6,17 +6,17 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.fragment.app.DialogFragment
-import com.example.sarawan.databinding.FragmentProfileAlertBinding
+import com.example.sarawan.databinding.FragmentProfileSuccessBinding
 
-class ProfileAlertFragment : DialogFragment() {
+class ProfileSuccessFragment : DialogFragment() {
 
-    private var _binding: FragmentProfileAlertBinding? = null
+    private var _binding: FragmentProfileSuccessBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View = FragmentProfileAlertBinding
+    ): View = FragmentProfileSuccessBinding
         .inflate(inflater, container, false)
         .also { _binding = it }
         .root
@@ -30,7 +30,17 @@ class ProfileAlertFragment : DialogFragment() {
     }
 
     private fun initViews() = with(binding) {
-        profileAlertOkButton.setOnClickListener { dismiss() }
+        profileSuccessOkButton.setOnClickListener { closeAllDialogs() }
+    }
+
+    private fun closeAllDialogs() {
+        val manager = requireActivity().supportFragmentManager
+        for (fragment in manager.fragments) {
+            if (fragment is DialogFragment) {
+                fragment.dismiss()
+            }
+        }
+        dismiss()
     }
 
     override fun onDestroy() {
@@ -39,6 +49,6 @@ class ProfileAlertFragment : DialogFragment() {
     }
 
     companion object {
-        fun newInstance() = ProfileAlertFragment()
+        fun newInstance() = ProfileSuccessFragment()
     }
 }

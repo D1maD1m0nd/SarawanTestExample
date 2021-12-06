@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="@color/white"
     android:orientation="vertical"
-    tools:context="framework.ui.profile.ProfilePhoneFragment">
+    tools:context=".framework.ui.profile.phone_fragment.ProfilePhoneFragment">
 
     <androidx.appcompat.widget.AppCompatImageButton
         android:id="@+id/profile_phone_close_button"

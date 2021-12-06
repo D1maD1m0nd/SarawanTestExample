@@ -11,16 +11,29 @@ sealed interface Query {
             data class Id(val id: Long) : Products
             data class SimilarProducts(val id : Long) : Products
         }
-
+        sealed interface Users : Get{
+            data class UserData(val id : Long) : Users
+        }
         object Basket : Get
 
         object Category : Get
+
+        object Address : Get
     }
 
     sealed interface Post : Query {
 
         sealed interface Basket : Post {
             data class Put(val products: ProductsUpdate) : Basket
+        }
+
+        sealed interface User : Post {
+            data class NewUser(val user : UserRegistration) : User
+            data class Sms(val user : UserRegistration) : User
+        }
+
+        sealed interface Address : Post {
+            data class NewAddress(val address : AddressItem) : Address
         }
     }
 

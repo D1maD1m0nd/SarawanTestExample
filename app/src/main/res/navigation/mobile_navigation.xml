@@ -51,17 +51,17 @@
 
     <fragment
         android:id="@+id/profileNameFragment"
-        android:name="com.example.sarawan.framework.ui.profile.ProfileNameFragment"
+        android:name="com.example.sarawan.framework.ui.profile.name_fragment.ProfileNameFragment"
         android:label="fragment_profile_name"
         tools:layout="@layout/fragment_profile_name" />
     <fragment
         android:id="@+id/profileAddressFragment"
-        android:name="com.example.sarawan.framework.ui.profile.ProfileAddressFragment"
+        android:name="com.example.sarawan.framework.ui.profile.address_fragment.ProfileAddressFragment"
         android:label="fragment_profile_address"
         tools:layout="@layout/fragment_profile_address" />
     <fragment
         android:id="@+id/profileAlertFragment"
-        android:name="com.example.sarawan.framework.ui.profile.ProfileAlertFragment"
+        android:name="com.example.sarawan.framework.ui.modals.ProfileAlertFragment"
         android:label="fragment_profile_alert"
         tools:layout="@layout/fragment_profile_alert" />
     <fragment
