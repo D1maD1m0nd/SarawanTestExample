@@ -11,11 +11,14 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.sarawan.R
+import com.example.sarawan.app.App.Companion.sharedPreferences
 import com.example.sarawan.databinding.FragmentProfileCodeBinding
 import com.example.sarawan.framework.ui.profile.ProfileSuccessFragment
 import com.example.sarawan.framework.ui.profile.sms_code_fragment.viewModel.SmsCodeViewModel
 import com.example.sarawan.model.data.AppState
 import com.example.sarawan.model.data.UserRegistration
+import com.example.sarawan.utils.exstentions.token
+import com.example.sarawan.utils.exstentions.userId
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
 
@@ -115,7 +118,7 @@ class ProfileCodeFragment : DialogFragment() {
         val code = getSmsCode()
         val number = getFormatNumber()
         if(code.length == DEFAULT_CODE_LENGTH) {
-            val user = UserRegistration(code = code.toInt(), phoneNumber = number)
+            val user = UserRegistration(code = code, phoneNumber = number)
             viewModel.createUser(user)
         }
     }
@@ -170,7 +173,12 @@ class ProfileCodeFragment : DialogFragment() {
         when (appState) {
             is AppState.Success<*> -> {
                 appState.data as MutableList<UserRegistration>
-                ProfileSuccessFragment.newInstance().show(childFragmentManager, null)
+                if(appState.data.isNotEmpty()) {
+                    val result = appState.data.first()
+                    sharedPreferences.token = result.token
+                    sharedPreferences.userId = result.userId
+                    ProfileSuccessFragment.newInstance().show(childFragmentManager, null)
+                }
             }
             is AppState.Error -> {
                 //при неверном коде возвращает ошибку 500

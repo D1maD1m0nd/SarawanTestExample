@@ -10,12 +10,12 @@ var SharedPreferences.token: String?
             .apply()
     }
 
-var SharedPreferences.userId: Int?
-    get() = this.getInt("userId", -1)
+var SharedPreferences.userId: Long?
+    get() = this.getLong("userId", -1)
     set(value) {
         if (value != null) {
             this.edit()
-                .putInt("token", value)
+                .putLong("userId", value)
                 .apply()
         }
     }
