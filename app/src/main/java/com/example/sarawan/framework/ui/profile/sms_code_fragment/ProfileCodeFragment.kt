@@ -13,7 +13,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.sarawan.R
 import com.example.sarawan.app.App.Companion.sharedPreferences
 import com.example.sarawan.databinding.FragmentProfileCodeBinding
-import com.example.sarawan.framework.ui.profile.ProfileSuccessFragment
+import com.example.sarawan.framework.ui.modals.ProfileSuccessFragment
 import com.example.sarawan.framework.ui.profile.sms_code_fragment.viewModel.SmsCodeViewModel
 import com.example.sarawan.model.data.AppState
 import com.example.sarawan.model.data.UserRegistration

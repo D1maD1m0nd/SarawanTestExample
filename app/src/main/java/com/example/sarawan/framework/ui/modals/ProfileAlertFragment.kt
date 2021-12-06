@@ -1,4 +1,4 @@
-package com.example.sarawan.framework.ui.profile
+package com.example.sarawan.framework.ui.modals
 
 import android.os.Bundle
 import android.view.LayoutInflater

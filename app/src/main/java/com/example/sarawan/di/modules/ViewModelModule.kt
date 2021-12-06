@@ -11,6 +11,7 @@ import com.example.sarawan.framework.ui.product_card.viewModel.ProductCardViewMo
 import com.example.sarawan.framework.ui.profile.address_fragment.viewModel.ProfileAddressViewModel
 import com.example.sarawan.framework.ui.profile.phone_fragment.viewModel.ProfilePhoneViewModel
 import com.example.sarawan.framework.ui.profile.sms_code_fragment.viewModel.SmsCodeViewModel
+import com.example.sarawan.framework.ui.profile.viewModel.ProfileViewModel
 import dagger.Binds
 import dagger.MapKey
 import dagger.Module
@@ -67,6 +68,11 @@ abstract class ViewModelModule {
     @ViewModelKey(ProfileAddressViewModel::class)
     @IntoMap
     protected abstract fun profileAddressViewModel(profileAddressViewModel: ProfileAddressViewModel): ViewModel
+
+    @Binds
+    @ViewModelKey(ProfileViewModel::class)
+    @IntoMap
+    protected abstract fun profileViewModel(profileViewModel: ProfileViewModel): ViewModel
 }
 
 @Target(

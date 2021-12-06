@@ -11,7 +11,9 @@ sealed interface Query {
             data class Id(val id: Long) : Products
             data class SimilarProducts(val id : Long) : Products
         }
-
+        sealed interface Users : Get{
+            data class UserData(val id : Long) : Users
+        }
         object Basket : Get
 
         object Category : Get

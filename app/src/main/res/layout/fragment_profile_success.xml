@@ -7,7 +7,7 @@
     android:layout_height="wrap_content"
     android:background="@color/white"
     android:orientation="vertical"
-    tools:context="framework.ui.profile.ProfileAlertFragment">
+    tools:context=".framework.ui.modals.ProfileAlertFragment">
 
     <androidx.appcompat.widget.AppCompatTextView
         android:layout_width="match_parent"

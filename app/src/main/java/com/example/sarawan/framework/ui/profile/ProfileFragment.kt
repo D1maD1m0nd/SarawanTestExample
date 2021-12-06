@@ -4,11 +4,19 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.example.sarawan.app.App.Companion.sharedPreferences
 import com.example.sarawan.databinding.FragmentProfileBinding
 import com.example.sarawan.framework.ui.profile.address_fragment.ProfileAddressFragment
+import com.example.sarawan.framework.ui.profile.name_fragment.ProfileNameFragment
 import com.example.sarawan.framework.ui.profile.phone_fragment.ProfilePhoneFragment
+import com.example.sarawan.framework.ui.profile.viewModel.ProfileViewModel
+import com.example.sarawan.model.data.AddressItem
+import com.example.sarawan.model.data.AppState
+import com.example.sarawan.model.data.UserDataModel
+import com.example.sarawan.utils.exstentions.userId
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
 
@@ -16,25 +24,35 @@ class ProfileFragment : Fragment() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
+    private val viewModel: ProfileViewModel by lazy {
+        viewModelFactory.create(ProfileViewModel::class.java)
+    }
 
     private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding!!
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        AndroidSupportInjection.inject(this)
+    }
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View = FragmentProfileBinding
             .inflate(inflater, container, false)
-            .also { _binding = it }
+            .also {
+                viewModel.getStateLiveData().observe(viewLifecycleOwner) { appState: AppState<*> ->
+                    setState(appState)
+                }
+                _binding = it
+            }
             .root
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        AndroidSupportInjection.inject(this)
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        sharedPreferences.userId?.let {
+            viewModel.getUserData(it)
+        }
         initViews()
     }
 
@@ -64,7 +82,42 @@ class ProfileFragment : Fragment() {
     private fun showName() {
         ProfileNameFragment.newInstance().show(childFragmentManager, null)
     }
+    private fun setState(appState: AppState<*>) = with(binding){
+        when (appState) {
+            is AppState.Success<*> -> {
+                if(appState.data.isNotEmpty()) {
+                    when(val firstItem = appState.data.first()) {
+                        is AddressItem -> {
+                            val data = appState.data as MutableList<AddressItem>
+                            val primaryAddress = data.findLast { it.primary == true }
+                            primaryAddress?.let {
+                                val address = formatAddress(it)
+                                binding.profileAddressTextView.text = address
+                            }
 
+                        }
+                        is UserDataModel -> {
+                            binding.profilePhoneTextView.text =firstItem.phone
+                        }
+                    }
+                }
+            }
+            is AppState.Error -> {
+                Toast.makeText(context,
+                    "При отправке смс кода произошла ошибка, повторите попытку позднее",
+                    Toast.LENGTH_SHORT)
+                    .show()
+            }
+            AppState.Loading -> Unit
+        }
+    }
+    private fun formatAddress(address : AddressItem) : String {
+        val city = address.city
+        val street = address.street
+        val house = address.house
+        val roomNum = address.roomNumber
+        return String.format("%s, ул %s, д %s, кв %s", city, street, house, roomNum)
+    }
     override fun onDestroy() {
         super.onDestroy()
         _binding = null

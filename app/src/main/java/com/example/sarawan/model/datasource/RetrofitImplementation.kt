@@ -11,7 +11,11 @@ class RetrofitImplementation @Inject constructor(private val apiService: ApiServ
         return when (query) {
 
             is Query.Get -> when (query) {
-
+                is Query.Get.Users -> when (query) {
+                    is Query.Get.Users.UserData -> apiService
+                        .getUser(query.id)
+                        .map { listOf(it) }
+                }
                 is Query.Get.Products -> when (query) {
                     is Query.Get.Products.DiscountProducts -> apiService
                         .getDiscountProducts(page = query.page)
@@ -43,7 +47,7 @@ class RetrofitImplementation @Inject constructor(private val apiService: ApiServ
 
                 Query.Get.Address -> apiService
                     .getAddress()
-                    .map { listOf(it) }
+                    .map { it }
             }
 
             is Query.Post -> when (query) {

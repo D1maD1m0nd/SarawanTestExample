@@ -10,7 +10,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.sarawan.app.App.Companion.sharedPreferences
 import com.example.sarawan.databinding.FragmentProfileAddressBinding
-import com.example.sarawan.framework.ui.profile.ProfileAlertFragment
+import com.example.sarawan.framework.ui.modals.ProfileAlertFragment
 import com.example.sarawan.framework.ui.profile.address_fragment.viewModel.ProfileAddressViewModel
 import com.example.sarawan.model.data.Address
 import com.example.sarawan.model.data.AddressItem

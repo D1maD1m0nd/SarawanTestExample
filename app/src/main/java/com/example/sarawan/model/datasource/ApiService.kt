@@ -82,6 +82,8 @@ interface ApiService {
     @POST("users/authentication/api/get-token/")
     fun createUser(@Body user : UserRegistration) : Single<UserRegistration>
 
+    @GET("api/user/{id}/")
+    fun getUser(@Path("id") id : Long) : Single<UserDataModel>
     /**
      * Отправка смс
      */
@@ -95,5 +97,5 @@ interface ApiService {
     fun createAddress(@Body address : AddressItem) : Single<Address>
 
     @GET("api/user_address/")
-    fun getAddress() : Single<Address>
+    fun getAddress() : Single<MutableList<AddressItem>>
 }
