@@ -70,6 +70,9 @@ class RetrofitImplementation @Inject constructor(private val apiService: ApiServ
                 is Query.Put.Basket.Update -> apiService
                     .updateBasketProduct(query.id, query.products)
                     .map { listOf(it) }
+                is Query.Put.Users.Update -> apiService
+                    .updateUser(query.id, query.user)
+                    .map { listOf(it) }
             }
 
             is Query.Delete -> when (query) {

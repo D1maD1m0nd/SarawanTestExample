@@ -77,13 +77,21 @@ interface ApiService {
     fun deleteBasketProduct(@Path("id") id: Int): Single<Basket>
 
     /**
+     * Получение пользователя по id
+     */
+    @GET("api/user/{id}/")
+    fun getUser(@Path("id") id : Long) : Single<UserDataModel>
+
+    /**
+     * Обновление пользователя
+     */
+    @PUT("api/user/{id}/")
+    fun updateUser(@Path("id") id : Long, @Body user : UserDataModel) : Single<UserDataModel>
+    /**
      * Создание пользователя
      */
     @POST("users/authentication/api/get-token/")
     fun createUser(@Body user : UserRegistration) : Single<UserRegistration>
-
-    @GET("api/user/{id}/")
-    fun getUser(@Path("id") id : Long) : Single<UserDataModel>
     /**
      * Отправка смс
      */

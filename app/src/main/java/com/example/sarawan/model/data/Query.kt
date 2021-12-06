@@ -42,6 +42,10 @@ sealed interface Query {
         sealed interface Basket : Put {
             data class Update(val id: Int, val products: ProductsUpdate) : Basket
         }
+
+        sealed interface Users : Put {
+            data class Update(val id : Long, val user : UserDataModel) : Users
+        }
     }
 
     sealed interface Delete : Query {
