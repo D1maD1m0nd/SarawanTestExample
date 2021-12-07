@@ -1,6 +1,7 @@
 package com.example.sarawan.di.modules
 
 import android.content.Context
+import android.content.SharedPreferences
 import com.example.sarawan.app.App
 import com.example.sarawan.model.datasource.ApiService
 import com.example.sarawan.utils.AndroidNetworkStatus
@@ -21,13 +22,13 @@ class NetworkModule {
     fun getNetworkStatus(context: Context): NetworkStatus = AndroidNetworkStatus(context)
 
     @Provides
-    fun getHttpClient(): OkHttpClient {
+    fun getHttpClient(shared: SharedPreferences): OkHttpClient {
         val httpClient = OkHttpClient.Builder()
         httpClient.addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
         httpClient.addInterceptor { chain ->
             val original = chain.request()
             val request = original.newBuilder()
-            val token = App.sharedPreferences.token ?: ""
+            val token = shared.token ?: ""
             if(token.isNotEmpty()) {
                 request.header("Authorization", "Token $token")
             }

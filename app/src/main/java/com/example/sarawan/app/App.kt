@@ -22,7 +22,6 @@ class App : Application(), HasAndroidInjector {
 
     override fun onCreate() {
         super.onCreate()
-        sharedPreferences = this.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE)
         DaggerAppComponent.builder()
             .application(this)
             .appModule(AppModule(this))
@@ -30,9 +29,7 @@ class App : Application(), HasAndroidInjector {
             .inject(this)
     }
     companion object{
-        private const val PREFERENCE_NAME = "SARAWAN_PREF"
         lateinit var navController : NavController
-        lateinit var sharedPreferences: SharedPreferences
     }
 
 }

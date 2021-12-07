@@ -11,9 +11,9 @@ data class Product(
     @field: Json(name = "id") val id: Long? = null,
     @field: Json(name = "images") val images: List<Image>? = null,
     @field: Json(name = "name") val name: String? = null,
-    @field: Json(name = "price_type") val price_type: String? = null,
-    @field: Json(name = "store_prices") val store_prices: List<StorePrice>? = null,
-    @field: Json(name = "unit_quantity") val unit_quantity: String? = null,
+    @field: Json(name = "price_type") val priceType: String? = null,
+    @field: Json(name = "store_prices") val storePrices: List<StorePrice>? = null,
+    @field: Json(name = "unit_quantity") val unitQuantity: String? = null,
     @field: Json(name = "description") val description: String? = null,
     var visible : Boolean = true
 )

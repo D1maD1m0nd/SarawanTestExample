@@ -2,6 +2,7 @@ package com.example.sarawan.di.modules
 
 import com.example.sarawan.framework.ui.basket.BasketFragment
 import com.example.sarawan.framework.ui.catalog.CatalogFragment
+import com.example.sarawan.framework.ui.category.CategoryFragment
 import com.example.sarawan.framework.ui.main.MainFragment
 import com.example.sarawan.framework.ui.product_card.ProductCardFragment
 import com.example.sarawan.framework.ui.profile.ProfileFragment
@@ -41,4 +42,8 @@ abstract class FragmentModule {
 
     @ContributesAndroidInjector
     abstract fun contributeProfileNameFragment() : ProfileNameFragment
+
+    @ContributesAndroidInjector
+    abstract fun contributeCategoryFragment() : CategoryFragment
+
 }

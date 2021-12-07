@@ -1,5 +1,6 @@
 package com.example.sarawan.framework.ui.profile.name_fragment
 
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,7 +9,6 @@ import android.view.WindowManager
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
-import com.example.sarawan.app.App.Companion.sharedPreferences
 import com.example.sarawan.databinding.FragmentProfileNameBinding
 import com.example.sarawan.framework.ui.profile.name_fragment.viewModel.NameViewModel
 import com.example.sarawan.model.data.AppState
@@ -18,6 +18,10 @@ import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
 
 class ProfileNameFragment : DialogFragment() {
+
+    @Inject
+    lateinit var sharedPreferences: SharedPreferences
+
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
     private val viewModel: NameViewModel by lazy {
@@ -30,6 +34,7 @@ class ProfileNameFragment : DialogFragment() {
         super.onCreate(savedInstanceState)
         AndroidSupportInjection.inject(this)
     }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -65,20 +70,24 @@ class ProfileNameFragment : DialogFragment() {
             viewModel.updateUser(user, it)
         }
     }
+
     private fun setState(appState: AppState<*>) {
         when (appState) {
             is AppState.Success<*> -> {
                 Toast.makeText(context, "Сохранение прошло успешно", Toast.LENGTH_SHORT).show()
             }
             is AppState.Error -> {
-                Toast.makeText(context,
+                Toast.makeText(
+                    context,
                     "Ошибка",
-                    Toast.LENGTH_SHORT)
+                    Toast.LENGTH_SHORT
+                )
                     .show()
             }
             AppState.Loading -> Unit
         }
     }
+
     override fun onDestroy() {
         super.onDestroy()
         _binding = null

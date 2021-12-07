@@ -185,10 +185,6 @@ class MainRecyclerAdapter(
         }
     }
 
-    interface OnListItemClickListener {
-        fun onItemClick(data: MainScreenDataModel, diff: Int, isNewItem: Boolean)
-    }
-
     interface CancellableHolder {
         fun cancelTask()
     }

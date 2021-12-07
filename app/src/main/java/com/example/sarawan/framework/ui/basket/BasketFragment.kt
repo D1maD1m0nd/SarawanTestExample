@@ -162,7 +162,7 @@ class BasketFragment : Fragment() {
     private fun showProductFragment(idProduct: Int) {
         val bundle = Bundle()
         bundle.putLong(PRODUCT_ID, idProduct.toLong())
-        navController.navigate(R.id.productCardFragment,bundle)
+        navController.navigate(R.id.action_basketFragment_to_productCardFragment,bundle)
     }
     override fun onDestroyView() {
         _binding = null

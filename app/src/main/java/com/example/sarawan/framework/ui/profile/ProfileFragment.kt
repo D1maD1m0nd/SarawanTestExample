@@ -1,5 +1,6 @@
 package com.example.sarawan.framework.ui.profile
 
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,7 +10,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.sarawan.R
 import com.example.sarawan.app.App.Companion.navController
-import com.example.sarawan.app.App.Companion.sharedPreferences
 import com.example.sarawan.databinding.FragmentProfileBinding
 import com.example.sarawan.framework.ui.profile.address_fragment.ProfileAddressFragment
 import com.example.sarawan.framework.ui.profile.name_fragment.ProfileNameFragment
@@ -24,6 +24,9 @@ import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
 
 class ProfileFragment : Fragment() {
+
+    @Inject
+    lateinit var sharedPreferences: SharedPreferences
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
