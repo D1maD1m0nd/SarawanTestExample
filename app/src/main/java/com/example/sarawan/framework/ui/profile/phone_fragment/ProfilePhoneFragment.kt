@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
@@ -36,6 +37,14 @@ class ProfilePhoneFragment : DialogFragment() {
 
     private lateinit var callback: () -> Unit
 
+    private lateinit var inputMethodManager: InputMethodManager
+
+    private fun showKeyboard() =
+        inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
+
+    private fun hideKeyboard(view: View) =
+        inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         AndroidSupportInjection.inject(this)
@@ -60,6 +69,10 @@ class ProfilePhoneFragment : DialogFragment() {
             width = WindowManager.LayoutParams.MATCH_PARENT
             height = WindowManager.LayoutParams.MATCH_PARENT
         }
+
+        inputMethodManager = requireActivity()
+            .getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as InputMethodManager
+
         initViews()
     }
 
@@ -71,6 +84,9 @@ class ProfilePhoneFragment : DialogFragment() {
 
         initAgreementTextView()
         toggleCheckBox()
+
+        profilePhoneMaskedEditText.requestFocus()
+        showKeyboard()
     }
 
     private fun initAgreementTextView() = with(binding) {
