@@ -35,7 +35,8 @@ object AdapterDelegatesTypes {
                     sumTextView.text = String.format("%s ₽", it.price)
                     counterTextView.text = item.quantity.toString()
                 }
-                productImageView.load(R.drawable.product_sample_img)
+                val image = item.basketProduct?.basketProduct?.images?.first()?.image ?: ""
+                productImageView.load(image)
 
                 var counter = counterTextView.text.toString().toInt()
                 plusImageButton.setOnClickListener {
