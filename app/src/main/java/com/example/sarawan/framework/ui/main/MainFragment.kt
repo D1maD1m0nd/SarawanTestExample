@@ -30,8 +30,8 @@ class MainFragment : BaseMainCatalogFragment() {
                     val data = appState.data as List<MainScreenDataModel>
                     if (data.isNullOrEmpty()) {
                         mainRecyclerAdapter?.clearData()
-                        binding.loadingLayout.visibility = View.GONE}
-                    else mainRecyclerAdapter?.setData(
+                        binding.loadingLayout.visibility = View.GONE
+                    } else mainRecyclerAdapter?.setData(
                         data,
                         binding.searchField.editText?.text.isNullOrEmpty()
                     )
@@ -42,10 +42,6 @@ class MainFragment : BaseMainCatalogFragment() {
                 AppState.Loading -> binding.loadingLayout.visibility = View.VISIBLE
             }
         }
-    }
-
-    companion object {
-        fun newInstance() = MainFragment()
     }
 
     override fun onFragmentNext() {

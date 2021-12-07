@@ -26,6 +26,15 @@ interface ApiService {
     ): Single<Response>
 
     /**
+     * Получение продуктов по главной категории
+     */
+    @GET("api/products/")
+    fun getCategoryProducts(
+        @Query("main_category") categoryProducts: Int,
+        @Query("page") page: Int
+    ): Single<Response>
+
+    /**
      * Получение популярных продуктов
      */
     @GET("api/products/")
@@ -38,7 +47,11 @@ interface ApiService {
      * Получение похожих продуктов
      */
     @GET("api/products/")
-    fun getSimilarProducts(@Query("similar_product") storeId: Long) : Single<Response>
+    fun getSimilarProducts(
+        @Query("similar_product") storeId: Long,
+        @Query("page") page: Int
+    ) : Single<Response>
+
     /**
      * Получение категорий
      */
@@ -87,11 +100,13 @@ interface ApiService {
      */
     @PUT("api/user/{id}/")
     fun updateUser(@Path("id") id : Long, @Body user : UserDataModel) : Single<UserDataModel>
+
     /**
      * Создание пользователя
      */
     @POST("users/authentication/api/get-token/")
     fun createUser(@Body user : UserRegistration) : Single<UserRegistration>
+
     /**
      * Отправка смс
      */

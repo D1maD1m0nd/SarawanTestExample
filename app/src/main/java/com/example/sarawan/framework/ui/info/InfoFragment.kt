@@ -39,15 +39,15 @@ class InfoFragment : Fragment() {
     }
 
     private fun showHowWorking() {
-        navController.navigate(R.id.infoHowFragment)
+        navController.navigate(R.id.action_infoFragment_to_infoHowFragment)
     }
 
     private fun showSupport() {
-        navController.navigate(R.id.infoSupportFragment)
+        navController.navigate(R.id.action_infoFragment_to_infoSupportFragment)
     }
 
     private fun showAbout() {
-        navController.navigate(R.id.infoAboutFragment)
+        navController.navigate(R.id.action_infoFragment_to_infoAboutFragment)
     }
 
     override fun onDestroy() {

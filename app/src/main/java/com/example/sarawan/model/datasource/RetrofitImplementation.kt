@@ -33,7 +33,10 @@ class RetrofitImplementation @Inject constructor(private val apiService: ApiServ
                         .search(query.productName, query.page)
                         .map { it.results }
                     is Query.Get.Products.SimilarProducts -> apiService
-                        .getSimilarProducts(query.id)
+                        .getSimilarProducts(query.id, query.page)
+                        .map { it.results }
+                    is Query.Get.Products.ProductCategory -> apiService
+                        .getCategoryProducts(query.productCategory, query.page)
                         .map { it.results }
                 }
 

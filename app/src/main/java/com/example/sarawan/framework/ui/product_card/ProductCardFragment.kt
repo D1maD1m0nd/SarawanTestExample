@@ -112,7 +112,7 @@ class ProductCardFragment : Fragment() {
         containerStoreRecyclerView.itemAnimator?.changeDuration = 0
         titleTextView.text = data.name
         contentDescriptionTextView.text = data.description
-        data.store_prices?.let {
+        data.storePrices?.let {
             priceTextView.text = it.first().price
             storeTextView.text = it.first().store
             storeAdapter.setData(it)

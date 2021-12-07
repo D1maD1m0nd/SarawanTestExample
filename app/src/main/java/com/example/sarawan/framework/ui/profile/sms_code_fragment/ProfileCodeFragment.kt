@@ -1,5 +1,6 @@
 package com.example.sarawan.framework.ui.profile.sms_code_fragment
 
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.view.LayoutInflater
@@ -11,7 +12,6 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.sarawan.R
-import com.example.sarawan.app.App.Companion.sharedPreferences
 import com.example.sarawan.databinding.FragmentProfileCodeBinding
 import com.example.sarawan.framework.ui.modals.ProfileSuccessFragment
 import com.example.sarawan.framework.ui.profile.sms_code_fragment.viewModel.SmsCodeViewModel
@@ -23,6 +23,9 @@ import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
 
 class ProfileCodeFragment : DialogFragment() {
+
+    @Inject
+    lateinit var sharedPreferences: SharedPreferences
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory

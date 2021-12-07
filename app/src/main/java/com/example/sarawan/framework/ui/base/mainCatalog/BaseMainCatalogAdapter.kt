@@ -19,6 +19,12 @@ abstract class BaseMainCatalogAdapter : RecyclerView.Adapter<RecyclerView.ViewHo
     override fun getItemViewType(position: Int): Int {
         return displayData[position].cardType ?: -1
     }
+
+    interface OnListItemClickListener {
+        fun onItemPriceChangeClick(data: MainScreenDataModel, diff: Int, isNewItem: Boolean)
+
+        fun onItemClick(data: MainScreenDataModel)
+    }
 }
 
 enum class CardType(val type: Int) {

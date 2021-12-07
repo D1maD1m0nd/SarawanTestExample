@@ -1,5 +1,6 @@
 package com.example.sarawan.framework.ui.profile.address_fragment
 
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,7 +9,6 @@ import android.view.WindowManager
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
-import com.example.sarawan.app.App.Companion.sharedPreferences
 import com.example.sarawan.databinding.FragmentProfileAddressBinding
 import com.example.sarawan.framework.ui.modals.ProfileAlertFragment
 import com.example.sarawan.framework.ui.profile.address_fragment.viewModel.ProfileAddressViewModel
@@ -21,6 +21,9 @@ import javax.inject.Inject
 class ProfileAddressFragment : DialogFragment() {
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
+
+    @Inject
+    lateinit var sharedPreferences: SharedPreferences
     private val viewModel: ProfileAddressViewModel by lazy {
         viewModelFactory.create(ProfileAddressViewModel::class.java)
     }
@@ -31,6 +34,7 @@ class ProfileAddressFragment : DialogFragment() {
         super.onCreate(savedInstanceState)
         AndroidSupportInjection.inject(this)
     }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -64,11 +68,11 @@ class ProfileAddressFragment : DialogFragment() {
     }
 
     private fun saveData() {
-        val address =  getAddress()
+        val address = getAddress()
         viewModel.createAddress(address)
     }
 
-    private fun getAddress() : AddressItem = with(binding) {
+    private fun getAddress(): AddressItem = with(binding) {
         val userId = sharedPreferences.userId
         val city = profileAddressCityTextView.text.toString()
         val street = profileAddressStreetEditText.text.toString()
@@ -90,14 +94,17 @@ class ProfileAddressFragment : DialogFragment() {
                 Toast.makeText(context, "Сохранение прошло успешно", Toast.LENGTH_SHORT).show()
             }
             is AppState.Error -> {
-                Toast.makeText(context,
+                Toast.makeText(
+                    context,
                     "При отправке смс кода произошла ошибка, повторите попытку позднее",
-                    Toast.LENGTH_SHORT)
+                    Toast.LENGTH_SHORT
+                )
                     .show()
             }
             AppState.Loading -> Unit
         }
     }
+
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
