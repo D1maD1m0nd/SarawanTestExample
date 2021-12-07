@@ -88,7 +88,7 @@ class ProfilePhoneFragment : DialogFragment() {
 
         profilePhoneMaskedEditText.doOnTextChanged { text, _, _, _ ->
             text?.let {
-                val number = phoneNumberWithoutMask(text.toString())
+                val number = phoneNumberWithoutMask(it.toString())
                 if (number.length == 12) {
                     hideKeyboard(profilePhoneMaskedEditText)
                 }
