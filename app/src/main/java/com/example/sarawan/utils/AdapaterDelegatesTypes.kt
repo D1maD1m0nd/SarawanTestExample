@@ -5,7 +5,7 @@ import com.example.sarawan.R
 import com.example.sarawan.databinding.BasketFooterItemBinding
 import com.example.sarawan.databinding.BasketHeaderItemBinding
 import com.example.sarawan.databinding.BasketItemBinding
-import com.example.sarawan.framework.ui.profile.ProfileAddressFragment
+import com.example.sarawan.framework.ui.profile.address_fragment.ProfileAddressFragment
 import com.example.sarawan.model.data.ProductsItem
 import com.example.sarawan.model.data.delegatesModel.BasketFooter
 import com.example.sarawan.model.data.delegatesModel.BasketHeader

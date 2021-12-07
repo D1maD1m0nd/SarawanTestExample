@@ -4,58 +4,26 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
-import coil.ImageLoader
-import com.example.sarawan.activity.FabChanger
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import com.example.sarawan.R
 import com.example.sarawan.app.App
 import com.example.sarawan.databinding.FragmentCatalogListBinding
-import com.example.sarawan.databinding.FragmentMainBinding
-import com.example.sarawan.framework.INavigation
+import com.example.sarawan.framework.ui.base.mainCatalog.BaseMainCatalogFragment
+import com.example.sarawan.framework.ui.base.mainCatalog.CardType
 import com.example.sarawan.framework.ui.category.viewModel.CategoryViewModel
-import com.example.sarawan.framework.ui.main.adapter.MainRecyclerAdapter
+import com.example.sarawan.model.data.AppState
 import com.example.sarawan.model.data.MainScreenDataModel
-import com.example.sarawan.rx.ISchedulerProvider
-import com.example.sarawan.utils.NetworkStatus
 import dagger.android.support.AndroidSupportInjection
-import javax.inject.Inject
 
-class CategoryFragment : Fragment(), INavigation {
-
-    @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
-
-    @Inject
-    lateinit var schedulerProvider: ISchedulerProvider
-
-    @Inject
-    lateinit var networkStatus: NetworkStatus
-
-    @Inject
-    lateinit var imageLoader: ImageLoader
+class CategoryFragment : BaseMainCatalogFragment() {
 
     private var _binding: FragmentCatalogListBinding? = null
-    private val binding get() = _binding!!
+    private val categoryBinding get() = _binding!!
 
-    val viewModel: CategoryViewModel by lazy {
+    override val viewModel: CategoryViewModel by lazy {
         viewModelFactory.create(CategoryViewModel::class.java)
     }
-
-    private var isOnline = true
-
-    private var recyclerAdapter: MainRecyclerAdapter? = null
-
-    private var fabChanger: FabChanger? = null
-
-    private val onListItemClickListener: MainRecyclerAdapter.OnListItemClickListener =
-        object : MainRecyclerAdapter.OnListItemClickListener {
-            override fun onItemClick(data: MainScreenDataModel, diff: Int, isNewItem: Boolean) {
-                data.price?.let {
-                    fabChanger?.changePrice(it * diff)
-//                    viewModel.saveData(data, isOnline, isNewItem)
-                }
-            }
-        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,12 +35,90 @@ class CategoryFragment : Fragment(), INavigation {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        super.onCreateView(inflater, container, savedInstanceState)
         _binding = FragmentCatalogListBinding.inflate(inflater, container, false)
-        return binding.root
+        return categoryBinding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        categoryBinding.backButton.setOnClickListener {
+            onFragmentBackStack()
+        }
+        initSpinner()
+        loadStartData()
+    }
+
+    private fun loadStartData() {
+        val catalogCategory = arguments?.getInt(KEY_CATEGORY) ?: DISCOUNT
+        categoryBinding.fragmentCaption.text =
+            arguments?.getString(KEY_CATEGORY_NAME) ?: "Выгодные предложения"
+        if (catalogCategory == DISCOUNT) {
+            viewModel.getStartData(isOnline)
+        } else viewModel.getCategoryData(catalogCategory, isOnline)
+    }
+
+    private fun initSpinner() {
+        val spinnerItems = resources.getStringArray(R.array.sortItems)
+        val spinnerAdapter =
+            ArrayAdapter(
+                requireContext(),
+                R.layout.spinner_dropdown_view_element,
+                R.id.item_text,
+                spinnerItems
+            )
+        spinnerAdapter.setDropDownViewResource(R.layout.spinner_dropdown_view_element)
+        categoryBinding.catalogSortSpinner.adapter = spinnerAdapter
+        categoryBinding.catalogSortSpinner.onItemSelectedListener =
+            object : AdapterView.OnItemSelectedListener {
+                override fun onNothingSelected(parent: AdapterView<*>?) {
+
+                }
+
+                override fun onItemSelected(
+                    parent: AdapterView<*>?,
+                    view: View?,
+                    position: Int,
+                    id: Long
+                ) {
+                    spinnerItems[position]
+                }
+            }
+
+    }
+
+    override fun attachAdapterToView() {
+        categoryBinding.cardsRecycler.layoutManager = gridLayoutManager
+        categoryBinding.cardsRecycler.adapter = mainRecyclerAdapter
+    }
+
+    override fun subscribeToViewModel() {
+        viewModel.getStateLiveData().observe(viewLifecycleOwner) { appState ->
+            when (appState) {
+                is AppState.Success<*> -> {
+                    val data = appState.data as List<MainScreenDataModel>
+                    if (data.isNullOrEmpty()) {
+                        mainRecyclerAdapter?.clearData()
+                    } else {
+                        data.forEach {
+                            it.cardType = CardType.COMMON.type
+                        }
+                        mainRecyclerAdapter?.setData(data, false)
+                    }
+                    categoryBinding.cardsRecycler.scrollToPosition(0)
+                    categoryBinding.loadingLayout.visibility = View.GONE
+                }
+                is AppState.Error -> Unit
+                AppState.Loading -> categoryBinding.loadingLayout.visibility = View.VISIBLE
+            }
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        categoryBinding.cardsRecycler.layoutManager = null
+        categoryBinding.cardsRecycler.adapter = null
+        _binding = null
     }
 
     override fun onFragmentBackStack() {
@@ -80,4 +126,10 @@ class CategoryFragment : Fragment(), INavigation {
     }
 
     override fun onFragmentNext() = Unit
+
+    companion object {
+        const val DISCOUNT = -1
+        const val KEY_CATEGORY = "CATEGORY"
+        const val KEY_CATEGORY_NAME = "CATEGORY NAME"
+    }
 }

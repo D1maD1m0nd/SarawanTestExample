@@ -46,7 +46,7 @@ class SimilarAdapter(val itemClickListener: ItemClickListener) : RecyclerView.Ad
     inner class ProductViewHolder(item: View) : RecyclerView.ViewHolder(item) {
         private val binding = ListItemCardBinding.bind(item)
         fun bind(product : Product) = with(binding) {
-            val store = product.store_prices?.first()
+            val store = product.storePrices?.first()
             discount.visibility = GONE
             itemDescription.text = product.name
             itemShopName.text = store?.store

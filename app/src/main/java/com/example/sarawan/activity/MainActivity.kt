@@ -1,5 +1,6 @@
 package com.example.sarawan.activity
 
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -9,10 +10,12 @@ import androidx.navigation.ui.setupWithNavController
 import com.example.sarawan.R
 import com.example.sarawan.app.App.Companion.navController
 import com.example.sarawan.databinding.ActivityMainBinding
+import com.example.sarawan.framework.ui.profile.phone_fragment.ProfilePhoneFragment
 import com.example.sarawan.model.data.AppState
 import com.example.sarawan.model.data.ProductsItem
 import com.example.sarawan.rx.ISchedulerProvider
 import com.example.sarawan.utils.NetworkStatus
+import com.example.sarawan.utils.exstentions.userId
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.android.AndroidInjection
 import io.reactivex.rxjava3.subjects.BehaviorSubject
@@ -20,6 +23,9 @@ import javax.inject.Inject
 import kotlin.system.exitProcess
 
 class MainActivity : AppCompatActivity(), FabChanger {
+
+    @Inject
+    lateinit var sharedPreferences: SharedPreferences
 
     @Inject
     lateinit var networkStatus: NetworkStatus
@@ -80,11 +86,14 @@ class MainActivity : AppCompatActivity(), FabChanger {
 
         navView.setOnItemSelectedListener {
             if (it.itemId == R.id.profileFragment) {
+/*
                 Toast.makeText(this, "Switched to profile", Toast.LENGTH_SHORT).show()
                 // тут можно вызвать попап при проверке сохранненго номера телефона или токена вместо навигации
                 navController.navigate(it.itemId)
                 // тут можно возвращать false чтобы не выделять отмеченный элемент
                 return@setOnItemSelectedListener true
+*/
+                return@setOnItemSelectedListener showProfile()
             }
             navController.navigate(it.itemId)
             true
@@ -94,6 +103,20 @@ class MainActivity : AppCompatActivity(), FabChanger {
             if (destination.id == R.id.basketFragment) binding.fabPrice.hide()
             else viewModel.getBasket()
         }
+    }
+
+    private fun showProfile(): Boolean =
+        if (sharedPreferences.userId == -1L) {
+            ProfilePhoneFragment.newInstance { navigateToProfile() }
+                .show(supportFragmentManager, null)
+            false
+        } else {
+            navigateToProfile()
+            true
+        }
+
+    private fun navigateToProfile() {
+        navController.navigate(R.id.profileFragment)
     }
 
     private fun observeOnlineStatus() {

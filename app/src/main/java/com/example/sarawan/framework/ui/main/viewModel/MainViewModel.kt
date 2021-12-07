@@ -26,7 +26,7 @@ class MainViewModel @Inject constructor(
                 }
 //                getRandomPicturesAsPartners(data)
                 data.sortedByDescending { it.discount }
-            }.zipWith(basket) { data, basketData ->
+           }.zipWith(basket) { data, basketData ->
                 val basketObject = (basketData as List<Basket>).first()
                 basketID = basketObject.basketId
                 data.forEach { mainScreenData ->
@@ -36,7 +36,7 @@ class MainViewModel @Inject constructor(
                     }
                 }
                 data
-            }
+           }
                 .subscribeOn(schedulerProvider.io)
                 .observeOn(schedulerProvider.io)
                 .subscribe(

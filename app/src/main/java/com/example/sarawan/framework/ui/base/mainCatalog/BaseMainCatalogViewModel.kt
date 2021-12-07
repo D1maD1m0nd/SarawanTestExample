@@ -14,7 +14,7 @@ abstract class BaseMainCatalogViewModel(
 
     protected var basketID: Int? = null
 
-    override fun search(word: String, isOnline: Boolean) {
+    fun search(word: String, isOnline: Boolean) {
         val search = interactor.getData(Query.Get.Products.ProductName(word), isOnline)
         val basket = interactor.getData(Query.Get.Basket, isOnline)
         compositeDisposable.add(
@@ -43,7 +43,7 @@ abstract class BaseMainCatalogViewModel(
         )
     }
 
-    override fun saveData(data: MainScreenDataModel, isOnline: Boolean, isNewItem: Boolean) {
+    fun saveData(data: MainScreenDataModel, isOnline: Boolean, isNewItem: Boolean) {
         val products = listOf(data.toProductShortItem())
         if (isNewItem) compositeDisposable.add(
             interactor
