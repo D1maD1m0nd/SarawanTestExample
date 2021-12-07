@@ -6,11 +6,12 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import coil.ImageLoader
 import com.example.sarawan.databinding.ListItemCardBinding
+import com.example.sarawan.framework.ui.base.mainCatalog.BaseMainCatalogAdapter
 import com.example.sarawan.framework.ui.main.viewHolder.CardItemViewHolder
 import com.example.sarawan.model.data.MainScreenDataModel
 
 class TopRecyclerAdapter(
-    private var onListItemClickListener: MainRecyclerAdapter.OnListItemClickListener,
+    private var onListItemClickListener: BaseMainCatalogAdapter.OnListItemClickListener,
     private val imageLoader: ImageLoader,
     private val callback: (measuredHeight: Int) -> Unit
 ) : RecyclerView.Adapter<CardItemViewHolder>() {

@@ -1,8 +1,10 @@
 package com.example.sarawan.framework.ui.main.viewHolder
 
+import android.os.Bundle
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.sarawan.R
+import com.example.sarawan.app.App
 import com.example.sarawan.databinding.ListItemButtonBinding
 import com.example.sarawan.model.data.MainScreenDataModel
 
@@ -18,7 +20,7 @@ class ButtonHolder(private val binding: ListItemButtonBinding) :
                 )
             )
             button.setOnClickListener {
-                TODO("Not yet implemented")
+                App.navController.navigate(R.id.action_mainFragment_to_categoryFragment)
             }
         }
     }

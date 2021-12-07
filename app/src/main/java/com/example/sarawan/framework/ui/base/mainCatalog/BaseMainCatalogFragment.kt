@@ -14,11 +14,13 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import coil.ImageLoader
+import com.example.sarawan.R
 import com.example.sarawan.activity.FabChanger
 import com.example.sarawan.activity.MainActivity
 import com.example.sarawan.app.App
 import com.example.sarawan.databinding.FragmentMainBinding
 import com.example.sarawan.framework.INavigation
+import com.example.sarawan.framework.ui.basket.BasketFragment
 import com.example.sarawan.framework.ui.main.adapter.MainRecyclerAdapter
 import com.example.sarawan.model.data.MainScreenDataModel
 import com.example.sarawan.rx.ISchedulerProvider
@@ -43,7 +45,7 @@ abstract class BaseMainCatalogFragment : Fragment(), INavigation {
     private var _binding: FragmentMainBinding? = null
     protected val binding get() = _binding!!
 
-    protected abstract val viewModel: MainCatalogInterface
+    protected abstract val viewModel: BaseMainCatalogViewModel
 
     protected var isOnline = true
 
@@ -55,13 +57,19 @@ abstract class BaseMainCatalogFragment : Fragment(), INavigation {
         GridLayoutManager(context, 2, GridLayoutManager.VERTICAL, false)
     }
 
-    private val onListItemClickListener: MainRecyclerAdapter.OnListItemClickListener =
-        object : MainRecyclerAdapter.OnListItemClickListener {
-            override fun onItemClick(data: MainScreenDataModel, diff: Int, isNewItem: Boolean) {
+    private val onListItemClickListener: BaseMainCatalogAdapter.OnListItemClickListener =
+        object : BaseMainCatalogAdapter.OnListItemClickListener {
+            override fun onItemPriceChangeClick(data: MainScreenDataModel, diff: Int, isNewItem: Boolean) {
                 data.price?.let {
                     fabChanger?.changePrice(it * diff)
                     viewModel.saveData(data, isOnline, isNewItem)
                 }
+            }
+
+            override fun onItemClick(data: MainScreenDataModel) {
+                    val bundle = Bundle()
+                    bundle.putLong(BasketFragment.PRODUCT_ID, data.id ?: -1)
+                    App.navController.navigate(R.id.action_mainFragment_to_productCardFragment,bundle)
             }
         }
 
@@ -194,6 +202,12 @@ abstract class BaseMainCatalogFragment : Fragment(), INavigation {
             .subscribe { isOnline ->
                 this.isOnline = isOnline
             }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding.mainRecyclerView.layoutManager = null
+        binding.mainRecyclerView.adapter = null
     }
 
     override fun onDestroy() {

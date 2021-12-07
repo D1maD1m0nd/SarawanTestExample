@@ -1,5 +1,6 @@
 package com.example.sarawan.activity
 
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -7,7 +8,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.sarawan.R
-import com.example.sarawan.app.App
 import com.example.sarawan.app.App.Companion.navController
 import com.example.sarawan.databinding.ActivityMainBinding
 import com.example.sarawan.framework.ui.profile.phone_fragment.ProfilePhoneFragment
@@ -23,6 +23,9 @@ import javax.inject.Inject
 import kotlin.system.exitProcess
 
 class MainActivity : AppCompatActivity(), FabChanger {
+
+    @Inject
+    lateinit var sharedPreferences: SharedPreferences
 
     @Inject
     lateinit var networkStatus: NetworkStatus
@@ -103,7 +106,7 @@ class MainActivity : AppCompatActivity(), FabChanger {
     }
 
     private fun showProfile(): Boolean =
-        if (App.sharedPreferences.userId == -1L) {
+        if (sharedPreferences.userId == -1L) {
             ProfilePhoneFragment.newInstance { navigateToProfile() }
                 .show(supportFragmentManager, null)
             false
