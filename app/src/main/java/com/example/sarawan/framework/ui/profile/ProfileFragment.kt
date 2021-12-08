@@ -106,8 +106,8 @@ class ProfileFragment : Fragment() {
                         is AddressItem -> {
                             val data = appState.data as MutableList<AddressItem>
                             if(data.isNotEmpty()) {
-                                val primaryAddress = data.first()
-                                primaryAddress.let {
+                                val primaryAddress = data.findLast { it.primary == true }
+                                primaryAddress?.let {
                                     val address = formatAddress(it)
                                     profileAddressTextView.text = address
                                 }
