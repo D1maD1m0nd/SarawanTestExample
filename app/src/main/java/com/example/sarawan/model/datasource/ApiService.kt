@@ -119,6 +119,12 @@ interface ApiService {
     @POST("api/user_address/")
     fun createAddress(@Body address : AddressItem) : Single<Address>
 
+    /**
+     * Получение списка адресов
+     */
     @GET("api/user_address/")
     fun getAddress() : Single<MutableList<AddressItem>>
+
+    @POST("api/order_calculate/")
+    fun getPreCalculationOrder(@Body address: AddressItem) : Single<Order>
 }

@@ -25,6 +25,9 @@ data class AddressItem(
 	@field:Json(name="id")
 	val id: Int? = null,
 
+	@field:Json(name="adress_id")
+	val idAddressOrder : Int? = null,
+
 	@field:Json(name="house")
 	val house: String? = null,
 
