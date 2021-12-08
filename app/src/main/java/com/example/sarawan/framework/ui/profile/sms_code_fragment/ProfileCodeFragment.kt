@@ -7,8 +7,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.core.content.getSystemService
 import androidx.core.view.isVisible
+import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.sarawan.R
@@ -43,6 +46,27 @@ class ProfileCodeFragment : DialogFragment() {
 
     private lateinit var timer: CountDownTimer
 
+    private var inputMethodManager: InputMethodManager? = null
+
+    private val profileCodeEdits by lazy {
+        with(binding) {
+            arrayOf(
+                profileCodeCode1EditText,
+                profileCodeCode2EditText,
+                profileCodeCode3EditText,
+                profileCodeCode4EditText,
+                profileCodeCode5EditText,
+                profileCodeCode6EditText,
+            )
+        }
+    }
+
+    private fun showKeyboard() =
+        inputMethodManager?.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
+
+    private fun hideKeyboard(view: View) =
+        inputMethodManager?.hideSoftInputFromWindow(view.windowToken, 0)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -70,6 +94,9 @@ class ProfileCodeFragment : DialogFragment() {
             width = WindowManager.LayoutParams.MATCH_PARENT
             height = WindowManager.LayoutParams.MATCH_PARENT
         }
+
+        inputMethodManager = requireActivity().getSystemService()
+
         initViews()
         setTitle()
         setCodeBorder()
@@ -104,6 +131,33 @@ class ProfileCodeFragment : DialogFragment() {
 
         val text = getString(R.string.profile_code_code_sent) + phoneNumber
         profileCodeSentTextView.text = text
+
+        initCodeTextViews()
+    }
+
+    private fun initCodeTextViews() = with(binding) {
+        profileCodeEdits.forEach { edit ->
+            edit.doOnTextChanged { text, _, _, _ ->
+                text?.let {
+                    //сначала узнаем, на каком мы месте
+                    val currentIndex = profileCodeEdits.indexOf(edit)
+                    if (it.length == 1) {
+                        //ввели символ, нужно переключиться на другой
+                        //если это не последний
+                        if (currentIndex == profileCodeEdits.size - 1) {
+                            hideKeyboard(edit)
+                        } else {
+                            profileCodeEdits[currentIndex + 1].requestFocus()
+                            //это почему-то ее прячет, работает, когда заремлено
+                            //showKeyboard()
+                        }
+                    }
+                }
+            }
+        }
+
+        profileCodeCode1EditText.requestFocus()
+        showKeyboard()
     }
 
     private fun sendCodeAgain() = with(binding) {
@@ -131,9 +185,12 @@ class ProfileCodeFragment : DialogFragment() {
         }
     }
 
-    private fun getSmsCode(): String = with(binding) {
-        return profileCodeCode1TextView.text.toString() + profileCodeCode2TextView.text.toString() + profileCodeCode3TextView.text.toString() + profileCodeCode4TextView.text.toString() + profileCodeCode5TextView.text.toString() + profileCodeCode6TextView.text.toString()
-    }
+    private fun getSmsCode() = concatCode()
+
+    private fun concatCode() = StringBuilder()
+        .also {
+            profileCodeEdits.forEach { tv -> it.append(tv.text.toString()) }
+        }.toString()
 
     private fun getFormatNumber(): String {
         return phoneNumber
@@ -154,27 +211,17 @@ class ProfileCodeFragment : DialogFragment() {
         profileCodeWrongCodeTextView.isVisible = wrongCode
     }
 
-    private fun clearCodeText() = with(binding) {
-        profileCodeCode1TextView.setText("")
-        profileCodeCode2TextView.setText("")
-        profileCodeCode3TextView.setText("")
-        profileCodeCode4TextView.setText("")
-        profileCodeCode5TextView.setText("")
-        profileCodeCode6TextView.setText("")
+    private fun clearCodeText() {
+        profileCodeEdits.forEach { it.setText("") }
     }
 
-    private fun setCodeBorder() = with(binding) {
+    private fun setCodeBorder() {
         val border = AppCompatResources.getDrawable(
             requireContext(),
             if (wrongCode) R.drawable.rectangle_red_shape
             else R.drawable.rectangle_gray_shape
         )
-        profileCodeCode1TextView.background = border
-        profileCodeCode2TextView.background = border
-        profileCodeCode3TextView.background = border
-        profileCodeCode4TextView.background = border
-        profileCodeCode5TextView.background = border
-        profileCodeCode6TextView.background = border
+        profileCodeEdits.forEach { it.background = border }
     }
 
     private fun setState(appState: AppState<*>) = with(binding) {
@@ -206,6 +253,7 @@ class ProfileCodeFragment : DialogFragment() {
         super.onDestroy()
         timer.cancel()
         _binding = null
+        inputMethodManager = null
     }
 
     companion object {

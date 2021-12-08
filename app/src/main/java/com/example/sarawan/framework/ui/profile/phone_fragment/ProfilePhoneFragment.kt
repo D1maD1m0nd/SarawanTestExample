@@ -10,8 +10,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.core.content.getSystemService
 import androidx.core.view.isVisible
+import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.sarawan.R
@@ -35,6 +38,14 @@ class ProfilePhoneFragment : DialogFragment() {
     private val binding get() = _binding!!
 
     private lateinit var callback: () -> Unit
+
+    private var inputMethodManager: InputMethodManager? = null
+
+    private fun showKeyboard() =
+        inputMethodManager?.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
+
+    private fun hideKeyboard(view: View) =
+        inputMethodManager?.hideSoftInputFromWindow(view.windowToken, 0)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,6 +71,9 @@ class ProfilePhoneFragment : DialogFragment() {
             width = WindowManager.LayoutParams.MATCH_PARENT
             height = WindowManager.LayoutParams.MATCH_PARENT
         }
+
+        inputMethodManager = requireActivity().getSystemService()
+
         initViews()
     }
 
@@ -71,6 +85,18 @@ class ProfilePhoneFragment : DialogFragment() {
 
         initAgreementTextView()
         toggleCheckBox()
+
+        profilePhoneMaskedEditText.doOnTextChanged { text, _, _, _ ->
+            text?.let {
+                val number = phoneNumberWithoutMask(it.toString())
+                if (number.length == 12) {
+                    hideKeyboard(profilePhoneMaskedEditText)
+                }
+            }
+        }
+
+        profilePhoneMaskedEditText.requestFocus()
+        showKeyboard()
     }
 
     private fun initAgreementTextView() = with(binding) {
@@ -110,13 +136,15 @@ class ProfilePhoneFragment : DialogFragment() {
 
     private fun getFormatNumber(): String {
         val number = binding.profilePhoneMaskedEditText.text.toString()
-        return number
-            .replace("(", "")
-            .replace(")", "")
-            .replace("_", "")
-            .replace("-", "")
-            .replace(" ", "")
+        return phoneNumberWithoutMask(number)
     }
+
+    private fun phoneNumberWithoutMask(number: String) = number
+        .replace("(", "")
+        .replace(")", "")
+        .replace("_", "")
+        .replace("-", "")
+        .replace(" ", "")
 
     private fun setState(appState: AppState<*>) {
         when (appState) {
@@ -150,6 +178,7 @@ class ProfilePhoneFragment : DialogFragment() {
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+        inputMethodManager = null
     }
 
     companion object {
