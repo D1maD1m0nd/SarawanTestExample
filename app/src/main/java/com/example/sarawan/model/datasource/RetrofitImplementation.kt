@@ -39,7 +39,13 @@ class RetrofitImplementation @Inject constructor(private val apiService: ApiServ
                         .getCategoryProducts(query.productCategory, query.page)
                         .map { it.results }
                 }
-
+                is Query.Get.Orders -> {
+                    when(query) {
+                        is Query.Get.Orders.Order -> apiService
+                            .getPreCalculationOrder(query.address)
+                            .map { listOf(it) }
+                    }
+                }
                 Query.Get.Basket -> apiService
                     .getBasket()
                     .map { listOf(it) }
