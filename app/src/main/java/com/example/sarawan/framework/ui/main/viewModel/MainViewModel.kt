@@ -14,8 +14,8 @@ class MainViewModel @Inject constructor(
 
     override fun getStartData(isOnline: Boolean) {
         val discount = interactor.getData(Query.Get.Products.DiscountProducts(), isOnline)
-        val popular = interactor.getData(Query.Get.Products.PopularProducts(), isOnline)
-//        val popular = getPopularData(lastPage, isOnline)
+        val popular = getPopularData(lastPage, isOnline)
+        lastPage += PAGES
         val basket = interactor.getData(Query.Get.Basket, isOnline)
         compositeDisposable.add(
             discount.zipWith(popular) { discountData, popularData ->
@@ -50,27 +50,18 @@ class MainViewModel @Inject constructor(
 
     private fun getPopularData(
         pageNumber: Int,
-        isOnline: Boolean,
-    ): Single<List<Product>> {
-        return Single.fromObservable {
-            Single.merge(
-                interactor.getData(
-                    Query.Get.Products.PopularProducts(pageNumber),
-                    isOnline
-                ) as Single<List<Product>>,
-                interactor.getData(
-                    Query.Get.Products.PopularProducts(pageNumber + 1),
-                    isOnline
-                ) as Single<List<Product>>,
-                interactor.getData(
-                    Query.Get.Products.PopularProducts(pageNumber + 2),
-                    isOnline
-                ) as Single<List<Product>>,
-                interactor.getData(
-                    Query.Get.Products.PopularProducts(pageNumber + 3),
-                    isOnline
-                ) as Single<List<Product>>
-            )
+        isOnline: Boolean
+    ): Single<MutableList<Product>> {
+        return if (lastPage + PAGES <= pageNumber) Single.fromCallable { mutableListOf() }
+        else Single.zip(
+            interactor.getData(
+                Query.Get.Products.PopularProducts(pageNumber),
+                isOnline
+            ) as Single<MutableList<Product>>,
+            getPopularData(pageNumber + 1, isOnline)
+        ) { data1, data2 ->
+            data1.addAll(data2)
+            data1
         }
     }
 }

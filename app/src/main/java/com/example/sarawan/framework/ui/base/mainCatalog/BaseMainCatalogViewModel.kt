@@ -87,4 +87,8 @@ abstract class BaseMainCatalogViewModel(
             )
         }
     }
+
+    companion object {
+        const val PAGES = 5
+    }
 }
