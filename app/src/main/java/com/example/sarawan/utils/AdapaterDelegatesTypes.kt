@@ -35,7 +35,8 @@ object AdapterDelegatesTypes {
                     sumTextView.text = String.format("%s ₽", it.price)
                     counterTextView.text = item.quantity.toString()
                 }
-                productImageView.load(R.drawable.product_sample_img)
+                val image = item.basketProduct?.basketProduct?.images?.first()?.image ?: ""
+                productImageView.load(image)
 
                 var counter = counterTextView.text.toString().toInt()
                 plusImageButton.setOnClickListener {
@@ -78,8 +79,10 @@ object AdapterDelegatesTypes {
         bind {
             binding.apply {
                 costValueTextView.text = String.format("%.2f ₽", item.price)
-                resultValuePaymentTextView.text = String.format("%.2f ₽", item.price)
+                diliveryPriceValueTextView.text = String.format("%.2f ₽", item.deliveryPrice)
+                resultValuePaymentTextView.text = String.format("%.2f ₽", item.resultPrice)
                 weightValueTextView.text = item.weight.toString()
+                addressButton.text = item.address
                 addressButton.setOnClickListener {
                     itemClickListener.showModal(ProfileAddressFragment.newInstance())
                 }

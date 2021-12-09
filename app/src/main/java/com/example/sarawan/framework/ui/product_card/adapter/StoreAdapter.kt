@@ -42,6 +42,7 @@ class StoreAdapter()  : RecyclerView.Adapter<StoreAdapter.StoreViewHolder>(){
                 it.visibility = GONE
                 counterContainer.visibility = VISIBLE
             }
+
         }
     }
 }

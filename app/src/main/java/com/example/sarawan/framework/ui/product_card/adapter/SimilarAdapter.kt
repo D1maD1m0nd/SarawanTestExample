@@ -7,6 +7,7 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import coil.load
 import com.example.sarawan.R
 import com.example.sarawan.databinding.ListItemCardBinding
 import com.example.sarawan.model.data.Product
@@ -61,6 +62,12 @@ class SimilarAdapter(val itemClickListener: ItemClickListener) : RecyclerView.Ad
             }
             itemBuyButton.setOnClickListener {
                 itemClickListener.changeVisible(absoluteAdapterPosition)
+            }
+            product.images?.let {
+                if(it.isNotEmpty()) {
+                    val image = product.images.first().image
+                    itemImage.load(image)
+                }
             }
         }
     }

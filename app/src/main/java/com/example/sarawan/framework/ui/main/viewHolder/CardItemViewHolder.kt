@@ -5,6 +5,7 @@ import androidx.recyclerview.widget.RecyclerView
 import coil.ImageLoader
 import coil.request.Disposable
 import coil.request.ImageRequest
+import com.example.sarawan.R
 import com.example.sarawan.databinding.ListItemCardBinding
 import com.example.sarawan.framework.ui.base.mainCatalog.BaseMainCatalogAdapter
 import com.example.sarawan.framework.ui.main.adapter.MainRecyclerAdapter
@@ -40,7 +41,8 @@ abstract class CardItemViewHolder(
 
                 itemPrice.text = String.format("%.2f", (data.price))
                 itemShopName.text = data.shop
-                "${data.weight.toString()}г".also { itemWeight.text = it }
+//                "${data.weight.toString()}г".also { itemWeight.text = it }
+                itemWeight.text = data.unitQuantity
                 itemDescription.text = data.itemDescription
 
                 itemBuyButton.setOnClickListener {
@@ -78,8 +80,9 @@ abstract class CardItemViewHolder(
             disposable = imageLoader.enqueue(
                 ImageRequest.Builder(binding.root.context)
                     .data(data.pictureUrl)
-//                        .placeholder(R.drawable.logo_top_bar)
+                    .placeholder(R.drawable.card_placeholder)
                     .target(binding.itemImage)
+                    .error(R.drawable.card_placeholder)
                     .build()
             )
         }

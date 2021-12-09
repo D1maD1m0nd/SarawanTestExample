@@ -8,6 +8,7 @@ data class MainScreenDataModel(
     val id: Long? = null,
     val itemDescription: String? = null,
     var quantity: Int? = null,
+    val unitQuantity: String? = null,
     val discount: Int? = null,
     val shop: String? = null,
     val weight: String? = null,
@@ -30,6 +31,7 @@ fun Product.toMainScreenDataModel(): MainScreenDataModel {
         itemDescription = name,
         pictureUrl = images?.first()?.image,
         discount = storePrices?.first()?.discount,
+        unitQuantity = unitQuantity,
         shop = storePrices?.first()?.store,
         cardType = when (storePrices?.first()?.discount) {
             is Int -> {

@@ -69,7 +69,7 @@ abstract class BaseMainCatalogFragment : Fragment(), INavigation {
             override fun onItemClick(data: MainScreenDataModel) {
                     val bundle = Bundle()
                     bundle.putLong(BasketFragment.PRODUCT_ID, data.id ?: -1)
-                    App.navController.navigate(R.id.action_mainFragment_to_productCardFragment,bundle)
+                    App.navController.navigate(R.id.productCardFragment,bundle)
             }
         }
 

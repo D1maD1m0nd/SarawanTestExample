@@ -61,7 +61,7 @@
                 android:orientation="horizontal">
 
                 <androidx.appcompat.widget.AppCompatEditText
-                    android:id="@+id/profile_code_code_1_text_view"
+                    android:id="@+id/profile_code_code_1_edit_text"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="5dp"
@@ -76,7 +76,7 @@
                     tools:text="1" />
 
                 <androidx.appcompat.widget.AppCompatEditText
-                    android:id="@+id/profile_code_code_2_text_view"
+                    android:id="@+id/profile_code_code_2_edit_text"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="5dp"
@@ -90,7 +90,7 @@
                     tools:text="1" />
 
                 <androidx.appcompat.widget.AppCompatEditText
-                    android:id="@+id/profile_code_code_3_text_view"
+                    android:id="@+id/profile_code_code_3_edit_text"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="5dp"
@@ -104,7 +104,7 @@
                     tools:text="1" />
 
                 <androidx.appcompat.widget.AppCompatEditText
-                    android:id="@+id/profile_code_code_4_text_view"
+                    android:id="@+id/profile_code_code_4_edit_text"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="5dp"
@@ -118,7 +118,7 @@
                     tools:text="1" />
 
                 <androidx.appcompat.widget.AppCompatEditText
-                    android:id="@+id/profile_code_code_5_text_view"
+                    android:id="@+id/profile_code_code_5_edit_text"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="5dp"
@@ -132,7 +132,7 @@
                     tools:text="1" />
 
                 <androidx.appcompat.widget.AppCompatEditText
-                    android:id="@+id/profile_code_code_6_text_view"
+                    android:id="@+id/profile_code_code_6_edit_text"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="5dp"
