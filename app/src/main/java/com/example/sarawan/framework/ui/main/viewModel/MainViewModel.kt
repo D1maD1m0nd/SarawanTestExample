@@ -4,6 +4,7 @@ import com.example.sarawan.framework.MainInteractor
 import com.example.sarawan.framework.ui.base.mainCatalog.BaseMainCatalogViewModel
 import com.example.sarawan.model.data.*
 import com.example.sarawan.rx.ISchedulerProvider
+import io.reactivex.rxjava3.core.Single
 import javax.inject.Inject
 
 class MainViewModel @Inject constructor(
@@ -14,6 +15,7 @@ class MainViewModel @Inject constructor(
     override fun getStartData(isOnline: Boolean) {
         val discount = interactor.getData(Query.Get.Products.DiscountProducts(), isOnline)
         val popular = interactor.getData(Query.Get.Products.PopularProducts(), isOnline)
+//        val popular = getPopularData(lastPage, isOnline)
         val basket = interactor.getData(Query.Get.Basket, isOnline)
         compositeDisposable.add(
             discount.zipWith(popular) { discountData, popularData ->
@@ -26,7 +28,7 @@ class MainViewModel @Inject constructor(
                 }
 //                getRandomPicturesAsPartners(data)
                 data.sortedByDescending { it.discount }
-           }.zipWith(basket) { data, basketData ->
+            }.zipWith(basket) { data, basketData ->
                 val basketObject = (basketData as List<Basket>).first()
                 basketID = basketObject.basketId
                 data.forEach { mainScreenData ->
@@ -36,7 +38,7 @@ class MainViewModel @Inject constructor(
                     }
                 }
                 data
-           }
+            }
                 .subscribeOn(schedulerProvider.io)
                 .observeOn(schedulerProvider.io)
                 .subscribe(
@@ -44,5 +46,31 @@ class MainViewModel @Inject constructor(
                     { stateLiveData.postValue(AppState.Error(it)) }
                 )
         )
+    }
+
+    private fun getPopularData(
+        pageNumber: Int,
+        isOnline: Boolean,
+    ): Single<List<Product>> {
+        return Single.fromObservable {
+            Single.merge(
+                interactor.getData(
+                    Query.Get.Products.PopularProducts(pageNumber),
+                    isOnline
+                ) as Single<List<Product>>,
+                interactor.getData(
+                    Query.Get.Products.PopularProducts(pageNumber + 1),
+                    isOnline
+                ) as Single<List<Product>>,
+                interactor.getData(
+                    Query.Get.Products.PopularProducts(pageNumber + 2),
+                    isOnline
+                ) as Single<List<Product>>,
+                interactor.getData(
+                    Query.Get.Products.PopularProducts(pageNumber + 3),
+                    isOnline
+                ) as Single<List<Product>>
+            )
+        }
     }
 }
