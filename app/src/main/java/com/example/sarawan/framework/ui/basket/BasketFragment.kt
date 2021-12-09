@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -16,9 +17,7 @@ import com.example.sarawan.framework.ui.basket.viewModel.BasketViewModel
 import com.example.sarawan.framework.ui.modals.DeliveryTimeFragment
 import com.example.sarawan.framework.ui.modals.PaymentMethodFragment
 import com.example.sarawan.framework.ui.profile.address_fragment.ProfileAddressFragment
-import com.example.sarawan.model.data.AppState
-import com.example.sarawan.model.data.ProductsItem
-import com.example.sarawan.model.data.ProductsUpdate
+import com.example.sarawan.model.data.*
 import com.example.sarawan.model.data.delegatesModel.BasketFooter
 import com.example.sarawan.model.data.delegatesModel.BasketHeader
 import com.example.sarawan.model.data.delegatesModel.BasketListItem
@@ -32,7 +31,6 @@ class BasketFragment : Fragment() {
     lateinit var viewModelFactory: ViewModelProvider.Factory
     private var _binding: FragmentBasketBinding? = null
     private val binding get() = _binding!!
-
     //основной список для отображения
     private val list: MutableList<BasketListItem> = ArrayList(
         listOf(
@@ -89,6 +87,7 @@ class BasketFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         initRcView()
         viewModel.getBasket()
+        viewModel.getAddress()
     }
 
     private fun initRcView() = with(binding) {
@@ -97,38 +96,64 @@ class BasketFragment : Fragment() {
         cardContainerRcView.adapter = adapter
     }
 
-    private fun setState(appState: AppState<*>) {
+    private fun setState(appState: AppState<*>){
         when (appState) {
             is AppState.Success<*> -> {
-                val data = appState.data as List<ProductsItem>
-                if(list.count() < LIMIT){
-                    initDataRcView(data)
+                val data = appState.data
+                if(data.isNotEmpty()) {
+                    when(val item = data.first()) {
+                        is ProductsItem -> {
+                            if(list.count() < LIMIT){
+                                data as MutableList<ProductsItem>
+                                initDataRcView(data)
+                            }
+                        }
+                        is AddressItem -> {
+                            viewModel.getOrder(AddressItem(idAddressOrder = item.id))
+                            val footer = (list.last() as BasketFooter)
+                            footer.apply {
+                                address = formatAddress(item)
+                            }
+                        }
+
+                        is Order -> {
+                            setFooterData(item)
+                            setHeaderData(item)
+                        }
+                    }
                 }
             }
             is AppState.Error -> Unit
             AppState.Loading -> Unit
         }
     }
-
+    private fun formatAddress(address: AddressItem): String {
+        val city = address.city
+        val street = address.street
+        val house = address.house
+        val roomNum = address.roomNumber
+        return "$city, ул $street, д $house, кв $roomNum"
+    }
     private fun initDataRcView(data: List<ProductsItem>) {
-        val countAdapter = list.size - 1
-        setFooterData(data)
-        setHeaderData(data)
-        list.addAll(countAdapter, data)
+        list.addAll(list.lastIndex, data)
         adapter.items = list
     }
 
-    private fun setFooterData(data: List<ProductsItem>) {
+    private fun setFooterData(order: Order) {
+        val sumOrder = order.basketSum!! + order.deliveryAmount!! + order.paymentAmount!!
         val footer = (list.last() as BasketFooter)
         footer.apply {
-            weight = BasketAdapter.calculateWeight(data)
-            price = BasketAdapter.calculateSum(data)
+            price = order.basketSum
+            deliveryPrice = order.deliveryAmount
+            resultPrice = sumOrder
         }
+        adapter.updateFooter()
     }
 
-    private fun setHeaderData(data: List<ProductsItem>) {
+    private fun setHeaderData(order: Order) {
         val header = (list.first() as BasketHeader)
-        header.counter = data.size
+        header.counter = order.basketCount!!
+        adapter.updateHeader()
     }
 
 

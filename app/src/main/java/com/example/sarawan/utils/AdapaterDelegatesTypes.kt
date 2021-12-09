@@ -79,8 +79,10 @@ object AdapterDelegatesTypes {
         bind {
             binding.apply {
                 costValueTextView.text = String.format("%.2f ₽", item.price)
-                resultValuePaymentTextView.text = String.format("%.2f ₽", item.price)
+                diliveryPriceValueTextView.text = String.format("%.2f ₽", item.deliveryPrice)
+                resultValuePaymentTextView.text = String.format("%.2f ₽", item.resultPrice)
                 weightValueTextView.text = item.weight.toString()
+                addressButton.text = item.address
                 addressButton.setOnClickListener {
                     itemClickListener.showModal(ProfileAddressFragment.newInstance())
                 }

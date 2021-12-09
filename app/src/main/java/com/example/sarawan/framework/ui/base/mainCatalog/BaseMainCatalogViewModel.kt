@@ -12,6 +12,8 @@ abstract class BaseMainCatalogViewModel(
     private val schedulerProvider: ISchedulerProvider
 ) : BaseViewModel<AppState<*>>(), MainCatalogInterface {
 
+    protected var lastPage = 1
+
     protected var basketID: Int? = null
 
     fun search(word: String, isOnline: Boolean) {

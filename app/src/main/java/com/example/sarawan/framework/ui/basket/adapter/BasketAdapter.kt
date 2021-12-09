@@ -16,19 +16,11 @@ class BasketAdapter(itemClickListener: ItemClickListener) : AsyncListDifferDeleg
         delegatesManager.addDelegate(AdapterDelegatesTypes.footerDelegateViewBindingViewHolder(itemClickListener))
     }
 
-    private fun updateHeader() {
-        val header = items.first() as BasketHeader
-        header.counter = items.count {
-            it is ProductsItem
-        }
+    fun updateHeader() {
         notifyItemChanged(FIRST_POSITION)
     }
 
-    private fun updateFooter() {
-        val footer = items.last() as BasketFooter
-        val dataModelList = filterDataModel()
-        footer.price = calculateSum(dataModelList)
-        footer.weight = calculateWeight(dataModelList)
+    fun updateFooter() {
         notifyItemChanged(itemCount - 1)
     }
 
