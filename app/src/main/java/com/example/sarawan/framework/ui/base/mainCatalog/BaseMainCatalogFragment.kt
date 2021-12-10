@@ -59,7 +59,11 @@ abstract class BaseMainCatalogFragment : Fragment(), INavigation {
 
     private val onListItemClickListener: BaseMainCatalogAdapter.OnListItemClickListener =
         object : BaseMainCatalogAdapter.OnListItemClickListener {
-            override fun onItemPriceChangeClick(data: MainScreenDataModel, diff: Int, isNewItem: Boolean) {
+            override fun onItemPriceChangeClick(
+                data: MainScreenDataModel,
+                diff: Int,
+                isNewItem: Boolean
+            ) {
                 data.price?.let {
                     fabChanger?.changePrice(it * diff)
                     viewModel.saveData(data, isOnline, isNewItem)
@@ -67,9 +71,9 @@ abstract class BaseMainCatalogFragment : Fragment(), INavigation {
             }
 
             override fun onItemClick(data: MainScreenDataModel) {
-                    val bundle = Bundle()
-                    bundle.putLong(BasketFragment.PRODUCT_ID, data.id ?: -1)
-                    App.navController.navigate(R.id.action_mainFragment_to_productCardFragment,bundle)
+                val bundle = Bundle()
+                bundle.putLong(BasketFragment.PRODUCT_ID, data.id ?: -1)
+                App.navController.navigate(R.id.productCardFragment, bundle)
             }
         }
 
@@ -114,8 +118,8 @@ abstract class BaseMainCatalogFragment : Fragment(), INavigation {
                     CardType.COMMON.type -> 1
                     CardType.STRING.type -> 2
                     CardType.BUTTON.type -> 2
-                    CardType.EMPTY.type -> 1
                     CardType.PARTNERS.type -> 2
+                    CardType.LOADING.type -> 2
                     else -> -1
                 }
             }

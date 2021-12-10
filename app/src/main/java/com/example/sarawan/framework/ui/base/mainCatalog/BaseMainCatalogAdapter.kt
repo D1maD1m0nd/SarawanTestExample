@@ -32,6 +32,6 @@ enum class CardType(val type: Int) {
     COMMON(1),
     STRING(2),
     BUTTON(3),
-    EMPTY(4),
-    PARTNERS(5)
+    PARTNERS(4),
+    LOADING(5)
 }
