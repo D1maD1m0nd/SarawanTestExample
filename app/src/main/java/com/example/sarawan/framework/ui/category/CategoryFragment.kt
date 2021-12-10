@@ -121,10 +121,6 @@ class CategoryFragment : BaseMainCatalogFragment() {
         _binding = null
     }
 
-    override fun onFragmentBackStack() {
-        App.navController.popBackStack()
-    }
-
     override fun onFragmentNext() = Unit
 
     companion object {

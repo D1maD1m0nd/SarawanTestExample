@@ -23,6 +23,34 @@ class MainFragment : BaseMainCatalogFragment() {
         binding.mainRecyclerView.adapter = mainRecyclerAdapter
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        subscribeToMoreViewModel()
+        watchForAdapter()
+    }
+
+    private fun watchForAdapter() {
+        binding.mainRecyclerView.addRecyclerListener {
+            mainRecyclerAdapter?.let { adapter ->
+                if (adapter.itemCount - it.absoluteAdapterPosition == 20)
+                    viewModel.getMoreData(isOnline)
+            }
+        }
+    }
+
+    private fun subscribeToMoreViewModel() {
+        viewModel.getMoreLiveData().observe(viewLifecycleOwner) { appState ->
+            when (appState) {
+                is AppState.Success<*> -> {
+                    val data = appState.data as List<MainScreenDataModel>
+                    mainRecyclerAdapter?.addData(data)
+                }
+                is AppState.Error -> Unit
+                AppState.Loading -> Unit
+            }
+        }
+    }
+
     override fun subscribeToViewModel() {
         viewModel.getStateLiveData().observe(viewLifecycleOwner) { appState ->
             when (appState) {
@@ -44,7 +72,5 @@ class MainFragment : BaseMainCatalogFragment() {
         }
     }
 
-    override fun onFragmentNext() {
-        TODO("Not yet implemented")
-    }
+    override fun onFragmentNext() = Unit
 }
