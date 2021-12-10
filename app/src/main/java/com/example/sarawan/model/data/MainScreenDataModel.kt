@@ -34,11 +34,11 @@ fun Product.toMainScreenDataModel(): MainScreenDataModel {
         unitQuantity = unitQuantity,
         shop = storePrices?.first()?.store,
         cardType = when (storePrices?.first()?.discount) {
-            is Int -> {
+            is Number -> {
                 if (storePrices.first().discount > 0) CardType.TOP.type
                 else CardType.COMMON.type
             }
-            else -> CardType.EMPTY.type
+            else -> throw RuntimeException("Discount should be instance of Number")
         }
     )
 }
