@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.example.sarawan.R
 import com.example.sarawan.databinding.ListItemCardBinding
+import com.example.sarawan.framework.ui.main.viewHolder.CardItemViewHolder
 import com.example.sarawan.model.data.Product
 import com.example.sarawan.utils.ItemClickListener
 
@@ -26,15 +27,22 @@ class SimilarAdapter(val itemClickListener: ItemClickListener) : RecyclerView.Ad
         notifyItemChanged(position)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductViewHolder  =
-        ProductViewHolder(
-            LayoutInflater
-            .from(parent.context)
-            .inflate(
-                R.layout.list_item_new,
-                parent,
-                false
-            ))
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductViewHolder {
+        val view = ListItemCardBinding.inflate(
+            LayoutInflater.from(parent.context),
+            parent,
+            false
+        ).apply {
+            root.layoutParams.apply {
+                width = parent.width / 2
+            }
+        }
+        return object : ProductViewHolder(
+            view,
+            itemClickListener
+        ) {}
+    }
+
 
     override fun onBindViewHolder(holder: ProductViewHolder, position: Int) {
         holder.bind(similarList[position])
@@ -44,8 +52,9 @@ class SimilarAdapter(val itemClickListener: ItemClickListener) : RecyclerView.Ad
     override fun getItemId(position: Int): Long {
         return similarList[position].id!!
     }
-    inner class ProductViewHolder(item: View) : RecyclerView.ViewHolder(item) {
-        private val binding = ListItemCardBinding.bind(item)
+    abstract class ProductViewHolder(
+        private val binding: ListItemCardBinding,
+        private val itemClickListener: ItemClickListener) : RecyclerView.ViewHolder(binding.root) {
         fun bind(product : Product) = with(binding) {
             val store = product.storePrices?.first()
             discount.visibility = GONE
