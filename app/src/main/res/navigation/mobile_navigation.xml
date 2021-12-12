@@ -9,64 +9,84 @@
         android:id="@+id/mainFragment"
         android:name="com.example.sarawan.framework.ui.main.MainFragment"
         android:label="fragment_main"
-        tools:layout="@layout/fragment_main" />
-    <fragment
-        android:id="@+id/profileFragment"
-        android:name="com.example.sarawan.framework.ui.profile.ProfileFragment"
-        android:label="fragment_profile"
-        tools:layout="@layout/fragment_profile" />
-    <fragment
-        android:id="@+id/infoFragment"
-        android:name="com.example.sarawan.framework.ui.info.InfoFragment"
-        android:label="fragment_info" />
+        tools:layout="@layout/fragment_main">
+        <action
+            android:id="@+id/action_mainFragment_to_categoryFragment"
+            app:destination="@id/categoryFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_productCardFragment"
+            app:destination="@id/productCardFragment" />
+    </fragment>
     <fragment
         android:id="@+id/basketFragment"
         android:name="com.example.sarawan.framework.ui.basket.BasketFragment"
         android:label="fragment_basket"
-        tools:layout="@layout/fragment_basket" />
+        tools:layout="@layout/fragment_basket">
+        <action
+            android:id="@+id/action_basketFragment_to_productCardFragment"
+            app:destination="@id/productCardFragment" />
+    </fragment>
     <fragment
         android:id="@+id/catalogFragment"
         android:name="com.example.sarawan.framework.ui.catalog.CatalogFragment"
         android:label="fragment_catalog"
         tools:layout="@layout/fragment_main">
         <action
-            android:id="@+id/action_catalogFragment_to_profileFragment"
-            app:destination="@id/profileFragment" />
+            android:id="@+id/action_catalogFragment_to_categoryFragment"
+            app:destination="@id/categoryFragment" />
+        <action
+            android:id="@+id/action_catalogFragment_to_productCardFragment"
+            app:destination="@id/productCardFragment" />
     </fragment>
 
-    <fragment
-        android:id="@+id/infoHowFragment"
-        android:name="com.example.sarawan.framework.ui.info.InfoHowFragment"
-        android:label="fragment_info_how" />
-
-    <fragment
-        android:id="@+id/infoAboutFragment"
-        android:name="com.example.sarawan.framework.ui.info.InfoAboutFragment"
-        android:label="fragment_info_about" />
-
-    <fragment
-        android:id="@+id/infoSupportFragment"
-        android:name="com.example.sarawan.framework.ui.info.InfoSupportFragment"
-        android:label="fragment_info_how" />
-
-    <fragment
-        android:id="@+id/profileNameFragment"
-        android:name="com.example.sarawan.framework.ui.profile.ProfileNameFragment"
-        android:label="fragment_profile_name"
-        tools:layout="@layout/fragment_profile_name" />
-    <fragment
-        android:id="@+id/profileAddressFragment"
-        android:name="com.example.sarawan.framework.ui.profile.ProfileAddressFragment"
-        android:label="fragment_profile_address"
-        tools:layout="@layout/fragment_profile_address" />
-    <fragment
-        android:id="@+id/profileAlertFragment"
-        android:name="com.example.sarawan.framework.ui.profile.ProfileAlertFragment"
-        android:label="fragment_profile_alert"
-        tools:layout="@layout/fragment_profile_alert" />
     <fragment
         android:id="@+id/productCardFragment"
         android:name="com.example.sarawan.framework.ui.product_card.ProductCardFragment"
         android:label="fragment_product_card"
         tools:layout="@layout/fragment_product_card" />
+    <fragment
+        android:id="@+id/categoryFragment"
+        android:name="com.example.sarawan.framework.ui.category.CategoryFragment"
+        android:label="CategoryFragment"
+        tools:layout="@layout/fragment_catalog_list">
+        <action
+            android:id="@+id/action_categoryFragment_to_productCardFragment"
+            app:destination="@id/productCardFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/infoHowFragment"
+        android:name="com.example.sarawan.framework.ui.info.InfoHowFragment"
+        android:label="InfoHowFragment"
+        tools:layout="@layout/fragment_info_how" />
+    <fragment
+        android:id="@+id/infoSupportFragment"
+        android:name="com.example.sarawan.framework.ui.info.InfoSupportFragment"
+        android:label="InfoSupportFragment"
+        tools:layout="@layout/fragment_info_support" />
+    <fragment
+        android:id="@+id/infoAboutFragment"
+        android:name="com.example.sarawan.framework.ui.info.InfoAboutFragment"
+        android:label="InfoAboutFragment"
+        tools:layout="@layout/fragment_info_about" />
+    <fragment
+        android:id="@+id/infoFragment"
+        android:name="com.example.sarawan.framework.ui.info.InfoFragment"
+        android:label="InfoFragment"
+        tools:layout="@layout/fragment_info">
+        <action
+            android:id="@+id/action_infoFragment_to_infoAboutFragment"
+            app:destination="@id/infoAboutFragment" />
+        <action
+            android:id="@+id/action_infoFragment_to_infoSupportFragment"
+            app:destination="@id/infoSupportFragment" />
+        <action
+            android:id="@+id/action_infoFragment_to_infoHowFragment"
+            app:destination="@id/infoHowFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.example.sarawan.framework.ui.profile.ProfileFragment"
+        android:label="fragment_profile"
+        tools:layout="@layout/fragment_profile" />
 </navigation>

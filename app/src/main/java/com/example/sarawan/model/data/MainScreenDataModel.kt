@@ -8,15 +8,17 @@ data class MainScreenDataModel(
     val id: Long? = null,
     val itemDescription: String? = null,
     var quantity: Int? = null,
+    val unitQuantity: String? = null,
     val discount: Int? = null,
     val shop: String? = null,
     val weight: String? = null,
     val pictureUrl: String? = null,
     val price: Float? = null,
-    val cardType: Int? = null,
+    var cardType: Int? = null,
     val fontSize: Float? = null,
     val gravity: Int? = null,
     val fontType: Int? = null,
+    val extData: List<Any>? = null,
     @ColorInt val backgroundColor: Int? = null,
     @ColorInt val textColor: Int? = null,
     val padding: ArrayList<Int>? = null,
@@ -25,17 +27,18 @@ data class MainScreenDataModel(
 fun Product.toMainScreenDataModel(): MainScreenDataModel {
     return MainScreenDataModel(
         id = id,
-        price = store_prices?.first()?.price?.toFloat(),
+        price = storePrices?.first()?.price?.toFloat(),
         itemDescription = name,
         pictureUrl = images?.first()?.image,
-        discount = store_prices?.first()?.discount,
-        shop = store_prices?.first()?.store,
-        cardType = when (store_prices?.first()?.discount) {
-            is Int -> {
-                if (store_prices.first().discount > 0) CardType.TOP.type
+        discount = storePrices?.first()?.discount,
+        unitQuantity = unitQuantity,
+        shop = storePrices?.first()?.store,
+        cardType = when (storePrices?.first()?.discount) {
+            is Number -> {
+                if (storePrices.first().discount > 0) CardType.TOP.type
                 else CardType.COMMON.type
             }
-            else -> CardType.EMPTY.type
+            else -> throw RuntimeException("Discount should be instance of Number")
         }
     )
 }

@@ -5,7 +5,7 @@ import com.example.sarawan.R
 import com.example.sarawan.databinding.BasketFooterItemBinding
 import com.example.sarawan.databinding.BasketHeaderItemBinding
 import com.example.sarawan.databinding.BasketItemBinding
-import com.example.sarawan.framework.ui.profile.ProfileAddressFragment
+import com.example.sarawan.framework.ui.profile.address_fragment.ProfileAddressFragment
 import com.example.sarawan.model.data.ProductsItem
 import com.example.sarawan.model.data.delegatesModel.BasketFooter
 import com.example.sarawan.model.data.delegatesModel.BasketHeader
@@ -35,7 +35,8 @@ object AdapterDelegatesTypes {
                     sumTextView.text = String.format("%s ₽", it.price)
                     counterTextView.text = item.quantity.toString()
                 }
-                productImageView.load(R.drawable.product_sample_img)
+                val image = item.basketProduct?.basketProduct?.images?.first()?.image ?: ""
+                productImageView.load(image)
 
                 var counter = counterTextView.text.toString().toInt()
                 plusImageButton.setOnClickListener {
@@ -78,8 +79,10 @@ object AdapterDelegatesTypes {
         bind {
             binding.apply {
                 costValueTextView.text = String.format("%.2f ₽", item.price)
-                resultValuePaymentTextView.text = String.format("%.2f ₽", item.price)
+                diliveryPriceValueTextView.text = String.format("%.2f ₽", item.deliveryPrice)
+                resultValuePaymentTextView.text = String.format("%.2f ₽", item.resultPrice)
                 weightValueTextView.text = item.weight.toString()
+                addressButton.text = item.address
                 addressButton.setOnClickListener {
                     itemClickListener.showModal(ProfileAddressFragment.newInstance())
                 }

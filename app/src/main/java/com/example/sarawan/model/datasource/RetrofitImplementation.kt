@@ -11,7 +11,11 @@ class RetrofitImplementation @Inject constructor(private val apiService: ApiServ
         return when (query) {
 
             is Query.Get -> when (query) {
-
+                is Query.Get.Users -> when (query) {
+                    is Query.Get.Users.UserData -> apiService
+                        .getUser(query.id)
+                        .map { listOf(it) }
+                }
                 is Query.Get.Products -> when (query) {
                     is Query.Get.Products.DiscountProducts -> apiService
                         .getDiscountProducts(page = query.page)
@@ -29,10 +33,19 @@ class RetrofitImplementation @Inject constructor(private val apiService: ApiServ
                         .search(query.productName, query.page)
                         .map { it.results }
                     is Query.Get.Products.SimilarProducts -> apiService
-                        .getSimilarProducts(query.id)
+                        .getSimilarProducts(query.id, query.page)
+                        .map { it.results }
+                    is Query.Get.Products.ProductCategory -> apiService
+                        .getCategoryProducts(query.productCategory, query.page)
                         .map { it.results }
                 }
-
+                is Query.Get.Orders -> {
+                    when(query) {
+                        is Query.Get.Orders.Order -> apiService
+                            .getPreCalculationOrder(query.address)
+                            .map { listOf(it) }
+                    }
+                }
                 Query.Get.Basket -> apiService
                     .getBasket()
                     .map { listOf(it) }
@@ -40,12 +53,24 @@ class RetrofitImplementation @Inject constructor(private val apiService: ApiServ
                 Query.Get.Category -> apiService
                     .getCategories()
                     .map { it as List<*> }
+
+                Query.Get.Address -> apiService
+                    .getAddress()
+                    .map { it }
             }
 
             is Query.Post -> when (query) {
-
                 is Query.Post.Basket.Put -> apiService
                     .putBasketProduct(query.products)
+                    .map { listOf(it) }
+                is Query.Post.User.Sms -> apiService
+                    .sendSms(query.user)
+                    .map { listOf(it) }
+                is Query.Post.User.NewUser -> apiService
+                    .createUser(query.user)
+                    .map { listOf(it) }
+                is Query.Post.Address.NewAddress -> apiService
+                    .createAddress(query.address)
                     .map { listOf(it) }
             }
 
@@ -53,6 +78,9 @@ class RetrofitImplementation @Inject constructor(private val apiService: ApiServ
 
                 is Query.Put.Basket.Update -> apiService
                     .updateBasketProduct(query.id, query.products)
+                    .map { listOf(it) }
+                is Query.Put.Users.Update -> apiService
+                    .updateUser(query.id, query.user)
                     .map { listOf(it) }
             }
 

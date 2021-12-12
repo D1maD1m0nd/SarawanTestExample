@@ -1,10 +1,12 @@
 package com.example.sarawan.di.modules
 
 import android.content.Context
-import com.example.sarawan.BuildConfig
+import android.content.SharedPreferences
+import com.example.sarawan.app.App
 import com.example.sarawan.model.datasource.ApiService
 import com.example.sarawan.utils.AndroidNetworkStatus
 import com.example.sarawan.utils.NetworkStatus
+import com.example.sarawan.utils.exstentions.token
 import dagger.Module
 import dagger.Provides
 import okhttp3.OkHttpClient
@@ -20,17 +22,20 @@ class NetworkModule {
     fun getNetworkStatus(context: Context): NetworkStatus = AndroidNetworkStatus(context)
 
     @Provides
-    fun getHttpClient(): OkHttpClient {
+    fun getHttpClient(shared: SharedPreferences): OkHttpClient {
         val httpClient = OkHttpClient.Builder()
         httpClient.addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
         httpClient.addInterceptor { chain ->
             val original = chain.request()
             val request = original.newBuilder()
-                .header("Authorization", TOKEN)
-                .method(original.method, original.body)
+            val token = shared.token ?: ""
+            if(token.isNotEmpty()) {
+                request.header("Authorization", "Token $token")
+            }
+            val builder = request.method(original.method, original.body)
                 .build()
 
-            chain.proceed(request)
+            chain.proceed(builder)
         }
         return httpClient.build()
     }
@@ -47,7 +52,6 @@ class NetworkModule {
     fun getApiService(retrofit: Retrofit): ApiService = retrofit.create(ApiService::class.java)
 
     companion object {
-        private const val BASE_URL = "https://dev.sarawan.ru/api/"
-        private const val TOKEN = "Token ${BuildConfig.USER_TOKEN}"
+        private const val BASE_URL = "https://dev.sarawan.ru/"
     }
 }

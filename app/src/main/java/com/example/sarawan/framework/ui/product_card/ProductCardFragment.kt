@@ -8,6 +8,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import coil.load
 import com.example.sarawan.app.App.Companion.navController
 import com.example.sarawan.databinding.FragmentProductCardBinding
 import com.example.sarawan.framework.ui.basket.BasketFragment
@@ -112,10 +113,15 @@ class ProductCardFragment : Fragment() {
         containerStoreRecyclerView.itemAnimator?.changeDuration = 0
         titleTextView.text = data.name
         contentDescriptionTextView.text = data.description
-        data.store_prices?.let {
+        data.storePrices?.let {
             priceTextView.text = it.first().price
             storeTextView.text = it.first().store
             storeAdapter.setData(it)
+        }
+        data.images?.let {
+            if(it.isNotEmpty()) {
+                mainImageProductImageView.load(it.first().image)
+            }
         }
     }
 

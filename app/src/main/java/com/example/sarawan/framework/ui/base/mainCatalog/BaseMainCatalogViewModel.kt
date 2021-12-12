@@ -1,6 +1,8 @@
 package com.example.sarawan.framework.ui.base.mainCatalog
 
 import android.graphics.Color
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.example.sarawan.R
 import com.example.sarawan.framework.MainInteractor
 import com.example.sarawan.framework.ui.base.BaseViewModel
@@ -12,9 +14,15 @@ abstract class BaseMainCatalogViewModel(
     private val schedulerProvider: ISchedulerProvider
 ) : BaseViewModel<AppState<*>>(), MainCatalogInterface {
 
+    protected val stateMoreLiveData: MutableLiveData<AppState<*>> = MutableLiveData()
+
+    protected var lastPage = 1
+
     protected var basketID: Int? = null
 
-    override fun search(word: String, isOnline: Boolean) {
+    fun getMoreLiveData(): LiveData<AppState<*>> = stateMoreLiveData
+
+    fun search(word: String, isOnline: Boolean) {
         val search = interactor.getData(Query.Get.Products.ProductName(word), isOnline)
         val basket = interactor.getData(Query.Get.Basket, isOnline)
         compositeDisposable.add(
@@ -43,7 +51,7 @@ abstract class BaseMainCatalogViewModel(
         )
     }
 
-    override fun saveData(data: MainScreenDataModel, isOnline: Boolean, isNewItem: Boolean) {
+    fun saveData(data: MainScreenDataModel, isOnline: Boolean, isNewItem: Boolean) {
         val products = listOf(data.toProductShortItem())
         if (isNewItem) compositeDisposable.add(
             interactor
@@ -84,5 +92,9 @@ abstract class BaseMainCatalogViewModel(
                 )
             )
         }
+    }
+
+    companion object {
+        const val PAGES = 5
     }
 }
