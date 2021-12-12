@@ -66,7 +66,10 @@ class SimilarAdapter(val itemClickListener: ItemClickListener) : RecyclerView.Ad
             product.images?.let {
                 if(it.isNotEmpty()) {
                     val image = product.images.first().image
-                    itemImage.load(image)
+                    itemImage.load(image) {
+                        placeholder(R.drawable.card_placeholder)
+                        error(R.drawable.card_placeholder)
+                    }
                 }
             }
         }

@@ -36,7 +36,11 @@ object AdapterDelegatesTypes {
                     counterTextView.text = item.quantity.toString()
                 }
                 val image = item.basketProduct?.basketProduct?.images?.first()?.image ?: ""
-                productImageView.load(image)
+
+                productImageView.load(image) {
+                    placeholder(R.drawable.card_placeholder)
+                    error(R.drawable.card_placeholder)
+                }
 
                 var counter = counterTextView.text.toString().toInt()
                 plusImageButton.setOnClickListener {
