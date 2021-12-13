@@ -139,7 +139,9 @@ class ProfileFragment : Fragment() {
                             if (sharedPreferences.basketId == -1) {
                                 sharedPreferences.basketId = firstItem.basket?.basketId
                             }
-                            profilePhoneTextView.text = firstItem.phone
+                            //profilePhoneTextView.text = firstItem.phone
+                            profilePhoneTextView.text = formatPhone(firstItem.phone)
+
                             val name = formatName(firstItem)
                             profileNameTextView.text = name
 
@@ -159,6 +161,22 @@ class ProfileFragment : Fragment() {
             AppState.Loading -> Unit
         }
     }
+
+    private fun formatPhone(number: String?): String =
+        number?.let {
+            var index = 0
+            getString(R.string.profile_phone_mask)
+                .asSequence()
+                .map { c ->
+                    if (index < number.length) {
+                        val cc = number.get(index)
+                        if (cc == c || c == '9') {
+                            index++
+                            cc
+                        } else c
+                    } else c
+                }.joinToString("")
+        } ?: ""
 
     private fun formatAddress(address: AddressItem): String {
         val city = address.city
