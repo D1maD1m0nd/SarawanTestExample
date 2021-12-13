@@ -6,7 +6,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.core.content.getSystemService
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.sarawan.databinding.FragmentProfileNameBinding
@@ -30,6 +32,26 @@ class ProfileNameFragment : DialogFragment() {
 
     private var _binding: FragmentProfileNameBinding? = null
     private val binding get() = _binding!!
+
+    private var userFirstName: String? = null
+    private var userLastName: String? = null
+    private lateinit var onSaveDataCallback: () -> Unit
+
+    private var inputMethodManager: InputMethodManager? = null
+    private var keyboardShown = false
+
+    private fun showKeyboard() {
+        inputMethodManager?.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
+        keyboardShown = true
+    }
+
+    private fun hideKeyboard() {
+        if (keyboardShown) {
+            inputMethodManager?.hideSoftInputFromWindow(binding.profileNameRootView.windowToken, 0)
+            keyboardShown = false
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         AndroidSupportInjection.inject(this)
@@ -54,20 +76,32 @@ class ProfileNameFragment : DialogFragment() {
             width = WindowManager.LayoutParams.MATCH_PARENT
             height = WindowManager.LayoutParams.MATCH_PARENT
         }
+        inputMethodManager = requireActivity().getSystemService()
         initViews()
     }
 
     private fun initViews() = with(binding) {
-        profileNameBackButton.setOnClickListener { dismiss() }
+        userFirstName?.let { profileNameEditText.setText(it) }
+        userLastName?.let { profileLastnameEditText.setText(it) }
+
+        profileNameBackButton.setOnClickListener {
+            hideKeyboard()
+            dismiss()
+        }
         profileNameSaveButton.setOnClickListener { saveData() }
+
+        profileNameEditText.requestFocus()
+        showKeyboard()
     }
 
     private fun saveData() = with(binding) {
-        sharedPreferences.userId?.let {
-            val firstName = profileNameEditText.text.toString()
-            val lastName = profileLastnameEditText.text.toString()
-            val user = UserDataModel(firstName = firstName, lastName = lastName)
-            viewModel.updateUser(user, it)
+        if (sharedPreferences.userId != 1L) {
+            sharedPreferences.userId?.let {
+                val firstName = profileNameEditText.text.toString()
+                val lastName = profileLastnameEditText.text.toString()
+                val user = UserDataModel(firstName = firstName, lastName = lastName)
+                viewModel.updateUser(user, it)
+            }
         }
     }
 
@@ -75,6 +109,10 @@ class ProfileNameFragment : DialogFragment() {
         when (appState) {
             is AppState.Success<*> -> {
                 Toast.makeText(context, "Сохранение прошло успешно", Toast.LENGTH_SHORT).show()
+
+                hideKeyboard()
+                onSaveDataCallback.invoke()
+                dismiss()
             }
             is AppState.Error -> {
                 Toast.makeText(
@@ -94,6 +132,13 @@ class ProfileNameFragment : DialogFragment() {
     }
 
     companion object {
-        fun newInstance() = ProfileNameFragment()
+        fun newInstance(user: UserDataModel?, onSaveDataCallback: () -> Unit) =
+            ProfileNameFragment().apply {
+                this.onSaveDataCallback = onSaveDataCallback
+                user?.let {
+                    userFirstName = it.firstName
+                    userLastName = it.lastName
+                }
+            }
     }
 }
