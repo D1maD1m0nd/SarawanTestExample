@@ -38,7 +38,7 @@ class CatalogFragment : BaseMainCatalogFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (savedInstanceState == null) viewModel.getStartData(isOnline)
+        if (savedInstanceState == null && isOnline) viewModel.getStartData(isOnline)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -74,7 +74,6 @@ class CatalogFragment : BaseMainCatalogFragment() {
                                 listData as List<MainScreenDataModel>,
                                 binding.searchField.editText?.text.isNullOrEmpty()
                             )
-
                         }
                         is CategoryDataModel -> {
                             binding.mainRecyclerView.layoutManager = linearLayoutManager

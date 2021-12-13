@@ -6,8 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import androidx.recyclerview.widget.RecyclerView
 import com.example.sarawan.R
-import com.example.sarawan.app.App
 import com.example.sarawan.databinding.FragmentCatalogListBinding
 import com.example.sarawan.framework.ui.base.mainCatalog.BaseMainCatalogFragment
 import com.example.sarawan.framework.ui.base.mainCatalog.CardType
@@ -47,15 +47,27 @@ class CategoryFragment : BaseMainCatalogFragment() {
         }
         initSpinner()
         loadStartData()
+        watchForAdapter()
+    }
+
+    private fun watchForAdapter() {
+        categoryBinding.cardsRecycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                mainRecyclerAdapter?.let { adapter ->
+                    if (newState == RecyclerView.SCROLL_STATE_IDLE
+                        && adapter.itemCount - gridLayoutManager.findLastVisibleItemPosition() < 2
+                        && isOnline
+                    ) viewModel.getMoreData(isOnline)
+                }
+            }
+        })
     }
 
     private fun loadStartData() {
-        val catalogCategory = arguments?.getInt(KEY_CATEGORY) ?: DISCOUNT
         categoryBinding.fragmentCaption.text =
             arguments?.getString(KEY_CATEGORY_NAME) ?: "Выгодные предложения"
-        if (catalogCategory == DISCOUNT) {
-            viewModel.getStartData(isOnline)
-        } else viewModel.getCategoryData(catalogCategory, isOnline)
+        if (isOnline) viewModel
+            .getStartData(arguments?.getInt(KEY_CATEGORY) ?: DISCOUNT, isOnline)
     }
 
     private fun initSpinner() {
