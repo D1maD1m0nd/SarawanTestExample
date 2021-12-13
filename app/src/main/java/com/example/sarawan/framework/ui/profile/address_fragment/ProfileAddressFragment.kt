@@ -6,7 +6,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.core.content.getSystemService
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.sarawan.databinding.FragmentProfileAddressBinding
@@ -30,6 +32,31 @@ class ProfileAddressFragment : DialogFragment() {
 
     private var _binding: FragmentProfileAddressBinding? = null
     private val binding get() = _binding!!
+
+    private var userCity: String? = null
+    private var userStreet: String? = null
+    private var userHouse: String? = null
+    private var userRoomNumber: String? = null
+    private var onSaveDataCallback: (() -> Unit)? = null
+
+    private var inputMethodManager: InputMethodManager? = null
+    private var keyboardShown = false
+
+    private fun showKeyboard() {
+        inputMethodManager?.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
+        keyboardShown = true
+    }
+
+    private fun hideKeyboard() {
+        if (keyboardShown) {
+            inputMethodManager?.hideSoftInputFromWindow(
+                binding.profileAddressRootView.windowToken,
+                0
+            )
+            keyboardShown = false
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         AndroidSupportInjection.inject(this)
@@ -54,16 +81,32 @@ class ProfileAddressFragment : DialogFragment() {
             width = WindowManager.LayoutParams.MATCH_PARENT
             height = WindowManager.LayoutParams.MATCH_PARENT
         }
+        inputMethodManager = requireActivity().getSystemService()
         initViews()
     }
 
     private fun initViews() = with(binding) {
-        profileAddressBackButton.setOnClickListener { dismiss() }
+        //город не обновляем
+        //userCity?.let {  }
+        //подъезда почему-то тоже нет в приходящем адресе
+
+        userStreet.let { profileAddressStreetEditText.setText(it) }
+        userHouse.let { profileAddressHouseEditText.setText(it) }
+        userRoomNumber.let { profileAddressApartmentEditText.setText(it) }
+
+        profileAddressBackButton.setOnClickListener {
+            hideKeyboard()
+            dismiss()
+        }
         profileAddressSaveButton.setOnClickListener { saveData() }
         profileAddressCityTextView.setOnClickListener { showAlert() }
+
+        profileAddressStreetEditText.requestFocus()
+        showKeyboard()
     }
 
     private fun showAlert() {
+        hideKeyboard()
         ProfileAlertFragment.newInstance().show(childFragmentManager, null)
     }
 
@@ -92,11 +135,15 @@ class ProfileAddressFragment : DialogFragment() {
         when (appState) {
             is AppState.Success<*> -> {
                 Toast.makeText(context, "Сохранение прошло успешно", Toast.LENGTH_SHORT).show()
+
+                hideKeyboard()
+                onSaveDataCallback?.invoke()
+                dismiss()
             }
             is AppState.Error -> {
                 Toast.makeText(
                     context,
-                    "При отправке смс кода произошла ошибка, повторите попытку позднее",
+                    "Ошибка",
                     Toast.LENGTH_SHORT
                 )
                     .show()
@@ -111,6 +158,18 @@ class ProfileAddressFragment : DialogFragment() {
     }
 
     companion object {
-        fun newInstance() = ProfileAddressFragment()
+        //для совместимости с вызовом Димы из корзины переопределил временно
+        fun newInstance() = newInstance(null, null)
+
+        fun newInstance(addressItem: AddressItem?, onSaveDataCallback: (() -> Unit)?) =
+            ProfileAddressFragment().apply {
+                this.onSaveDataCallback = onSaveDataCallback
+                addressItem?.let {
+                    userCity = it.city
+                    userStreet = it.street
+                    userHouse = it.house
+                    userRoomNumber = it.roomNumber
+                }
+            }
     }
 }

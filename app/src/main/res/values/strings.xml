@@ -74,7 +74,7 @@
     <string name="profile_title">Профиль</string>
     <string name="profile_add_name">Добавить имя</string>
     <string name="profile_foo_phone">+7 000 00 00</string>
-    <string name="profile_foo_address">г.Москва\nул.Тверская, дом 13, подъезд 4, кв. 75</string>
+    <string name="profile_add_address">Адрес</string>
     <string name="profile_exit">Выйти</string>
     <string name="profile_alert_no_change_city">Вы не можете поменять город.</string>
     <string name="profile_alert_only_moscow">На данный момент сервис\n действует только в г. Москва.</string>
