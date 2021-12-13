@@ -9,4 +9,5 @@ interface ItemClickListener {
     fun deleteItem(basketId : Int, pos : Int, item : BasketListItem)
     fun openProductCard(productId : Int)
     fun changeVisible(pos: Int)
+    fun createOrder()
 }
