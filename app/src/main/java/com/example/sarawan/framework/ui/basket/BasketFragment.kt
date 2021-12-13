@@ -44,7 +44,7 @@ class BasketFragment : Fragment() {
             showModalDialog(fragment)
         }
 
-        override fun update() {
+        override fun update(pos : Int) {
             updateBasket()
         }
 
@@ -186,7 +186,9 @@ class BasketFragment : Fragment() {
     }
     private fun showProductFragment(idProduct: Int) {
         val bundle = Bundle()
+        val products = adapter.items.filterIsInstance<ProductsItem>()
         bundle.putLong(PRODUCT_ID, idProduct.toLong())
+        bundle.putParcelableArrayList(PRODUCTS_BASKET, ArrayList(products));
         navController.navigate(R.id.action_basketFragment_to_productCardFragment,bundle)
     }
     override fun onDestroyView() {
@@ -197,6 +199,7 @@ class BasketFragment : Fragment() {
     companion object {
         fun newInstance() = BasketFragment()
         const val PRODUCT_ID = "PRODUCT_ID"
+        const val PRODUCTS_BASKET = "PRODUCTS_BASKET"
         private const val LIMIT = 3
     }
 }

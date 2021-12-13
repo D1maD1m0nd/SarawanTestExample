@@ -18,6 +18,7 @@ import com.example.sarawan.framework.ui.profile.viewModel.ProfileViewModel
 import com.example.sarawan.model.data.AddressItem
 import com.example.sarawan.model.data.AppState
 import com.example.sarawan.model.data.UserDataModel
+import com.example.sarawan.utils.exstentions.basketId
 import com.example.sarawan.utils.exstentions.token
 import com.example.sarawan.utils.exstentions.userId
 import dagger.android.support.AndroidSupportInjection
@@ -114,6 +115,9 @@ class ProfileFragment : Fragment() {
                             }
                         }
                         is UserDataModel -> {
+                            if(sharedPreferences.basketId == -1) {
+                                sharedPreferences.basketId = firstItem.basket?.basketId
+                            }
                             profilePhoneTextView.text = firstItem.phone
                             val name = formatName(firstItem)
                             profileNameTextView.text = name

@@ -19,3 +19,13 @@ var SharedPreferences.userId: Long?
                 .apply()
         }
     }
+
+var SharedPreferences.basketId:Int?
+    get() = this.getInt("basketId", -1)
+    set(value) {
+        if (value != null) {
+            this.edit()
+                .putInt("basketId", value)
+                .apply()
+        }
+    }
