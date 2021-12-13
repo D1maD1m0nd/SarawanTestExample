@@ -5,7 +5,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.core.content.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.sarawan.R
@@ -38,6 +40,10 @@ class ProfileFragment : Fragment() {
     private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding!!
 
+    //нам нужно отдельно иметь сохраненные имя и фамилию, чтобы передавать в фрагмент
+    //их редактирования, если они не пустые
+    private var user : UserDataModel? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         AndroidSupportInjection.inject(this)
@@ -56,11 +62,17 @@ class ProfileFragment : Fragment() {
         }
         .root
 
+    private fun getUserData() {
+        if (sharedPreferences.userId != -1L) {
+            sharedPreferences.userId?.let {
+                viewModel.getUserData(it)
+            }
+        }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        sharedPreferences.userId?.let {
-            viewModel.getUserData(it)
-        }
+        getUserData()
         initViews()
     }
 
@@ -78,7 +90,7 @@ class ProfileFragment : Fragment() {
 
     private fun leave() {
         sharedPreferences.token = null
-        sharedPreferences.userId = -1
+        sharedPreferences.userId = -1L
         navController.navigate(R.id.mainFragment)
     }
 
@@ -96,7 +108,10 @@ class ProfileFragment : Fragment() {
     }
 
     private fun showName() {
-        ProfileNameFragment.newInstance().show(childFragmentManager, null)
+        ProfileNameFragment.newInstance(user) {
+            getUserData()
+        }
+            .show(childFragmentManager, null)
     }
 
     private fun setState(appState: AppState<*>) = with(binding) {
@@ -106,7 +121,7 @@ class ProfileFragment : Fragment() {
                     when (val firstItem = appState.data.first()) {
                         is AddressItem -> {
                             val data = appState.data as MutableList<AddressItem>
-                            if(data.isNotEmpty()) {
+                            if (data.isNotEmpty()) {
                                 val primaryAddress = data.findLast { it.primary == true }
                                 primaryAddress?.let {
                                     val address = formatAddress(it)
@@ -115,12 +130,14 @@ class ProfileFragment : Fragment() {
                             }
                         }
                         is UserDataModel -> {
-                            if(sharedPreferences.basketId == -1) {
+                            if (sharedPreferences.basketId == -1) {
                                 sharedPreferences.basketId = firstItem.basket?.basketId
                             }
                             profilePhoneTextView.text = firstItem.phone
                             val name = formatName(firstItem)
                             profileNameTextView.text = name
+
+                            user = firstItem
                         }
                     }
                 }
@@ -148,7 +165,12 @@ class ProfileFragment : Fragment() {
     private fun formatName(user: UserDataModel): String {
         val firstName = user.firstName
         val lastName = user.lastName
-        return "$firstName $lastName"
+        val fullName = "$firstName $lastName".trim()
+        return if (fullName.isNotEmpty()) {
+            fullName
+        } else {
+            getString(R.string.profile_add_name)
+        }
     }
 
     override fun onDestroy() {
