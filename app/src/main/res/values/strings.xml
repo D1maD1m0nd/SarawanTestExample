@@ -103,4 +103,5 @@
     <string name="profile_code_wrong_code">Неверный код</string>
     <string name="profile_success_registered">Вы успешно зарегистрировались!</string>
     <string name="profile_success_ok">OK</string>
+    <string name="confrim_order_message">Ваш заказ успешно оформлен!</string>
 </resources>
