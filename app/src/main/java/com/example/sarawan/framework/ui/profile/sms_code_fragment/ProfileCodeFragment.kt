@@ -47,6 +47,19 @@ class ProfileCodeFragment : DialogFragment() {
     private lateinit var timer: CountDownTimer
 
     private var inputMethodManager: InputMethodManager? = null
+    private var keyboardShown = false
+
+    private fun showKeyboard() {
+        inputMethodManager?.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
+        keyboardShown = true
+    }
+
+    private fun hideKeyboard() {
+        if (keyboardShown) {
+            inputMethodManager?.hideSoftInputFromWindow(binding.profileCodeRootView.windowToken, 0)
+            keyboardShown = false
+        }
+    }
 
     private val profileCodeEdits by lazy {
         with(binding) {
@@ -60,12 +73,6 @@ class ProfileCodeFragment : DialogFragment() {
             )
         }
     }
-
-    private fun showKeyboard() =
-        inputMethodManager?.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
-
-    private fun hideKeyboard(view: View) =
-        inputMethodManager?.hideSoftInputFromWindow(view.windowToken, 0)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -121,7 +128,10 @@ class ProfileCodeFragment : DialogFragment() {
     }
 
     private fun initViews() = with(binding) {
-        profileCodeCloseButton.setOnClickListener { dismiss() }
+        profileCodeCloseButton.setOnClickListener {
+            hideKeyboard()
+            dismiss()
+        }
 
         profileCodeSendButton.setOnClickListener { sendCode() }
         profileCodeRequestAgainButton.setOnClickListener { sendCodeAgain() }
@@ -145,7 +155,7 @@ class ProfileCodeFragment : DialogFragment() {
                         //ввели символ, нужно переключиться на другой
                         //если это не последний
                         if (currentIndex == profileCodeEdits.size - 1) {
-                            hideKeyboard(edit)
+                            hideKeyboard()
                         } else {
                             profileCodeEdits[currentIndex + 1].requestFocus()
                             //это почему-то ее прячет, работает, когда заремлено
@@ -232,6 +242,7 @@ class ProfileCodeFragment : DialogFragment() {
                     val result = appState.data.first()
                     sharedPreferences.token = result.token
                     sharedPreferences.userId = result.userId
+                    hideKeyboard()
                     ProfileSuccessFragment.newInstance(
                         callback
                     ).show(childFragmentManager, null)
