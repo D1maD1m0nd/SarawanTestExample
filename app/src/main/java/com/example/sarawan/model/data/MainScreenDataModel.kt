@@ -6,6 +6,7 @@ import com.example.sarawan.framework.ui.base.mainCatalog.CardType
 data class MainScreenDataModel(
 
     val id: Long? = null,
+    val storeId : Int? = null,
     val itemDescription: String? = null,
     var quantity: Int? = null,
     val unitQuantity: String? = null,
@@ -27,6 +28,7 @@ data class MainScreenDataModel(
 fun Product.toMainScreenDataModel(): MainScreenDataModel {
     return MainScreenDataModel(
         id = id,
+        storeId = storePrices?.first()?.id,
         price = storePrices?.first()?.price?.toFloat(),
         itemDescription = name,
         pictureUrl = images?.first()?.image,
@@ -39,7 +41,7 @@ fun Product.toMainScreenDataModel(): MainScreenDataModel {
 
 fun MainScreenDataModel.toProductShortItem(): ProductShortItem {
     return ProductShortItem(
-        product = id?.toInt() ?: 0,
+        product = storeId ?: 0,
         quantity = quantity ?: 0
     )
 }
