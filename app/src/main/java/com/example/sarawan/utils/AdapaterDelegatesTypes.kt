@@ -44,15 +44,13 @@ object AdapterDelegatesTypes {
 
                 var counter = counterTextView.text.toString().toInt()
                 plusImageButton.setOnClickListener {
-                    if(counter in 0..99) {
                         ++counter
                         item.quantity = counter
                         itemClickListener.update()
                         counterTextView.text = counter.toString()
-                    }
                 }
                 minusImageButton.setOnClickListener {
-                    if(counter in  1..100) {
+                    if(counter > 0) {
                         --counter
                         item.quantity = counter
                         itemClickListener.update()
@@ -89,6 +87,10 @@ object AdapterDelegatesTypes {
                 addressButton.text = item.address
                 addressButton.setOnClickListener {
                     itemClickListener.showModal(ProfileAddressFragment.newInstance())
+                }
+
+                setOrderButton.setOnClickListener {
+
                 }
             }
         }

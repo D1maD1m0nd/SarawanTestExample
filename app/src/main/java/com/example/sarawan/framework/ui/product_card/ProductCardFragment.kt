@@ -46,6 +46,10 @@ class ProductCardFragment : Fragment() {
         override fun changeVisible(pos : Int) {
             changeVisibleFlag(pos)
         }
+
+        override fun createOrder() {
+            TODO("Not yet implemented")
+        }
     }
     @Inject
     lateinit var sharedPreferences: SharedPreferences

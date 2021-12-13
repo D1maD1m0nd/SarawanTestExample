@@ -30,7 +30,7 @@ class BasketFragment : Fragment() {
     lateinit var viewModelFactory: ViewModelProvider.Factory
     private var _binding: FragmentBasketBinding? = null
     private val binding get() = _binding!!
-
+    private var addressItem : AddressItem? = null
     //основной список для отображения
     private val list: MutableList<BasketListItem> = ArrayList(
         listOf(
@@ -59,6 +59,13 @@ class BasketFragment : Fragment() {
 
         override fun changeVisible(pos: Int) {
             TODO("Not yet implemented")
+        }
+
+        override fun createOrder() {
+            addressItem?.let {
+                viewModel.createOrder(it)
+            }
+
         }
     }
     private val adapter = BasketAdapter(itemClickListener)
@@ -109,7 +116,11 @@ class BasketFragment : Fragment() {
                             }
                         }
                         is AddressItem -> {
-                            viewModel.getOrder(AddressItem(idAddressOrder = item.id))
+
+                            addressItem = AddressItem(idAddressOrder = item.id)
+                            addressItem?.let {
+                                viewModel.getOrder(it)
+                            }
                             val footer = (list.last() as BasketFooter)
                             footer.apply {
                                 address = formatAddress(item)

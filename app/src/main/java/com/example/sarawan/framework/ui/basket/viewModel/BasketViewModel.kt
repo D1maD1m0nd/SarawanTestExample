@@ -48,6 +48,22 @@ class BasketViewModel @Inject constructor(
         )
     }
 
+    fun createOrder(address: AddressItem){
+        basketID?.let { id ->
+            compositeDisposable.add(
+                interactor.getData(Query.Post.Order.Create(address), true)
+                    .subscribeOn(schedulerProvider.io)
+                    .observeOn(schedulerProvider.io)
+                    .doOnSubscribe { stateLiveData.postValue(AppState.Loading) }
+                    .subscribe(
+                        {stateLiveData.postValue(AppState.Success(it))},
+                        { stateLiveData.postValue(AppState.Error(it)) }),
+            )
+        }
+        if (basketID == null) stateLiveData.value =
+            AppState.Error(RuntimeException("Should init BasketID first"))
+    }
+
     fun updateBasket(products: ProductsUpdate) {
         basketID?.let { id ->
             compositeDisposable.add(
