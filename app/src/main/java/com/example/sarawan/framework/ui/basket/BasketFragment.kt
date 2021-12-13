@@ -44,7 +44,7 @@ class BasketFragment : Fragment() {
             showModalDialog(fragment)
         }
 
-        override fun update(pos : Int) {
+        override fun update(pos: Int, mode: Boolean) {
             updateBasket()
         }
 
