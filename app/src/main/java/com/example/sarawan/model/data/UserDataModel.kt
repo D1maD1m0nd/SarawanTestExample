@@ -23,7 +23,10 @@ data class UserDataModel(
 	val email: String? = null,
 
 	@field:Json(name="status")
-	val status: String? = null
+	val status: String? = null,
+
+	@field:Json(name="basket")
+	val basket: Basket? = null,
 )
 
 data class UserRegistration(

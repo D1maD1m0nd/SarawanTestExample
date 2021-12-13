@@ -15,7 +15,7 @@ import com.example.sarawan.model.data.Product
 import com.example.sarawan.utils.ItemClickListener
 
 class SimilarAdapter(val itemClickListener: ItemClickListener) : RecyclerView.Adapter<SimilarAdapter.ProductViewHolder>() {
-    private var similarList : MutableList<Product> = ArrayList(20)
+    private var similarList : List<Product> = ArrayList(20)
 
     @SuppressLint("NotifyDataSetChanged")
     fun setData(products : MutableList<Product>) {
@@ -61,17 +61,27 @@ class SimilarAdapter(val itemClickListener: ItemClickListener) : RecyclerView.Ad
             itemDescription.text = product.name
             itemShopName.text = store?.store
             itemPrice.text = store?.price
+            itemQuantity.text = product.count.toString()
             if(!product.visible) {
                 itemBuyButton.visibility = GONE
                 itemQuantityLayout.visibility = VISIBLE
-                itemQuantity.text = "1"
             } else {
                 itemBuyButton.visibility = VISIBLE
                 itemQuantityLayout.visibility = GONE
             }
             itemBuyButton.setOnClickListener {
                 itemClickListener.changeVisible(absoluteAdapterPosition)
+                itemClickListener.update(absoluteAdapterPosition, true)
             }
+
+            plusButton.setOnClickListener {
+                itemClickListener.update(absoluteAdapterPosition, true)
+            }
+
+            minusButton.setOnClickListener {
+                itemClickListener.update(absoluteAdapterPosition, false)
+            }
+
             product.images?.let {
                 if(it.isNotEmpty()) {
                     val image = product.images.first().image

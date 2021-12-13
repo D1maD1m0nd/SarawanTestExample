@@ -3,8 +3,7 @@ package com.example.sarawan.framework.ui.product_card.adapter
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.GONE
-import android.view.View.VISIBLE
+import android.view.View.*
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.sarawan.R
@@ -39,10 +38,16 @@ class StoreAdapter()  : RecyclerView.Adapter<StoreAdapter.StoreViewHolder>(){
             storeTitleTextView.text = store.store
             priceTextView.text = String.format("%s ₽", store.price)
             basketButton.setOnClickListener {
-                it.visibility = GONE
+                it.visibility = INVISIBLE
                 counterContainer.visibility = VISIBLE
             }
 
+            plusButtonImageButton.setOnClickListener {
+            }
+
+            minusImageButton.setOnClickListener {
+
+            }
         }
     }
 }
