@@ -31,7 +31,7 @@ class BasketViewModel @Inject constructor(
                 .observeOn(schedulerProvider.io)
                 .doOnSubscribe { stateLiveData.postValue(AppState.Loading) }
                 .subscribe(
-                    {stateLiveData.postValue(AppState.Success(it))},
+                    { stateLiveData.postValue(AppState.Success(it)) },
                     { stateLiveData.postValue(AppState.Error(it)) }),
         )
     }
@@ -43,7 +43,7 @@ class BasketViewModel @Inject constructor(
                 .observeOn(schedulerProvider.io)
                 .doOnSubscribe { stateLiveData.postValue(AppState.Loading) }
                 .subscribe(
-                    {stateLiveData.postValue(AppState.Success(it))},
+                    { stateLiveData.postValue(AppState.Success(it)) },
                     { stateLiveData.postValue(AppState.Error(it)) }),
         )
     }
@@ -81,7 +81,8 @@ class BasketViewModel @Inject constructor(
         }
 
         override fun onError(e: Throwable) {
-            stateLiveData.postValue(AppState.Error(e))
+//            stateLiveData.postValue(AppState.Error(e))
+            stateLiveData.postValue(AppState.Success(emptyList<ProductsItem>()))
         }
     }
 }

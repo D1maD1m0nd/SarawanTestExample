@@ -14,21 +14,23 @@ class MainViewModel @Inject constructor(
 ) : BaseMainCatalogViewModel(interactor, schedulerProvider) {
 
     override fun getStartData(isOnline: Boolean) {
+        searchWord = null
         val discount = interactor.getData(Query.Get.Products.DiscountProducts(), isOnline)
-        val basket = interactor.getData(Query.Get.Basket, isOnline)
+        val basket =
+            interactor.getData(Query.Get.Basket, isOnline).onErrorReturnItem(listOf(Basket()))
         val popular = loadMoreData(isOnline, Query.Get.Products.PopularProducts())
         compositeDisposable.add(
             Single.zip(discount, popular, basket) { discountData, popularData, basketData ->
                 val data: MutableList<MainScreenDataModel> = mutableListOf()
                 data.addAll(popularData)
-                val basketObject = (basketData as List<Basket>).first()
-                basketID = basketObject.basketId
+                val basketObject = (basketData as List<Basket>).firstOrNull()
+                basketID = basketObject?.basketId
                 discountData.forEach { discountSingleData ->
                     val mainScreenData = (discountSingleData as Product)
                         .toMainScreenDataModel()
                         .apply { cardType = CardType.TOP.type }
                     data.add(mainScreenData)
-                    basketObject.products?.forEach { basketSingleData ->
+                    basketObject?.products?.forEach { basketSingleData ->
                         if (mainScreenData.id == basketSingleData.basketProduct?.basketProduct?.id)
                             mainScreenData.quantity = basketSingleData.quantity
                     }
@@ -45,7 +47,9 @@ class MainViewModel @Inject constructor(
     }
 
     override fun getMoreData(isOnline: Boolean) {
-        loadMoreData(isOnline, Query.Get.Products.PopularProducts())
+        val tempWord = searchWord
+        (if (tempWord == null) loadMoreData(isOnline, Query.Get.Products.PopularProducts())
+        else loadMoreData(isOnline, Query.Get.Products.ProductName(tempWord)))
             .subscribeOn(schedulerProvider.io)
             .observeOn(schedulerProvider.io)
             .subscribe(
