@@ -90,8 +90,13 @@ object AdapterDelegatesTypes {
                 }
 
                 setOrderButton.setOnClickListener {
-
+                    itemClickListener.create()
                 }
+
+                clearButton.setOnClickListener {
+                    itemClickListener.clear()
+                }
+
             }
         }
     }

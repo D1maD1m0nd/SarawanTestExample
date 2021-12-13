@@ -47,7 +47,11 @@ class ProductCardFragment : Fragment() {
             changeVisibleFlag(pos)
         }
 
-        override fun createOrder() {
+        override fun create() {
+            TODO("Not yet implemented")
+        }
+
+        override fun clear() {
             TODO("Not yet implemented")
         }
     }
