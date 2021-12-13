@@ -61,11 +61,16 @@ class BasketFragment : Fragment() {
             TODO("Not yet implemented")
         }
 
-        override fun createOrder() {
+        override fun create() {
             addressItem?.let {
                 viewModel.createOrder(it)
             }
 
+        }
+
+        override fun clear() {
+            viewModel.clearBasket()
+            removeItems()
         }
     }
     private val adapter = BasketAdapter(itemClickListener)
@@ -196,6 +201,13 @@ class BasketFragment : Fragment() {
 
         viewModel.updateBasket(ProductsUpdate(items))
         adapter.updateHolders()
+    }
+
+    private fun removeItems() {
+        val oldSize = list.count { it is ProductsItem }
+        list.removeAll { it is ProductsItem }
+        adapter.items = list
+        adapter.notifyItemRangeRemoved(1, oldSize)
     }
 
     private fun showProductFragment(idProduct: Int) {

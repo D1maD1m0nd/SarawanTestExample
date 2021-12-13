@@ -71,6 +71,8 @@ interface ApiService {
     @GET("api/basket/")
     fun getBasket(): Single<Basket>
 
+    @DELETE("api/basket/")
+    fun clearBasket() : Single<Basket>
     /**
      * Добавление продукта в корзину
      */
