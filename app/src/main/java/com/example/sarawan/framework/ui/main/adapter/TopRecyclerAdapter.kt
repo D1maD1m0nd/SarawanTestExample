@@ -22,7 +22,7 @@ class TopRecyclerAdapter(
     fun setData(data: List<MainScreenDataModel>?) {
         displayData.clear()
         if (data == null) return
-        displayData.addAll(data)
+        displayData.addAll(data.sortedByDescending { it.discount })
         notifyDataSetChanged()
     }
 
