@@ -5,9 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
-import androidx.core.content.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.sarawan.R
@@ -42,7 +40,10 @@ class ProfileFragment : Fragment() {
 
     //нам нужно отдельно иметь сохраненные имя и фамилию, чтобы передавать в фрагмент
     //их редактирования, если они не пустые
-    private var user : UserDataModel? = null
+    private var user: UserDataModel? = null
+
+    //аналогично и для адреса
+    private var addressItem: AddressItem? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -95,7 +96,10 @@ class ProfileFragment : Fragment() {
     }
 
     private fun showAddress() {
-        ProfileAddressFragment.newInstance().show(childFragmentManager, null)
+        ProfileAddressFragment.newInstance(addressItem) {
+            getUserData()
+        }
+            .show(childFragmentManager, null)
     }
 
     private fun showPhone() {
@@ -126,6 +130,8 @@ class ProfileFragment : Fragment() {
                                 primaryAddress?.let {
                                     val address = formatAddress(it)
                                     profileAddressTextView.text = address
+
+                                    addressItem = it
                                 }
                             }
                         }
@@ -133,7 +139,9 @@ class ProfileFragment : Fragment() {
                             if (sharedPreferences.basketId == -1) {
                                 sharedPreferences.basketId = firstItem.basket?.basketId
                             }
-                            profilePhoneTextView.text = firstItem.phone
+                            //profilePhoneTextView.text = firstItem.phone
+                            profilePhoneTextView.text = formatPhone(firstItem.phone)
+
                             val name = formatName(firstItem)
                             profileNameTextView.text = name
 
@@ -153,6 +161,22 @@ class ProfileFragment : Fragment() {
             AppState.Loading -> Unit
         }
     }
+
+    private fun formatPhone(number: String?): String =
+        number?.let {
+            var index = 0
+            getString(R.string.profile_phone_mask)
+                .asSequence()
+                .map { c ->
+                    if (index < number.length) {
+                        val cc = number.get(index)
+                        if (cc == c || c == '9') {
+                            index++
+                            cc
+                        } else c
+                    } else c
+                }.joinToString("")
+        } ?: ""
 
     private fun formatAddress(address: AddressItem): String {
         val city = address.city
