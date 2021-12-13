@@ -149,11 +149,10 @@ class MainActivity : AppCompatActivity(), FabChanger {
     }
 
     override fun changePrice(price: Float) {
-        totalPrice.onNext(totalPrice.value + price)
+        totalPrice.onNext(totalPrice.value ?: 0 + price)
     }
 
     companion object {
-
         private const val BACK_BUTTON_EXIT_DELAY = 3000
     }
 }

@@ -19,29 +19,17 @@ abstract class BaseMainCatalogViewModel(
 
     private var lastPage = 1
 
+    protected var searchWord: String? = null
+
     protected var basketID: Int? = null
 
     fun getMoreLiveData(): LiveData<AppState<*>> = stateMoreLiveData
 
     fun search(word: String, isOnline: Boolean) {
-        val search = interactor.getData(Query.Get.Products.ProductName(word), isOnline)
-        val basket = interactor.getData(Query.Get.Basket, isOnline)
+        lastPage = 1
+        searchWord = word
         compositeDisposable.add(
-            search.zipWith(basket) { searchData, basketData ->
-                val data: MutableList<MainScreenDataModel> = mutableListOf()
-                val basketObject = (basketData as List<Basket>).first()
-                basketID = basketObject.basketId
-                searchData.forEach {
-                    val product = (it as Product).toMainScreenDataModel()
-                    data.add(product)
-                    basketObject.products?.forEach { basketSingleData ->
-                        if (product.id == basketSingleData.basketProduct?.basketProduct?.id)
-                            product.quantity = basketSingleData.quantity
-                    }
-                }
-//                getRandomPicturesAsPartners(data)
-                data.sortedByDescending { it.discount }
-            }
+            loadMoreData(isOnline, Query.Get.Products.ProductName(word))
                 .subscribeOn(schedulerProvider.io)
                 .observeOn(schedulerProvider.io)
                 .doOnSubscribe { stateLiveData.postValue(AppState.Loading) }
@@ -80,16 +68,17 @@ abstract class BaseMainCatalogViewModel(
         isOnline: Boolean,
         query: Query.Get.Products
     ): Single<MutableList<MainScreenDataModel>> {
-        val basket = interactor.getData(Query.Get.Basket, isOnline)
+        val basket = interactor.getData(Query.Get.Basket, isOnline).onErrorReturnItem(listOf(Basket()))
         val productsData = getProductsData(isOnline, query.apply { page = lastPage })
+            .onErrorReturnItem(mutableListOf())
         return Single.zip(productsData, basket) { productData, basketData ->
             val data: MutableList<MainScreenDataModel> = mutableListOf()
-            val basketObject = (basketData as List<Basket>).first()
-            basketID = basketObject.basketId
+            val basketObject = (basketData as List<Basket>).firstOrNull()
+            basketID = basketObject?.basketId
             productData.forEach { singleData ->
                 val mainScreenData = (singleData).toMainScreenDataModel()
                 data.add(mainScreenData)
-                basketObject.products?.forEach { basketSingleData ->
+                basketObject?.products?.forEach { basketSingleData ->
                     if (mainScreenData.id == basketSingleData.basketProduct?.basketProduct?.id)
                         mainScreenData.quantity = basketSingleData.quantity
                 }
