@@ -21,4 +21,5 @@
     <color name="light_black">#99000000</color>
     <color name="light_gray_clear_button">#80000000</color>
     <color name = "surface">#14212121</color>
+    <color name="blue">#FF0038FF</color>
 </resources>
