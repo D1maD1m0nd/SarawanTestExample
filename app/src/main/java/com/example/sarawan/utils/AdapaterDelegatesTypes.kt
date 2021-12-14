@@ -67,8 +67,8 @@ object AdapterDelegatesTypes {
                 }
 
                 infoContainerConstraintLayout.setOnClickListener {
-                    item.basketProduct?.productStoreId?.let{
-                        itemClickListener.openProductCard(it)
+                    item.basketProduct?.basketProduct?.id?.let{
+                        itemClickListener.openProductCard(it.toInt())
                     }
                 }
             }
