@@ -20,7 +20,7 @@ class BasketViewModel @Inject constructor(
                 .subscribeOn(schedulerProvider.io)
                 .observeOn(schedulerProvider.io)
                 .doOnSubscribe { stateLiveData.postValue(AppState.Loading) }
-                .subscribeWith(getObserver())
+                .subscribeWith(getObserverBasketList())
         )
     }
 
@@ -110,6 +110,24 @@ class BasketViewModel @Inject constructor(
             basketID = basket.basketId
             val items = basket.products as List<*>
             stateLiveData.postValue(AppState.Success(items))
+        }
+
+        override fun onError(e: Throwable) {
+//            stateLiveData.postValue(AppState.Error(e))
+            stateLiveData.postValue(AppState.Success(emptyList<ProductsItem>()))
+        }
+    }
+
+    private fun getObserverBasketList() = object : DisposableSingleObserver<List<*>>() {
+        override fun onSuccess(result: List<*>) {
+            val basket = result.first() as Basket
+            basketID = basket.basketId
+            val items = basket.products as List<*>
+            if(items.isEmpty()) {
+                stateLiveData.postValue(AppState.Empty)
+            } else {
+                stateLiveData.postValue(AppState.Success(items))
+            }
         }
 
         override fun onError(e: Throwable) {

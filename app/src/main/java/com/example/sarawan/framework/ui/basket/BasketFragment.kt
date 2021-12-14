@@ -108,15 +108,15 @@ class BasketFragment : Fragment() {
         cardContainerRcView.adapter = adapter
     }
 
-    private fun setState(appState: AppState<*>) {
+    private fun setState(appState: AppState<*>) = with(binding){
         when (appState) {
             is AppState.Success<*> -> {
                 val data = appState.data
                 if (data.isNotEmpty()) {
                     when (val item = data.first()) {
                         is ProductsItem -> {
+                            data as MutableList<ProductsItem>
                             if (list.count() < LIMIT) {
-                                data as MutableList<ProductsItem>
                                 initDataRcView(data)
                             }
                         }
@@ -140,7 +140,12 @@ class BasketFragment : Fragment() {
                 }
             }
             is AppState.Error -> Unit
-            AppState.Loading -> Unit
+            is AppState.Loading -> Unit
+            is AppState.Empty ->  {
+                infoBasketTextView.text = getString(R.string.basket_empty)
+                actionBasketTextView.text = getString(R.string.nav_sales)
+                actionBasketTextView.setOnClickListener { navController.navigate(R.id.mainFragment)}
+            }
         }
     }
 
