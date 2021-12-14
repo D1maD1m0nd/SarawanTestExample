@@ -10,9 +10,8 @@ import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.example.sarawan.R
 import com.example.sarawan.databinding.ListItemCardBinding
-import com.example.sarawan.framework.ui.main.viewHolder.CardItemViewHolder
 import com.example.sarawan.model.data.Product
-import com.example.sarawan.utils.ItemClickListener
+import com.example.sarawan.framework.ui.product_card.adapter.ItemClickListener
 
 class SimilarAdapter(val itemClickListener: ItemClickListener) : RecyclerView.Adapter<SimilarAdapter.ProductViewHolder>() {
     private var similarList : List<Product> = ArrayList(20)
@@ -62,7 +61,7 @@ class SimilarAdapter(val itemClickListener: ItemClickListener) : RecyclerView.Ad
             itemShopName.text = store?.store
             itemPrice.text = store?.price
             itemQuantity.text = product.count.toString()
-            if(!product.visible) {
+            if(product.count > 0) {
                 itemBuyButton.visibility = GONE
                 itemQuantityLayout.visibility = VISIBLE
             } else {
@@ -70,8 +69,9 @@ class SimilarAdapter(val itemClickListener: ItemClickListener) : RecyclerView.Ad
                 itemQuantityLayout.visibility = GONE
             }
             itemBuyButton.setOnClickListener {
-                itemClickListener.changeVisible(absoluteAdapterPosition)
-                itemClickListener.update(absoluteAdapterPosition, true)
+                //itemClickListener.changeVisible(absoluteAdapterPosition)
+                product.count++
+                itemClickListener.create(product, absoluteAdapterPosition)
             }
 
             plusButton.setOnClickListener {
