@@ -25,7 +25,8 @@ data class StorePrice(
     @field: Json(name = "discount") val discount: Int,
     @field: Json(name = "id") val id: Int,
     @field: Json(name = "price") val price: String,
-    @field: Json(name = "store") val store: String
+    @field: Json(name = "store") val store: String,
+    var count: Int
 ) : Parcelable
 @Parcelize
 data class Image(
