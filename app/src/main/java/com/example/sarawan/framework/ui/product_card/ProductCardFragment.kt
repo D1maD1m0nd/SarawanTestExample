@@ -19,6 +19,8 @@ import com.example.sarawan.framework.ui.product_card.adapter.StoreAdapter
 import com.example.sarawan.framework.ui.product_card.viewModel.ProductCardViewModel
 import com.example.sarawan.model.data.AppState
 import com.example.sarawan.model.data.Product
+import com.example.sarawan.model.data.StorePrice
+import com.example.sarawan.model.data.TypeCardEnum
 import com.example.sarawan.utils.toProductShortItem
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
@@ -31,12 +33,15 @@ class ProductCardFragment : Fragment() {
             TODO("Not yet implemented")
         }
 
-        override fun update(pos: Int, mode: Boolean) {
-            updateDataBasket(pos, mode)
+        override fun update(pos: Int, mode: Boolean, type: TypeCardEnum) {
+            when(type) {
+                TypeCardEnum.SIMILAR -> updateDataBasket(pos, mode)
+                TypeCardEnum.STORE -> updateDataBasketIntoStore(pos, mode)
+            }
         }
 
-        override fun create(product: Product, pos: Int) {
-            itemSave(product, pos, true)
+        override fun create(product: Product, pos: Int, type: TypeCardEnum) {
+            itemSave(product, pos, true, type)
         }
     }
     @Inject
@@ -49,8 +54,9 @@ class ProductCardFragment : Fragment() {
     private var _binding: FragmentProductCardBinding? = null
     private val binding get() = _binding!!
     private  var productId : Long? = null
-    private val storeAdapter  = StoreAdapter()
+    private val storeAdapter  = StoreAdapter(itemClickListener)
     private val similarProducts : MutableList<Product> = ArrayList(20)
+    private val storeProducts : MutableList<StorePrice> = ArrayList(5)
     private val similarAdapter = SimilarAdapter(itemClickListener)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -116,7 +122,8 @@ class ProductCardFragment : Fragment() {
         data.storePrices?.let {
             priceTextView.text = it.first().price
             storeTextView.text = it.first().store
-            storeAdapter.setData(it)
+            storeProducts.addAll(it)
+            storeAdapter.setData(storeProducts)
         }
         data.images?.let {
             if(it.isNotEmpty()) {
@@ -134,18 +141,36 @@ class ProductCardFragment : Fragment() {
             true -> product.count++
             false -> product.count--
         }
-        itemSave(product, pos, false)
-        similarAdapter.notifyItemChanged(pos)
+        itemSave(product, pos, false, TypeCardEnum.SIMILAR)
     }
 
-    private fun itemSave(product : Product, pos:Int, isNew : Boolean){
-        similarProducts[pos] = product
+    private fun updateDataBasketIntoStore(pos : Int, mode : Boolean) {
+        val store = storeProducts[pos]
+        when(mode) {
+            true -> store.count++
+            false -> store.count--
+        }
+        val product = Product(count = store.count, storePrices = listOf(store))
+        itemSave(product , pos, false, TypeCardEnum.STORE)
+    }
+
+    private fun itemSave(product : Product, pos:Int, isNew : Boolean, type: TypeCardEnum){
+
         viewModel.saveData(
             listOf(product.toProductShortItem()),
             isOnline = true,
             isNewItem = isNew
         )
-        similarAdapter.notifyItemChanged(pos)
+        when(type) {
+            TypeCardEnum.SIMILAR -> {
+                similarProducts[pos] = product
+                similarAdapter.notifyItemChanged(pos)
+            }
+            TypeCardEnum.STORE -> {
+                storeProducts[pos].count = product.count
+                storeAdapter.notifyItemChanged(pos)
+            }
+        }
     }
 
     companion object {
