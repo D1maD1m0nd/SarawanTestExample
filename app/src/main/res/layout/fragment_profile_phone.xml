@@ -135,13 +135,10 @@
                     android:layout_gravity="center_vertical"
                     android:fontFamily="@font/montserrat_regular"
                     android:text="@string/profile_phone_user_agreement"
-                    android:textColor="#FF0038FF"
+                    android:textColor="@color/blue"
                     android:textSize="14sp" />
 
             </androidx.appcompat.widget.LinearLayoutCompat>
-
         </androidx.appcompat.widget.LinearLayoutCompat>
-
     </androidx.core.widget.NestedScrollView>
-
 </androidx.appcompat.widget.LinearLayoutCompat>
