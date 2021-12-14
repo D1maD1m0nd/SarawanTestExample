@@ -9,6 +9,7 @@ fun ProductsItem.toUpdateProduct() : ProductShortItem{
     this.basketProduct?.productStoreId?.let {
         id = it
     }
+
     this.quantity?.let {
         count = it
     }

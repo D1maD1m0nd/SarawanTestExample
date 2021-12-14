@@ -74,7 +74,8 @@
     <string name="profile_title">Профиль</string>
     <string name="profile_add_name">Добавить имя</string>
     <string name="profile_foo_phone">+7 000 00 00</string>
-    <string name="profile_foo_address">г.Москва\nул.Тверская, дом 13, подъезд 4, кв. 75</string>
+    <string name="profile_phone_mask">+7 (999) 999-99-99</string>
+    <string name="profile_add_address">Адрес</string>
     <string name="profile_exit">Выйти</string>
     <string name="profile_alert_no_change_city">Вы не можете поменять город.</string>
     <string name="profile_alert_only_moscow">На данный момент сервис\n действует только в г. Москва.</string>
@@ -102,4 +103,5 @@
     <string name="profile_code_wrong_code">Неверный код</string>
     <string name="profile_success_registered">Вы успешно зарегистрировались!</string>
     <string name="profile_success_ok">OK</string>
+    <string name="confrim_order_message">Ваш заказ успешно оформлен!</string>
 </resources>

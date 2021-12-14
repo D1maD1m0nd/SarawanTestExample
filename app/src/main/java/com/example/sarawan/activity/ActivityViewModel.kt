@@ -6,7 +6,6 @@ import com.example.sarawan.model.data.AppState
 import com.example.sarawan.model.data.Basket
 import com.example.sarawan.model.data.Query
 import com.example.sarawan.rx.ISchedulerProvider
-import io.reactivex.rxjava3.observers.DisposableSingleObserver
 import javax.inject.Inject
 
 class ActivityViewModel @Inject constructor(
@@ -19,23 +18,18 @@ class ActivityViewModel @Inject constructor(
     fun getBasket() {
         compositeDisposable.add(
             interactor.getData(Query.Get.Basket, true)
+                .onErrorReturnItem(listOf(Basket()))
                 .subscribeOn(schedulerProvider.io)
                 .observeOn(schedulerProvider.io)
                 .doOnSubscribe { stateLiveData.postValue(AppState.Loading) }
-                .subscribeWith(getObserver())
+                .subscribe({
+                    val basket = it.firstOrNull() as Basket?
+                    basketID = basket?.basketId
+                    val items = basket?.products as List<*>?
+                    items?.let {
+                        stateLiveData.postValue(AppState.Success(items))
+                    }
+                }, { stateLiveData.postValue(AppState.Error(it)) })
         )
-    }
-
-    private fun getObserver() = object : DisposableSingleObserver<List<*>>() {
-        override fun onSuccess(result: List<*>) {
-            val basket = result.first() as Basket
-            basketID = basket.basketId
-            val items = basket.products as List<*>
-            stateLiveData.postValue(AppState.Success(items))
-        }
-
-        override fun onError(e: Throwable) {
-            stateLiveData.postValue(AppState.Error(e))
-        }
     }
 }

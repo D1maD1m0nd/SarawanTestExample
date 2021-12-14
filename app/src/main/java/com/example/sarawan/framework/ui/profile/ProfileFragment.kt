@@ -18,6 +18,7 @@ import com.example.sarawan.framework.ui.profile.viewModel.ProfileViewModel
 import com.example.sarawan.model.data.AddressItem
 import com.example.sarawan.model.data.AppState
 import com.example.sarawan.model.data.UserDataModel
+import com.example.sarawan.utils.exstentions.basketId
 import com.example.sarawan.utils.exstentions.token
 import com.example.sarawan.utils.exstentions.userId
 import dagger.android.support.AndroidSupportInjection
@@ -37,6 +38,13 @@ class ProfileFragment : Fragment() {
     private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding!!
 
+    //нам нужно отдельно иметь сохраненные имя и фамилию, чтобы передавать в фрагмент
+    //их редактирования, если они не пустые
+    private var user: UserDataModel? = null
+
+    //аналогично и для адреса
+    private var addressItem: AddressItem? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         AndroidSupportInjection.inject(this)
@@ -55,11 +63,17 @@ class ProfileFragment : Fragment() {
         }
         .root
 
+    private fun getUserData() {
+        if (sharedPreferences.userId != -1L) {
+            sharedPreferences.userId?.let {
+                viewModel.getUserData(it)
+            }
+        }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        sharedPreferences.userId?.let {
-            viewModel.getUserData(it)
-        }
+        getUserData()
         initViews()
     }
 
@@ -77,12 +91,15 @@ class ProfileFragment : Fragment() {
 
     private fun leave() {
         sharedPreferences.token = null
-        sharedPreferences.userId = -1
+        sharedPreferences.userId = -1L
         navController.navigate(R.id.mainFragment)
     }
 
     private fun showAddress() {
-        ProfileAddressFragment.newInstance().show(childFragmentManager, null)
+        ProfileAddressFragment.newInstance(addressItem) {
+            getUserData()
+        }
+            .show(childFragmentManager, null)
     }
 
     private fun showPhone() {
@@ -95,7 +112,10 @@ class ProfileFragment : Fragment() {
     }
 
     private fun showName() {
-        ProfileNameFragment.newInstance().show(childFragmentManager, null)
+        ProfileNameFragment.newInstance(user) {
+            getUserData()
+        }
+            .show(childFragmentManager, null)
     }
 
     private fun setState(appState: AppState<*>) = with(binding) {
@@ -105,18 +125,27 @@ class ProfileFragment : Fragment() {
                     when (val firstItem = appState.data.first()) {
                         is AddressItem -> {
                             val data = appState.data as MutableList<AddressItem>
-                            if(data.isNotEmpty()) {
+                            if (data.isNotEmpty()) {
                                 val primaryAddress = data.findLast { it.primary == true }
                                 primaryAddress?.let {
                                     val address = formatAddress(it)
                                     profileAddressTextView.text = address
+
+                                    addressItem = it
                                 }
                             }
                         }
                         is UserDataModel -> {
-                            profilePhoneTextView.text = firstItem.phone
+                            if (sharedPreferences.basketId == -1) {
+                                sharedPreferences.basketId = firstItem.basket?.basketId
+                            }
+                            //profilePhoneTextView.text = firstItem.phone
+                            profilePhoneTextView.text = formatPhone(firstItem.phone)
+
                             val name = formatName(firstItem)
                             profileNameTextView.text = name
+
+                            user = firstItem
                         }
                     }
                 }
@@ -133,6 +162,22 @@ class ProfileFragment : Fragment() {
         }
     }
 
+    private fun formatPhone(number: String?): String =
+        number?.let {
+            var index = 0
+            getString(R.string.profile_phone_mask)
+                .asSequence()
+                .map { c ->
+                    if (index < number.length) {
+                        val cc = number.get(index)
+                        if (cc == c || c == '9') {
+                            index++
+                            cc
+                        } else c
+                    } else c
+                }.joinToString("")
+        } ?: ""
+
     private fun formatAddress(address: AddressItem): String {
         val city = address.city
         val street = address.street
@@ -144,7 +189,12 @@ class ProfileFragment : Fragment() {
     private fun formatName(user: UserDataModel): String {
         val firstName = user.firstName
         val lastName = user.lastName
-        return "$firstName $lastName"
+        val fullName = "$firstName $lastName".trim()
+        return if (fullName.isNotEmpty()) {
+            fullName
+        } else {
+            getString(R.string.profile_add_name)
+        }
     }
 
     override fun onDestroy() {

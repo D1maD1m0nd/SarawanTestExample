@@ -5,6 +5,7 @@ import com.example.sarawan.R
 import com.example.sarawan.databinding.BasketFooterItemBinding
 import com.example.sarawan.databinding.BasketHeaderItemBinding
 import com.example.sarawan.databinding.BasketItemBinding
+import com.example.sarawan.framework.ui.modals.SuccessOrderFragment
 import com.example.sarawan.framework.ui.profile.address_fragment.ProfileAddressFragment
 import com.example.sarawan.model.data.ProductsItem
 import com.example.sarawan.model.data.delegatesModel.BasketFooter
@@ -36,19 +37,21 @@ object AdapterDelegatesTypes {
                     counterTextView.text = item.quantity.toString()
                 }
                 val image = item.basketProduct?.basketProduct?.images?.first()?.image ?: ""
-                productImageView.load(image)
+
+                productImageView.load(image) {
+                    placeholder(R.drawable.card_placeholder)
+                    error(R.drawable.card_placeholder)
+                }
 
                 var counter = counterTextView.text.toString().toInt()
                 plusImageButton.setOnClickListener {
-                    if(counter in 0..99) {
                         ++counter
                         item.quantity = counter
                         itemClickListener.update()
                         counterTextView.text = counter.toString()
-                    }
                 }
                 minusImageButton.setOnClickListener {
-                    if(counter in  1..100) {
+                    if(counter > 0) {
                         --counter
                         item.quantity = counter
                         itemClickListener.update()
@@ -86,6 +89,16 @@ object AdapterDelegatesTypes {
                 addressButton.setOnClickListener {
                     itemClickListener.showModal(ProfileAddressFragment.newInstance())
                 }
+
+                setOrderButton.setOnClickListener {
+                    itemClickListener.create()
+                    itemClickListener.showModal(SuccessOrderFragment.newInstance())
+                }
+
+                clearButton.setOnClickListener {
+                    itemClickListener.clear()
+                }
+
             }
         }
     }

@@ -26,4 +26,5 @@ class CatalogViewModel @Inject constructor(
         )
     }
 
+    override fun getMoreData(isOnline: Boolean) = Unit
 }

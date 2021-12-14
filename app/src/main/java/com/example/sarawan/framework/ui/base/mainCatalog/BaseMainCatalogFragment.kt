@@ -13,6 +13,7 @@ import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import coil.ImageLoader
 import com.example.sarawan.R
 import com.example.sarawan.activity.FabChanger
@@ -22,6 +23,7 @@ import com.example.sarawan.databinding.FragmentMainBinding
 import com.example.sarawan.framework.INavigation
 import com.example.sarawan.framework.ui.basket.BasketFragment
 import com.example.sarawan.framework.ui.main.adapter.MainRecyclerAdapter
+import com.example.sarawan.model.data.AppState
 import com.example.sarawan.model.data.MainScreenDataModel
 import com.example.sarawan.rx.ISchedulerProvider
 import com.example.sarawan.utils.NetworkStatus
@@ -65,8 +67,10 @@ abstract class BaseMainCatalogFragment : Fragment(), INavigation {
                 isNewItem: Boolean
             ) {
                 data.price?.let {
-                    fabChanger?.changePrice(it * diff)
-                    viewModel.saveData(data, isOnline, isNewItem)
+                    if (isOnline) {
+                        fabChanger?.changePrice(it * diff)
+                        viewModel.saveData(data, isOnline, isNewItem)
+                    }
                 }
             }
 
@@ -98,6 +102,34 @@ abstract class BaseMainCatalogFragment : Fragment(), INavigation {
         attachAdapterToView()
         initSearchField()
         subscribeToViewModel()
+        subscribeToMoreViewModel()
+        watchForAdapter()
+    }
+
+    private fun watchForAdapter() {
+        binding.mainRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                mainRecyclerAdapter?.let { adapter ->
+                    if (newState == RecyclerView.SCROLL_STATE_IDLE
+                        && adapter.itemCount - gridLayoutManager.findLastVisibleItemPosition() < 2
+                        && isOnline
+                    ) viewModel.getMoreData(isOnline)
+                }
+            }
+        })
+    }
+
+    private fun subscribeToMoreViewModel() {
+        viewModel.getMoreLiveData().observe(viewLifecycleOwner) { appState ->
+            when (appState) {
+                is AppState.Success<*> -> {
+                    val data = appState.data as List<MainScreenDataModel>
+                    if (data.isNotEmpty()) mainRecyclerAdapter?.addData(data)
+                }
+                is AppState.Error -> Unit
+                AppState.Loading -> Unit
+            }
+        }
     }
 
     protected abstract fun attachAdapterToView()

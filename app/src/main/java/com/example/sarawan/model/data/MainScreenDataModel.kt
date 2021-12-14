@@ -6,6 +6,7 @@ import com.example.sarawan.framework.ui.base.mainCatalog.CardType
 data class MainScreenDataModel(
 
     val id: Long? = null,
+    val storeId : Int? = null,
     val itemDescription: String? = null,
     var quantity: Int? = null,
     val unitQuantity: String? = null,
@@ -27,25 +28,20 @@ data class MainScreenDataModel(
 fun Product.toMainScreenDataModel(): MainScreenDataModel {
     return MainScreenDataModel(
         id = id,
+        storeId = storePrices?.first()?.id,
         price = storePrices?.first()?.price?.toFloat(),
         itemDescription = name,
         pictureUrl = images?.first()?.image,
         discount = storePrices?.first()?.discount,
         unitQuantity = unitQuantity,
         shop = storePrices?.first()?.store,
-        cardType = when (storePrices?.first()?.discount) {
-            is Number -> {
-                if (storePrices.first().discount > 0) CardType.TOP.type
-                else CardType.COMMON.type
-            }
-            else -> throw RuntimeException("Discount should be instance of Number")
-        }
+        cardType = CardType.COMMON.type
     )
 }
 
 fun MainScreenDataModel.toProductShortItem(): ProductShortItem {
     return ProductShortItem(
-        product = id?.toInt() ?: 0,
+        product = storeId ?: 0,
         quantity = quantity ?: 0
     )
 }

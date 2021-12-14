@@ -31,7 +31,7 @@ class BasketViewModel @Inject constructor(
                 .observeOn(schedulerProvider.io)
                 .doOnSubscribe { stateLiveData.postValue(AppState.Loading) }
                 .subscribe(
-                    {stateLiveData.postValue(AppState.Success(it))},
+                    { stateLiveData.postValue(AppState.Success(it)) },
                     { stateLiveData.postValue(AppState.Error(it)) }),
         )
     }
@@ -43,9 +43,41 @@ class BasketViewModel @Inject constructor(
                 .observeOn(schedulerProvider.io)
                 .doOnSubscribe { stateLiveData.postValue(AppState.Loading) }
                 .subscribe(
-                    {stateLiveData.postValue(AppState.Success(it))},
+                    { stateLiveData.postValue(AppState.Success(it)) },
                     { stateLiveData.postValue(AppState.Error(it)) }),
         )
+    }
+
+    fun createOrder(address: AddressItem){
+        basketID?.let { id ->
+            compositeDisposable.add(
+                interactor.getData(Query.Post.Order.Create(address), true)
+                    .subscribeOn(schedulerProvider.io)
+                    .observeOn(schedulerProvider.io)
+                    .doOnSubscribe { stateLiveData.postValue(AppState.Loading) }
+                    .subscribe(
+                        {stateLiveData.postValue(AppState.Success(it))},
+                        { stateLiveData.postValue(AppState.Error(it)) }),
+            )
+        }
+        if (basketID == null) stateLiveData.value =
+            AppState.Error(RuntimeException("Should init BasketID first"))
+    }
+
+    fun clearBasket() {
+        basketID?.let { id ->
+            compositeDisposable.add(
+                interactor.getData(Query.Delete.Basket.Clear, true)
+                    .subscribeOn(schedulerProvider.io)
+                    .observeOn(schedulerProvider.io)
+                    .doOnSubscribe { stateLiveData.postValue(AppState.Loading) }
+                    .subscribe(
+                        {stateLiveData.postValue(AppState.Success(it))},
+                        { stateLiveData.postValue(AppState.Error(it)) }),
+            )
+        }
+        if (basketID == null) stateLiveData.value =
+            AppState.Error(RuntimeException("Should init BasketID first"))
     }
 
     fun updateBasket(products: ProductsUpdate) {
@@ -81,7 +113,8 @@ class BasketViewModel @Inject constructor(
         }
 
         override fun onError(e: Throwable) {
-            stateLiveData.postValue(AppState.Error(e))
+//            stateLiveData.postValue(AppState.Error(e))
+            stateLiveData.postValue(AppState.Success(emptyList<ProductsItem>()))
         }
     }
 }
