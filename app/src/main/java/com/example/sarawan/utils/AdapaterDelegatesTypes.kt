@@ -92,7 +92,6 @@ object AdapterDelegatesTypes {
 
                 setOrderButton.setOnClickListener {
                     itemClickListener.create()
-                    itemClickListener.showModal(SuccessOrderFragment.newInstance())
                 }
 
                 clearButton.setOnClickListener {

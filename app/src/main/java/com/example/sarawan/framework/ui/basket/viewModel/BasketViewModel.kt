@@ -29,7 +29,6 @@ class BasketViewModel @Inject constructor(
             interactor.getData(Query.Get.Address, true)
                 .subscribeOn(schedulerProvider.io)
                 .observeOn(schedulerProvider.io)
-                .doOnSubscribe { stateLiveData.postValue(AppState.Loading) }
                 .subscribe(
                     { stateLiveData.postValue(AppState.Success(it)) },
                     { stateLiveData.postValue(AppState.Error(it)) }),
@@ -41,7 +40,6 @@ class BasketViewModel @Inject constructor(
             interactor.getData(Query.Get.Orders.Order(address), true)
                 .subscribeOn(schedulerProvider.io)
                 .observeOn(schedulerProvider.io)
-                .doOnSubscribe { stateLiveData.postValue(AppState.Loading) }
                 .subscribe(
                     { stateLiveData.postValue(AppState.Success(it)) },
                     { stateLiveData.postValue(AppState.Error(it)) }),
@@ -70,10 +68,9 @@ class BasketViewModel @Inject constructor(
                 interactor.getData(Query.Delete.Basket.Clear, true)
                     .subscribeOn(schedulerProvider.io)
                     .observeOn(schedulerProvider.io)
-                    .doOnSubscribe { stateLiveData.postValue(AppState.Loading) }
                     .subscribe(
-                        {stateLiveData.postValue(AppState.Success(it))},
-                        { stateLiveData.postValue(AppState.Error(it)) }),
+                        {stateLiveData.postValue(AppState.Empty)},
+                        {stateLiveData.postValue(AppState.Empty)}),
             )
         }
         if (basketID == null) stateLiveData.value =
@@ -86,7 +83,6 @@ class BasketViewModel @Inject constructor(
                 interactor.getData(Query.Put.Basket.Update(id, products), true)
                     .subscribeOn(schedulerProvider.io)
                     .observeOn(schedulerProvider.io)
-                    .doOnSubscribe { stateLiveData.postValue(AppState.Loading) }
                     .subscribeWith(getObserver())
             )
         }
@@ -99,7 +95,6 @@ class BasketViewModel @Inject constructor(
             interactor.getData(Query.Delete.Basket.Remove(id), true)
                 .subscribeOn(schedulerProvider.io)
                 .observeOn(schedulerProvider.io)
-                .doOnSubscribe { stateLiveData.postValue(AppState.Loading) }
                 .subscribeWith(getObserver())
         )
     }

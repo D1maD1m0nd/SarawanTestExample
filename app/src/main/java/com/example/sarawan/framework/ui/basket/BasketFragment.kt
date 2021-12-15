@@ -1,9 +1,11 @@
 package com.example.sarawan.framework.ui.basket
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -116,10 +118,13 @@ class BasketFragment : Fragment() {
                 if (data.isNotEmpty()) {
                     when (val item = data.first()) {
                         is ProductsItem -> {
+                            Log.d("TAG_PRODUCT_ITEM", "ProductsItem THIS")
                             data as MutableList<ProductsItem>
-                            if (list.count() < LIMIT) {
+                            Log.d("TAG_PRODUCT_ITEM", "THIS")
+                            if(list.size < LIMIT) {
                                 initDataRcView(data)
                             }
+                            progressBar.visibility = View.GONE
                         }
                         is AddressItem -> {
 
@@ -136,20 +141,39 @@ class BasketFragment : Fragment() {
                         is Order -> {
                             setFooterData(item)
                             setHeaderData(item)
+                            Toast.makeText(context, "Заказ оформлен", Toast.LENGTH_SHORT).show()
+                        }
+
+                        is OrderApprove -> {
+                            item.orderName?.let {
+
+                                itemClickListener.showModal(SuccessOrderFragment.newInstance())
+                                progressBar.visibility = View.GONE
+                                removeItems()
+                                emptyStatus()
+                            }
                         }
                     }
                 }
             }
-            is AppState.Error -> Unit
-            is AppState.Loading -> Unit
+            is AppState.Error -> {
+                progressBar.visibility = View.GONE
+                Toast.makeText(context, appState.error.toString(), Toast.LENGTH_SHORT).show()
+            }
+            is AppState.Loading -> {
+                progressBar.visibility = View.VISIBLE
+            }
             is AppState.Empty ->  {
-                infoBasketTextView.text = getString(R.string.basket_empty)
-                actionBasketTextView.text = getString(R.string.nav_sales)
-                actionBasketTextView.setOnClickListener { navController.navigate(R.id.mainFragment)}
+                emptyStatus()
             }
         }
     }
-
+    private fun emptyStatus() = with(binding){
+        progressBar.visibility = View.GONE
+        infoBasketTextView.text = getString(R.string.basket_empty)
+        actionBasketTextView.text = getString(R.string.nav_sales)
+        actionBasketTextView.setOnClickListener { navController.navigate(R.id.mainFragment)}
+    }
     private fun formatAddress(address: AddressItem): String {
         val city = address.city
         val street = address.street
@@ -164,11 +188,11 @@ class BasketFragment : Fragment() {
     }
 
     private fun setFooterData(order: Order) {
-        val sumOrder = order.basketSum!! + order.deliveryAmount!! + order.paymentAmount!!
+        val sumOrder = order.basketSumm!! + order.deliveryAmount!! + order.paymentAmount!!
         val footer = (list.last() as BasketFooter)
         footer.apply {
-            price = order.basketSum
-            deliveryPrice = order.deliveryAmount
+            price = order.basketSumm
+            deliveryPrice = order.deliveryAmount.toDouble()
             resultPrice = sumOrder
         }
         adapter.updateFooter()
@@ -199,22 +223,23 @@ class BasketFragment : Fragment() {
         viewModel.deleteBasketProduct(basketItemId)
     }
 
+    private fun removeItems() {
+        val end = list.size
+        list.clear()
+        adapter.items = list
+        adapter.notifyItemRangeRemoved(0, end)
+        binding.progressBar.visibility = View.GONE
+    }
+
     private fun updateBasket() {
         val products = adapter.items.filterIsInstance<ProductsItem>()
         val items = products.map {
             it.toProductShortItem()
         }
-
         viewModel.updateBasket(ProductsUpdate(items))
         adapter.updateHolders()
     }
 
-    private fun removeItems() {
-        val oldSize = list.count { it is ProductsItem }
-        list.removeAll { it is ProductsItem }
-        adapter.items = list
-        adapter.notifyItemRangeRemoved(1, oldSize)
-    }
 
     private fun showProductFragment(idProduct: Int) {
         val bundle = Bundle()
