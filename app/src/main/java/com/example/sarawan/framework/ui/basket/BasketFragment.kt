@@ -1,9 +1,11 @@
 package com.example.sarawan.framework.ui.basket
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -116,10 +118,11 @@ class BasketFragment : Fragment() {
                 if (data.isNotEmpty()) {
                     when (val item = data.first()) {
                         is ProductsItem -> {
+                            Log.d("TAG_PRODUCT_ITEM", "ProductsItem THIS")
                             data as MutableList<ProductsItem>
-                            if (list.count() < LIMIT) {
-                                initDataRcView(data)
-                            }
+                            Log.d("TAG_PRODUCT_ITEM", "THIS")
+                            initDataRcView(data)
+
                         }
                         is AddressItem -> {
 
@@ -136,11 +139,17 @@ class BasketFragment : Fragment() {
                         is Order -> {
                             setFooterData(item)
                             setHeaderData(item)
+                            item.orderName?.let {
+                                itemClickListener.showModal(SuccessOrderFragment.newInstance())
+                            }
+                            Toast.makeText(context, "Заказ оформлен", Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
             }
-            is AppState.Error -> Unit
+            is AppState.Error -> {
+                Toast.makeText(context, appState.error.toString(), Toast.LENGTH_SHORT).show()
+            }
             is AppState.Loading -> Unit
             is AppState.Empty ->  {
                 infoBasketTextView.text = getString(R.string.basket_empty)
