@@ -7,7 +7,7 @@
     android:layout_height="wrap_content">
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/materialButton"
+        android:id="@+id/clear_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/clear"
@@ -30,7 +30,7 @@
         android:textSize="@dimen/shop_info_font_size"
         android:layout_marginTop="26dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/materialButton" />
+        app:layout_constraintTop_toBottomOf="@+id/clear_button" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/weight_value_text_view"

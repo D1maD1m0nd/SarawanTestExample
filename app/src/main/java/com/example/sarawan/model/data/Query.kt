@@ -5,12 +5,13 @@ sealed interface Query {
     sealed interface Get : Query {
 
         sealed interface Products : Get {
-            data class ProductName(val productName: String, val page: Int = 1) : Products
-            data class ProductCategory(val productCategory: Int, val page: Int = 1) : Products
-            data class DiscountProducts(val page: Int = 1) : Products
-            data class PopularProducts(val page: Int = 1) : Products
-            data class Id(val id: Long) : Products
-            data class SimilarProducts(val id : Long, val page: Int = 1) : Products
+            var page: Int
+            data class ProductName(val productName: String, override var page: Int = 1) : Products
+            data class ProductCategory(val productCategory: Int, override var page: Int = 1) : Products
+            data class DiscountProducts(override var page: Int = 1) : Products
+            data class PopularProducts(override var page: Int = 1) : Products
+            data class Id(val id: Long, override var page: Int = 1) : Products
+            data class SimilarProducts(val id : Long, override var page: Int = 1) : Products
         }
         sealed interface Users : Get {
             data class UserData(val id : Long) : Users
@@ -30,6 +31,10 @@ sealed interface Query {
 
         sealed interface Basket : Post {
             data class Put(val products: ProductsUpdate) : Basket
+        }
+
+        sealed interface Order : Post {
+            data class Create(val address: AddressItem) : Basket
         }
 
         sealed interface User : Post {
@@ -56,6 +61,7 @@ sealed interface Query {
     sealed interface Delete : Query {
         sealed interface Basket : Delete {
             data class Remove(val id: Int) : Basket
+            object Clear :Basket
         }
     }
 }

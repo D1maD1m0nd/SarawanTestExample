@@ -64,7 +64,7 @@
                 android:padding="12dp"
                 android:textColor="@color/black"
                 android:textSize="16sp"
-                app:mask="+7 (999) 999-99-99"
+                app:mask="@string/profile_phone_mask"
                 app:placeholder="_" />
 
             <com.google.android.material.button.MaterialButton
@@ -135,13 +135,10 @@
                     android:layout_gravity="center_vertical"
                     android:fontFamily="@font/montserrat_regular"
                     android:text="@string/profile_phone_user_agreement"
-                    android:textColor="#FF0038FF"
+                    android:textColor="@color/blue"
                     android:textSize="14sp" />
 
             </androidx.appcompat.widget.LinearLayoutCompat>
-
         </androidx.appcompat.widget.LinearLayoutCompat>
-
     </androidx.core.widget.NestedScrollView>
-
 </androidx.appcompat.widget.LinearLayoutCompat>

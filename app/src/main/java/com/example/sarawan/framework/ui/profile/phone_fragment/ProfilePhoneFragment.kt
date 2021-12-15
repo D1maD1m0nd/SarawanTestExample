@@ -40,12 +40,19 @@ class ProfilePhoneFragment : DialogFragment() {
     private lateinit var callback: () -> Unit
 
     private var inputMethodManager: InputMethodManager? = null
+    private var keyboardShown = false
 
-    private fun showKeyboard() =
+    private fun showKeyboard() {
         inputMethodManager?.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
+        keyboardShown = true
+    }
 
-    private fun hideKeyboard(view: View) =
-        inputMethodManager?.hideSoftInputFromWindow(view.windowToken, 0)
+    private fun hideKeyboard() {
+        if (keyboardShown) {
+            inputMethodManager?.hideSoftInputFromWindow(binding.profilePhoneRootView.windowToken, 0)
+            keyboardShown = false
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -78,7 +85,10 @@ class ProfilePhoneFragment : DialogFragment() {
     }
 
     private fun initViews() = with(binding) {
-        profilePhoneCloseButton.setOnClickListener { dismiss() }
+        profilePhoneCloseButton.setOnClickListener {
+            hideKeyboard()
+            dismiss()
+        }
         profilePhoneSendButton.setOnClickListener { sendCode() }
         profilePhoneAgreementTextView.setOnClickListener { showAgreement() }
         profilePhoneCheckbox.setOnClickListener { toggleCheckBox() }
@@ -90,7 +100,7 @@ class ProfilePhoneFragment : DialogFragment() {
             text?.let {
                 val number = phoneNumberWithoutMask(it.toString())
                 if (number.length == 12) {
-                    hideKeyboard(profilePhoneMaskedEditText)
+                    hideKeyboard()
                 }
             }
         }
@@ -154,6 +164,7 @@ class ProfilePhoneFragment : DialogFragment() {
                     val result = appState.data.first()
                     result.success?.let {
                         if (it) {
+                            hideKeyboard()
                             val number = binding.profilePhoneMaskedEditText.text.toString()
                             ProfileCodeFragment.newInstance(
                                 callback,

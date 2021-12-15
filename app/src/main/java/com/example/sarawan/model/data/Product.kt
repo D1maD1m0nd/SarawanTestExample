@@ -1,6 +1,8 @@
 package com.example.sarawan.model.data
 
+import android.os.Parcelable
 import com.squareup.moshi.Json
+import kotlinx.android.parcel.Parcelize
 
 data class Response(
     @field: Json(name = "results") val results: List<Product>
@@ -15,19 +17,21 @@ data class Product(
     @field: Json(name = "store_prices") val storePrices: List<StorePrice>? = null,
     @field: Json(name = "unit_quantity") val unitQuantity: String? = null,
     @field: Json(name = "description") val description: String? = null,
-    var visible : Boolean = true
+    var visible : Boolean = true,
+    var count : Int = 0
 )
-
+@Parcelize
 data class StorePrice(
     @field: Json(name = "discount") val discount: Int,
     @field: Json(name = "id") val id: Int,
     @field: Json(name = "price") val price: String,
-    @field: Json(name = "store") val store: String
-)
-
+    @field: Json(name = "store") val store: String,
+    var count: Int
+) : Parcelable
+@Parcelize
 data class Image(
     @field: Json(name = "image") val image: String
-)
+) : Parcelable
 
 
 data class ProductsUpdate(

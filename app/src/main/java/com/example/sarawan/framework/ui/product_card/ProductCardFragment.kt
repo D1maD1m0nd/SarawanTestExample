@@ -1,49 +1,51 @@
 package com.example.sarawan.framework.ui.product_card
 
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import coil.load
+import com.example.sarawan.R
 import com.example.sarawan.app.App.Companion.navController
 import com.example.sarawan.databinding.FragmentProductCardBinding
 import com.example.sarawan.framework.ui.basket.BasketFragment
+import com.example.sarawan.framework.ui.product_card.adapter.ItemClickListener
 import com.example.sarawan.framework.ui.product_card.adapter.SimilarAdapter
 import com.example.sarawan.framework.ui.product_card.adapter.StoreAdapter
 import com.example.sarawan.framework.ui.product_card.viewModel.ProductCardViewModel
 import com.example.sarawan.model.data.AppState
 import com.example.sarawan.model.data.Product
-import com.example.sarawan.model.data.delegatesModel.BasketListItem
-import com.example.sarawan.utils.ItemClickListener
+import com.example.sarawan.model.data.StorePrice
+import com.example.sarawan.model.data.TypeCardEnum
+import com.example.sarawan.utils.toProductShortItem
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
 
 
 class ProductCardFragment : Fragment() {
     private val itemClickListener = object : ItemClickListener {
-        override fun showModal(fragment: DialogFragment) {
+
+        override fun openProductCard(productId: Int) {
             TODO("Not yet implemented")
         }
 
-        override fun update() {
-            TODO("Not yet implemented")
-        }
-        override fun deleteItem(basketId: Int, pos: Int, item : BasketListItem) {
-            TODO("Not yet implemented")
-        }
-
-        override fun openProductCard(productId : Int) {
-            TODO("Not yet implemented")
+        override fun update(pos: Int, mode: Boolean, type: TypeCardEnum) {
+            when(type) {
+                TypeCardEnum.SIMILAR -> updateDataBasket(pos, mode)
+                TypeCardEnum.STORE -> updateDataBasketIntoStore(pos, mode)
+            }
         }
 
-        override fun changeVisible(pos : Int) {
-            changeVisibleFlag(pos)
+        override fun create(product: Product, pos: Int, type: TypeCardEnum) {
+            itemSave(product, pos, true, type)
         }
     }
+    @Inject
+    lateinit var sharedPreferences: SharedPreferences
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
     private val viewModel: ProductCardViewModel by lazy {
@@ -52,12 +54,15 @@ class ProductCardFragment : Fragment() {
     private var _binding: FragmentProductCardBinding? = null
     private val binding get() = _binding!!
     private  var productId : Long? = null
-    private val storeAdapter  = StoreAdapter()
+    private val storeAdapter  = StoreAdapter(itemClickListener)
     private val similarProducts : MutableList<Product> = ArrayList(20)
+    private val storeProducts : MutableList<StorePrice> = ArrayList(5)
     private val similarAdapter = SimilarAdapter(itemClickListener)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        productId = arguments?.getLong(BasketFragment.PRODUCT_ID, 0)
+        arguments?.apply {
+            productId = getLong(BasketFragment.PRODUCT_ID, 0)
+        }
         AndroidSupportInjection.inject(this)
     }
     override fun onCreateView(
@@ -77,6 +82,7 @@ class ProductCardFragment : Fragment() {
             navController.popBackStack()
         }
         viewModel.getProduct(productId)
+        viewModel.similarProducts(productId)
     }
 
     override fun onDestroyView() {
@@ -116,19 +122,57 @@ class ProductCardFragment : Fragment() {
         data.storePrices?.let {
             priceTextView.text = it.first().price
             storeTextView.text = it.first().store
-            storeAdapter.setData(it)
+            storeProducts.addAll(it)
+            storeAdapter.setData(storeProducts)
         }
         data.images?.let {
             if(it.isNotEmpty()) {
-                mainImageProductImageView.load(it.first().image)
+                val url = it.first().image
+                mainImageProductImageView.load(url) {
+                    placeholder(R.drawable.card_placeholder)
+                    error(R.drawable.card_placeholder)
+                }
+            }
+        }
+    }
+    private fun updateDataBasket(pos : Int, mode : Boolean) {
+        val product = similarProducts[pos]
+        when(mode) {
+            true -> product.count++
+            false -> product.count--
+        }
+        itemSave(product, pos, false, TypeCardEnum.SIMILAR)
+    }
+
+    private fun updateDataBasketIntoStore(pos : Int, mode : Boolean) {
+        val store = storeProducts[pos]
+        when(mode) {
+            true -> store.count++
+            false -> store.count--
+        }
+        val product = Product(count = store.count, storePrices = listOf(store))
+        itemSave(product , pos, false, TypeCardEnum.STORE)
+    }
+
+    private fun itemSave(product : Product, pos:Int, isNew : Boolean, type: TypeCardEnum){
+
+        viewModel.saveData(
+            listOf(product.toProductShortItem()),
+            isOnline = true,
+            isNewItem = isNew
+        )
+        when(type) {
+            TypeCardEnum.SIMILAR -> {
+                similarProducts[pos] = product
+                similarAdapter.notifyItemChanged(pos)
+            }
+            TypeCardEnum.STORE -> {
+                storeProducts[pos].count = product.count
+                storeAdapter.notifyItemChanged(pos)
             }
         }
     }
 
-    private fun changeVisibleFlag(pos : Int) {
-        similarProducts[pos].visible = false
-        similarAdapter.updateItem(similarProducts, pos)
-    }
     companion object {
         fun newInstance() = ProductCardFragment()
     }

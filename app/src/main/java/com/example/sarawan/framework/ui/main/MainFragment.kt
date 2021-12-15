@@ -15,7 +15,7 @@ class MainFragment : BaseMainCatalogFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (savedInstanceState == null) viewModel.getStartData(isOnline)
+        if (savedInstanceState == null && isOnline) viewModel.getStartData(isOnline)
     }
 
     override fun attachAdapterToView() {
@@ -44,7 +44,5 @@ class MainFragment : BaseMainCatalogFragment() {
         }
     }
 
-    override fun onFragmentNext() {
-        TODO("Not yet implemented")
-    }
+    override fun onFragmentNext() = Unit
 }

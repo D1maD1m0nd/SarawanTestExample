@@ -71,6 +71,8 @@ interface ApiService {
     @GET("api/basket/")
     fun getBasket(): Single<Basket>
 
+    @DELETE("api/basket/")
+    fun clearBasket() : Single<Basket>
     /**
      * Добавление продукта в корзину
      */
@@ -125,6 +127,15 @@ interface ApiService {
     @GET("api/user_address/")
     fun getAddress() : Single<MutableList<AddressItem>>
 
+    /**
+     * Расчет стоимости заказа
+     */
     @POST("api/order_calculate/")
     fun getPreCalculationOrder(@Body address: AddressItem) : Single<Order>
+
+    /**
+     * Оформление заказа
+     */
+    @POST("api/api/order_approve/")
+    fun createOrder(@Body address : AddressItem) : Single<Order>
 }

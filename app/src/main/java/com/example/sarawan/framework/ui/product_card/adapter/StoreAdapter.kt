@@ -3,22 +3,24 @@ package com.example.sarawan.framework.ui.product_card.adapter
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.GONE
-import android.view.View.VISIBLE
+import android.view.View.*
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.sarawan.R
 import com.example.sarawan.databinding.StoreItemBinding
+import com.example.sarawan.model.data.Product
 import com.example.sarawan.model.data.StorePrice
+import com.example.sarawan.model.data.TypeCardEnum
 
 
-class StoreAdapter()  : RecyclerView.Adapter<StoreAdapter.StoreViewHolder>(){
+class StoreAdapter(val itemClickListener: ItemClickListener)  : RecyclerView.Adapter<StoreAdapter.StoreViewHolder>(){
     private val stores : MutableList<StorePrice> = ArrayList(10);
 
     @SuppressLint("NotifyDataSetChanged")
     fun setData(store : List<StorePrice>) {
         stores.clear()
         stores.addAll(store)
+        notifyDataSetChanged()
     }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
         StoreViewHolder(LayoutInflater
@@ -38,11 +40,34 @@ class StoreAdapter()  : RecyclerView.Adapter<StoreAdapter.StoreViewHolder>(){
         fun bind(store : StorePrice) = with(binding) {
             storeTitleTextView.text = store.store
             priceTextView.text = String.format("%s ₽", store.price)
-            basketButton.setOnClickListener {
-                it.visibility = GONE
+            counterTextView.text = store.count.toString()
+            if(store.count > 0) {
+                basketButton.visibility = INVISIBLE
                 counterContainer.visibility = VISIBLE
             }
+            basketButton.setOnClickListener {
+                itemClickListener.create(
+                    Product(count = 1, storePrices = listOf(store)),
+                    absoluteAdapterPosition,
+                    TypeCardEnum.STORE
+                )
+            }
 
+            plusButtonImageButton.setOnClickListener {
+                itemClickListener.update(
+                    absoluteAdapterPosition,
+                    mode = true,
+                    TypeCardEnum.STORE
+                )
+            }
+
+            minusImageButton.setOnClickListener {
+                itemClickListener.update(
+                    absoluteAdapterPosition,
+                    mode = false,
+                    TypeCardEnum.STORE
+                )
+            }
         }
     }
 }

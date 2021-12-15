@@ -11,10 +11,11 @@ import coil.load
 import com.example.sarawan.R
 import com.example.sarawan.databinding.ListItemCardBinding
 import com.example.sarawan.model.data.Product
-import com.example.sarawan.utils.ItemClickListener
+import com.example.sarawan.framework.ui.product_card.adapter.ItemClickListener
+import com.example.sarawan.model.data.TypeCardEnum
 
 class SimilarAdapter(val itemClickListener: ItemClickListener) : RecyclerView.Adapter<SimilarAdapter.ProductViewHolder>() {
-    private var similarList : MutableList<Product> = ArrayList(20)
+    private var similarList : List<Product> = ArrayList(20)
 
     @SuppressLint("NotifyDataSetChanged")
     fun setData(products : MutableList<Product>) {
@@ -26,15 +27,22 @@ class SimilarAdapter(val itemClickListener: ItemClickListener) : RecyclerView.Ad
         notifyItemChanged(position)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductViewHolder  =
-        ProductViewHolder(
-            LayoutInflater
-            .from(parent.context)
-            .inflate(
-                R.layout.list_item_new,
-                parent,
-                false
-            ))
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductViewHolder {
+        val view = ListItemCardBinding.inflate(
+            LayoutInflater.from(parent.context),
+            parent,
+            false
+        ).apply {
+            root.layoutParams.apply {
+                width = parent.width / 2
+            }
+        }
+        return object : ProductViewHolder(
+            view,
+            itemClickListener
+        ) {}
+    }
+
 
     override fun onBindViewHolder(holder: ProductViewHolder, position: Int) {
         holder.bind(similarList[position])
@@ -44,29 +52,44 @@ class SimilarAdapter(val itemClickListener: ItemClickListener) : RecyclerView.Ad
     override fun getItemId(position: Int): Long {
         return similarList[position].id!!
     }
-    inner class ProductViewHolder(item: View) : RecyclerView.ViewHolder(item) {
-        private val binding = ListItemCardBinding.bind(item)
+    abstract class ProductViewHolder(
+        private val binding: ListItemCardBinding,
+        private val itemClickListener: ItemClickListener) : RecyclerView.ViewHolder(binding.root) {
         fun bind(product : Product) = with(binding) {
             val store = product.storePrices?.first()
             discount.visibility = GONE
             itemDescription.text = product.name
             itemShopName.text = store?.store
             itemPrice.text = store?.price
-            if(!product.visible) {
+            itemQuantity.text = product.count.toString()
+            if(product.count > 0) {
                 itemBuyButton.visibility = GONE
                 itemQuantityLayout.visibility = VISIBLE
-                itemQuantity.text = "1"
             } else {
                 itemBuyButton.visibility = VISIBLE
                 itemQuantityLayout.visibility = GONE
             }
             itemBuyButton.setOnClickListener {
-                itemClickListener.changeVisible(absoluteAdapterPosition)
+                //itemClickListener.changeVisible(absoluteAdapterPosition)
+                product.count++
+                itemClickListener.create(product, absoluteAdapterPosition, TypeCardEnum.SIMILAR)
             }
+
+            plusButton.setOnClickListener {
+                itemClickListener.update(absoluteAdapterPosition, true, TypeCardEnum.SIMILAR)
+            }
+
+            minusButton.setOnClickListener {
+                itemClickListener.update(absoluteAdapterPosition, false, TypeCardEnum.SIMILAR)
+            }
+
             product.images?.let {
                 if(it.isNotEmpty()) {
                     val image = product.images.first().image
-                    itemImage.load(image)
+                    itemImage.load(image) {
+                        placeholder(R.drawable.card_placeholder)
+                        error(R.drawable.card_placeholder)
+                    }
                 }
             }
         }

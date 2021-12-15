@@ -72,6 +72,9 @@ class RetrofitImplementation @Inject constructor(private val apiService: ApiServ
                 is Query.Post.Address.NewAddress -> apiService
                     .createAddress(query.address)
                     .map { listOf(it) }
+                is Query.Post.Order.Create -> apiService
+                    .createOrder(query.address)
+                    .map { listOf(it) }
             }
 
             is Query.Put -> when (query) {
@@ -88,6 +91,9 @@ class RetrofitImplementation @Inject constructor(private val apiService: ApiServ
 
                 is Query.Delete.Basket.Remove -> apiService
                     .deleteBasketProduct(query.id)
+                    .map { listOf(it) }
+                is Query.Delete.Basket.Clear -> apiService
+                    .clearBasket()
                     .map { listOf(it) }
             }
         }

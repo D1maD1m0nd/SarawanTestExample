@@ -5,7 +5,6 @@ import android.graphics.Color
 import android.graphics.Typeface
 import android.view.Gravity
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -13,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import coil.ImageLoader
 import com.example.sarawan.databinding.ListItemButtonBinding
 import com.example.sarawan.databinding.ListItemCardBinding
+import com.example.sarawan.databinding.LoadingLayoutBinding
 import com.example.sarawan.framework.ui.base.mainCatalog.BaseMainCatalogAdapter
 import com.example.sarawan.framework.ui.base.mainCatalog.CardType
 import com.example.sarawan.framework.ui.main.viewHolder.*
@@ -81,7 +81,11 @@ class MainRecyclerAdapter(
         commonData.forEach {
             setData(it)
         }
-        if (commonData.size % 2 != 0) setData(MainScreenDataModel(cardType = CardType.EMPTY.type))
+        displayData.add(
+            MainScreenDataModel(
+                cardType = CardType.LOADING.type
+            )
+        )
         if (!partnersData.isNullOrEmpty()) {
             displayData.add(
                 MainScreenDataModel(
@@ -97,18 +101,27 @@ class MainRecyclerAdapter(
         }
     }
 
-    private fun setData(data: MainScreenDataModel?) {
+    fun addData(data: List<MainScreenDataModel>?) {
+        if (data.isNullOrEmpty()) return
+        else {
+            data.forEach {
+                setData(it, itemCount - 1)
+            }
+        }
+    }
+
+    private fun setData(data: MainScreenDataModel?, index: Int = itemCount) {
         data?.let {
             if (it.cardType == CardType.COMMON.type) {
-                displayData.add(it)
-                notifyItemInserted(displayData.size)
+                displayData.add(index, it)
+                notifyItemInserted(index)
             }
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
-            CardType.COMMON.type -> CommonCardsViewHolder(
+            CardType.COMMON.type -> object : CardItemViewHolder(
                 ListItemCardBinding.inflate(
                     LayoutInflater.from(parent.context),
                     parent,
@@ -116,7 +129,7 @@ class MainRecyclerAdapter(
                 ),
                 imageLoader,
                 onListItemClickListener
-            )
+            ) {}
             CardType.TOP.type -> {
                 topCardsRecycler = RecyclerView(parent.context)
                 topCardsRecycler.layoutManager =
@@ -143,6 +156,13 @@ class MainRecyclerAdapter(
                     false
                 )
             )
+            CardType.LOADING.type -> object : RecyclerView.ViewHolder(
+                LoadingLayoutBinding.inflate(
+                    LayoutInflater.from(parent.context),
+                    parent,
+                    false
+                ).root
+            ) {}
             else -> throw RuntimeException("No Such viewType: $viewType")
         }
     }
@@ -150,7 +170,7 @@ class MainRecyclerAdapter(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (getItemViewType(position)) {
             CardType.COMMON.type -> {
-                holder as CommonCardsViewHolder
+                holder as CardItemViewHolder
                 holder.bind(displayData[position])
             }
             CardType.TOP.type -> {
@@ -177,10 +197,7 @@ class MainRecyclerAdapter(
                 holder as ButtonHolder
                 holder.bind(displayData[position])
             }
-            CardType.EMPTY.type -> {
-                holder as CommonCardsViewHolder
-                holder.itemView.visibility = View.INVISIBLE
-            }
+            CardType.LOADING.type -> Unit
             else -> throw RuntimeException("No binder for holder: $holder")
         }
     }

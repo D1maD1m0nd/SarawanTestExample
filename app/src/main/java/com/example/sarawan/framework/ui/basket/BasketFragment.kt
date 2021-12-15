@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -22,7 +21,7 @@ import com.example.sarawan.model.data.delegatesModel.BasketFooter
 import com.example.sarawan.model.data.delegatesModel.BasketHeader
 import com.example.sarawan.model.data.delegatesModel.BasketListItem
 import com.example.sarawan.utils.ItemClickListener
-import com.example.sarawan.utils.toUpdateProduct
+import com.example.sarawan.utils.toProductShortItem
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
 
@@ -31,6 +30,7 @@ class BasketFragment : Fragment() {
     lateinit var viewModelFactory: ViewModelProvider.Factory
     private var _binding: FragmentBasketBinding? = null
     private val binding get() = _binding!!
+    private var addressItem : AddressItem? = null
     //основной список для отображения
     private val list: MutableList<BasketListItem> = ArrayList(
         listOf(
@@ -44,21 +44,33 @@ class BasketFragment : Fragment() {
             showModalDialog(fragment)
         }
 
-        override fun update() {
+        override fun update(pos: Int, mode: Boolean) {
             updateBasket()
         }
 
-        override fun deleteItem(basketId: Int, pos: Int, item : BasketListItem) {
+        override fun deleteItem(basketId: Int, pos: Int, item: BasketListItem) {
             list.remove(item)
             deleteBasketItem(pos, basketId)
         }
 
-        override fun openProductCard(productId : Int) {
+        override fun openProductCard(productId: Int) {
             showProductFragment(productId)
         }
 
-        override fun changeVisible(pos : Int) {
+        override fun changeVisible(pos: Int) {
             TODO("Not yet implemented")
+        }
+
+        override fun create() {
+            addressItem?.let {
+                viewModel.createOrder(it)
+            }
+
+        }
+
+        override fun clear() {
+            viewModel.clearBasket()
+            removeItems()
         }
     }
     private val adapter = BasketAdapter(itemClickListener)
@@ -91,25 +103,29 @@ class BasketFragment : Fragment() {
     }
 
     private fun initRcView() = with(binding) {
-        cardContainerRcView.itemAnimator?.changeDuration = 0;
+        cardContainerRcView.itemAnimator?.changeDuration = 0
         cardContainerRcView.layoutManager = LinearLayoutManager(context)
         cardContainerRcView.adapter = adapter
     }
 
-    private fun setState(appState: AppState<*>){
+    private fun setState(appState: AppState<*>) = with(binding){
         when (appState) {
             is AppState.Success<*> -> {
                 val data = appState.data
-                if(data.isNotEmpty()) {
-                    when(val item = data.first()) {
+                if (data.isNotEmpty()) {
+                    when (val item = data.first()) {
                         is ProductsItem -> {
-                            if(list.count() < LIMIT){
-                                data as MutableList<ProductsItem>
+                            data as MutableList<ProductsItem>
+                            if (list.count() < LIMIT) {
                                 initDataRcView(data)
                             }
                         }
                         is AddressItem -> {
-                            viewModel.getOrder(AddressItem(idAddressOrder = item.id))
+
+                            addressItem = AddressItem(idAddressOrder = item.id)
+                            addressItem?.let {
+                                viewModel.getOrder(it)
+                            }
                             val footer = (list.last() as BasketFooter)
                             footer.apply {
                                 address = formatAddress(item)
@@ -124,9 +140,15 @@ class BasketFragment : Fragment() {
                 }
             }
             is AppState.Error -> Unit
-            AppState.Loading -> Unit
+            is AppState.Loading -> Unit
+            is AppState.Empty ->  {
+                infoBasketTextView.text = getString(R.string.basket_empty)
+                actionBasketTextView.text = getString(R.string.nav_sales)
+                actionBasketTextView.setOnClickListener { navController.navigate(R.id.mainFragment)}
+            }
         }
     }
+
     private fun formatAddress(address: AddressItem): String {
         val city = address.city
         val street = address.street
@@ -134,6 +156,7 @@ class BasketFragment : Fragment() {
         val roomNum = address.roomNumber
         return "$city, ул $street, д $house, кв $roomNum"
     }
+
     private fun initDataRcView(data: List<ProductsItem>) {
         list.addAll(list.lastIndex, data)
         adapter.items = list
@@ -166,7 +189,7 @@ class BasketFragment : Fragment() {
         }
     }
 
-    private fun deleteBasketItem(pos: Int, basketItemId: Int ) {
+    private fun deleteBasketItem(pos: Int, basketItemId: Int) {
         adapter.apply {
             items = list
             notifyItemRemoved(pos)
@@ -178,17 +201,28 @@ class BasketFragment : Fragment() {
     private fun updateBasket() {
         val products = adapter.items.filterIsInstance<ProductsItem>()
         val items = products.map {
-            it.toUpdateProduct()
+            it.toProductShortItem()
         }
 
         viewModel.updateBasket(ProductsUpdate(items))
         adapter.updateHolders()
     }
+
+    private fun removeItems() {
+        val oldSize = list.count { it is ProductsItem }
+        list.removeAll { it is ProductsItem }
+        adapter.items = list
+        adapter.notifyItemRangeRemoved(1, oldSize)
+    }
+
     private fun showProductFragment(idProduct: Int) {
         val bundle = Bundle()
+        val products = adapter.items.filterIsInstance<ProductsItem>()
         bundle.putLong(PRODUCT_ID, idProduct.toLong())
-        navController.navigate(R.id.action_basketFragment_to_productCardFragment,bundle)
+        bundle.putParcelableArrayList(PRODUCTS_BASKET, ArrayList(products))
+        navController.navigate(R.id.action_basketFragment_to_productCardFragment, bundle)
     }
+
     override fun onDestroyView() {
         _binding = null
         super.onDestroyView()
@@ -197,6 +231,7 @@ class BasketFragment : Fragment() {
     companion object {
         fun newInstance() = BasketFragment()
         const val PRODUCT_ID = "PRODUCT_ID"
+        const val PRODUCTS_BASKET = "PRODUCTS_BASKET"
         private const val LIMIT = 3
     }
 }
