@@ -30,7 +30,7 @@ object AdapterDelegatesTypes {
                 item.basketProduct?.let {
                     titleProductTextView.text = it.basketProduct?.name
                     propertiesTextView.text = it.basketProduct?.unitQuantity
-                    productCompanyTextView.text = "Растишка"
+                    productCompanyTextView.text = "Сарафан"
                     productCountryTextView.text = "Россия"
                     productShopTextView.text = it.store
                     sumTextView.text = String.format("%s ₽", it.price)
