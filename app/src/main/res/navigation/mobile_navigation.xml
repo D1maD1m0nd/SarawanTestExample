@@ -43,7 +43,11 @@
         android:id="@+id/productCardFragment"
         android:name="com.example.sarawan.framework.ui.product_card.ProductCardFragment"
         android:label="fragment_product_card"
-        tools:layout="@layout/fragment_product_card" />
+        tools:layout="@layout/fragment_product_card" >
+        <action
+            android:id="@+id/action_productCardFragment_self"
+            app:destination="@id/productCardFragment" />
+    </fragment>
     <fragment
         android:id="@+id/categoryFragment"
         android:name="com.example.sarawan.framework.ui.category.CategoryFragment"

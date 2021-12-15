@@ -83,6 +83,12 @@ class SimilarAdapter(val itemClickListener: ItemClickListener) : RecyclerView.Ad
                 itemClickListener.update(absoluteAdapterPosition, false, TypeCardEnum.SIMILAR)
             }
 
+            itemCard.setOnClickListener {
+                product.id?.let {
+                    itemClickListener.openProductCard(productId = product.id)
+                }
+            }
+
             product.images?.let {
                 if(it.isNotEmpty()) {
                     val image = product.images.first().image
