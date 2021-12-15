@@ -137,5 +137,5 @@ interface ApiService {
      * Оформление заказа
      */
     @POST("api/order_approve/")
-    fun createOrder(@Body address : AddressItem) : Single<Order>
+    fun createOrder(@Body address : AddressItem) : Single<OrderApprove>
 }

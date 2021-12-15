@@ -103,6 +103,7 @@ class ProductCardFragment : Fragment() {
             }
             is AppState.Error -> Unit
             AppState.Loading -> Unit
+            else -> {}
         }
     }
 

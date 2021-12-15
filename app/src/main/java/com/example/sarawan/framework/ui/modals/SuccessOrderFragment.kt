@@ -34,6 +34,11 @@ class SuccessOrderFragment : DialogFragment() {
         }
     }
     companion object {
-        fun newInstance() = SuccessOrderFragment()
+        private const val ARG_MESSAGE = "MESSAGE"
+        fun newInstance(message : String) = SuccessOrderFragment().apply {
+            arguments = Bundle().apply {
+                putString(ARG_MESSAGE, message)
+            }
+        }
     }
 }
