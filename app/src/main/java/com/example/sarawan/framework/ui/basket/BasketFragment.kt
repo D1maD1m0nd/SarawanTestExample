@@ -15,6 +15,7 @@ import com.example.sarawan.framework.ui.basket.adapter.BasketAdapter
 import com.example.sarawan.framework.ui.basket.viewModel.BasketViewModel
 import com.example.sarawan.framework.ui.modals.DeliveryTimeFragment
 import com.example.sarawan.framework.ui.modals.PaymentMethodFragment
+import com.example.sarawan.framework.ui.modals.SuccessOrderFragment
 import com.example.sarawan.framework.ui.profile.address_fragment.ProfileAddressFragment
 import com.example.sarawan.model.data.*
 import com.example.sarawan.model.data.delegatesModel.BasketFooter
@@ -185,7 +186,7 @@ class BasketFragment : Fragment() {
             is DeliveryTimeFragment -> fragment.show(childFragmentManager, null)
             is ProfileAddressFragment -> fragment.show(childFragmentManager, null)
             is PaymentMethodFragment -> fragment.show(childFragmentManager, null)
-            else -> Unit
+            is SuccessOrderFragment -> fragment.show(childFragmentManager, null)
         }
     }
 
