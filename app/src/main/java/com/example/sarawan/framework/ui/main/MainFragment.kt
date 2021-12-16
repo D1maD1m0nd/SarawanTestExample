@@ -15,7 +15,7 @@ class MainFragment : BaseMainCatalogFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (savedInstanceState == null && isOnline) viewModel.getStartData(isOnline)
+        if (savedInstanceState == null && isOnline) viewModel.getStartData(isOnline) { /*TODO handle error loading data */ }
     }
 
     override fun attachAdapterToView() {
@@ -27,19 +27,22 @@ class MainFragment : BaseMainCatalogFragment() {
         viewModel.getStateLiveData().observe(viewLifecycleOwner) { appState ->
             when (appState) {
                 is AppState.Success<*> -> {
-                    val data = appState.data as List<MainScreenDataModel>
-                    if (data.isNullOrEmpty()) {
-                        mainRecyclerAdapter?.clearData()
+                    val data = appState.data as List<Pair<Int, List<MainScreenDataModel>>>
+                    if (data.first().second.isNullOrEmpty()) {
                         binding.loadingLayout.visibility = View.GONE
-                    } else mainRecyclerAdapter?.setData(
-                        data,
-                        binding.searchField.editText?.text.isNullOrEmpty()
-                    )
-                    binding.topBarLayout.setExpanded(true, true)
-                    binding.mainRecyclerView.scrollToPosition(0)
+                    } else {
+                        maxCount = data.first().first
+                        mainRecyclerAdapter?.setData(
+                            data.first().second,
+                            binding.searchField.editText?.text.isNullOrEmpty(),
+                            maxCount
+                        )
+                    }
+                    isDataLoaded = true
                 }
                 is AppState.Error -> Unit
                 AppState.Loading -> binding.loadingLayout.visibility = View.VISIBLE
+                AppState.Empty -> Unit
             }
         }
     }

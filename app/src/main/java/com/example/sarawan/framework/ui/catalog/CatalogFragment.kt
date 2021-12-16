@@ -38,7 +38,7 @@ class CatalogFragment : BaseMainCatalogFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (savedInstanceState == null && isOnline) viewModel.getStartData(isOnline)
+        if (savedInstanceState == null && isOnline) viewModel.getStartData(isOnline) { /*TODO handle error loading data */ }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -63,16 +63,17 @@ class CatalogFragment : BaseMainCatalogFragment() {
                 is AppState.Success<*> -> {
                     val listData = appState.data as List<*>?
                     if (listData.isNullOrEmpty()) {
-                        mainRecyclerAdapter?.clearData()
-                        catalogAdapter?.clearData()
                         binding.loadingLayout.visibility = View.GONE
                     } else when (listData.first()) {
-                        is MainScreenDataModel -> {
+                        is Pair<*, *> -> {
                             binding.mainRecyclerView.layoutManager = gridLayoutManager
                             binding.mainRecyclerView.adapter = mainRecyclerAdapter
+                            maxCount =
+                                (listData.first() as Pair<Int, List<MainScreenDataModel>>).first
                             mainRecyclerAdapter?.setData(
-                                listData as List<MainScreenDataModel>,
-                                binding.searchField.editText?.text.isNullOrEmpty()
+                                (listData.first() as Pair<Int, List<MainScreenDataModel>>).second,
+                                binding.searchField.editText?.text.isNullOrEmpty(),
+                                maxCount
                             )
                         }
                         is CategoryDataModel -> {
@@ -87,11 +88,11 @@ class CatalogFragment : BaseMainCatalogFragment() {
                             }
                         }
                     }
-                    binding.topBarLayout.setExpanded(true, true)
-                    binding.mainRecyclerView.scrollToPosition(0)
+                    isDataLoaded = true
                 }
                 is AppState.Error -> Unit
                 AppState.Loading -> binding.loadingLayout.visibility = View.VISIBLE
+                AppState.Empty -> Unit
             }
         }
     }

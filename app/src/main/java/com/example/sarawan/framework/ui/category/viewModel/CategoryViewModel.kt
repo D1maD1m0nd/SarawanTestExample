@@ -13,23 +13,24 @@ class CategoryViewModel @Inject constructor(
     private val schedulerProvider: ISchedulerProvider
 ) : BaseMainCatalogViewModel(interactor, schedulerProvider) {
 
-    private var category: Int = -1
+    private var category: Int = CategoryFragment.DISCOUNT
 
-    fun getStartData(category: Int, isOnline: Boolean) {
+    fun getStartData(category: Int, isOnline: Boolean, errorCallback: () -> Unit) {
+        lastPage = 1
         this.category = category
-        getMoreData(isOnline)
+        getMoreData(isOnline, errorCallback)
     }
 
-    override fun getStartData(isOnline: Boolean) = Unit
+    override fun getStartData(isOnline: Boolean, errorCallback: () -> Unit) = Unit
 
-    override fun getMoreData(isOnline: Boolean) {
+    override fun getMoreData(isOnline: Boolean, errorCallback: () -> Unit) {
         (if (category == CategoryFragment.DISCOUNT) {
-            loadMoreData(isOnline, Query.Get.Products.DiscountProducts())
-        } else loadMoreData(isOnline, Query.Get.Products.ProductCategory(category)))
+            loadMoreData(isOnline, Query.Get.Products.DiscountProducts(), errorCallback)
+        } else loadMoreData(isOnline, Query.Get.Products.ProductCategory(category), errorCallback))
             .subscribeOn(schedulerProvider.io)
             .observeOn(schedulerProvider.io)
             .subscribe(
-                { stateLiveData.postValue(AppState.Success(it)) },
+                { stateLiveData.postValue(AppState.Success(listOf(Pair(maxElement ,it)))) },
                 { stateLiveData.postValue(AppState.Error(it)) }
             )
     }

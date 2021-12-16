@@ -13,20 +13,20 @@ class MainViewModel @Inject constructor(
     private val schedulerProvider: ISchedulerProvider
 ) : BaseMainCatalogViewModel(interactor, schedulerProvider) {
 
-    override fun getStartData(isOnline: Boolean) {
+    override fun getStartData(isOnline: Boolean, errorCallback: () -> Unit) {
         searchWord = null
         val discount = interactor.getData(Query.Get.Products.DiscountProducts(), isOnline)
         val basket =
             interactor.getData(Query.Get.Basket, isOnline).onErrorReturnItem(listOf(Basket()))
-        val popular = loadMoreData(isOnline, Query.Get.Products.PopularProducts())
+        val popular = loadMoreData(isOnline, Query.Get.Products.PopularProducts(), errorCallback)
         compositeDisposable.add(
             Single.zip(discount, popular, basket) { discountData, popularData, basketData ->
                 val data: MutableList<MainScreenDataModel> = mutableListOf()
                 data.addAll(popularData)
                 val basketObject = (basketData as List<Basket>).firstOrNull()
                 basketID = basketObject?.basketId
-                discountData.forEach { discountSingleData ->
-                    val mainScreenData = (discountSingleData as Product)
+                (discountData.first() as Response).results.forEach { discountSingleData ->
+                    val mainScreenData = discountSingleData
                         .toMainScreenDataModel()
                         .apply { cardType = CardType.TOP.type }
                     data.add(mainScreenData)
@@ -40,21 +40,25 @@ class MainViewModel @Inject constructor(
                 .subscribeOn(schedulerProvider.io)
                 .observeOn(schedulerProvider.io)
                 .subscribe(
-                    { stateLiveData.postValue(AppState.Success(it)) },
+                    { stateLiveData.postValue(AppState.Success(listOf(Pair(maxElement, it)))) },
                     { stateLiveData.postValue(AppState.Error(it)) }
                 )
         )
     }
 
-    override fun getMoreData(isOnline: Boolean) {
+    override fun getMoreData(isOnline: Boolean, errorCallback: () -> Unit) {
         val tempWord = searchWord
-        (if (tempWord == null) loadMoreData(isOnline, Query.Get.Products.PopularProducts())
-        else loadMoreData(isOnline, Query.Get.Products.ProductName(tempWord)))
+        (if (tempWord == null) loadMoreData(
+            isOnline,
+            Query.Get.Products.PopularProducts(),
+            errorCallback
+        )
+        else loadMoreData(isOnline, Query.Get.Products.ProductName(tempWord), errorCallback))
             .subscribeOn(schedulerProvider.io)
             .observeOn(schedulerProvider.io)
             .subscribe(
-                { stateMoreLiveData.postValue(AppState.Success(it)) },
-                { stateMoreLiveData.postValue(AppState.Error(it)) }
+                { stateLiveData.postValue(AppState.Success(listOf(Pair(maxElement, it)))) },
+                { stateLiveData.postValue(AppState.Error(it)) }
             )
     }
 

@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import androidx.recyclerview.widget.RecyclerView
 import com.example.sarawan.R
 import com.example.sarawan.databinding.FragmentCatalogListBinding
 import com.example.sarawan.framework.ui.base.mainCatalog.BaseMainCatalogFragment
@@ -47,27 +46,17 @@ class CategoryFragment : BaseMainCatalogFragment() {
         }
         initSpinner()
         loadStartData()
-        watchForAdapter()
-    }
-
-    private fun watchForAdapter() {
-        categoryBinding.cardsRecycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                mainRecyclerAdapter?.let { adapter ->
-                    if (newState == RecyclerView.SCROLL_STATE_IDLE
-                        && adapter.itemCount - gridLayoutManager.findLastVisibleItemPosition() < 2
-                        && isOnline
-                    ) viewModel.getMoreData(isOnline)
-                }
-            }
-        })
+        watchForAdapter(categoryBinding.cardsRecycler)
     }
 
     private fun loadStartData() {
         categoryBinding.fragmentCaption.text =
             arguments?.getString(KEY_CATEGORY_NAME) ?: "Выгодные предложения"
         if (isOnline) viewModel
-            .getStartData(arguments?.getInt(KEY_CATEGORY) ?: DISCOUNT, isOnline)
+            .getStartData(
+                arguments?.getInt(KEY_CATEGORY) ?: DISCOUNT,
+                isOnline
+            ) { /*TODO handle error loading data */ }
     }
 
     private fun initSpinner() {
@@ -108,29 +97,31 @@ class CategoryFragment : BaseMainCatalogFragment() {
         viewModel.getStateLiveData().observe(viewLifecycleOwner) { appState ->
             when (appState) {
                 is AppState.Success<*> -> {
-                    val data = appState.data as List<MainScreenDataModel>
-                    if (data.isNullOrEmpty()) {
-                        mainRecyclerAdapter?.clearData()
-                    } else {
-                        data.forEach {
+                    val data = appState.data as List<Pair<Int, List<MainScreenDataModel>>>
+                    if (data.first().second.isNullOrEmpty()) return@observe
+                    else {
+                        data.first().second.forEach {
                             it.cardType = CardType.COMMON.type
                         }
-                        mainRecyclerAdapter?.setData(data, false)
+                        maxCount = data.first().first
+                        mainRecyclerAdapter?.setData(data.first().second, false, maxCount)
                     }
-                    categoryBinding.cardsRecycler.scrollToPosition(0)
+//                    categoryBinding.cardsRecycler.scrollToPosition(0)
                     categoryBinding.loadingLayout.visibility = View.GONE
+                    isDataLoaded = true
                 }
                 is AppState.Error -> Unit
                 AppState.Loading -> categoryBinding.loadingLayout.visibility = View.VISIBLE
+                AppState.Empty -> Unit
             }
         }
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
+    override fun onDestroy() {
         categoryBinding.cardsRecycler.layoutManager = null
         categoryBinding.cardsRecycler.adapter = null
         _binding = null
+        super.onDestroy()
     }
 
     override fun onFragmentNext() = Unit
