@@ -23,7 +23,6 @@ import com.example.sarawan.databinding.FragmentMainBinding
 import com.example.sarawan.framework.INavigation
 import com.example.sarawan.framework.ui.basket.BasketFragment
 import com.example.sarawan.framework.ui.main.adapter.MainRecyclerAdapter
-import com.example.sarawan.model.data.AppState
 import com.example.sarawan.model.data.MainScreenDataModel
 import com.example.sarawan.rx.ISchedulerProvider
 import com.example.sarawan.utils.NetworkStatus
@@ -50,6 +49,12 @@ abstract class BaseMainCatalogFragment : Fragment(), INavigation {
     protected abstract val viewModel: BaseMainCatalogViewModel
 
     protected var isOnline = true
+
+    protected var maxCount = 0
+
+    protected var isDataLoaded = false
+
+    protected var isSearchActive = false
 
     protected var mainRecyclerAdapter: MainRecyclerAdapter? = null
 
@@ -102,34 +107,28 @@ abstract class BaseMainCatalogFragment : Fragment(), INavigation {
         attachAdapterToView()
         initSearchField()
         subscribeToViewModel()
-        subscribeToMoreViewModel()
         watchForAdapter()
     }
 
-    private fun watchForAdapter() {
-        binding.mainRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+    protected fun watchForAdapter(recyclerView: RecyclerView = binding.mainRecyclerView) {
+        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 mainRecyclerAdapter?.let { adapter ->
                     if (newState == RecyclerView.SCROLL_STATE_IDLE
-                        && adapter.itemCount - gridLayoutManager.findLastVisibleItemPosition() < 2
+                        && isDataLoaded
+                        && recyclerView.layoutManager is GridLayoutManager
+                        && adapter.getItemViewType(
+                            (recyclerView.layoutManager as GridLayoutManager)
+                                .findLastVisibleItemPosition()
+                        ) == CardType.LOADING.type
                         && isOnline
-                    ) viewModel.getMoreData(isOnline)
+                    ) {
+                        isDataLoaded = false
+                        viewModel.getMoreData(isOnline) { /*TODO handle error loading data */ }
+                    }
                 }
             }
         })
-    }
-
-    private fun subscribeToMoreViewModel() {
-        viewModel.getMoreLiveData().observe(viewLifecycleOwner) { appState ->
-            when (appState) {
-                is AppState.Success<*> -> {
-                    val data = appState.data as List<MainScreenDataModel>
-                    if (data.isNotEmpty()) mainRecyclerAdapter?.addData(data)
-                }
-                is AppState.Error -> Unit
-                AppState.Loading -> Unit
-            }
-        }
     }
 
     protected abstract fun attachAdapterToView()
@@ -150,7 +149,6 @@ abstract class BaseMainCatalogFragment : Fragment(), INavigation {
                     CardType.COMMON.type -> 1
                     CardType.STRING.type -> 2
                     CardType.BUTTON.type -> 2
-                    CardType.PARTNERS.type -> 2
                     CardType.LOADING.type -> 2
                     else -> -1
                 }
@@ -222,12 +220,23 @@ abstract class BaseMainCatalogFragment : Fragment(), INavigation {
         activity?.getSystemService<InputMethodManager>()
             ?.hideSoftInputFromWindow(binding.searchField.windowToken, 0)
         binding.searchField.clearFocus()
-        viewModel.search(binding.searchField.editText?.text.toString(), isOnline)
         if (!isOnline) Toast.makeText(
             context,
             "You are Offline! Get Results from Cache",
             Toast.LENGTH_SHORT
         ).show()
+        else {
+            isSearchActive = true
+
+            viewModel.search(
+                binding.searchField.editText?.text.toString(),
+                isOnline
+            ) { /*TODO handle error loading data */ }
+
+            mainRecyclerAdapter?.clear()
+            binding.topBarLayout.setExpanded(true, true)
+            binding.mainRecyclerView.scrollToPosition(0)
+        }
     }
 
     private fun checkOnlineStatus() {

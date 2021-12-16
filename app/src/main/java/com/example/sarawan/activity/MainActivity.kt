@@ -125,8 +125,8 @@ class MainActivity : AppCompatActivity(), FabChanger {
             .subscribeOn(schedulerProvider.io)
             .observeOn(schedulerProvider.ui)
             .subscribe { isOnline ->
-                val message = if (isOnline) "You now Online" else "You are Offline!"
-                Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+//                val message = if (isOnline) "You now Online" else "You are Offline!"
+//                Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
             }
     }
 
@@ -149,7 +149,7 @@ class MainActivity : AppCompatActivity(), FabChanger {
     }
 
     override fun changePrice(price: Float) {
-        totalPrice.onNext(totalPrice.value ?: 0 + price)
+        totalPrice.onNext((totalPrice.value ?: 0f) + price)
     }
 
     companion object {
