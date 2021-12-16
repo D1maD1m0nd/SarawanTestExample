@@ -24,7 +24,6 @@ import com.example.sarawan.model.data.delegatesModel.BasketFooter
 import com.example.sarawan.model.data.delegatesModel.BasketHeader
 import com.example.sarawan.model.data.delegatesModel.BasketListItem
 import com.example.sarawan.utils.ItemClickListener
-import com.example.sarawan.utils.toProductShortItem
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
 
@@ -141,13 +140,12 @@ class BasketFragment : Fragment() {
                         is Order -> {
                             setFooterData(item)
                             setHeaderData(item)
-                            Toast.makeText(context, "Заказ оформлен", Toast.LENGTH_SHORT).show()
                         }
 
                         is OrderApprove -> {
                             item.orderName?.let {
-
-                                itemClickListener.showModal(SuccessOrderFragment.newInstance())
+                                var message = "Заказ №${it} оформлен"
+                                itemClickListener.showModal(SuccessOrderFragment.newInstance(message))
                                 progressBar.visibility = View.GONE
                                 removeItems()
                                 emptyStatus()
