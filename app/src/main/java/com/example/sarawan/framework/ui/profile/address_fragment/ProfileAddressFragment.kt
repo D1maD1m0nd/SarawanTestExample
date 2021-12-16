@@ -135,7 +135,6 @@ class ProfileAddressFragment : DialogFragment() {
         when (appState) {
             is AppState.Success<*> -> {
                 Toast.makeText(context, "Сохранение прошло успешно", Toast.LENGTH_SHORT).show()
-
                 hideKeyboard()
                 onSaveDataCallback?.invoke()
                 dismiss()

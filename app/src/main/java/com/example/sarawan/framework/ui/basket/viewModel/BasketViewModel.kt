@@ -96,8 +96,8 @@ class BasketViewModel @Inject constructor(
                 .subscribeOn(schedulerProvider.io)
                 .observeOn(schedulerProvider.io)
                 .subscribe(
-                    {},
-                    {stateLiveData.postValue(AppState.Empty)}),
+                    {stateLiveData.postValue(AppState.Success(it))},
+                    {}),
         )
     }
 

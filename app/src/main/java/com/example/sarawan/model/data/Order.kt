@@ -15,7 +15,9 @@ data class Order(
 	val deliveryAmount: Double? = null,
 
 	@field:Json(name="basket_summ")
-	val basketSumm: Double? = null
+	val basketSumm: Double? = null,
+
+	val weight : Double? = null
 )
 
 data class OrderApprove(

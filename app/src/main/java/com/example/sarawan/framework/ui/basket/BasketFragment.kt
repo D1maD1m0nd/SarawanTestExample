@@ -140,12 +140,11 @@ class BasketFragment : Fragment() {
 
                         is Order -> {
                             setFooterData(item)
-                            setHeaderData(item)
                         }
 
                         is OrderApprove -> {
                             item.orderName?.let {
-                                var message = "Заказ №${it} оформлен"
+                                val message = "Заказ №${it} оформлен"
                                 itemClickListener.showModal(SuccessOrderFragment.newInstance(message))
                                 progressBar.visibility = View.GONE
                                 removeItems()
@@ -182,17 +181,47 @@ class BasketFragment : Fragment() {
     }
 
     private fun initDataRcView(data: List<ProductsItem>) {
-        list.addAll(list.lastIndex, data)
+        val order = productItemsToOrder(data)
+        val start = list.size - 1
+        val end = data.size
+        list.addAll(start, data)
         adapter.items = list
+        adapter.notifyItemRangeInserted(start, end)
+        setFooterData(order)
+        setHeaderData(order)
+    }
+    private fun productItemsToOrder(data: List<ProductsItem>) : Order {
+        val count = data.sumOf { it.quantity ?: 0 }
+        val weight = data.sumOf { it.basketProduct?.basketProduct?.unitQuantity?.toDouble() ?: 0.0 }
+        val price = data.sumOf { it.basketProduct?.price?.toDouble() ?: 0.0 }
+
+        return Order(
+            basketCount = count,
+            paymentAmount = 0.0,
+            deliveryAmount = 0.0,
+            basketSumm = price,
+            weight = weight
+        )
     }
 
     private fun setFooterData(order: Order) {
-        val sumOrder = order.basketSumm!! + order.deliveryAmount!! + order.paymentAmount!!
         val footer = (list.last() as BasketFooter)
         footer.apply {
-            price = order.basketSumm
-            deliveryPrice = order.deliveryAmount.toDouble()
-            resultPrice = sumOrder
+            if(price == 0.0) {
+                price = order.basketSumm ?: 0.0
+            }
+            if(deliveryPrice == 0.0) {
+                deliveryPrice = order.deliveryAmount ?: 0.0
+            }
+            if(weight == 0.0) {
+                weight = order.weight ?: 0.0
+            }
+            if(resultPrice == 0.0) {
+                resultPrice = order.paymentAmount ?: 0.0
+            }
+            this@BasketFragment.addressItem?.let{
+                this.addressItem = it
+            }
         }
         adapter.updateFooter()
     }
@@ -258,6 +287,7 @@ class BasketFragment : Fragment() {
 
     override fun onDestroyView() {
         _binding = null
+        list.clear()
         super.onDestroyView()
     }
 
