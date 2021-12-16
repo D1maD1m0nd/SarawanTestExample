@@ -1,5 +1,6 @@
 package com.example.sarawan.model.data.delegatesModel
 
+import com.example.sarawan.model.data.AddressItem
 import java.util.*
 
 class BasketFooter(
@@ -8,5 +9,6 @@ class BasketFooter(
     var price: Double = 0.0,
     var deliveryPrice: Double = 0.0,
     var resultPrice: Double = 0.0,
-    var address: String = "Адрес"
+    var address: String = "Адрес",
+    var addressItem : AddressItem? = null
 ) : BasketListItem

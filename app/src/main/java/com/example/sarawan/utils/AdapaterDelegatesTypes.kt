@@ -87,6 +87,7 @@ object AdapterDelegatesTypes {
     ){
         bind {
             binding.apply {
+                weightValueTextView.text = String.format("%.2f кг", item.weight)
                 costValueTextView.text = String.format("%.2f ₽", item.price)
                 diliveryPriceValueTextView.text = String.format("%.2f ₽", item.deliveryPrice)
                 resultValuePaymentTextView.text = String.format("%.2f ₽", item.resultPrice)
