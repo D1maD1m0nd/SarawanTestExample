@@ -140,7 +140,6 @@ class BasketFragment : Fragment() {
                         is Order -> {
                             setFooterData(item)
                             setHeaderData(item)
-                            Toast.makeText(context, "Заказ оформлен", Toast.LENGTH_SHORT).show()
                         }
 
                         is OrderApprove -> {

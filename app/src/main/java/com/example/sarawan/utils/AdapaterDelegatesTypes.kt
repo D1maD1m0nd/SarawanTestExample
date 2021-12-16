@@ -1,11 +1,9 @@
 package com.example.sarawan.utils
 
-import coil.load
 import com.example.sarawan.R
 import com.example.sarawan.databinding.BasketFooterItemBinding
 import com.example.sarawan.databinding.BasketHeaderItemBinding
 import com.example.sarawan.databinding.BasketItemBinding
-import com.example.sarawan.framework.ui.modals.SuccessOrderFragment
 import com.example.sarawan.framework.ui.profile.address_fragment.ProfileAddressFragment
 import com.example.sarawan.model.data.ProductsItem
 import com.example.sarawan.model.data.delegatesModel.BasketFooter
@@ -56,6 +54,11 @@ object AdapterDelegatesTypes {
                         item.quantity = counter
                         itemClickListener.update()
                         counterTextView.text = counter.toString()
+                    } else if(counter == 0) {
+                        val basketId = item.basketProductId
+                        basketId?.let {
+                            itemClickListener.deleteItem(basketId, absoluteAdapterPosition, item)
+                        }
                     }
                 }
 
