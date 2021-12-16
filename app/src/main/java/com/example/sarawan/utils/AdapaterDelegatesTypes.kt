@@ -53,12 +53,14 @@ object AdapterDelegatesTypes {
                     if(counter > 0) {
                         --counter
                         item.quantity = counter
-                        itemClickListener.update()
-                        counterTextView.text = counter.toString()
-                    } else if(counter == 0) {
-                        val basketId = item.basketProductId
-                        basketId?.let {
-                            itemClickListener.deleteItem(basketId, absoluteAdapterPosition, item)
+                        if(counter == 0) {
+                            val basketId = item.basketProductId
+                            basketId?.let {
+                                itemClickListener.deleteItem(basketId, absoluteAdapterPosition, item)
+                            }
+                        } else {
+                            itemClickListener.update()
+                            counterTextView.text = counter.toString()
                         }
                     }
                 }

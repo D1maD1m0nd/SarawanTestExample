@@ -214,10 +214,18 @@ class BasketFragment : Fragment() {
     }
 
     private fun deleteBasketItem(pos: Int, basketItemId: Int) {
+        val end = list.size + 1
         adapter.apply {
-            items = list
-            notifyItemRemoved(pos)
-            updateHolders()
+            if(list.size == 2) {
+                list.clear()
+                items = list
+                notifyItemRangeRemoved(0, end)
+                emptyStatus()
+            } else {
+                items = list
+                notifyItemRemoved(pos)
+                updateHolders()
+            }
         }
         viewModel.deleteBasketProduct(basketItemId)
     }
