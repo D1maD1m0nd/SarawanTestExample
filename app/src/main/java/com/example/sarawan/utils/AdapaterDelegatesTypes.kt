@@ -1,5 +1,6 @@
 package com.example.sarawan.utils
 
+import coil.load
 import com.example.sarawan.R
 import com.example.sarawan.databinding.BasketFooterItemBinding
 import com.example.sarawan.databinding.BasketHeaderItemBinding
