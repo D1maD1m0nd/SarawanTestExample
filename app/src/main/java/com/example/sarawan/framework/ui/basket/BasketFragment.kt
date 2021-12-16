@@ -182,8 +182,11 @@ class BasketFragment : Fragment() {
     }
 
     private fun initDataRcView(data: List<ProductsItem>) {
+        val start = list.size
         list.addAll(list.lastIndex, data)
+        val end = list.size
         adapter.items = list
+        adapter.notifyItemRangeInserted(start, end)
     }
 
     private fun setFooterData(order: Order) {
