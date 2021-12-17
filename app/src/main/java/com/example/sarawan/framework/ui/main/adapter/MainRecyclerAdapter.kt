@@ -112,7 +112,7 @@ class MainRecyclerAdapter(
             displayData.add(MainScreenDataModel(cardType = CardType.TOP.type))
             displayData.add(
                 MainScreenDataModel(
-                    itemDescription = "Посмотреть еще",
+                    itemDescription = "Посмотреть всё",
                     cardType = CardType.BUTTON.type
                 )
             )
@@ -189,6 +189,7 @@ class MainRecyclerAdapter(
     override fun clear() {
         topData.clear()
         commonData.clear()
+        topRecyclerAdapter.clear()
         super.clear()
     }
 

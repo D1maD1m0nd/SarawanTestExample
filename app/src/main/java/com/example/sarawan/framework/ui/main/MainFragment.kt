@@ -13,14 +13,14 @@ class MainFragment : BaseMainCatalogFragment() {
         viewModelFactory.create(MainViewModel::class.java)
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        if (savedInstanceState == null && isOnline) viewModel.getStartData(isOnline) { /*TODO handle error loading data */ }
-    }
-
     override fun attachAdapterToView() {
         binding.mainRecyclerView.layoutManager = gridLayoutManager
         binding.mainRecyclerView.adapter = mainRecyclerAdapter
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        if (isOnline) viewModel.getStartData(isOnline) { /*TODO handle error loading data */ }
+        super.onViewCreated(view, savedInstanceState)
     }
 
     override fun subscribeToViewModel() {

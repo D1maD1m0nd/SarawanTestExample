@@ -77,13 +77,13 @@ interface ApiService {
      * Добавление продукта в корзину
      */
     @POST("api/basket/")
-    fun putBasketProduct(@Body productItem: ProductsUpdate): Single<Basket>
+    fun putBasketProduct(@Body productItem: ProductsUpdate): Single<BasketResponse>
 
     /**
      * Обновление продукта
      */
     @PUT("api/basket/{id}/")
-    fun updateBasketProduct(@Path("id") id: Int, @Body productItem: ProductsUpdate): Single<Basket>
+    fun updateBasketProduct(@Path("id") id: Int, @Body productItem: ProductsUpdate): Single<BasketResponse>
 
     /**
      * Удаление продукта из корзины
