@@ -65,7 +65,6 @@ class CategoryFragment : BaseMainCatalogFragment() {
             ArrayAdapter(
                 requireContext(),
                 R.layout.spinner_dropdown_view_element,
-                R.id.item_text,
                 spinnerItems
             )
         spinnerAdapter.setDropDownViewResource(R.layout.spinner_dropdown_view_element)
@@ -82,10 +81,11 @@ class CategoryFragment : BaseMainCatalogFragment() {
                     position: Int,
                     id: Long
                 ) {
+                    view?.setBackgroundResource(R.drawable.spinner_background)
                     spinnerItems[position]
                 }
             }
-
+        categoryBinding.catalogSortSpinner.setBackgroundResource(R.drawable.bg_sort_spinner)
     }
 
     override fun attachAdapterToView() {
@@ -117,11 +117,11 @@ class CategoryFragment : BaseMainCatalogFragment() {
         }
     }
 
-    override fun onDestroy() {
+    override fun onDestroyView() {
         categoryBinding.cardsRecycler.layoutManager = null
         categoryBinding.cardsRecycler.adapter = null
         _binding = null
-        super.onDestroy()
+        super.onDestroyView()
     }
 
     override fun onFragmentNext() = Unit

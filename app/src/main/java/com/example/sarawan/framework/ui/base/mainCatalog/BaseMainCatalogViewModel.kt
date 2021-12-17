@@ -1,7 +1,5 @@
 package com.example.sarawan.framework.ui.base.mainCatalog
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import com.example.sarawan.framework.MainInteractor
 import com.example.sarawan.framework.ui.base.BaseViewModel
 import com.example.sarawan.model.data.*
@@ -30,7 +28,7 @@ abstract class BaseMainCatalogViewModel(
                 .observeOn(schedulerProvider.io)
                 .doOnSubscribe { stateLiveData.postValue(AppState.Loading) }
                 .subscribe(
-                    { stateLiveData.postValue(AppState.Success(listOf(Pair(maxElement ,it)))) },
+                    { stateLiveData.postValue(AppState.Success(listOf(Pair(maxElement, it)))) },
                     { stateLiveData.postValue(AppState.Error(it)) }
                 )
         )
@@ -44,7 +42,7 @@ abstract class BaseMainCatalogViewModel(
                 .subscribeOn(schedulerProvider.io)
                 .observeOn(schedulerProvider.io)
                 .subscribe({
-                    basketID = (it as List<Basket>).first().basketId
+                    basketID = (it as List<BasketResponse>).first().basketId
                 }, { stateLiveData.postValue(AppState.Error(it)) })
         )
         else basketID?.let { basket ->
@@ -112,6 +110,10 @@ abstract class BaseMainCatalogViewModel(
     }
 
     abstract fun getMoreData(isOnline: Boolean, errorCallback: () -> Unit)
+
+    fun clear() {
+        stateLiveData.value = AppState.Empty
+    }
 
     companion object {
         const val PAGES = 3

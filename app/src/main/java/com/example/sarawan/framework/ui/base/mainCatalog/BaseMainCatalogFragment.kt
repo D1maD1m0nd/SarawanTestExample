@@ -54,8 +54,6 @@ abstract class BaseMainCatalogFragment : Fragment(), INavigation {
 
     protected var isDataLoaded = false
 
-    protected var isSearchActive = false
-
     protected var mainRecyclerAdapter: MainRecyclerAdapter? = null
 
     private var fabChanger: FabChanger? = null
@@ -140,7 +138,7 @@ abstract class BaseMainCatalogFragment : Fragment(), INavigation {
             mainRecyclerAdapter = MainRecyclerAdapter(onListItemClickListener, imageLoader) {
                 binding.loadingLayout.visibility = View.GONE
             }
-        }
+        } else mainRecyclerAdapter?.clear()
 
         gridLayoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
             override fun getSpanSize(position: Int): Int {
@@ -226,8 +224,6 @@ abstract class BaseMainCatalogFragment : Fragment(), INavigation {
             Toast.LENGTH_SHORT
         ).show()
         else {
-            isSearchActive = true
-
             viewModel.search(
                 binding.searchField.editText?.text.toString(),
                 isOnline
@@ -253,6 +249,7 @@ abstract class BaseMainCatalogFragment : Fragment(), INavigation {
         super.onDestroyView()
         binding.mainRecyclerView.layoutManager = null
         binding.mainRecyclerView.adapter = null
+        viewModel.clear()
     }
 
     override fun onDestroy() {
