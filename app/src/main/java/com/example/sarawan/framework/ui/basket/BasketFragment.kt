@@ -287,10 +287,8 @@ class BasketFragment : Fragment() {
 
     override fun onDestroyView() {
         _binding = null
-        list.clear()
         super.onDestroyView()
     }
-
     companion object {
         fun newInstance() = BasketFragment()
         const val PRODUCT_ID = "PRODUCT_ID"
