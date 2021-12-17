@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
-import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -20,7 +19,7 @@ import com.example.sarawan.framework.ui.product_card.adapter.SimilarAdapter
 import com.example.sarawan.framework.ui.product_card.adapter.StoreAdapter
 import com.example.sarawan.framework.ui.product_card.viewModel.ProductCardViewModel
 import com.example.sarawan.model.data.*
-import com.example.sarawan.utils.toProductShortItem
+import com.example.sarawan.utils.exstentions.toProductShortItem
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
 

@@ -31,22 +31,21 @@ abstract class CardItemViewHolder(
                 }
 
                 if (quantity > 0) {
-                    itemBuyButton.visibility = View.GONE
+                    itemBuyButtonFrame.visibility = View.GONE
                     itemQuantityLayout.visibility = View.VISIBLE
                     itemQuantity.text = quantity.toString()
                 } else {
-                    itemBuyButton.visibility = View.VISIBLE
+                    itemBuyButtonFrame.visibility = View.VISIBLE
                     itemQuantityLayout.visibility = View.GONE
                 }
 
                 itemPrice.text = String.format("%.2f", (data.price))
                 itemShopName.text = data.shop
-//                "${data.weight.toString()}г".also { itemWeight.text = it }
-                itemWeight.text = data.unitQuantity
+                "${data.unitQuantity.toString()} Кг".also { itemWeight.text = it }
                 itemDescription.text = data.itemDescription
 
                 itemBuyButton.setOnClickListener {
-                    itemBuyButton.visibility = View.GONE
+                    itemBuyButtonFrame.visibility = View.GONE
                     itemQuantityLayout.visibility = View.VISIBLE
                     quantity = 1
                     data.quantity = quantity
@@ -54,11 +53,13 @@ abstract class CardItemViewHolder(
                     listener.onItemPriceChangeClick(data, 1, true)
                 }
 
+                itemQuantityLayout.setOnClickListener { }
+
                 minusButton.setOnClickListener {
                     quantity -= 1
                     data.quantity = quantity
                     if (quantity <= 0) {
-                        itemBuyButton.visibility = View.VISIBLE
+                        itemBuyButtonFrame.visibility = View.VISIBLE
                         itemQuantityLayout.visibility = View.GONE
                     }
                     itemQuantity.text = quantity.toString()

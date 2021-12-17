@@ -63,12 +63,13 @@ class SimilarAdapter(val itemClickListener: ItemClickListener) : RecyclerView.Ad
             itemPrice.text = store?.price
             itemQuantity.text = product.count.toString()
             if(product.count > 0) {
-                itemBuyButton.visibility = GONE
+                itemBuyButtonFrame.visibility = GONE
                 itemQuantityLayout.visibility = VISIBLE
             } else {
-                itemBuyButton.visibility = VISIBLE
+                itemBuyButtonFrame.visibility = VISIBLE
                 itemQuantityLayout.visibility = GONE
             }
+            itemQuantityLayout.setOnClickListener { }
             itemBuyButton.setOnClickListener {
                 //itemClickListener.changeVisible(absoluteAdapterPosition)
                 product.count++
@@ -82,6 +83,8 @@ class SimilarAdapter(val itemClickListener: ItemClickListener) : RecyclerView.Ad
             minusButton.setOnClickListener {
                 itemClickListener.update(absoluteAdapterPosition, false, TypeCardEnum.SIMILAR)
             }
+
+            "${product.unitQuantity.toString()} Кг".also { itemWeight.text = it }
 
             itemCard.setOnClickListener {
                 product.id?.let {
