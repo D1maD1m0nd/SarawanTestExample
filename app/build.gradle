@@ -35,14 +35,6 @@ android {
     buildFeatures {
         viewBinding true
     }
-    buildTypes.each {
-        Properties properties = new Properties()
-        properties.load(project.rootProject.file("app.properties").newDataInputStream())
-        def userToken  = properties.getProperty("USER_TOKEN", "")
-        def userId = properties.getProperty("USER_ID", "")
-        it.buildConfigField "String", "USER_TOKEN", userToken
-        it.buildConfigField "String", "USER_ID", userId
-    }
 }
 
 dependencies {
