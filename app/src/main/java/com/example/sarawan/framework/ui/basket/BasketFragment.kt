@@ -1,5 +1,6 @@
 package com.example.sarawan.framework.ui.basket
 
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -19,16 +20,21 @@ import com.example.sarawan.framework.ui.modals.DeliveryTimeFragment
 import com.example.sarawan.framework.ui.modals.PaymentMethodFragment
 import com.example.sarawan.framework.ui.modals.SuccessOrderFragment
 import com.example.sarawan.framework.ui.profile.address_fragment.ProfileAddressFragment
+import com.example.sarawan.framework.ui.profile.phone_fragment.ProfilePhoneFragment
 import com.example.sarawan.model.data.*
 import com.example.sarawan.model.data.delegatesModel.BasketFooter
 import com.example.sarawan.model.data.delegatesModel.BasketHeader
 import com.example.sarawan.model.data.delegatesModel.BasketListItem
 import com.example.sarawan.utils.ItemClickListener
 import com.example.sarawan.utils.exstentions.toProductShortItem
+import com.example.sarawan.utils.exstentions.userId
 import dagger.android.support.AndroidSupportInjection
+import retrofit2.HttpException
 import javax.inject.Inject
 
 class BasketFragment : Fragment() {
+    @Inject
+    lateinit var sharedPreferences: SharedPreferences
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
     private var _binding: FragmentBasketBinding? = null
@@ -58,10 +64,6 @@ class BasketFragment : Fragment() {
 
         override fun openProductCard(productId: Int) {
             showProductFragment(productId)
-        }
-
-        override fun changeVisible(pos: Int) {
-            TODO("Not yet implemented")
         }
 
         override fun create() {
@@ -100,11 +102,22 @@ class BasketFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initRcView()
-        viewModel.getBasket()
-        viewModel.getAddress()
+        initData()
     }
 
+    private fun initData() {
+        if (sharedPreferences.userId == -1L) {
+            ProfilePhoneFragment.newInstance { navigateToProfile() }
+                .show(requireActivity().supportFragmentManager, null)
+        } else {
+            initRcView()
+            viewModel.getBasket()
+            viewModel.getAddress()
+        }
+    }
+    private fun navigateToProfile() {
+        navController.navigate(R.id.profileFragment)
+    }
     private fun initRcView() = with(binding) {
         cardContainerRcView.itemAnimator?.changeDuration = 0
         cardContainerRcView.layoutManager = LinearLayoutManager(context)
@@ -117,6 +130,11 @@ class BasketFragment : Fragment() {
                 val data = appState.data
                 if (data.isNotEmpty()) {
                     when (val item = data.first()) {
+                        is BasketResponse -> {
+                            if(list.size >= LIMIT) {
+                                this@BasketFragment.recalculateData()
+                            }
+                        }
                         is ProductsItem -> {
                             Log.d("TAG_PRODUCT_ITEM", "ProductsItem THIS")
                             data as MutableList<ProductsItem>
@@ -127,7 +145,6 @@ class BasketFragment : Fragment() {
                             progressBar.visibility = View.GONE
                         }
                         is AddressItem -> {
-
                             addressItem = AddressItem(idAddressOrder = item.id)
                             addressItem?.let {
                                 viewModel.getOrder(it)
@@ -139,7 +156,7 @@ class BasketFragment : Fragment() {
                         }
 
                         is Order -> {
-                            setFooterData(item)
+                            setFooterData(item, true)
                         }
 
                         is OrderApprove -> {
@@ -156,7 +173,12 @@ class BasketFragment : Fragment() {
             }
             is AppState.Error -> {
                 progressBar.visibility = View.GONE
-                Toast.makeText(context, appState.error.toString(), Toast.LENGTH_SHORT).show()
+                val error = appState.error
+                if(error is HttpException) {
+                    when(error.code()) {
+                        500 -> Toast.makeText(context, getString(R.string.error_500), Toast.LENGTH_SHORT).show()
+                    }
+                }
             }
             is AppState.Loading -> {
                 progressBar.visibility = View.VISIBLE
@@ -181,19 +203,26 @@ class BasketFragment : Fragment() {
     }
 
     private fun initDataRcView(data: List<ProductsItem>) {
-        val order = productItemsToOrder(data)
         val start = list.size - 1
         val end = data.size
         list.addAll(start, data)
         adapter.items = list
+        recalculateData()
         adapter.notifyItemRangeInserted(start, end)
-        setFooterData(order)
-        setHeaderData(order)
     }
     private fun productItemsToOrder(data: List<ProductsItem>) : Order {
         val count = data.sumOf { it.quantity ?: 0 }
-        val weight = data.sumOf { it.basketProduct?.basketProduct?.unitQuantity?.toDouble() ?: 0.0 }
-        val price = data.sumOf { it.basketProduct?.price?.toDouble() ?: 0.0 }
+        val weight = data.sumOf {
+            it.basketProduct
+                            ?.basketProduct
+                            ?.unitQuantity
+                            ?.toDouble()
+                            ?.times(it.quantity!!) ?: 0.0 }
+        val price = data.sumOf {
+            it.basketProduct
+                            ?.price
+                            ?.toDouble()
+                            ?.times(it.quantity!!) ?: 0.0 }
 
         return Order(
             basketCount = count,
@@ -204,20 +233,19 @@ class BasketFragment : Fragment() {
         )
     }
 
-    private fun setFooterData(order: Order) {
+    private fun setFooterData(order: Order, isRemote : Boolean = false) {
         val footer = (list.last() as BasketFooter)
         footer.apply {
-            if(price == 0.0) {
-                price = order.basketSumm ?: 0.0
-            }
-            if(deliveryPrice == 0.0) {
-                deliveryPrice = order.deliveryAmount ?: 0.0
+            price = order.basketSumm ?: 0.0
+
+            if(deliveryPrice == 0.0 || isRemote) {
+                deliveryPrice = order.paymentAmount ?: 0.0
             }
             if(weight == 0.0) {
                 weight = order.weight ?: 0.0
             }
-            if(resultPrice == 0.0) {
-                resultPrice = order.paymentAmount ?: 0.0
+            if(resultPrice == 0.0 || isRemote) {
+                resultPrice = order.paymentAmount?.plus(order.basketSumm!!) ?: 0.0
             }
             this@BasketFragment.addressItem?.let{
                 this.addressItem = it
@@ -276,7 +304,17 @@ class BasketFragment : Fragment() {
         adapter.updateHolders()
     }
 
-
+    private fun recalculateData() {
+        val items: List<ProductsItem> = list.filterIsInstance<ProductsItem>()
+        if(items.isNotEmpty()) {
+            val order = productItemsToOrder(items)
+            setFooterData(order)
+            setHeaderData(order)
+            addressItem?.let {
+                viewModel.getOrder(address = it)
+            }
+        }
+    }
     private fun showProductFragment(idProduct: Int) {
         val bundle = Bundle()
         val products = adapter.items.filterIsInstance<ProductsItem>()
@@ -296,3 +334,4 @@ class BasketFragment : Fragment() {
         private const val LIMIT = 3
     }
 }
+

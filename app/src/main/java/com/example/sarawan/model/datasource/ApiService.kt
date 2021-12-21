@@ -121,7 +121,7 @@ interface ApiService {
      * Создание нового адреса
      */
     @POST("api/user_address/")
-    fun createAddress(@Body address : AddressItem) : Single<Address>
+    fun createAddress(@Body address : AddressItem) : Single<AddressItem>
 
     /**
      * Получение списка адресов

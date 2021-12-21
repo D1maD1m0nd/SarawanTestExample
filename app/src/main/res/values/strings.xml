@@ -112,4 +112,5 @@
     <string name="basket_empty">Корзина пуста</string>
     <string name="nav_sales">Перейти к покупкам</string>
     <string name="product_add">Товар добавлен</string>
+    <string name="error_500">Что то пошло не так, повторите попытку позже</string>
 </resources>

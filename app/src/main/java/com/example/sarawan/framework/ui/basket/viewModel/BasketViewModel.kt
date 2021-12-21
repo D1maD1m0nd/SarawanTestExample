@@ -47,7 +47,7 @@ class BasketViewModel @Inject constructor(
     }
 
     fun createOrder(address: AddressItem){
-        basketID?.let { id ->
+        basketID?.let {
             compositeDisposable.add(
                 interactor.getData(Query.Post.Order.Create(address), true)
                     .subscribeOn(schedulerProvider.io)
@@ -63,7 +63,7 @@ class BasketViewModel @Inject constructor(
     }
 
     fun clearBasket() {
-        basketID?.let { id ->
+        basketID?.let {
             compositeDisposable.add(
                 interactor.getData(Query.Delete.Basket.Clear, true)
                     .subscribeOn(schedulerProvider.io)
@@ -83,7 +83,9 @@ class BasketViewModel @Inject constructor(
                 interactor.getData(Query.Put.Basket.Update(id, products), true)
                     .subscribeOn(schedulerProvider.io)
                     .observeOn(schedulerProvider.io)
-                    .subscribeWith(getObserver())
+                    .subscribe(
+                        {stateLiveData.postValue(AppState.Success(it))},
+                        {stateLiveData.postValue(AppState.Success(emptyList<ProductsItem>()))})
             )
         }
         if (basketID == null) stateLiveData.value =
@@ -101,20 +103,6 @@ class BasketViewModel @Inject constructor(
         )
     }
 
-    private fun getObserver() = object : DisposableSingleObserver<List<*>>() {
-        override fun onSuccess(result: List<*>) {
-            val basket = result.first() as Basket
-            basketID = basket.basketId
-            val items = basket.products as List<*>
-            stateLiveData.postValue(AppState.Success(items))
-        }
-
-        override fun onError(e: Throwable) {
-//            stateLiveData.postValue(AppState.Error(e))
-            stateLiveData.postValue(AppState.Success(emptyList<ProductsItem>()))
-        }
-    }
-
     private fun getObserverBasketList() = object : DisposableSingleObserver<List<*>>() {
         override fun onSuccess(result: List<*>) {
             val basket = result.first() as Basket
@@ -128,6 +116,7 @@ class BasketViewModel @Inject constructor(
         }
 
         override fun onError(e: Throwable) {
+
 //            stateLiveData.postValue(AppState.Error(e))
             stateLiveData.postValue(AppState.Success(emptyList<ProductsItem>()))
         }
