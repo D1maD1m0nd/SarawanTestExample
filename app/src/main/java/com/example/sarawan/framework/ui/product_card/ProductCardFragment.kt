@@ -19,6 +19,7 @@ import com.example.sarawan.framework.ui.product_card.adapter.SimilarAdapter
 import com.example.sarawan.framework.ui.product_card.adapter.StoreAdapter
 import com.example.sarawan.framework.ui.product_card.viewModel.ProductCardViewModel
 import com.example.sarawan.model.data.*
+import com.example.sarawan.utils.TypeCardEnum
 import com.example.sarawan.utils.exstentions.toProductShortItem
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
@@ -152,7 +153,7 @@ class ProductCardFragment : Fragment() {
             true -> store.count++
             false -> store.count--
         }
-        val product = Product(count = store.count, storePrices = listOf(store))
+        val product = Product(count = store.count, storePrices = mutableListOf(store))
         itemSave(product , pos, false, TypeCardEnum.STORE)
     }
 

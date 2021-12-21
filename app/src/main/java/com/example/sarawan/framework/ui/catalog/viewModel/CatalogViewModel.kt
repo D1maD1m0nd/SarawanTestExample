@@ -6,12 +6,15 @@ import com.example.sarawan.model.data.AppState
 import com.example.sarawan.model.data.CategoryDataModel
 import com.example.sarawan.model.data.Query
 import com.example.sarawan.rx.ISchedulerProvider
+import com.example.sarawan.utils.SortBy
+import com.example.sarawan.utils.StringProvider
 import javax.inject.Inject
 
 class CatalogViewModel @Inject constructor(
     private val interactor: MainInteractor,
-    private val schedulerProvider: ISchedulerProvider
-) : BaseMainCatalogViewModel(interactor, schedulerProvider) {
+    private val schedulerProvider: ISchedulerProvider,
+    stringProvider: StringProvider
+) : BaseMainCatalogViewModel(interactor, schedulerProvider, stringProvider) {
 
     override fun getStartData(isOnline: Boolean, errorCallback: () -> Unit) {
         compositeDisposable.add(
@@ -26,5 +29,5 @@ class CatalogViewModel @Inject constructor(
         )
     }
 
-    override fun getMoreData(isOnline: Boolean, errorCallback: () -> Unit) = Unit
+    override fun getMoreData(isOnline: Boolean, sortType: SortBy, errorCallback: () -> Unit) = Unit
 }

@@ -23,7 +23,8 @@ import javax.inject.Singleton
         AppModule::class,
         NetworkModule::class,
         ImageModule::class,
-        SharedModule::class
+        SharedModule::class,
+        StringProviderModule::class
     ]
 )
 @Singleton

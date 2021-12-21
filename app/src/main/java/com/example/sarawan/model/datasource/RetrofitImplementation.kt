@@ -1,6 +1,7 @@
 package com.example.sarawan.model.datasource
 
 import com.example.sarawan.model.data.Query
+import com.example.sarawan.utils.SortBy
 import io.reactivex.rxjava3.core.Single
 import javax.inject.Inject
 
@@ -18,7 +19,15 @@ class RetrofitImplementation @Inject constructor(private val apiService: ApiServ
                 }
                 is Query.Get.Products -> when (query) {
                     is Query.Get.Products.DiscountProducts -> apiService
-                        .getDiscountProducts(page = query.page)
+                        .getDiscountProducts(
+                            page = query.page,
+                            order = when (query.sortBy) {
+                                SortBy.PRICE_ASC -> "price"
+                                SortBy.PRICE_DES -> "-price"
+                                SortBy.ALPHABET -> "name"
+                                SortBy.DISCOUNT -> "-discount"
+                            }
+                        )
                         .map { mutableListOf(it) }
 
                     is Query.Get.Products.Id -> apiService
@@ -36,7 +45,15 @@ class RetrofitImplementation @Inject constructor(private val apiService: ApiServ
                         .getSimilarProducts(query.id, query.page)
                         .map { it.results }
                     is Query.Get.Products.ProductCategory -> apiService
-                        .getCategoryProducts(query.productCategory, query.page)
+                        .getCategoryProducts(
+                            query.productCategory, query.page,
+                            order = when (query.sortBy) {
+                                SortBy.PRICE_ASC -> "price"
+                                SortBy.PRICE_DES -> "-price"
+                                SortBy.ALPHABET -> "name"
+                                SortBy.DISCOUNT -> "-discount"
+                            }
+                        )
                         .map { mutableListOf(it) }
                 }
                 is Query.Get.Orders -> {

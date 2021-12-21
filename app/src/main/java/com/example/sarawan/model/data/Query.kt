@@ -1,5 +1,7 @@
 package com.example.sarawan.model.data
 
+import com.example.sarawan.utils.SortBy
+
 sealed interface Query {
 
     sealed interface Get : Query {
@@ -7,8 +9,8 @@ sealed interface Query {
         sealed interface Products : Get {
             var page: Int
             data class ProductName(val productName: String, override var page: Int = 1) : Products
-            data class ProductCategory(val productCategory: Int, override var page: Int = 1) : Products
-            data class DiscountProducts(override var page: Int = 1) : Products
+            data class ProductCategory(val productCategory: Int, override var page: Int = 1, val sortBy: SortBy = SortBy.PRICE_ASC) : Products
+            data class DiscountProducts(override var page: Int = 1, val sortBy: SortBy = SortBy.DISCOUNT) : Products
             data class PopularProducts(override var page: Int = 1) : Products
             data class Id(val id: Long, override var page: Int = 1) : Products
             data class SimilarProducts(val id : Long, override var page: Int = 1) : Products

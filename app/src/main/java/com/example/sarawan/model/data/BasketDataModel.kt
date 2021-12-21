@@ -3,7 +3,7 @@ package com.example.sarawan.model.data
 import android.os.Parcelable
 import com.example.sarawan.model.data.delegatesModel.BasketListItem
 import com.squareup.moshi.Json
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 import java.util.*
 
 data class Basket(
@@ -23,7 +23,7 @@ data class ProductsItem(
 
 @Parcelize
 data class BasketProduct(
-    @field:Json(name = "store_prices") val storePrices: List<StorePrice>? = null,
+    @field:Json(name="store_prices") val storePrices: List<StorePrice>? = null,
     @field:Json(name="product") val basketProduct: BasketProduct? = null,
     @field:Json(name="price") val price: String? = null,
     @field:Json(name="discount") val discount: Int? = null,

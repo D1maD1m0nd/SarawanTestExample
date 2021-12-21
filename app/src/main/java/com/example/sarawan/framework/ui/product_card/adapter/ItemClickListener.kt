@@ -1,7 +1,7 @@
 package com.example.sarawan.framework.ui.product_card.adapter
 
 import com.example.sarawan.model.data.Product
-import com.example.sarawan.model.data.TypeCardEnum
+import com.example.sarawan.utils.TypeCardEnum
 
 interface ItemClickListener {
     fun openProductCard(productId : Long)

@@ -43,6 +43,7 @@ abstract class CardItemViewHolder(
                 itemShopName.text = data.shop
                 "${data.unitQuantity.toString()} Кг".also { itemWeight.text = it }
                 itemDescription.text = data.itemDescription
+                itemMinPriceText.text = data.sortText
 
                 itemBuyButton.setOnClickListener {
                     itemBuyButtonFrame.visibility = View.GONE

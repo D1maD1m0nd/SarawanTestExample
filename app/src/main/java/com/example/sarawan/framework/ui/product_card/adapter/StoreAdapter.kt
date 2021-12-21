@@ -10,11 +10,11 @@ import com.example.sarawan.R
 import com.example.sarawan.databinding.StoreItemBinding
 import com.example.sarawan.model.data.Product
 import com.example.sarawan.model.data.StorePrice
-import com.example.sarawan.model.data.TypeCardEnum
+import com.example.sarawan.utils.TypeCardEnum
 
 
 class StoreAdapter(val itemClickListener: ItemClickListener)  : RecyclerView.Adapter<StoreAdapter.StoreViewHolder>(){
-    private val stores : MutableList<StorePrice> = ArrayList(10);
+    private val stores : MutableList<StorePrice> = ArrayList(10)
 
     @SuppressLint("NotifyDataSetChanged")
     fun setData(store : List<StorePrice>) {
@@ -47,7 +47,7 @@ class StoreAdapter(val itemClickListener: ItemClickListener)  : RecyclerView.Ada
             }
             basketButton.setOnClickListener {
                 itemClickListener.create(
-                    Product(count = 1, storePrices = listOf(store)),
+                    Product(count = 1, storePrices = mutableListOf(store)),
                     absoluteAdapterPosition,
                     TypeCardEnum.STORE
                 )

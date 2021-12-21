@@ -2,7 +2,6 @@ package com.example.sarawan.framework.ui.product_card.adapter
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
-import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
@@ -11,8 +10,7 @@ import coil.load
 import com.example.sarawan.R
 import com.example.sarawan.databinding.ListItemCardBinding
 import com.example.sarawan.model.data.Product
-import com.example.sarawan.framework.ui.product_card.adapter.ItemClickListener
-import com.example.sarawan.model.data.TypeCardEnum
+import com.example.sarawan.utils.TypeCardEnum
 
 class SimilarAdapter(val itemClickListener: ItemClickListener) : RecyclerView.Adapter<SimilarAdapter.ProductViewHolder>() {
     private var similarList : List<Product> = ArrayList(20)

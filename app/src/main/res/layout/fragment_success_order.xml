@@ -14,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="@string/confrim_order_message"
+        android:text="@string/confirm_order_message"
         android:textSize="24sp"
         android:lineSpacingExtra="0sp"
         android:fontFamily="@font/montserrat_medium"

@@ -5,14 +5,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
-import android.widget.ArrayAdapter
 import com.example.sarawan.R
 import com.example.sarawan.databinding.FragmentCatalogListBinding
+import com.example.sarawan.databinding.SpinnerDropdownViewElementBinding
 import com.example.sarawan.framework.ui.base.mainCatalog.BaseMainCatalogFragment
 import com.example.sarawan.framework.ui.base.mainCatalog.CardType
+import com.example.sarawan.framework.ui.category.spinnerAdapter.CustomSpinnerAdapter
 import com.example.sarawan.framework.ui.category.viewModel.CategoryViewModel
 import com.example.sarawan.model.data.AppState
 import com.example.sarawan.model.data.MainScreenDataModel
+import com.example.sarawan.utils.SortBy
 import dagger.android.support.AndroidSupportInjection
 
 class CategoryFragment : BaseMainCatalogFragment() {
@@ -44,30 +46,42 @@ class CategoryFragment : BaseMainCatalogFragment() {
         categoryBinding.backButton.setOnClickListener {
             onFragmentBackStack()
         }
+        categoryBinding.fragmentCaption.text = arguments?.getString(KEY_CATEGORY_NAME) ?: "Выгодные предложения"
         initSpinner()
-        loadStartData()
         watchForAdapter(categoryBinding.cardsRecycler)
     }
 
-    private fun loadStartData() {
-        categoryBinding.fragmentCaption.text =
-            arguments?.getString(KEY_CATEGORY_NAME) ?: "Выгодные предложения"
-        if (isOnline) viewModel
-            .getStartData(
-                arguments?.getInt(KEY_CATEGORY) ?: DISCOUNT,
-                isOnline
-            ) { /*TODO handle error loading data */ }
-    }
-
     private fun initSpinner() {
-        val spinnerItems = resources.getStringArray(R.array.sortItems)
-        val spinnerAdapter =
-            ArrayAdapter(
-                requireContext(),
-                R.layout.spinner_dropdown_view_element,
-                spinnerItems
-            )
-        spinnerAdapter.setDropDownViewResource(R.layout.spinner_dropdown_view_element)
+        val spinnerStrings = arrayOf(
+            resources.getString(SortBy.PRICE_ASC.text),
+            resources.getString(SortBy.PRICE_DES.text),
+            resources.getString(SortBy.ALPHABET.text),
+            resources.getString(SortBy.DISCOUNT.text),
+        )
+        val spinnerItems = listOf(
+            SpinnerDropdownViewElementBinding.inflate(LayoutInflater.from(context))
+                .apply {
+                    itemText.text = spinnerStrings[0]
+                    itemIcon.setImageResource(R.drawable.spinner_arrow_up)
+                },
+            SpinnerDropdownViewElementBinding.inflate(LayoutInflater.from(context))
+                .apply {
+                    itemText.text = spinnerStrings[1]
+                    itemIcon.setImageResource(R.drawable.spinner_arrow_down)
+                },
+            SpinnerDropdownViewElementBinding.inflate(LayoutInflater.from(context))
+                .apply { itemText.text = spinnerStrings[2] },
+            SpinnerDropdownViewElementBinding.inflate(LayoutInflater.from(context))
+                .apply { itemText.text = spinnerStrings[3] }
+        )
+        val spinnerAdapter = CustomSpinnerAdapter(
+            requireContext(),
+            R.layout.spinner_dropdown_view_element,
+            R.id.item_text,
+            spinnerItems,
+            spinnerStrings
+        )
+
         categoryBinding.catalogSortSpinner.adapter = spinnerAdapter
         categoryBinding.catalogSortSpinner.onItemSelectedListener =
             object : AdapterView.OnItemSelectedListener {
@@ -81,11 +95,24 @@ class CategoryFragment : BaseMainCatalogFragment() {
                     position: Int,
                     id: Long
                 ) {
-                    view?.setBackgroundResource(R.drawable.spinner_background)
-                    spinnerItems[position]
+                    if (isOnline) {
+                        mainRecyclerAdapter?.clear()
+                        spinnerAdapter.setSelected(position)
+                        val sortType =
+                            SortBy.values().find { it.id.toLong() == id } ?: SortBy.PRICE_ASC
+                        viewModel.changeSorting(
+                            arguments?.getInt(KEY_CATEGORY) ?: DISCOUNT,
+                            isOnline,
+                            sortType
+                        ) { /*TODO handle error loading data */ }
+                    }
                 }
             }
-        categoryBinding.catalogSortSpinner.setBackgroundResource(R.drawable.bg_sort_spinner)
+        categoryBinding.catalogSortSpinner.alpha = 1f
+        val selection =
+            if (arguments?.getString(KEY_CATEGORY_NAME) != null) SortBy.PRICE_ASC.id
+            else SortBy.DISCOUNT.id
+        categoryBinding.catalogSortSpinner.setSelection(selection)
     }
 
     override fun attachAdapterToView() {
@@ -106,7 +133,6 @@ class CategoryFragment : BaseMainCatalogFragment() {
                         maxCount = data.first().first
                         mainRecyclerAdapter?.setData(data.first().second, false, maxCount)
                     }
-//                    categoryBinding.cardsRecycler.scrollToPosition(0)
                     categoryBinding.loadingLayout.visibility = View.GONE
                     isDataLoaded = true
                 }

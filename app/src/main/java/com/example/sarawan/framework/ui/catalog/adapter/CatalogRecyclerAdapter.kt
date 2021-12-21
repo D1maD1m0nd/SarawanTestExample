@@ -42,7 +42,6 @@ class CatalogRecyclerAdapter(
             MainScreenDataModel(
                 cardType = CardType.TOP.type,
                 backgroundColor = Color.WHITE,
-//                padding = arrayListOf(0, 75, 0, 0),
                 fontSize = 28f
             )
         )
