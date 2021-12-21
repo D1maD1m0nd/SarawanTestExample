@@ -34,6 +34,7 @@
                 android:textColor="@color/black"
                 android:textSize="18sp"
                 android:textStyle="bold"
+                android:layout_marginEnd="10dp"
                 tools:text="Категория" />
 
             <androidx.appcompat.widget.AppCompatSpinner
@@ -42,10 +43,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="14dp"
                 android:background="@drawable/bg_sort_spinner"
-                android:entries="@array/sortItems"
                 android:minWidth="158dp"
                 android:minHeight="34dp"
-                tools:ignore="TouchTargetSizeCheck" />
+                tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
         </androidx.appcompat.widget.LinearLayoutCompat>
 
     </com.google.android.material.appbar.AppBarLayout>

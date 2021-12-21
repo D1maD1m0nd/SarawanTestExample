@@ -22,7 +22,8 @@ interface ApiService {
     @GET("api/products/")
     fun getDiscountProducts(
         @Query("discount_products") discountProducts: Boolean = true,
-        @Query("page") page: Int
+        @Query("page") page: Int,
+        @Query("order") order: String,
     ): Single<Response>
 
     /**
@@ -31,7 +32,8 @@ interface ApiService {
     @GET("api/products/")
     fun getCategoryProducts(
         @Query("main_category") categoryProducts: Int,
-        @Query("page") page: Int
+        @Query("page") page: Int,
+        @Query("order") order: String,
     ): Single<Response>
 
     /**

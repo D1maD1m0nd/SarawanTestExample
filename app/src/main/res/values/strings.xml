@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">Sarawan</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_home">Главная</string>
@@ -8,7 +8,12 @@
     <string name="buy">Купить</string>
     <string name="price_text">₽</string>
     <string name="kg">Кг</string>
-    <string name="min_price">Мин. цена:</string>
+    <string name="min_price">Мин. цена: </string>
+    <string name="max_price">Макс. цена: </string>
+    <string name="max_discount">Макс. скидка: </string>
+    <string name="sort_price">Цене</string>
+    <string name="sort_alphabet">Алфавиту</string>
+    <string name="sort_discount">Скидке</string>
     <string name="default_product_title">Грибы шампиньоны свежие</string>
     <string name="product_sample_properties">уп. 600г</string>
     <string name="product_company_owner">Горзеленхоз</string>
@@ -74,7 +79,7 @@
     <string name="profile_title">Профиль</string>
     <string name="profile_add_name">Добавить имя</string>
     <string name="profile_foo_phone">+7 000 00 00</string>
-    <string name="profile_phone_mask">+7 (999) 999-99-99</string>
+    <string name="profile_phone_mask" tools:ignore="TypographyDashes">+7 (999) 999-99-99</string>
     <string name="profile_add_address">Адрес</string>
     <string name="profile_exit">Выйти</string>
     <string name="profile_alert_no_change_city">Вы не можете поменять город.</string>
@@ -92,9 +97,9 @@
     <string name="default_store">Ашан</string>
     <string name="add_to_basket">Добавить в корзину</string>
     <string name="price_other_store">Цена в других магазинах:</string>
-    <string name="semilar_products_view">С этим товаром смотрят:</string>
+    <string name="similar_products_view">С этим товаром смотрят:</string>
     <string name="description">Описание</string>
-    <string name="dilivery_price">Стоимость доставки</string>
+    <string name="delivery_price">Стоимость доставки</string>
     <string name="profile_code_enter_code_from_sms">Введите код из СМС</string>
     <string name="profile_code_send_code">Отправить</string>
     <string name="profile_code_code_sent">Код отправлен на телефон\n</string>
@@ -103,7 +108,7 @@
     <string name="profile_code_wrong_code">Неверный код</string>
     <string name="profile_success_registered">Вы успешно зарегистрировались!</string>
     <string name="profile_success_ok">OK</string>
-    <string name="confrim_order_message">Ваш заказ успешно оформлен!</string>
+    <string name="confirm_order_message">Ваш заказ успешно оформлен!</string>
     <string name="basket_empty">Корзина пуста</string>
     <string name="nav_sales">Перейти к покупкам</string>
     <string name="product_add">Товар добавлен</string>

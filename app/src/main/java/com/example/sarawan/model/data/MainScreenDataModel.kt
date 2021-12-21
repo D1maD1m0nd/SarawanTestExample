@@ -23,9 +23,10 @@ data class MainScreenDataModel(
     @ColorInt val backgroundColor: Int? = null,
     @ColorInt val textColor: Int? = null,
     val padding: ArrayList<Int>? = null,
+    val sortText: String? = null,
 )
 
-fun Product.toMainScreenDataModel(): MainScreenDataModel {
+fun Product.toMainScreenDataModel(sortText: String): MainScreenDataModel {
     return MainScreenDataModel(
         id = id,
         storeId = storePrices?.first()?.id,
@@ -35,7 +36,9 @@ fun Product.toMainScreenDataModel(): MainScreenDataModel {
         discount = storePrices?.first()?.discount,
         unitQuantity = unitQuantity,
         shop = storePrices?.first()?.store,
-        cardType = CardType.COMMON.type
+        cardType = CardType.COMMON.type,
+        quantity = storePrices?.first()?.count,
+        sortText = sortText
     )
 }
 

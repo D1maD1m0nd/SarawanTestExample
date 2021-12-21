@@ -14,7 +14,7 @@ data class Product(
     @field: Json(name = "images") val images: List<Image>? = null,
     @field: Json(name = "name") val name: String? = null,
     @field: Json(name = "price_type") val priceType: String? = null,
-    @field: Json(name = "store_prices") val storePrices: List<StorePrice>? = null,
+    @field: Json(name = "store_prices") val storePrices: MutableList<StorePrice>? = null,
     @field: Json(name = "unit_quantity") val unitQuantity: String? = null,
     @field: Json(name = "description") val description: String? = null,
     var count: Int = 0

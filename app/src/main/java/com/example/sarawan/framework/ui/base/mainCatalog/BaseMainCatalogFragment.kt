@@ -26,6 +26,7 @@ import com.example.sarawan.framework.ui.main.adapter.MainRecyclerAdapter
 import com.example.sarawan.model.data.MainScreenDataModel
 import com.example.sarawan.rx.ISchedulerProvider
 import com.example.sarawan.utils.NetworkStatus
+import com.example.sarawan.utils.SortBy
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
 
@@ -122,7 +123,7 @@ abstract class BaseMainCatalogFragment : Fragment(), INavigation {
                         && isOnline
                     ) {
                         isDataLoaded = false
-                        viewModel.getMoreData(isOnline) { /*TODO handle error loading data */ }
+                        viewModel.getMoreData(isOnline, SortBy.PRICE_ASC) { /*TODO handle error loading data */ }
                     }
                 }
             }
