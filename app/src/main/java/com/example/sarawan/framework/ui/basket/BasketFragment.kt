@@ -132,7 +132,7 @@ class BasketFragment : Fragment() {
                     when (val item = data.first()) {
                         is BasketResponse -> {
                             if(list.size > LIMIT) {
-                                recalculateData()
+                                this@BasketFragment.recalculateData()
                             }
                         }
                         is ProductsItem -> {
@@ -174,7 +174,7 @@ class BasketFragment : Fragment() {
             }
             is AppState.Error -> {
                 progressBar.visibility = View.GONE
-                var error = appState.error
+                val error = appState.error
                 if(error is HttpException) {
                     when(error.code()) {
                         500 -> Toast.makeText(context, getString(R.string.error_500), Toast.LENGTH_SHORT).show()
@@ -213,8 +213,17 @@ class BasketFragment : Fragment() {
     }
     private fun productItemsToOrder(data: List<ProductsItem>) : Order {
         val count = data.sumOf { it.quantity ?: 0 }
-        val weight = data.sumOf { it.basketProduct?.basketProduct?.unitQuantity?.toDouble() ?: 0.0 }
-        val price = data.sumOf { it.basketProduct?.price?.toDouble()?.times(it.quantity!!) ?: 0.0 }
+        val weight = data.sumOf {
+            it.basketProduct
+                            ?.basketProduct
+                            ?.unitQuantity
+                            ?.toDouble()
+                            ?.times(it.quantity!!) ?: 0.0 }
+        val price = data.sumOf {
+            it.basketProduct
+                            ?.price
+                            ?.toDouble()
+                            ?.times(it.quantity!!) ?: 0.0 }
 
         return Order(
             basketCount = count,
@@ -297,7 +306,7 @@ class BasketFragment : Fragment() {
     }
 
     private fun recalculateData() {
-        var items = list.filterIsInstance<ProductsItem>()
+        val items: List<ProductsItem> = list.filterIsInstance<ProductsItem>()
         if(items.isNotEmpty()) {
             val order = productItemsToOrder(items)
             setFooterData(order)

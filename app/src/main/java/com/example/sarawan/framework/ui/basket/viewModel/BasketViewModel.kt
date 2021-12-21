@@ -47,7 +47,7 @@ class BasketViewModel @Inject constructor(
     }
 
     fun createOrder(address: AddressItem){
-        basketID?.let { id ->
+        basketID?.let {
             compositeDisposable.add(
                 interactor.getData(Query.Post.Order.Create(address), true)
                     .subscribeOn(schedulerProvider.io)
@@ -63,7 +63,7 @@ class BasketViewModel @Inject constructor(
     }
 
     fun clearBasket() {
-        basketID?.let { id ->
+        basketID?.let {
             compositeDisposable.add(
                 interactor.getData(Query.Delete.Basket.Clear, true)
                     .subscribeOn(schedulerProvider.io)
