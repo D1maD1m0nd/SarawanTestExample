@@ -131,7 +131,7 @@ class BasketFragment : Fragment() {
                 if (data.isNotEmpty()) {
                     when (val item = data.first()) {
                         is BasketResponse -> {
-                            if(list.size > LIMIT) {
+                            if(list.size >= LIMIT) {
                                 this@BasketFragment.recalculateData()
                             }
                         }
@@ -145,7 +145,6 @@ class BasketFragment : Fragment() {
                             progressBar.visibility = View.GONE
                         }
                         is AddressItem -> {
-
                             addressItem = AddressItem(idAddressOrder = item.id)
                             addressItem?.let {
                                 viewModel.getOrder(it)
