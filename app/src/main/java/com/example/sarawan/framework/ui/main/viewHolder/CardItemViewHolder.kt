@@ -77,6 +77,7 @@ abstract class CardItemViewHolder(
 
             val discount = data.discount
             if (discount != null && discount > 0) "-${discount}%".also {
+                binding.discount.visibility = View.VISIBLE
                 binding.discount.text = it
             }
             else binding.discount.visibility = View.GONE

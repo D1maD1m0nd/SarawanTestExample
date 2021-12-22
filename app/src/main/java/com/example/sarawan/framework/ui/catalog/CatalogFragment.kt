@@ -36,13 +36,9 @@ class CatalogFragment : BaseMainCatalogFragment() {
             }
         }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        if (savedInstanceState == null && isOnline) viewModel.getStartData(isOnline) { /*TODO handle error loading data */ }
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         initCatalogRecyclerAdapter()
+        if (isOnline) viewModel.getStartData(isOnline) { /*TODO handle error loading data */ }
         super.onViewCreated(view, savedInstanceState)
     }
 
@@ -54,7 +50,7 @@ class CatalogFragment : BaseMainCatalogFragment() {
     private fun initCatalogRecyclerAdapter() {
         if (catalogAdapter == null) {
             catalogAdapter = CatalogRecyclerAdapter(onCatalogItemClickListener)
-        }
+        } else catalogAdapter?.clear()
     }
 
     override fun subscribeToViewModel() {
