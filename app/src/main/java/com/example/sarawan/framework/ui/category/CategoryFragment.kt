@@ -9,7 +9,6 @@ import com.example.sarawan.R
 import com.example.sarawan.databinding.FragmentCatalogListBinding
 import com.example.sarawan.databinding.SpinnerDropdownViewElementBinding
 import com.example.sarawan.framework.ui.base.mainCatalog.BaseMainCatalogFragment
-import com.example.sarawan.framework.ui.base.mainCatalog.CardType
 import com.example.sarawan.framework.ui.category.spinnerAdapter.CustomSpinnerAdapter
 import com.example.sarawan.framework.ui.category.viewModel.CategoryViewModel
 import com.example.sarawan.model.data.AppState
@@ -85,9 +84,7 @@ class CategoryFragment : BaseMainCatalogFragment() {
         categoryBinding.catalogSortSpinner.adapter = spinnerAdapter
         categoryBinding.catalogSortSpinner.onItemSelectedListener =
             object : AdapterView.OnItemSelectedListener {
-                override fun onNothingSelected(parent: AdapterView<*>?) {
-
-                }
+                override fun onNothingSelected(parent: AdapterView<*>?) = Unit
 
                 override fun onItemSelected(
                     parent: AdapterView<*>?,
@@ -127,9 +124,6 @@ class CategoryFragment : BaseMainCatalogFragment() {
                     val data = appState.data as List<Pair<Int, List<MainScreenDataModel>>>
                     if (data.first().second.isNullOrEmpty()) return@observe
                     else {
-                        data.first().second.forEach {
-                            it.cardType = CardType.COMMON.type
-                        }
                         maxCount = data.first().first
                         mainRecyclerAdapter?.setData(data.first().second, false, maxCount)
                     }
