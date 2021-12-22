@@ -121,7 +121,7 @@ class MainRecyclerAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
-            CardType.COMMON.type -> object : CardItemViewHolder(
+            CardType.COMMON.type -> CardItemViewHolder(
                 ListItemCardBinding.inflate(
                     LayoutInflater.from(parent.context),
                     parent,
@@ -129,7 +129,7 @@ class MainRecyclerAdapter(
                 ),
                 imageLoader,
                 onListItemClickListener
-            ) {}
+            )
             CardType.TOP.type -> {
                 topCardsRecycler = RecyclerView(parent.context)
                 topCardsRecycler.layoutManager =
