@@ -11,7 +11,7 @@ import com.example.sarawan.framework.ui.base.mainCatalog.BaseMainCatalogAdapter
 import com.example.sarawan.framework.ui.main.adapter.MainRecyclerAdapter
 import com.example.sarawan.model.data.MainScreenDataModel
 
-abstract class CardItemViewHolder(
+class CardItemViewHolder(
     private val binding: ListItemCardBinding,
     private val imageLoader: ImageLoader,
     private val listener: BaseMainCatalogAdapter.OnListItemClickListener
@@ -19,7 +19,7 @@ abstract class CardItemViewHolder(
 
     private var disposable: Disposable? = null
 
-    open fun bind(data: MainScreenDataModel) {
+    fun bind(data: MainScreenDataModel) {
         if (layoutPosition != RecyclerView.NO_POSITION) {
             var quantity = data.quantity ?: 0
             data.quantity = quantity

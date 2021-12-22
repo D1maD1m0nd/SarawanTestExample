@@ -35,11 +35,11 @@ class TopRecyclerAdapter(
                 width = parent.width / 2
             }
         }
-        return object : CardItemViewHolder(
+        return CardItemViewHolder(
             view,
             imageLoader,
             onListItemClickListener
-        ) {}
+        )
     }
 
     override fun onBindViewHolder(holder: CardItemViewHolder, position: Int) {

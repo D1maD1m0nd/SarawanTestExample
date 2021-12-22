@@ -25,16 +25,17 @@
         android:layout_height="match_parent"
         android:layout_margin="8dp">
 
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_height="match_parent">
 
             <LinearLayout
+                android:id="@+id/card_top_layout"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="0dp"
                 android:orientation="vertical"
-                android:paddingHorizontal="16dp">
+                android:paddingHorizontal="16dp"
+                app:layout_constraintTop_toTopOf="parent">
 
                 <ImageView
                     android:id="@+id/item_image"
@@ -130,7 +131,9 @@
                 android:layout_height="wrap_content"
                 android:paddingHorizontal="16dp"
                 android:paddingTop="5dp"
-                android:paddingBottom="8dp">
+                android:paddingBottom="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/card_top_layout">
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/item_buy_button"
@@ -150,6 +153,8 @@
                 android:paddingBottom="8dp"
                 android:soundEffectsEnabled="false"
                 android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/card_top_layout"
                 tools:visibility="visible">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
@@ -175,7 +180,7 @@
                         android:layout_height="wrap_content"
                         android:elevation="1dp"
                         android:paddingHorizontal="8dp"
-                        android:paddingVertical="17dp"
+                        android:paddingVertical="16dp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent">
@@ -212,7 +217,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:paddingHorizontal="8dp"
-                        android:paddingVertical="10dp"
+                        android:paddingVertical="9dp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent">
@@ -229,6 +234,6 @@
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </FrameLayout>
 
-        </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>
 </FrameLayout>
