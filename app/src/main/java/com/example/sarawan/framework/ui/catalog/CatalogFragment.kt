@@ -29,16 +29,21 @@ class CatalogFragment : BaseMainCatalogFragment() {
     private val onCatalogItemClickListener: CatalogRecyclerAdapter.OnListItemClickListener =
         object : CatalogRecyclerAdapter.OnListItemClickListener {
             override fun onItemClick(data: MainScreenDataModel) {
-                val bundle = Bundle()
-                bundle.putInt(CategoryFragment.KEY_CATEGORY, data.id?.toInt() ?: -1)
-                bundle.putString(CategoryFragment.KEY_CATEGORY_NAME, data.itemDescription)
-                App.navController.navigate(R.id.action_catalogFragment_to_categoryFragment, bundle)
+                if (isOnline) {
+                    val bundle = Bundle()
+                    bundle.putInt(CategoryFragment.KEY_CATEGORY, data.id?.toInt() ?: -1)
+                    bundle.putString(CategoryFragment.KEY_CATEGORY_NAME, data.itemDescription)
+                    App.navController.navigate(
+                        R.id.action_catalogFragment_to_categoryFragment,
+                        bundle
+                    )
+                } else { /*TODO handle network error */ }
             }
         }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         initCatalogRecyclerAdapter()
-        if (isOnline) viewModel.getStartData(isOnline) { /*TODO handle error loading data */ }
+        if (isOnline) viewModel.getStartData(isOnline) else { /*TODO handle network error */ }
         super.onViewCreated(view, savedInstanceState)
     }
 

@@ -19,7 +19,7 @@ class MainFragment : BaseMainCatalogFragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        if (isOnline) viewModel.getStartData(isOnline) { /*TODO handle error loading data */ }
+        if (isOnline) viewModel.getStartData(isOnline) else { /*TODO handle network error */ }
         super.onViewCreated(view, savedInstanceState)
     }
 
@@ -30,15 +30,17 @@ class MainFragment : BaseMainCatalogFragment() {
                     val data = appState.data as List<Pair<Int, List<MainScreenDataModel>>>
                     if (data.first().second.isNullOrEmpty()) {
                         binding.loadingLayout.visibility = View.GONE
+                        binding.emptyDataLayout.root.visibility = View.VISIBLE
                     } else {
+                        binding.emptyDataLayout.root.visibility = View.GONE
                         maxCount = data.first().first
                         mainRecyclerAdapter?.setData(
                             data.first().second,
                             binding.searchField.editText?.text.isNullOrEmpty(),
                             maxCount
                         )
+                        isDataLoaded = true
                     }
-                    isDataLoaded = true
                 }
                 is AppState.Error -> Unit
                 AppState.Loading -> binding.loadingLayout.visibility = View.VISIBLE

@@ -69,8 +69,10 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/min_price"
+                        android:paddingEnd="5sp"
                         android:textColor="@color/card_text_color"
-                        android:textSize="14sp" />
+                        android:textSize="14sp"
+                        tools:ignore="RtlSymmetry" />
 
                     <com.google.android.material.textview.MaterialTextView
                         android:id="@+id/item_shop_name"

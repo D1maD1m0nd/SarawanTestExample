@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import android.widget.Toast
 import androidx.core.content.getSystemService
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
@@ -51,7 +50,7 @@ abstract class BaseMainCatalogFragment : Fragment(), INavigation {
 
     protected var isOnline = true
 
-    protected var maxCount = 0
+    protected var maxCount = -1
 
     protected var isDataLoaded = false
 
@@ -120,10 +119,14 @@ abstract class BaseMainCatalogFragment : Fragment(), INavigation {
                             (recyclerView.layoutManager as GridLayoutManager)
                                 .findLastVisibleItemPosition()
                         ) == CardType.LOADING.type
-                        && isOnline
-                    ) {
+                    ) if (isOnline) {
+                        /*TODO change animation*/
                         isDataLoaded = false
-                        viewModel.getMoreData(isOnline, SortBy.PRICE_ASC) { /*TODO handle error loading data */ }
+                        viewModel.getMoreData(
+                            isOnline,
+                            SortBy.PRICE_ASC
+                        )
+                    } else {/*TODO handle offline and change animation*/
                     }
                 }
             }
@@ -205,8 +208,8 @@ abstract class BaseMainCatalogFragment : Fragment(), INavigation {
         }
 
         binding.searchField.editText?.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_SEARCH && binding.searchField.editText?.text.toString()
-                    .isNotEmpty()
+            if (actionId == EditorInfo.IME_ACTION_SEARCH
+                && binding.searchField.editText?.text.toString().isNotEmpty()
             ) {
                 makeSearch()
                 return@setOnEditorActionListener true
@@ -219,20 +222,16 @@ abstract class BaseMainCatalogFragment : Fragment(), INavigation {
         activity?.getSystemService<InputMethodManager>()
             ?.hideSoftInputFromWindow(binding.searchField.windowToken, 0)
         binding.searchField.clearFocus()
-        if (!isOnline) Toast.makeText(
-            context,
-            "You are Offline! Get Results from Cache",
-            Toast.LENGTH_SHORT
-        ).show()
-        else {
+        if (isOnline) {
             viewModel.search(
                 binding.searchField.editText?.text.toString(),
                 isOnline
-            ) { /*TODO handle error loading data */ }
-
+            )
+            binding.loadingLayout.visibility = View.VISIBLE
             mainRecyclerAdapter?.clear()
             binding.topBarLayout.setExpanded(true, true)
             binding.mainRecyclerView.scrollToPosition(0)
+        } else { /*TODO handle network error*/
         }
     }
 

@@ -45,7 +45,8 @@ class CategoryFragment : BaseMainCatalogFragment() {
         categoryBinding.backButton.setOnClickListener {
             onFragmentBackStack()
         }
-        categoryBinding.fragmentCaption.text = arguments?.getString(KEY_CATEGORY_NAME) ?: "Выгодные предложения"
+        categoryBinding.fragmentCaption.text =
+            arguments?.getString(KEY_CATEGORY_NAME) ?: "Выгодные предложения"
         initSpinner()
         watchForAdapter(categoryBinding.cardsRecycler)
     }
@@ -101,7 +102,8 @@ class CategoryFragment : BaseMainCatalogFragment() {
                             arguments?.getInt(KEY_CATEGORY) ?: DISCOUNT,
                             isOnline,
                             sortType
-                        ) { /*TODO handle error loading data */ }
+                        )
+                    } else { /*TODO handle network error */
                     }
                 }
             }
@@ -122,13 +124,15 @@ class CategoryFragment : BaseMainCatalogFragment() {
             when (appState) {
                 is AppState.Success<*> -> {
                     val data = appState.data as List<Pair<Int, List<MainScreenDataModel>>>
-                    if (data.first().second.isNullOrEmpty()) return@observe
-                    else {
+                    if (data.first().second.isNullOrEmpty()) {
+                        categoryBinding.emptyDataLayout.root.visibility = View.VISIBLE
+                    } else {
+                        categoryBinding.emptyDataLayout.root.visibility = View.GONE
                         maxCount = data.first().first
                         mainRecyclerAdapter?.setData(data.first().second, false, maxCount)
+                        isDataLoaded = true
                     }
                     categoryBinding.loadingLayout.visibility = View.GONE
-                    isDataLoaded = true
                 }
                 is AppState.Error -> Unit
                 AppState.Loading -> categoryBinding.loadingLayout.visibility = View.VISIBLE

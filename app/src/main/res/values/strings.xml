@@ -7,9 +7,8 @@
     <string name="buy">Купить</string>
     <string name="price_text">₽</string>
     <string name="kg">Кг</string>
-    <string name="min_price">Мин. цена: </string>
-    <string name="max_price">Макс. цена: </string>
-    <string name="max_discount">Макс. скидка: </string>
+    <string name="min_price">Мин. цена:</string>
+    <string name="max_discount">Макс. скидка:</string>
     <string name="sort_price">Цене</string>
     <string name="sort_alphabet">Алфавиту</string>
     <string name="sort_discount">Скидке</string>
@@ -112,4 +111,6 @@
     <string name="nav_sales">Перейти к покупкам</string>
     <string name="product_add">Товар добавлен</string>
     <string name="error_500">Что то пошло не так, повторите попытку позже</string>
+    <string name="no_items">К сожалению, такого товара нет.</string>
+    <string name="press_back_again_to_exit">Для выхода нажмите "Назад" еще раз</string>
 </resources>

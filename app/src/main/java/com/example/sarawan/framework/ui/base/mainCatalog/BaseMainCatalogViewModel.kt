@@ -7,6 +7,7 @@ import com.example.sarawan.rx.ISchedulerProvider
 import com.example.sarawan.utils.SortBy
 import com.example.sarawan.utils.StringProvider
 import io.reactivex.rxjava3.core.Single
+import retrofit2.HttpException
 
 abstract class BaseMainCatalogViewModel(
     private val interactor: MainInteractor,
@@ -24,12 +25,12 @@ abstract class BaseMainCatalogViewModel(
 
     protected var basketID: Int? = null
 
-    fun search(word: String, isOnline: Boolean, errorCallback: () -> Unit) {
+    fun search(word: String, isOnline: Boolean) {
         sortType = SortBy.PRICE_ASC
         lastPage = 1
         searchWord = word
         compositeDisposable.add(
-            loadMoreData(isOnline, Query.Get.Products.ProductName(word), errorCallback)
+            loadMoreData(isOnline, Query.Get.Products.ProductName(word))
                 .subscribeOn(schedulerProvider.io)
                 .observeOn(schedulerProvider.io)
                 .doOnSubscribe { stateLiveData.postValue(AppState.Loading) }
@@ -76,12 +77,11 @@ abstract class BaseMainCatalogViewModel(
 
     protected fun loadMoreData(
         isOnline: Boolean,
-        query: Query.Get.Products,
-        errorCallback: () -> Unit
+        query: Query.Get.Products
     ): Single<MutableList<Product>> {
         val basket =
             interactor.getData(Query.Get.Basket, isOnline).onErrorReturnItem(listOf(Basket()))
-        val productsData = getProductsData(isOnline, query.apply { page = lastPage }, errorCallback)
+        val productsData = getProductsData(isOnline, query.apply { page = lastPage })
         return Single.zip(productsData, basket) { responseData, basketData ->
             val data: MutableList<Product> = mutableListOf()
             val basketObject = (basketData as List<Basket>).firstOrNull()
@@ -113,28 +113,24 @@ abstract class BaseMainCatalogViewModel(
 
     private fun getProductsData(
         isOnline: Boolean,
-        query: Query.Get.Products,
-        errorCallback: () -> Unit
+        query: Query.Get.Products
     ): Single<MutableList<Response>> {
         return if (lastPage + PAGES <= query.page) Single.fromCallable { mutableListOf() }
         else {
-            val singleData =
-                (interactor.getData(query, isOnline) as Single<MutableList<Response>>)
-                    .onErrorReturn {
-                        errorCallback()
-                        mutableListOf()
-                    }
-            Single.zip(
-                singleData,
-                getProductsData(isOnline, query.apply { page += 1 }, errorCallback)
-            ) { data1, data2 ->
+            val singleData = (interactor.getData(query, isOnline) as Single<MutableList<Response>>)
+                .onErrorReturn {
+                    if (it is HttpException && it.code() == 404) mutableListOf()
+                    else throw it
+                }
+            Single.zip(singleData, getProductsData(isOnline, query.apply { page += 1 }))
+            { data1, data2 ->
                 data1.addAll(data2)
                 data1
             }
         }
     }
 
-    abstract fun getMoreData(isOnline: Boolean, sortType: SortBy, errorCallback: () -> Unit)
+    abstract fun getMoreData(isOnline: Boolean, sortType: SortBy)
 
     fun clear() {
         stateLiveData.value = AppState.Empty

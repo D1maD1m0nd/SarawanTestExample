@@ -36,6 +36,7 @@ class ProductCardFragment : Fragment() {
             when(type) {
                 TypeCardEnum.SIMILAR -> updateDataBasket(pos, mode)
                 TypeCardEnum.STORE -> updateDataBasketIntoStore(pos, mode)
+                TypeCardEnum.DEFAULT -> Unit
             }
         }
 
@@ -123,7 +124,7 @@ class ProductCardFragment : Fragment() {
             itemSave(data, 0, true, TypeCardEnum.DEFAULT)
         }
         data.storePrices?.let {
-            priceTextView.text = it.first().price
+            priceTextView.text = it.first().price.toString()
             storeTextView.text = it.first().store
             storeProducts.addAll(it)
             storeAdapter.setData(storeProducts)

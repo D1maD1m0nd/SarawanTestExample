@@ -16,7 +16,7 @@ class CatalogViewModel @Inject constructor(
     stringProvider: StringProvider
 ) : BaseMainCatalogViewModel(interactor, schedulerProvider, stringProvider) {
 
-    override fun getStartData(isOnline: Boolean, errorCallback: () -> Unit) {
+    override fun getStartData(isOnline: Boolean) {
         compositeDisposable.add(
             interactor.getData(Query.Get.Category, isOnline)
                 .subscribeOn(schedulerProvider.io)
@@ -29,5 +29,5 @@ class CatalogViewModel @Inject constructor(
         )
     }
 
-    override fun getMoreData(isOnline: Boolean, sortType: SortBy, errorCallback: () -> Unit) = Unit
+    override fun getMoreData(isOnline: Boolean, sortType: SortBy) = Unit
 }
