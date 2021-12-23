@@ -20,12 +20,12 @@ class CategoryViewModel @Inject constructor(
 
     private var category: Int = CategoryFragment.DISCOUNT
 
-    override fun getStartData(isOnline: Boolean, errorCallback: () -> Unit) = Unit
+    override fun getStartData(isOnline: Boolean) = Unit
 
-    override fun getMoreData(isOnline: Boolean, sortType: SortBy, errorCallback: () -> Unit) {
+    override fun getMoreData(isOnline: Boolean, sortType: SortBy) {
         (if (category == CategoryFragment.DISCOUNT) {
-            loadMoreData(isOnline, Query.Get.Products.DiscountProducts(sortBy = sortType), errorCallback)
-        } else loadMoreData(isOnline, Query.Get.Products.ProductCategory(category, sortBy = sortType), errorCallback))
+            loadMoreData(isOnline, Query.Get.Products.DiscountProducts(sortBy = sortType))
+        } else loadMoreData(isOnline, Query.Get.Products.ProductCategory(category, sortBy = sortType)))
             .subscribeOn(schedulerProvider.io)
             .observeOn(schedulerProvider.io)
             .subscribe(
@@ -44,11 +44,11 @@ class CategoryViewModel @Inject constructor(
             )
     }
 
-    fun changeSorting(category: Int, isOnline: Boolean, sortType: SortBy, errorCallback: () -> Unit){
+    fun changeSorting(category: Int, isOnline: Boolean, sortType: SortBy){
         stateLiveData.value = AppState.Loading
         lastPage = 1
         this.category = category
         this.sortType = sortType
-        getMoreData(isOnline, sortType, errorCallback)
+        getMoreData(isOnline, sortType)
     }
 }

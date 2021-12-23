@@ -41,7 +41,8 @@ class CardItemViewHolder(
 
                 itemPrice.text = String.format("%.2f", (data.price))
                 itemShopName.text = data.shop
-                "${data.unitQuantity.toString()} Кг".also { itemWeight.text = it }
+                "${data.unitQuantity.toString()} ${root.resources.getString(R.string.kg)}"
+                    .also { itemWeight.text = it }
                 itemDescription.text = data.itemDescription
                 itemMinPriceText.text = data.sortText
 
@@ -73,23 +74,23 @@ class CardItemViewHolder(
                     itemQuantity.text = quantity.toString()
                     listener.onItemPriceChangeClick(data, 1, false)
                 }
-            }
 
-            val discount = data.discount
-            if (discount != null && discount > 0) "-${discount}%".also {
-                binding.discount.visibility = View.VISIBLE
-                binding.discount.text = it
-            }
-            else binding.discount.visibility = View.GONE
+                val discountNumber = data.discount
+                if (discountNumber != null && discountNumber > 0) "-${discountNumber}%".also {
+                    discount.visibility = View.VISIBLE
+                    discount.text = it
+                }
+                else discount.visibility = View.GONE
 
-            disposable = imageLoader.enqueue(
-                ImageRequest.Builder(binding.root.context)
-                    .data(data.pictureUrl)
-                    .placeholder(R.drawable.card_placeholder)
-                    .target(binding.itemImage)
-                    .error(R.drawable.card_placeholder)
-                    .build()
-            )
+                disposable = imageLoader.enqueue(
+                    ImageRequest.Builder(root.context)
+                        .data(data.pictureUrl)
+                        .placeholder(R.drawable.card_placeholder)
+                        .target(itemImage)
+                        .error(R.drawable.card_placeholder)
+                        .build()
+                )
+            }
         }
     }
 

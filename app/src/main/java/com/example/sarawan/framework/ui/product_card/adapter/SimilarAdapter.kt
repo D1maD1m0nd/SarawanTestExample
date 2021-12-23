@@ -58,7 +58,7 @@ class SimilarAdapter(val itemClickListener: ItemClickListener) : RecyclerView.Ad
             discount.visibility = GONE
             itemDescription.text = product.name
             itemShopName.text = store?.store
-            itemPrice.text = store?.price
+            itemPrice.text = store?.price.toString()
             itemQuantity.text = product.count.toString()
             if(product.count > 0) {
                 itemBuyButtonFrame.visibility = GONE

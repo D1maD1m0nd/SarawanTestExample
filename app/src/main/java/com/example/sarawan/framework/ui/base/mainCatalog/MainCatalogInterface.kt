@@ -2,5 +2,5 @@ package com.example.sarawan.framework.ui.base.mainCatalog
 
 interface MainCatalogInterface {
 
-    fun getStartData(isOnline: Boolean, errorCallback: () -> Unit)
+    fun getStartData(isOnline: Boolean)
 }

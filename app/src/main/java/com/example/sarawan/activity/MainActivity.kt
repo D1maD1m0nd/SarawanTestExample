@@ -137,7 +137,7 @@ class MainActivity : AppCompatActivity(), FabChanger {
     }
 
     private fun checkExit() {
-        Toast.makeText(this, "Press BACK again to exit", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, getString(R.string.press_back_again_to_exit), Toast.LENGTH_SHORT).show()
         if (System.currentTimeMillis() - lastTimeBackPressed < BACK_BUTTON_EXIT_DELAY && isBackShown) {
             exitProcess(0)
         } else isBackShown = false
