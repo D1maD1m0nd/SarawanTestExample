@@ -12,7 +12,6 @@ import com.example.sarawan.app.App.Companion.navController
 import com.example.sarawan.databinding.ActivityMainBinding
 import com.example.sarawan.framework.ui.profile.phone_fragment.ProfilePhoneFragment
 import com.example.sarawan.model.data.AppState
-import com.example.sarawan.model.data.ProductsItem
 import com.example.sarawan.rx.ISchedulerProvider
 import com.example.sarawan.utils.NetworkStatus
 import com.example.sarawan.utils.exstentions.userId
@@ -59,8 +58,8 @@ class MainActivity : AppCompatActivity(), FabChanger {
 
     private fun updateFab(appState: AppState<*>) {
         if (appState is AppState.Success<*>) {
-            val data = appState.data as List<ProductsItem>
-            putPrice(data.sumOf { it.basketProduct?.price!!.toDouble() * it.quantity!! }.toFloat())
+            val data = appState.data as List<Float?>
+            putPrice(data.firstOrNull() ?: 0f)
         }
     }
 
@@ -83,7 +82,7 @@ class MainActivity : AppCompatActivity(), FabChanger {
         navView.setupWithNavController(navController)
 
         navView.setOnItemSelectedListener {
-            when(it.itemId) {
+            when (it.itemId) {
                 R.id.profileFragment -> return@setOnItemSelectedListener showProfile()
                 R.id.basketFragment -> return@setOnItemSelectedListener showBasket()
             }

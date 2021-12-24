@@ -6,7 +6,6 @@ import com.example.sarawan.model.data.AppState
 import com.example.sarawan.model.data.CategoryDataModel
 import com.example.sarawan.model.data.Query
 import com.example.sarawan.rx.ISchedulerProvider
-import com.example.sarawan.utils.SortBy
 import com.example.sarawan.utils.StringProvider
 import javax.inject.Inject
 
@@ -29,5 +28,5 @@ class CatalogViewModel @Inject constructor(
         )
     }
 
-    override fun getMoreData(isOnline: Boolean, sortType: SortBy) = Unit
+    override fun getMoreData(isOnline: Boolean) = Unit
 }

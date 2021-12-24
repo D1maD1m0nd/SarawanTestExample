@@ -13,22 +13,24 @@ class ActivityViewModel @Inject constructor(
     private val schedulerProvider: ISchedulerProvider
 ) : BaseViewModel<AppState<*>>() {
 
-    private var basketID: Int? = null
-
     fun getBasket() {
+        compositeDisposable.clear()
         compositeDisposable.add(
             interactor.getData(Query.Get.Basket, true)
-                .onErrorReturnItem(listOf(Basket()))
                 .subscribeOn(schedulerProvider.io)
                 .observeOn(schedulerProvider.io)
-                .doOnSubscribe { stateLiveData.postValue(AppState.Loading) }
-                .subscribe({
-                    val basket = it.firstOrNull() as Basket?
-                    basketID = basket?.basketId
-                    val items = basket?.products as List<*>?
-                    items?.let {
-                        stateLiveData.postValue(AppState.Success(items))
-                    }
+                .subscribe({ baskets ->
+                    val items = (baskets.firstOrNull() as? Basket)?.products
+                    val price = items?.sumOf {
+                        var result = 0.0
+                        it.quantity?.let { quantity ->
+                            it.basketProduct?.price?.let { price ->
+                               result += (price.toDouble() * quantity)
+                            }
+                        }
+                        result
+                    }?.toFloat()
+                    stateLiveData.postValue(AppState.Success(listOf(price)))
                 }, { stateLiveData.postValue(AppState.Error(it)) })
         )
     }

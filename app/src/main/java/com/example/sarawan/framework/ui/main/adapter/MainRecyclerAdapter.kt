@@ -5,8 +5,10 @@ import android.graphics.Color
 import android.graphics.Typeface
 import android.view.Gravity
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import coil.ImageLoader
@@ -30,6 +32,8 @@ class MainRecyclerAdapter(
     private val commonData: MutableList<MainScreenDataModel> = mutableListOf()
 
     private var isLoadingHidden = false
+
+    private var loadingLayout: LoadingLayoutBinding? = null
 
     private val topRecyclerAdapter =
         TopRecyclerAdapter(onListItemClickListener, imageLoader) { measuredHeight: Int ->
@@ -64,8 +68,9 @@ class MainRecyclerAdapter(
     }
 
     private fun setCommonData(data: List<MainScreenDataModel>) {
-        commonData.addAll(data.filter { it.cardType == CardType.COMMON.type })
-        commonData.forEach { setData(it) }
+        val filteredData = data.filter { it.cardType == CardType.COMMON.type }
+        commonData.addAll(filteredData)
+        filteredData.forEach { setData(it) }
     }
 
     private fun setData(data: MainScreenDataModel) {
@@ -143,13 +148,14 @@ class MainRecyclerAdapter(
                 ),
                 onButtonMoreClickListener
             )
-            CardType.LOADING.type -> object : RecyclerView.ViewHolder(
-                LoadingLayoutBinding.inflate(
+            CardType.LOADING.type -> {
+                loadingLayout = LoadingLayoutBinding.inflate(
                     LayoutInflater.from(parent.context),
                     parent,
                     false
-                ).root
-            ) {}
+                )
+                object : RecyclerView.ViewHolder(loadingLayout!!.root) {}
+            }
             else -> throw RuntimeException("No Such viewType: $viewType")
         }
     }
@@ -182,6 +188,21 @@ class MainRecyclerAdapter(
             }
             CardType.LOADING.type -> Unit
             else -> throw RuntimeException("No binder for holder: $holder")
+        }
+    }
+
+    fun changeLoadingAnimation(enable: Boolean) {
+        loadingLayout?.let {
+            if (!isLoadingHidden && it.root.isVisible) {
+                if (enable) {
+                    if (!it.loadingProgress.isIndeterminate) {
+                        it.loadingProgress.visibility = View.INVISIBLE
+                        it.loadingProgress.isIndeterminate = true
+                        it.loadingProgress.visibility = View.VISIBLE
+                    }
+                } else if (it.loadingProgress.isIndeterminate)
+                    it.loadingProgress.setProgressCompat(20, true)
+            }
         }
     }
 

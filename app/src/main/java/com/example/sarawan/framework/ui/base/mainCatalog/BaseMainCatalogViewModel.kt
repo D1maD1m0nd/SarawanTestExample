@@ -130,7 +130,7 @@ abstract class BaseMainCatalogViewModel(
         }
     }
 
-    abstract fun getMoreData(isOnline: Boolean, sortType: SortBy)
+    abstract fun getMoreData(isOnline: Boolean)
 
     fun clear() {
         stateLiveData.value = AppState.Empty
@@ -140,7 +140,7 @@ abstract class BaseMainCatalogViewModel(
         product.apply {
             when (sortType) {
                 SortBy.PRICE_ASC -> storePrices?.sortBy { it.price }
-                SortBy.PRICE_DES -> storePrices?.sortByDescending { it.price }
+                SortBy.PRICE_DES -> storePrices?.sortBy { it.price }
                 SortBy.ALPHABET -> Unit
                 SortBy.DISCOUNT -> storePrices?.sortByDescending { it.discount }
             }
