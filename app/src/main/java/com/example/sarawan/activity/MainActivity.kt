@@ -51,7 +51,6 @@ class MainActivity : AppCompatActivity(), FabChanger {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         initNavigation()
-        observeOnlineStatus()
         initFAB()
         viewModel.getStateLiveData().observe(this) { appState: AppState<*> ->
             updateFab(appState)
@@ -107,6 +106,7 @@ class MainActivity : AppCompatActivity(), FabChanger {
             navigateToProfile()
             true
         }
+
     private fun showBasket(): Boolean =
         if (sharedPreferences.userId == -1L) {
             ProfilePhoneFragment.newInstance { navigateToProfile() }
@@ -116,22 +116,13 @@ class MainActivity : AppCompatActivity(), FabChanger {
             navigateToBasket()
             true
         }
+
     private fun navigateToProfile() {
         navController.navigate(R.id.profileFragment)
     }
+
     private fun navigateToBasket() {
         navController.navigate(R.id.basketFragment)
-    }
-
-    private fun observeOnlineStatus() {
-        networkStatus
-            .isOnline()
-            .subscribeOn(schedulerProvider.io)
-            .observeOn(schedulerProvider.ui)
-            .subscribe { isOnline ->
-//                val message = if (isOnline) "You now Online" else "You are Offline!"
-//                Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
-            }
     }
 
     override fun onBackPressed() {

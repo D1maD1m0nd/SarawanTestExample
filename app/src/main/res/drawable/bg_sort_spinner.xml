@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item>
-        <layer-list>
-            <item android:drawable="@drawable/spinner_background" />
-            <item android:bottom="8dp" android:drawable="@drawable/spinner_dropdown_arrow" android:gravity="center_vertical|right" android:left="5dp" android:right="5dp" android:top="8dp" />
-        </layer-list>
-    </item>
-</selector>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@drawable/spinner_background" />
+    <item
+        android:bottom="8dp"
+        android:drawable="@drawable/spinner_dropdown_arrow"
+        android:gravity="center_vertical|right"
+        android:left="5dp"
+        android:right="5dp"
+        android:top="8dp" />
+</layer-list>

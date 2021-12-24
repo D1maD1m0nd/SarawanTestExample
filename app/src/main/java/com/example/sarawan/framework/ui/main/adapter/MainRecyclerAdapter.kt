@@ -15,16 +15,14 @@ import com.example.sarawan.databinding.ListItemCardBinding
 import com.example.sarawan.databinding.LoadingLayoutBinding
 import com.example.sarawan.framework.ui.base.mainCatalog.BaseMainCatalogAdapter
 import com.example.sarawan.framework.ui.base.mainCatalog.CardType
-import com.example.sarawan.framework.ui.main.viewHolder.ButtonHolder
-import com.example.sarawan.framework.ui.main.viewHolder.CardItemViewHolder
-import com.example.sarawan.framework.ui.main.viewHolder.StringHolder
-import com.example.sarawan.framework.ui.main.viewHolder.TopCardsViewHolder
+import com.example.sarawan.framework.ui.main.viewHolder.*
 import com.example.sarawan.model.data.MainScreenDataModel
 import com.google.android.material.textview.MaterialTextView
 
 class MainRecyclerAdapter(
     private var onListItemClickListener: OnListItemClickListener,
     private val imageLoader: ImageLoader,
+    private val onButtonMoreClickListener: ButtonMoreClickListener,
     private val callback: () -> Unit
 ) : BaseMainCatalogAdapter() {
 
@@ -142,7 +140,8 @@ class MainRecyclerAdapter(
                     LayoutInflater.from(parent.context),
                     parent,
                     false
-                )
+                ),
+                onButtonMoreClickListener
             )
             CardType.LOADING.type -> object : RecyclerView.ViewHolder(
                 LoadingLayoutBinding.inflate(
