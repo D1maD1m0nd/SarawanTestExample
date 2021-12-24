@@ -40,4 +40,15 @@ class OrderViewModel@Inject constructor(
                     { stateLiveData.postValue(AppState.Error(it)) }),
         )
     }
+    fun createOrder(address: AddressItem){
+            compositeDisposable.add(
+                interactor.getData(Query.Post.Order.Create(address), true)
+                    .subscribeOn(schedulerProvider.io)
+                    .observeOn(schedulerProvider.io)
+                    .doOnSubscribe { stateLiveData.postValue(AppState.Loading) }
+                    .subscribe(
+                        {stateLiveData.postValue(AppState.Success(it))},
+                        { stateLiveData.postValue(AppState.Error(it)) }),
+            )
+    }
 }
