@@ -21,7 +21,12 @@ abstract class BaseMainCatalogAdapter : RecyclerView.Adapter<RecyclerView.ViewHo
     }
 
     interface OnListItemClickListener {
-        fun onItemPriceChangeClick(data: MainScreenDataModel, diff: Int, isNewItem: Boolean)
+        fun onItemPriceChangeClick(
+            data: MainScreenDataModel,
+            diff: Int,
+            isNewItem: Boolean,
+            callback: (isOnline: Boolean) -> Unit
+        )
 
         fun onItemClick(data: MainScreenDataModel)
     }

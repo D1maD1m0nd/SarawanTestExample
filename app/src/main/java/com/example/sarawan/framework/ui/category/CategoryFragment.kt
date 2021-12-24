@@ -25,6 +25,8 @@ class CategoryFragment : BaseMainCatalogFragment() {
         viewModelFactory.create(CategoryViewModel::class.java)
     }
 
+    private var sortType: SortBy = SortBy.PRICE_ASC
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         AndroidSupportInjection.inject(this)
@@ -50,6 +52,8 @@ class CategoryFragment : BaseMainCatalogFragment() {
         initSpinner()
         watchForAdapter(categoryBinding.cardsRecycler)
     }
+
+    override fun refresh() = Unit
 
     private fun initSpinner() {
         val spinnerStrings = arrayOf(
@@ -94,24 +98,28 @@ class CategoryFragment : BaseMainCatalogFragment() {
                     id: Long
                 ) {
                     if (isOnline) {
-                        mainRecyclerAdapter?.clear()
-                        spinnerAdapter.setSelected(position)
-                        val sortType =
-                            SortBy.values().find { it.id.toLong() == id } ?: SortBy.PRICE_ASC
-                        viewModel.changeSorting(
-                            arguments?.getInt(KEY_CATEGORY) ?: DISCOUNT,
-                            isOnline,
-                            sortType
-                        )
-                    } else { /*TODO handle network error */
+                        if (sortType.id != position || mainRecyclerAdapter?.itemCount == 0) {
+                            mainRecyclerAdapter?.clear()
+                            spinnerAdapter.setSelected(position)
+                            sortType =
+                                SortBy.values().find { it.id.toLong() == id } ?: SortBy.PRICE_ASC
+                            viewModel.changeSorting(
+                                arguments?.getInt(KEY_CATEGORY) ?: DISCOUNT,
+                                isOnline,
+                                sortType
+                            )
+                        }
+                    } else {
+                        categoryBinding.catalogSortSpinner.setSelection(sortType.id)
+                        handleNetworkErrorWithToast()
                     }
                 }
             }
         categoryBinding.catalogSortSpinner.alpha = 1f
-        val selection =
-            if (arguments?.getString(KEY_CATEGORY_NAME) != null) SortBy.PRICE_ASC.id
-            else SortBy.DISCOUNT.id
-        categoryBinding.catalogSortSpinner.setSelection(selection)
+        sortType =
+            if (arguments?.getString(KEY_CATEGORY_NAME) != null) SortBy.PRICE_ASC
+            else SortBy.DISCOUNT
+        categoryBinding.catalogSortSpinner.setSelection(sortType.id)
     }
 
     override fun attachAdapterToView() {
@@ -134,7 +142,7 @@ class CategoryFragment : BaseMainCatalogFragment() {
                     }
                     categoryBinding.loadingLayout.visibility = View.GONE
                 }
-                is AppState.Error -> Unit
+                is AppState.Error -> handleNetworkErrorWithToast()
                 AppState.Loading -> categoryBinding.loadingLayout.visibility = View.VISIBLE
                 AppState.Empty -> Unit
             }

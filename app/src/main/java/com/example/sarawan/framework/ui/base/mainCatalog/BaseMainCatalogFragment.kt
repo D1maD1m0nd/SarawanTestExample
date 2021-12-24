@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
+import android.widget.Toast
 import androidx.core.content.getSystemService
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
@@ -22,6 +23,7 @@ import com.example.sarawan.databinding.FragmentMainBinding
 import com.example.sarawan.framework.INavigation
 import com.example.sarawan.framework.ui.basket.BasketFragment
 import com.example.sarawan.framework.ui.main.adapter.MainRecyclerAdapter
+import com.example.sarawan.framework.ui.main.viewHolder.ButtonMoreClickListener
 import com.example.sarawan.model.data.MainScreenDataModel
 import com.example.sarawan.rx.ISchedulerProvider
 import com.example.sarawan.utils.NetworkStatus
@@ -48,7 +50,7 @@ abstract class BaseMainCatalogFragment : Fragment(), INavigation {
 
     protected abstract val viewModel: BaseMainCatalogViewModel
 
-    protected var isOnline = true
+    protected var isOnline = false
 
     protected var maxCount = -1
 
@@ -67,26 +69,32 @@ abstract class BaseMainCatalogFragment : Fragment(), INavigation {
             override fun onItemPriceChangeClick(
                 data: MainScreenDataModel,
                 diff: Int,
-                isNewItem: Boolean
+                isNewItem: Boolean,
+                callback: (isOnline: Boolean) -> Unit
             ) {
                 data.price?.let {
                     if (isOnline) {
+                        callback(isOnline)
                         fabChanger?.changePrice(it * diff)
                         viewModel.saveData(data, isOnline, isNewItem)
-                    }
+                    } else handleNetworkErrorWithToast()
                 }
             }
 
             override fun onItemClick(data: MainScreenDataModel) {
-                val bundle = Bundle()
-                bundle.putLong(BasketFragment.PRODUCT_ID, data.id ?: -1)
-                App.navController.navigate(R.id.productCardFragment, bundle)
+                if (isOnline) {
+                    val bundle = Bundle()
+                    bundle.putLong(BasketFragment.PRODUCT_ID, data.id ?: -1)
+                    App.navController.navigate(R.id.productCardFragment, bundle)
+                } else handleNetworkErrorWithToast()
             }
+
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         AndroidSupportInjection.inject(this)
+        checkOnlineStatus()
     }
 
     override fun onCreateView(
@@ -100,13 +108,21 @@ abstract class BaseMainCatalogFragment : Fragment(), INavigation {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        checkOnlineStatus()
         initRecyclerAdapter()
         attachAdapterToView()
         initSearchField()
         subscribeToViewModel()
         watchForAdapter()
+        initRefreshButton()
     }
+
+    private fun initRefreshButton() {
+        binding.noConnectionLayout.refreshButton.setOnClickListener {
+            refresh()
+        }
+    }
+
+    protected abstract fun refresh()
 
     protected fun watchForAdapter(recyclerView: RecyclerView = binding.mainRecyclerView) {
         recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -126,7 +142,9 @@ abstract class BaseMainCatalogFragment : Fragment(), INavigation {
                             isOnline,
                             SortBy.PRICE_ASC
                         )
-                    } else {/*TODO handle offline and change animation*/
+                    } else {
+                        handleNetworkErrorWithToast()
+                        /*TODO change animation*/
                     }
                 }
             }
@@ -138,10 +156,15 @@ abstract class BaseMainCatalogFragment : Fragment(), INavigation {
     protected abstract fun subscribeToViewModel()
 
     private fun initRecyclerAdapter() {
+        val buttonMoreClickListener = ButtonMoreClickListener {
+            if (isOnline) App.navController.navigate(R.id.action_mainFragment_to_categoryFragment)
+            else handleNetworkErrorWithToast()
+        }
         if (mainRecyclerAdapter == null) {
-            mainRecyclerAdapter = MainRecyclerAdapter(onListItemClickListener, imageLoader) {
-                binding.loadingLayout.visibility = View.GONE
-            }
+            mainRecyclerAdapter =
+                MainRecyclerAdapter(onListItemClickListener, imageLoader, buttonMoreClickListener) {
+                    binding.loadingLayout.visibility = View.GONE
+                }
         } else mainRecyclerAdapter?.clear()
 
         gridLayoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
@@ -231,8 +254,19 @@ abstract class BaseMainCatalogFragment : Fragment(), INavigation {
             mainRecyclerAdapter?.clear()
             binding.topBarLayout.setExpanded(true, true)
             binding.mainRecyclerView.scrollToPosition(0)
-        } else { /*TODO handle network error*/
-        }
+        } else handleNetworkErrorWithToast()
+    }
+
+    protected fun handleNetworkErrorWithToast() {
+        Toast.makeText(
+            context,
+            getString(R.string.no_internet),
+            Toast.LENGTH_SHORT
+        ).show()
+    }
+
+    protected fun handleNetworkErrorWithLayout() {
+        binding.noConnectionLayout.root.visibility = View.VISIBLE
     }
 
     private fun checkOnlineStatus() {

@@ -112,9 +112,11 @@
     <string name="product_add">Товар добавлен</string>
     <string name="error_500">Что то пошло не так, повторите попытку позже</string>
     <string name="no_items">К сожалению, такого товара нет.</string>
-    <string name="press_back_again_to_exit">Для выхода нажмите "Назад" еще раз</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="press_back_again_to_exit">Для выхода нажмите \"Назад\" еще раз</string>
+    <string name="no_internet">Нет соединения с интернетом! Повторите попытку позже!</string>
+    <string name="refresh">Обновить</string>
+    <string name="no_connection">Нет соединения</string>
+    <string name="check_network_and_refresh">Проверьте соединение с сетью и обновите страницу</string>
     <string name="nav_order">Перейти к оформленю</string>
     <string name="order">Заказ</string>
     <string name="rub_symbol">₽</string>

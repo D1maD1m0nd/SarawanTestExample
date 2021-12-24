@@ -37,14 +37,21 @@ class CatalogFragment : BaseMainCatalogFragment() {
                         R.id.action_catalogFragment_to_categoryFragment,
                         bundle
                     )
-                } else { /*TODO handle network error */ }
+                } else handleNetworkErrorWithToast()
             }
         }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         initCatalogRecyclerAdapter()
-        if (isOnline) viewModel.getStartData(isOnline) else { /*TODO handle network error */ }
+        if (isOnline) viewModel.getStartData(isOnline) else handleNetworkErrorWithLayout()
         super.onViewCreated(view, savedInstanceState)
+    }
+
+    override fun refresh() {
+        if (isOnline) {
+            viewModel.getStartData(isOnline)
+            binding.noConnectionLayout.root.visibility = View.GONE
+        }
     }
 
     override fun attachAdapterToView() {
@@ -91,7 +98,7 @@ class CatalogFragment : BaseMainCatalogFragment() {
                     }
                     isDataLoaded = true
                 }
-                is AppState.Error -> Unit
+                is AppState.Error -> handleNetworkErrorWithToast()
                 AppState.Loading -> binding.loadingLayout.visibility = View.VISIBLE
                 AppState.Empty -> Unit
             }

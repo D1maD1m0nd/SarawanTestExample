@@ -47,32 +47,41 @@ class CardItemViewHolder(
                 itemMinPriceText.text = data.sortText
 
                 itemBuyButton.setOnClickListener {
-                    itemBuyButtonFrame.visibility = View.GONE
-                    itemQuantityLayout.visibility = View.VISIBLE
-                    quantity = 1
-                    data.quantity = quantity
-                    itemQuantity.text = data.quantity.toString()
-                    listener.onItemPriceChangeClick(data, 1, true)
+                    listener.onItemPriceChangeClick(data, 1, true) { isOnline ->
+                        if (isOnline) {
+                            itemBuyButtonFrame.visibility = View.GONE
+                            itemQuantityLayout.visibility = View.VISIBLE
+                            quantity = 1
+                            data.quantity = quantity
+                            itemQuantity.text = data.quantity.toString()
+                        }
+                    }
                 }
 
                 itemQuantityLayout.setOnClickListener { }
 
                 minusButton.setOnClickListener {
-                    quantity -= 1
-                    data.quantity = quantity
-                    if (quantity <= 0) {
-                        itemBuyButtonFrame.visibility = View.VISIBLE
-                        itemQuantityLayout.visibility = View.GONE
+                    listener.onItemPriceChangeClick(data, -1, false) { isOnline ->
+                        if (isOnline) {
+                            quantity -= 1
+                            data.quantity = quantity
+                            if (quantity <= 0) {
+                                itemBuyButtonFrame.visibility = View.VISIBLE
+                                itemQuantityLayout.visibility = View.GONE
+                            }
+                            itemQuantity.text = quantity.toString()
+                        }
                     }
-                    itemQuantity.text = quantity.toString()
-                    listener.onItemPriceChangeClick(data, -1, false)
                 }
 
                 plusButton.setOnClickListener {
-                    quantity += 1
-                    data.quantity = quantity
-                    itemQuantity.text = quantity.toString()
-                    listener.onItemPriceChangeClick(data, 1, false)
+                    listener.onItemPriceChangeClick(data, 1, false) { isOnline ->
+                        if (isOnline) {
+                            quantity += 1
+                            data.quantity = quantity
+                            itemQuantity.text = quantity.toString()
+                        }
+                    }
                 }
 
                 val discountNumber = data.discount

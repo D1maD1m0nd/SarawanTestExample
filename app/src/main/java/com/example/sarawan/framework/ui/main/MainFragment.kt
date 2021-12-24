@@ -19,8 +19,15 @@ class MainFragment : BaseMainCatalogFragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        if (isOnline) viewModel.getStartData(isOnline) else { /*TODO handle network error */ }
+        if (isOnline) viewModel.getStartData(isOnline) else handleNetworkErrorWithLayout()
         super.onViewCreated(view, savedInstanceState)
+    }
+
+    override fun refresh() {
+        if (isOnline) {
+            viewModel.getStartData(isOnline)
+            binding.noConnectionLayout.root.visibility = View.GONE
+        }
     }
 
     override fun subscribeToViewModel() {
@@ -42,7 +49,7 @@ class MainFragment : BaseMainCatalogFragment() {
                         isDataLoaded = true
                     }
                 }
-                is AppState.Error -> Unit
+                is AppState.Error -> handleNetworkErrorWithToast()
                 AppState.Loading -> binding.loadingLayout.visibility = View.VISIBLE
                 AppState.Empty -> Unit
             }
