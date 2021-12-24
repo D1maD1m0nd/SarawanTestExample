@@ -56,7 +56,7 @@ class ProductCardFragment : Fragment() {
     private  var productId : Long? = null
     private val storeAdapter  = StoreAdapter(itemClickListener)
     private val similarProducts : MutableList<Product> = ArrayList(20)
-    private val storeProducts : MutableList<StorePrice> = ArrayList(5)
+    private var storeProducts : MutableList<StorePrice> = ArrayList(5)
     private val similarAdapter = SimilarAdapter(itemClickListener)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -126,7 +126,7 @@ class ProductCardFragment : Fragment() {
         data.storePrices?.let {
             priceTextView.text = it.first().price.toString()
             storeTextView.text = it.first().store
-            storeProducts.addAll(it)
+            storeProducts = it
             storeAdapter.setData(storeProducts)
         }
         data.images?.let {

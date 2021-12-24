@@ -5,6 +5,7 @@ import com.example.sarawan.framework.ui.base.BaseViewModel
 import com.example.sarawan.framework.ui.base.mainCatalog.CardType
 import com.example.sarawan.model.data.*
 import com.example.sarawan.rx.ISchedulerProvider
+import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.observers.DisposableSingleObserver
 import javax.inject.Inject
@@ -18,11 +19,21 @@ class ProductCardViewModel @Inject constructor(
         storeId?.let {
             compositeDisposable.add(
                 interactor.getData(Query.Get.Products.Id(storeId), true)
+                    .map{
+                        val data  =  (it as List<Product>).map { product ->
+                            product.storePrices?.sortBy { storeItem ->
+                                storeItem.price
+                            }
+                            product
+                        }
+                        data
+                    }
                     .subscribeOn(schedulerProvider.io)
                     .observeOn(schedulerProvider.io)
-                    .observeOn(schedulerProvider.io)
                     .subscribe(
-                        {stateLiveData.postValue(AppState.Success(it))},
+                        {
+                            stateLiveData.postValue(AppState.Success(it))
+                        },
                         { stateLiveData.postValue(AppState.Error(it)) }),
             )
 
@@ -41,6 +52,9 @@ class ProductCardViewModel @Inject constructor(
                     basketID = basketObject?.basketId
                     if(basketData.isNotEmpty()) {
                         data = similars.map {
+                            it.storePrices?.sortBy { storeItem ->
+                                storeItem.price
+                            }
                             basketObject?.products?.forEach { basketSingleData ->
                                 if (it.id == basketSingleData.basketProduct?.basketProduct?.id) {
                                     it.count = basketSingleData.quantity!!
