@@ -22,10 +22,10 @@ class CategoryViewModel @Inject constructor(
 
     override fun getStartData(isOnline: Boolean) = Unit
 
-    override fun getMoreData(isOnline: Boolean, sortType: SortBy) {
+    override fun getMoreData(isOnline: Boolean) {
         (if (category == CategoryFragment.DISCOUNT) {
-            loadMoreData(isOnline, Query.Get.Products.DiscountProducts(sortBy = sortType))
-        } else loadMoreData(isOnline, Query.Get.Products.ProductCategory(category, sortBy = sortType)))
+            loadMoreData(isOnline, Query.Get.Products.DiscountProducts(sortBy = this.sortType))
+        } else loadMoreData(isOnline, Query.Get.Products.ProductCategory(category, sortBy = this.sortType)))
             .subscribeOn(schedulerProvider.io)
             .observeOn(schedulerProvider.io)
             .subscribe(
@@ -49,6 +49,6 @@ class CategoryViewModel @Inject constructor(
         lastPage = 1
         this.category = category
         this.sortType = sortType
-        getMoreData(isOnline, sortType)
+        getMoreData(isOnline)
     }
 }

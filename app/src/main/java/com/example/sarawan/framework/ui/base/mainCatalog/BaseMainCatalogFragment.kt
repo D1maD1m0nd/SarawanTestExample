@@ -17,7 +17,6 @@ import androidx.recyclerview.widget.RecyclerView
 import coil.ImageLoader
 import com.example.sarawan.R
 import com.example.sarawan.activity.FabChanger
-import com.example.sarawan.activity.MainActivity
 import com.example.sarawan.app.App
 import com.example.sarawan.databinding.FragmentMainBinding
 import com.example.sarawan.framework.INavigation
@@ -27,7 +26,6 @@ import com.example.sarawan.framework.ui.main.viewHolder.ButtonMoreClickListener
 import com.example.sarawan.model.data.MainScreenDataModel
 import com.example.sarawan.rx.ISchedulerProvider
 import com.example.sarawan.utils.NetworkStatus
-import com.example.sarawan.utils.SortBy
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
 
@@ -124,7 +122,7 @@ abstract class BaseMainCatalogFragment : Fragment(), INavigation {
 
     protected abstract fun refresh()
 
-    protected fun watchForAdapter(recyclerView: RecyclerView = binding.mainRecyclerView) {
+    private fun watchForAdapter(recyclerView: RecyclerView = binding.mainRecyclerView) {
         recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 mainRecyclerAdapter?.let { adapter ->
@@ -136,16 +134,10 @@ abstract class BaseMainCatalogFragment : Fragment(), INavigation {
                                 .findLastVisibleItemPosition()
                         ) == CardType.LOADING.type
                     ) if (isOnline) {
-                        /*TODO change animation*/
                         isDataLoaded = false
-                        viewModel.getMoreData(
-                            isOnline,
-                            SortBy.PRICE_ASC
-                        )
-                    } else {
-                        handleNetworkErrorWithToast()
-                        /*TODO change animation*/
-                    }
+                        viewModel.getMoreData(isOnline)
+                    } else handleNetworkErrorWithToast()
+                    adapter.changeLoadingAnimation(isOnline)
                 }
             }
         })
@@ -283,13 +275,8 @@ abstract class BaseMainCatalogFragment : Fragment(), INavigation {
         super.onDestroyView()
         binding.mainRecyclerView.layoutManager = null
         binding.mainRecyclerView.adapter = null
-        viewModel.clear()
-    }
-
-    override fun onDestroy() {
         _binding = null
-        (activity as MainActivity).setSupportActionBar(null)
-        super.onDestroy()
+        viewModel.clear()
     }
 
     override fun onAttach(context: Context) {

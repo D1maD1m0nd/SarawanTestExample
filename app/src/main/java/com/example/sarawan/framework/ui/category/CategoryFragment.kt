@@ -3,10 +3,8 @@ package com.example.sarawan.framework.ui.category
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.AdapterView
 import com.example.sarawan.R
-import com.example.sarawan.databinding.FragmentCatalogListBinding
 import com.example.sarawan.databinding.SpinnerDropdownViewElementBinding
 import com.example.sarawan.framework.ui.base.mainCatalog.BaseMainCatalogFragment
 import com.example.sarawan.framework.ui.category.spinnerAdapter.CustomSpinnerAdapter
@@ -14,12 +12,8 @@ import com.example.sarawan.framework.ui.category.viewModel.CategoryViewModel
 import com.example.sarawan.model.data.AppState
 import com.example.sarawan.model.data.MainScreenDataModel
 import com.example.sarawan.utils.SortBy
-import dagger.android.support.AndroidSupportInjection
 
 class CategoryFragment : BaseMainCatalogFragment() {
-
-    private var _binding: FragmentCatalogListBinding? = null
-    private val categoryBinding get() = _binding!!
 
     override val viewModel: CategoryViewModel by lazy {
         viewModelFactory.create(CategoryViewModel::class.java)
@@ -27,30 +21,21 @@ class CategoryFragment : BaseMainCatalogFragment() {
 
     private var sortType: SortBy = SortBy.PRICE_ASC
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        AndroidSupportInjection.inject(this)
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        super.onCreateView(inflater, container, savedInstanceState)
-        _binding = FragmentCatalogListBinding.inflate(inflater, container, false)
-        return categoryBinding.root
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        categoryBinding.backButton.setOnClickListener {
+        setupAppBar()
+        initSpinner()
+    }
+
+    private fun setupAppBar() {
+        binding.topBar.visibility = View.GONE
+        binding.searchBar.visibility = View.GONE
+        binding.barWithSpinner.visibility = View.VISIBLE
+        binding.backButton.setOnClickListener {
             onFragmentBackStack()
         }
-        categoryBinding.fragmentCaption.text =
+        binding.fragmentCaption.text =
             arguments?.getString(KEY_CATEGORY_NAME) ?: "Выгодные предложения"
-        initSpinner()
-        watchForAdapter(categoryBinding.cardsRecycler)
     }
 
     override fun refresh() = Unit
@@ -86,8 +71,8 @@ class CategoryFragment : BaseMainCatalogFragment() {
             spinnerStrings
         )
 
-        categoryBinding.catalogSortSpinner.adapter = spinnerAdapter
-        categoryBinding.catalogSortSpinner.onItemSelectedListener =
+        binding.catalogSortSpinner.adapter = spinnerAdapter
+        binding.catalogSortSpinner.onItemSelectedListener =
             object : AdapterView.OnItemSelectedListener {
                 override fun onNothingSelected(parent: AdapterView<*>?) = Unit
 
@@ -110,21 +95,21 @@ class CategoryFragment : BaseMainCatalogFragment() {
                             )
                         }
                     } else {
-                        categoryBinding.catalogSortSpinner.setSelection(sortType.id)
+                        binding.catalogSortSpinner.setSelection(sortType.id)
                         handleNetworkErrorWithToast()
                     }
                 }
             }
-        categoryBinding.catalogSortSpinner.alpha = 1f
+        binding.catalogSortSpinner.alpha = 1f
         sortType =
             if (arguments?.getString(KEY_CATEGORY_NAME) != null) SortBy.PRICE_ASC
             else SortBy.DISCOUNT
-        categoryBinding.catalogSortSpinner.setSelection(sortType.id)
+        binding.catalogSortSpinner.setSelection(sortType.id)
     }
 
     override fun attachAdapterToView() {
-        categoryBinding.cardsRecycler.layoutManager = gridLayoutManager
-        categoryBinding.cardsRecycler.adapter = mainRecyclerAdapter
+        binding.mainRecyclerView.layoutManager = gridLayoutManager
+        binding.mainRecyclerView.adapter = mainRecyclerAdapter
     }
 
     override fun subscribeToViewModel() {
@@ -133,27 +118,20 @@ class CategoryFragment : BaseMainCatalogFragment() {
                 is AppState.Success<*> -> {
                     val data = appState.data as List<Pair<Int, List<MainScreenDataModel>>>
                     if (data.first().second.isNullOrEmpty()) {
-                        categoryBinding.emptyDataLayout.root.visibility = View.VISIBLE
+                        binding.emptyDataLayout.root.visibility = View.VISIBLE
                     } else {
-                        categoryBinding.emptyDataLayout.root.visibility = View.GONE
+                        binding.emptyDataLayout.root.visibility = View.GONE
                         maxCount = data.first().first
                         mainRecyclerAdapter?.setData(data.first().second, false, maxCount)
                         isDataLoaded = true
                     }
-                    categoryBinding.loadingLayout.visibility = View.GONE
+                    binding.loadingLayout.visibility = View.GONE
                 }
                 is AppState.Error -> handleNetworkErrorWithToast()
-                AppState.Loading -> categoryBinding.loadingLayout.visibility = View.VISIBLE
+                AppState.Loading -> binding.loadingLayout.visibility = View.VISIBLE
                 AppState.Empty -> Unit
             }
         }
-    }
-
-    override fun onDestroyView() {
-        categoryBinding.cardsRecycler.layoutManager = null
-        categoryBinding.cardsRecycler.adapter = null
-        _binding = null
-        super.onDestroyView()
     }
 
     override fun onFragmentNext() = Unit
