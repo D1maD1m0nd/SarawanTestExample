@@ -51,8 +51,7 @@ class MainViewModel @Inject constructor(
         )
     }
 
-    override fun getMoreData(isOnline: Boolean, sortType: SortBy) {
-        this.sortType = sortType
+    override fun getMoreData(isOnline: Boolean) {
         val tempWord = searchWord
         (if (tempWord == null) loadMoreData(
             isOnline,
