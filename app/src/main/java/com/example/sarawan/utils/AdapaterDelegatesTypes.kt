@@ -5,7 +5,6 @@ import com.example.sarawan.R
 import com.example.sarawan.databinding.BasketFooterItemBinding
 import com.example.sarawan.databinding.BasketHeaderItemBinding
 import com.example.sarawan.databinding.BasketItemBinding
-import com.example.sarawan.framework.ui.modals.SuccessOrderFragment
 import com.example.sarawan.framework.ui.profile.address_fragment.ProfileAddressFragment
 import com.example.sarawan.model.data.ProductsItem
 import com.example.sarawan.model.data.delegatesModel.BasketFooter
@@ -30,7 +29,7 @@ object AdapterDelegatesTypes {
                 item.basketProduct?.let {
                     titleProductTextView.text = it.basketProduct?.name
                     propertiesTextView.text = it.basketProduct?.unitQuantity
-                    productCompanyTextView.text = "Растишка"
+                    productCompanyTextView.text = "Сарафан"
                     productCountryTextView.text = "Россия"
                     productShopTextView.text = it.store
                     sumTextView.text = String.format("%s ₽", it.price)
@@ -54,8 +53,15 @@ object AdapterDelegatesTypes {
                     if(counter > 0) {
                         --counter
                         item.quantity = counter
-                        itemClickListener.update()
-                        counterTextView.text = counter.toString()
+                        if(counter == 0) {
+                            val basketId = item.basketProductId
+                            basketId?.let {
+                                itemClickListener.deleteItem(basketId, absoluteAdapterPosition, item)
+                            }
+                        } else {
+                            itemClickListener.update()
+                            counterTextView.text = counter.toString()
+                        }
                     }
                 }
 
@@ -81,24 +87,14 @@ object AdapterDelegatesTypes {
     ){
         bind {
             binding.apply {
+                weightValueTextView.text = String.format("%.2f кг", item.weight)
                 costValueTextView.text = String.format("%.2f ₽", item.price)
-                diliveryPriceValueTextView.text = String.format("%.2f ₽", item.deliveryPrice)
-                resultValuePaymentTextView.text = String.format("%.2f ₽", item.resultPrice)
-                weightValueTextView.text = item.weight.toString()
-                addressButton.text = item.address
-                addressButton.setOnClickListener {
-                    itemClickListener.showModal(ProfileAddressFragment.newInstance())
-                }
-
-                setOrderButton.setOnClickListener {
-                    itemClickListener.create()
-                    itemClickListener.showModal(SuccessOrderFragment.newInstance())
-                }
-
                 clearButton.setOnClickListener {
                     itemClickListener.clear()
                 }
-
+                navigateOrderButton.setOnClickListener {
+                    itemClickListener.openOrderCard()
+                }
             }
         }
     }

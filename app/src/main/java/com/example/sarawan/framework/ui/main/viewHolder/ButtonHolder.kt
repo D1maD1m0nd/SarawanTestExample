@@ -1,6 +1,5 @@
 package com.example.sarawan.framework.ui.main.viewHolder
 
-import android.os.Bundle
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.sarawan.R
@@ -8,7 +7,7 @@ import com.example.sarawan.app.App
 import com.example.sarawan.databinding.ListItemButtonBinding
 import com.example.sarawan.model.data.MainScreenDataModel
 
-class ButtonHolder(private val binding: ListItemButtonBinding) :
+class ButtonHolder(private val binding: ListItemButtonBinding, private val listener: ButtonMoreClickListener) :
     RecyclerView.ViewHolder(binding.root) {
     fun bind(data: MainScreenDataModel) {
         with(binding) {
@@ -20,8 +19,12 @@ class ButtonHolder(private val binding: ListItemButtonBinding) :
                 )
             )
             button.setOnClickListener {
-                App.navController.navigate(R.id.action_mainFragment_to_categoryFragment)
+                listener.onButtonClick()
             }
         }
     }
+}
+
+fun interface ButtonMoreClickListener {
+    fun onButtonClick()
 }

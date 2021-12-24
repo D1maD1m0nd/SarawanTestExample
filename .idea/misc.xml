@@ -89,7 +89,11 @@
         <entry key="..\:/KotlinProjects/sarawan_Android_2/app/src/main/res/xml/rounded_edit_text.xml" value="0.3067708333333333" />
         <entry key="..\:/Sarawan/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.3651041666666667" />
         <entry key="..\:/Sarawan/app/src/main/res/drawable/icon.xml" value="0.3651041666666667" />
+        <entry key="..\:/Sarawan/app/src/main/res/layout/basket_footer_item.xml" value="0.28940217391304346" />
+        <entry key="..\:/Sarawan/app/src/main/res/layout/fragment_order.xml" value="0.28940217391304346" />
         <entry key="..\:/Sarawan/app/src/main/res/xml/network_security_config.xml" value="0.3489583333333333" />
+        <entry key="app/src/main/res/drawable/ic_launcher_foreground.xml" value="0.17291666666666666" />
+        <entry key="app/src/main/res/drawable/ic_logo_black_24dp.xml" value="0.371875" />
       </map>
     </option>
   </component>

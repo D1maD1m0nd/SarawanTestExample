@@ -8,20 +8,25 @@ abstract class BaseMainCatalogAdapter : RecyclerView.Adapter<RecyclerView.ViewHo
 
     protected val displayData: MutableList<MainScreenDataModel> = mutableListOf()
 
-    @SuppressLint("NotifyDataSetChanged")
-    fun clearData() {
-        displayData.clear()
-        notifyDataSetChanged()
-    }
-
     override fun getItemCount(): Int = displayData.size
 
     override fun getItemViewType(position: Int): Int {
         return displayData[position].cardType ?: -1
     }
 
+    @SuppressLint("NotifyDataSetChanged")
+    open fun clear() {
+        displayData.clear()
+        notifyDataSetChanged()
+    }
+
     interface OnListItemClickListener {
-        fun onItemPriceChangeClick(data: MainScreenDataModel, diff: Int, isNewItem: Boolean)
+        fun onItemPriceChangeClick(
+            data: MainScreenDataModel,
+            diff: Int,
+            isNewItem: Boolean,
+            callback: (isOnline: Boolean) -> Unit
+        )
 
         fun onItemClick(data: MainScreenDataModel)
     }
@@ -32,6 +37,5 @@ enum class CardType(val type: Int) {
     COMMON(1),
     STRING(2),
     BUTTON(3),
-    PARTNERS(4),
-    LOADING(5)
+    LOADING(4)
 }

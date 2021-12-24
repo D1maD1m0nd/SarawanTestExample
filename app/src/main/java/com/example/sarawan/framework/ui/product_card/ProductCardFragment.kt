@@ -4,6 +4,7 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -17,11 +18,9 @@ import com.example.sarawan.framework.ui.product_card.adapter.ItemClickListener
 import com.example.sarawan.framework.ui.product_card.adapter.SimilarAdapter
 import com.example.sarawan.framework.ui.product_card.adapter.StoreAdapter
 import com.example.sarawan.framework.ui.product_card.viewModel.ProductCardViewModel
-import com.example.sarawan.model.data.AppState
-import com.example.sarawan.model.data.Product
-import com.example.sarawan.model.data.StorePrice
-import com.example.sarawan.model.data.TypeCardEnum
-import com.example.sarawan.utils.toProductShortItem
+import com.example.sarawan.model.data.*
+import com.example.sarawan.utils.TypeCardEnum
+import com.example.sarawan.utils.exstentions.toProductShortItem
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
 
@@ -29,14 +28,15 @@ import javax.inject.Inject
 class ProductCardFragment : Fragment() {
     private val itemClickListener = object : ItemClickListener {
 
-        override fun openProductCard(productId: Int) {
-            TODO("Not yet implemented")
+        override fun openProductCard(productId: Long) {
+            showProductFragment(productId)
         }
 
         override fun update(pos: Int, mode: Boolean, type: TypeCardEnum) {
             when(type) {
                 TypeCardEnum.SIMILAR -> updateDataBasket(pos, mode)
                 TypeCardEnum.STORE -> updateDataBasketIntoStore(pos, mode)
+                TypeCardEnum.DEFAULT -> Unit
             }
         }
 
@@ -104,6 +104,7 @@ class ProductCardFragment : Fragment() {
             }
             is AppState.Error -> Unit
             AppState.Loading -> Unit
+            else -> {}
         }
     }
 
@@ -119,8 +120,11 @@ class ProductCardFragment : Fragment() {
         containerStoreRecyclerView.itemAnimator?.changeDuration = 0
         titleTextView.text = data.name
         contentDescriptionTextView.text = data.description
+        addBasketButton.setOnClickListener {
+            itemSave(data, 0, true, TypeCardEnum.DEFAULT)
+        }
         data.storePrices?.let {
-            priceTextView.text = it.first().price
+            priceTextView.text = it.first().price.toString()
             storeTextView.text = it.first().store
             storeProducts.addAll(it)
             storeAdapter.setData(storeProducts)
@@ -150,7 +154,7 @@ class ProductCardFragment : Fragment() {
             true -> store.count++
             false -> store.count--
         }
-        val product = Product(count = store.count, storePrices = listOf(store))
+        val product = Product(count = store.count, storePrices = mutableListOf(store))
         itemSave(product , pos, false, TypeCardEnum.STORE)
     }
 
@@ -170,7 +174,16 @@ class ProductCardFragment : Fragment() {
                 storeProducts[pos].count = product.count
                 storeAdapter.notifyItemChanged(pos)
             }
+            TypeCardEnum.DEFAULT -> {
+                binding.addBasketButton.visibility = GONE
+            }
         }
+    }
+
+    private fun showProductFragment(idProduct: Long) {
+        val bundle = Bundle()
+        bundle.putLong(BasketFragment.PRODUCT_ID, idProduct)
+        navController.navigate(R.id.action_productCardFragment_self, bundle)
     }
 
     companion object {

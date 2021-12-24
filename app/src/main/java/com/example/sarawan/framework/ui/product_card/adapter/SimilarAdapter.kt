@@ -2,7 +2,6 @@ package com.example.sarawan.framework.ui.product_card.adapter
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
-import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
@@ -11,8 +10,7 @@ import coil.load
 import com.example.sarawan.R
 import com.example.sarawan.databinding.ListItemCardBinding
 import com.example.sarawan.model.data.Product
-import com.example.sarawan.framework.ui.product_card.adapter.ItemClickListener
-import com.example.sarawan.model.data.TypeCardEnum
+import com.example.sarawan.utils.TypeCardEnum
 
 class SimilarAdapter(val itemClickListener: ItemClickListener) : RecyclerView.Adapter<SimilarAdapter.ProductViewHolder>() {
     private var similarList : List<Product> = ArrayList(20)
@@ -60,15 +58,16 @@ class SimilarAdapter(val itemClickListener: ItemClickListener) : RecyclerView.Ad
             discount.visibility = GONE
             itemDescription.text = product.name
             itemShopName.text = store?.store
-            itemPrice.text = store?.price
+            itemPrice.text = store?.price.toString()
             itemQuantity.text = product.count.toString()
             if(product.count > 0) {
-                itemBuyButton.visibility = GONE
+                itemBuyButtonFrame.visibility = GONE
                 itemQuantityLayout.visibility = VISIBLE
             } else {
-                itemBuyButton.visibility = VISIBLE
+                itemBuyButtonFrame.visibility = VISIBLE
                 itemQuantityLayout.visibility = GONE
             }
+            itemQuantityLayout.setOnClickListener { }
             itemBuyButton.setOnClickListener {
                 //itemClickListener.changeVisible(absoluteAdapterPosition)
                 product.count++
@@ -81,6 +80,14 @@ class SimilarAdapter(val itemClickListener: ItemClickListener) : RecyclerView.Ad
 
             minusButton.setOnClickListener {
                 itemClickListener.update(absoluteAdapterPosition, false, TypeCardEnum.SIMILAR)
+            }
+
+            "${product.unitQuantity.toString()} Кг".also { itemWeight.text = it }
+
+            itemCard.setOnClickListener {
+                product.id?.let {
+                    itemClickListener.openProductCard(productId = product.id)
+                }
             }
 
             product.images?.let {

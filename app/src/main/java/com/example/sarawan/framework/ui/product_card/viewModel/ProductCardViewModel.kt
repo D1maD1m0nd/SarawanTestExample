@@ -69,7 +69,7 @@ class ProductCardViewModel @Inject constructor(
                 .subscribeOn(schedulerProvider.io)
                 .observeOn(schedulerProvider.io)
                 .subscribe({
-                    basketID = (it as List<Basket>).first().basketId
+                    basketID = (it as List<BasketResponse>).first().basketId
                 }, { stateLiveData.postValue(AppState.Error(it)) })
         )
         else basketID?.let { basket ->

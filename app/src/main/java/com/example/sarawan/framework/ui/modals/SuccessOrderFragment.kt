@@ -1,27 +1,54 @@
 package com.example.sarawan.framework.ui.modals
 
-import android.app.Dialog
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import androidx.fragment.app.DialogFragment
-import com.example.sarawan.R
+import com.example.sarawan.databinding.FragmentSuccessOrderBinding
 
 
 class SuccessOrderFragment : DialogFragment() {
+    private var _binding: FragmentSuccessOrderBinding? = null
+    private val binding get() = _binding!!
+    var message : String? = null
+    override fun onCreate(savedInstanceState: android.os.Bundle?) {
+        super.onCreate(savedInstanceState)
+        message = arguments?.getString(ARG_MESSAGE, "")
 
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_success_order, container, false)
+    ): View {
+        _binding = FragmentSuccessOrderBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        message?.let {
+            binding.messageTextView.text = it
+        }
+        dialog?.window?.attributes?.apply {
+            width = WindowManager.LayoutParams.MATCH_PARENT
+        }
+        binding.confrimButton.setOnClickListener {
+            dismiss()
+        }
     }
 
+    override fun onDestroyView() {
+        _binding = null
+        super.onDestroyView()
+    }
     companion object {
-        fun newInstance() = SuccessOrderFragment()
+        private const val ARG_MESSAGE = "MESSAGE"
+        fun newInstance(message : String) = SuccessOrderFragment().apply {
+            arguments = Bundle().apply {
+                putString(ARG_MESSAGE, message)
+            }
+        }
     }
 }

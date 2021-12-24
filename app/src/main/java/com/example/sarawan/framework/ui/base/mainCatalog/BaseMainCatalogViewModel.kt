@@ -1,31 +1,32 @@
 package com.example.sarawan.framework.ui.base.mainCatalog
 
-import android.graphics.Color
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import com.example.sarawan.R
 import com.example.sarawan.framework.MainInteractor
 import com.example.sarawan.framework.ui.base.BaseViewModel
 import com.example.sarawan.model.data.*
 import com.example.sarawan.rx.ISchedulerProvider
+import com.example.sarawan.utils.SortBy
+import com.example.sarawan.utils.StringProvider
 import io.reactivex.rxjava3.core.Single
+import retrofit2.HttpException
 
 abstract class BaseMainCatalogViewModel(
     private val interactor: MainInteractor,
-    private val schedulerProvider: ISchedulerProvider
+    private val schedulerProvider: ISchedulerProvider,
+    private val stringProvider: StringProvider
 ) : BaseViewModel<AppState<*>>(), MainCatalogInterface {
 
-    protected val stateMoreLiveData: MutableLiveData<AppState<*>> = MutableLiveData()
+    protected var sortType = SortBy.PRICE_ASC
 
-    private var lastPage = 1
+    protected var lastPage = 1
+
+    protected var maxElement = 0
 
     protected var searchWord: String? = null
 
     protected var basketID: Int? = null
 
-    fun getMoreLiveData(): LiveData<AppState<*>> = stateMoreLiveData
-
     fun search(word: String, isOnline: Boolean) {
+        sortType = SortBy.PRICE_ASC
         lastPage = 1
         searchWord = word
         compositeDisposable.add(
@@ -34,7 +35,17 @@ abstract class BaseMainCatalogViewModel(
                 .observeOn(schedulerProvider.io)
                 .doOnSubscribe { stateLiveData.postValue(AppState.Loading) }
                 .subscribe(
-                    { stateLiveData.postValue(AppState.Success(it)) },
+                    { productsList ->
+                        val result: MutableList<MainScreenDataModel> = mutableListOf()
+                        productsList.forEach { product ->
+                            sortShops(product)
+                            if (isValidToShow(product))
+                                result.add(
+                                    product.toMainScreenDataModel(stringProvider.getString(sortType.description))
+                                )
+                        }
+                        stateLiveData.postValue(AppState.Success(listOf(Pair(maxElement, result))))
+                    },
                     { stateLiveData.postValue(AppState.Error(it)) }
                 )
         )
@@ -48,7 +59,7 @@ abstract class BaseMainCatalogViewModel(
                 .subscribeOn(schedulerProvider.io)
                 .observeOn(schedulerProvider.io)
                 .subscribe({
-                    basketID = (it as List<Basket>).first().basketId
+                    basketID = (it as List<BasketResponse>).first().basketId
                 }, { stateLiveData.postValue(AppState.Error(it)) })
         )
         else basketID?.let { basket ->
@@ -67,20 +78,19 @@ abstract class BaseMainCatalogViewModel(
     protected fun loadMoreData(
         isOnline: Boolean,
         query: Query.Get.Products
-    ): Single<MutableList<MainScreenDataModel>> {
-        val basket = interactor.getData(Query.Get.Basket, isOnline).onErrorReturnItem(listOf(Basket()))
+    ): Single<MutableList<Product>> {
+        val basket =
+            interactor.getData(Query.Get.Basket, isOnline).onErrorReturnItem(listOf(Basket()))
         val productsData = getProductsData(isOnline, query.apply { page = lastPage })
-            .onErrorReturnItem(mutableListOf())
-        return Single.zip(productsData, basket) { productData, basketData ->
-            val data: MutableList<MainScreenDataModel> = mutableListOf()
+        return Single.zip(productsData, basket) { responseData, basketData ->
+            val data: MutableList<Product> = mutableListOf()
             val basketObject = (basketData as List<Basket>).firstOrNull()
             basketID = basketObject?.basketId
-            productData.forEach { singleData ->
-                val mainScreenData = (singleData).toMainScreenDataModel()
-                data.add(mainScreenData)
-                basketObject?.products?.forEach { basketSingleData ->
-                    if (mainScreenData.id == basketSingleData.basketProduct?.basketProduct?.id)
-                        mainScreenData.quantity = basketSingleData.quantity
+            responseData.forEach {
+                maxElement = it.count
+                it.results.forEach { singleData ->
+                    data.add(singleData)
+                    getQuantityFromBasket(basketObject, singleData)
                 }
             }
             lastPage += PAGES
@@ -88,45 +98,60 @@ abstract class BaseMainCatalogViewModel(
         }
     }
 
+    protected fun getQuantityFromBasket(
+        basketObject: Basket?,
+        singleData: Product
+    ) {
+        basketObject?.products?.forEach { basketSingleData ->
+            if (singleData.id == basketSingleData.basketProduct?.basketProduct?.id)
+                singleData.storePrices?.forEach { store ->
+                    if (store.id == basketSingleData.basketProduct?.productStoreId)
+                        store.count = basketSingleData.quantity ?: 0
+                }
+        }
+    }
+
     private fun getProductsData(
         isOnline: Boolean,
         query: Query.Get.Products
-    ): Single<MutableList<Product>> {
+    ): Single<MutableList<Response>> {
         return if (lastPage + PAGES <= query.page) Single.fromCallable { mutableListOf() }
-        else Single.zip(
-            interactor.getData(
-                query,
-                isOnline
-            ) as Single<MutableList<Product>>,
-            getProductsData(isOnline, query.apply { page += 1 })
-        ) { data1, data2 ->
-            data1.addAll(data2)
-            data1
+        else {
+            val singleData = (interactor.getData(query, isOnline) as Single<MutableList<Response>>)
+                .onErrorReturn {
+                    if (it is HttpException && it.code() == 404) mutableListOf()
+                    else throw it
+                }
+            Single.zip(singleData, getProductsData(isOnline, query.apply { page += 1 }))
+            { data1, data2 ->
+                data1.addAll(data2)
+                data1
+            }
         }
     }
 
     abstract fun getMoreData(isOnline: Boolean)
 
-    protected fun getRandomPicturesAsPartners(data: MutableList<MainScreenDataModel>) {
-        for (i in 0..(Math.random() * 10 + 10).toInt()) {
-            val picture = when ((Math.random() * 3).toInt()) {
-                0 -> R.drawable.test_5
-                1 -> R.drawable.test_lenta
-                else -> R.drawable.test_magnit
+    fun clear() {
+        stateLiveData.value = AppState.Empty
+    }
+
+    protected fun sortShops(product: Product) {
+        product.apply {
+            when (sortType) {
+                SortBy.PRICE_ASC -> storePrices?.sortBy { it.price }
+                SortBy.PRICE_DES -> storePrices?.sortBy { it.price }
+                SortBy.ALPHABET -> Unit
+                SortBy.DISCOUNT -> storePrices?.sortByDescending { it.discount }
             }
-            val color = if (picture == R.drawable.test_lenta) Color.BLUE else Color.WHITE
-            data.add(
-                MainScreenDataModel(
-                    backgroundColor = color,
-                    padding = arrayListOf(25, 25, 0, 0),
-                    pictureUrl = picture.toString(),
-                    cardType = CardType.PARTNERS.type
-                )
-            )
         }
     }
 
+    protected fun isValidToShow(product: Product) =
+        product.storePrices?.findLast { it.count > 0 } == product.storePrices?.first() ||
+                product.storePrices?.sumOf { it.count } == 0
+
     companion object {
-        const val PAGES = 5
+        const val PAGES = 3
     }
 }

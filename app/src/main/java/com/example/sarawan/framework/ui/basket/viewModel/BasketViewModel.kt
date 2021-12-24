@@ -24,56 +24,16 @@ class BasketViewModel @Inject constructor(
         )
     }
 
-    fun getAddress() {
-        compositeDisposable.add(
-            interactor.getData(Query.Get.Address, true)
-                .subscribeOn(schedulerProvider.io)
-                .observeOn(schedulerProvider.io)
-                .doOnSubscribe { stateLiveData.postValue(AppState.Loading) }
-                .subscribe(
-                    { stateLiveData.postValue(AppState.Success(it)) },
-                    { stateLiveData.postValue(AppState.Error(it)) }),
-        )
-    }
-
-    fun getOrder(address: AddressItem) {
-        compositeDisposable.add(
-            interactor.getData(Query.Get.Orders.Order(address), true)
-                .subscribeOn(schedulerProvider.io)
-                .observeOn(schedulerProvider.io)
-                .doOnSubscribe { stateLiveData.postValue(AppState.Loading) }
-                .subscribe(
-                    { stateLiveData.postValue(AppState.Success(it)) },
-                    { stateLiveData.postValue(AppState.Error(it)) }),
-        )
-    }
-
-    fun createOrder(address: AddressItem){
-        basketID?.let { id ->
-            compositeDisposable.add(
-                interactor.getData(Query.Post.Order.Create(address), true)
-                    .subscribeOn(schedulerProvider.io)
-                    .observeOn(schedulerProvider.io)
-                    .doOnSubscribe { stateLiveData.postValue(AppState.Loading) }
-                    .subscribe(
-                        {stateLiveData.postValue(AppState.Success(it))},
-                        { stateLiveData.postValue(AppState.Error(it)) }),
-            )
-        }
-        if (basketID == null) stateLiveData.value =
-            AppState.Error(RuntimeException("Should init BasketID first"))
-    }
 
     fun clearBasket() {
-        basketID?.let { id ->
+        basketID?.let {
             compositeDisposable.add(
                 interactor.getData(Query.Delete.Basket.Clear, true)
                     .subscribeOn(schedulerProvider.io)
                     .observeOn(schedulerProvider.io)
-                    .doOnSubscribe { stateLiveData.postValue(AppState.Loading) }
                     .subscribe(
-                        {stateLiveData.postValue(AppState.Success(it))},
-                        { stateLiveData.postValue(AppState.Error(it)) }),
+                        {stateLiveData.postValue(AppState.Empty)},
+                        {stateLiveData.postValue(AppState.Empty)}),
             )
         }
         if (basketID == null) stateLiveData.value =
@@ -86,8 +46,9 @@ class BasketViewModel @Inject constructor(
                 interactor.getData(Query.Put.Basket.Update(id, products), true)
                     .subscribeOn(schedulerProvider.io)
                     .observeOn(schedulerProvider.io)
-                    .doOnSubscribe { stateLiveData.postValue(AppState.Loading) }
-                    .subscribeWith(getObserver())
+                    .subscribe(
+                        {stateLiveData.postValue(AppState.Success(it))},
+                        {stateLiveData.postValue(AppState.Success(emptyList<ProductsItem>()))})
             )
         }
         if (basketID == null) stateLiveData.value =
@@ -99,23 +60,10 @@ class BasketViewModel @Inject constructor(
             interactor.getData(Query.Delete.Basket.Remove(id), true)
                 .subscribeOn(schedulerProvider.io)
                 .observeOn(schedulerProvider.io)
-                .doOnSubscribe { stateLiveData.postValue(AppState.Loading) }
-                .subscribeWith(getObserver())
+                .subscribe(
+                    {stateLiveData.postValue(AppState.Success(it))},
+                    {}),
         )
-    }
-
-    private fun getObserver() = object : DisposableSingleObserver<List<*>>() {
-        override fun onSuccess(result: List<*>) {
-            val basket = result.first() as Basket
-            basketID = basket.basketId
-            val items = basket.products as List<*>
-            stateLiveData.postValue(AppState.Success(items))
-        }
-
-        override fun onError(e: Throwable) {
-//            stateLiveData.postValue(AppState.Error(e))
-            stateLiveData.postValue(AppState.Success(emptyList<ProductsItem>()))
-        }
     }
 
     private fun getObserverBasketList() = object : DisposableSingleObserver<List<*>>() {
@@ -131,6 +79,7 @@ class BasketViewModel @Inject constructor(
         }
 
         override fun onError(e: Throwable) {
+
 //            stateLiveData.postValue(AppState.Error(e))
             stateLiveData.postValue(AppState.Success(emptyList<ProductsItem>()))
         }

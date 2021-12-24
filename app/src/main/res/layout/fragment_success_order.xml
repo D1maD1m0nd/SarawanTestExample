@@ -10,12 +10,12 @@
     android:paddingBottom="50dp">
 
     <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/materialTextView2"
+        android:id="@+id/message_text_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="@string/confrim_order_message"
-        android:textSize="28sp"
+        android:text="@string/confirm_order_message"
+        android:textSize="24sp"
         android:lineSpacingExtra="0sp"
         android:fontFamily="@font/montserrat_medium"
         android:textColor="@color/black"
@@ -31,8 +31,8 @@
         android:fontFamily="@font/montserrat_medium"
         android:text="@string/profile_alert_ok"
         app:cornerRadius="10dp"
-        app:layout_constraintEnd_toEndOf="@+id/materialTextView2"
-        app:layout_constraintStart_toStartOf="@+id/materialTextView2"
-        app:layout_constraintTop_toBottomOf="@+id/materialTextView2" />
+        app:layout_constraintEnd_toEndOf="@+id/message_text_view"
+        app:layout_constraintStart_toStartOf="@+id/message_text_view"
+        app:layout_constraintTop_toBottomOf="@+id/message_text_view" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -29,3 +29,14 @@ var SharedPreferences.basketId:Int?
                 .apply()
         }
     }
+
+var SharedPreferences.basketAddressId:Int?
+    get() = this.getInt("basketAddress", -1)
+    set(value) {
+        if (value != null) {
+            this.edit()
+                .putInt("basketId", value)
+                .apply()
+        }
+    }
+

@@ -5,8 +5,10 @@ import android.graphics.Color
 import android.graphics.Typeface
 import android.view.Gravity
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import coil.ImageLoader
@@ -22,11 +24,16 @@ import com.google.android.material.textview.MaterialTextView
 class MainRecyclerAdapter(
     private var onListItemClickListener: OnListItemClickListener,
     private val imageLoader: ImageLoader,
+    private val onButtonMoreClickListener: ButtonMoreClickListener,
     private val callback: () -> Unit
 ) : BaseMainCatalogAdapter() {
 
     private val topData: MutableList<MainScreenDataModel> = mutableListOf()
-    private val partnersData: MutableList<MainScreenDataModel> = mutableListOf()
+    private val commonData: MutableList<MainScreenDataModel> = mutableListOf()
+
+    private var isLoadingHidden = false
+
+    private var loadingLayout: LoadingLayoutBinding? = null
 
     private val topRecyclerAdapter =
         TopRecyclerAdapter(onListItemClickListener, imageLoader) { measuredHeight: Int ->
@@ -35,18 +42,67 @@ class MainRecyclerAdapter(
         }
     private lateinit var topCardsRecycler: RecyclerView
 
-    private val partnersRecyclerAdapter = PartnersRecyclerAdapter(imageLoader)
-    private lateinit var partnersCardsRecycler: RecyclerView
+    fun setData(data: List<MainScreenDataModel>?, isRecommended: Boolean, maxCommonData: Int) {
+        if (data.isNullOrEmpty()) return
+        setTopData(data)
+        setRecommendedString(isRecommended)
+        setLoading()
+        setCommonData(data)
+        removeLoading(maxCommonData)
+    }
+
+    private fun removeLoading(maxCommonData: Int) {
+        if (!isLoadingHidden && maxCommonData - commonData.size < 1) {
+            isLoadingHidden = true
+            displayData.removeLast()
+            notifyItemRemoved(itemCount)
+        }
+    }
+
+    private fun setLoading() {
+        if (!isLoadingHidden && displayData.none { it.cardType == CardType.LOADING.type }) displayData.add(
+            MainScreenDataModel(
+                cardType = CardType.LOADING.type
+            )
+        )
+    }
+
+    private fun setCommonData(data: List<MainScreenDataModel>) {
+        val filteredData = data.filter { it.cardType == CardType.COMMON.type }
+        commonData.addAll(filteredData)
+        filteredData.forEach { setData(it) }
+    }
+
+    private fun setData(data: MainScreenDataModel) {
+        val index = if (isLoadingHidden) itemCount else itemCount - 1
+        displayData.add(index, data)
+        notifyItemInserted(index)
+    }
+
 
     @SuppressLint("NotifyDataSetChanged")
-    fun setData(data: List<MainScreenDataModel>?, isRecommended: Boolean) {
-        if (data == null) return
-        topData.clear()
-        displayData.clear()
-        partnersData.clear()
-        topData.addAll(data.filter { it.cardType == CardType.TOP.type })
-        partnersData.addAll(data.filter { it.cardType == CardType.PARTNERS.type })
-        if (topData.isNotEmpty()) {
+    private fun setRecommendedString(isRecommended: Boolean) {
+        if (displayData.none { it.cardType == CardType.COMMON.type }) {
+            displayData.add(
+                MainScreenDataModel(
+                    itemDescription = if (isRecommended) "Мы рекомендуем" else null,
+                    fontSize = if (isRecommended) 18F else 0F,
+                    backgroundColor = Color.WHITE,
+                    padding = if (isRecommended) arrayListOf(13, 24, 0, 14)
+                    else arrayListOf(13, 10, 0, 0),
+                    gravity = Gravity.START,
+                    fontType = Typeface.BOLD,
+                    cardType = CardType.STRING.type
+                )
+            )
+            notifyDataSetChanged()
+        }
+    }
+
+    private fun setTopData(data: List<MainScreenDataModel>) {
+        val filteredTopData = data.filter { it.cardType == CardType.TOP.type }
+        if (filteredTopData.isNotEmpty()) {
+            topData.addAll(filteredTopData)
             displayData.add(
                 MainScreenDataModel(
                     itemDescription = "Выгодные предложения",
@@ -59,69 +115,16 @@ class MainRecyclerAdapter(
             displayData.add(MainScreenDataModel(cardType = CardType.TOP.type))
             displayData.add(
                 MainScreenDataModel(
-                    itemDescription = "Посмотреть еще",
+                    itemDescription = "Посмотреть всё",
                     cardType = CardType.BUTTON.type
                 )
             )
         } else callback()
-        displayData.add(
-            MainScreenDataModel(
-                itemDescription = if (isRecommended) "Мы рекомендуем" else null,
-                fontSize = if (isRecommended) 18F else 0F,
-                backgroundColor = Color.WHITE,
-                padding = if (isRecommended) arrayListOf(13, 24, 0, 14)
-                else arrayListOf(13, 10, 0, 0),
-                gravity = Gravity.START,
-                fontType = Typeface.BOLD,
-                cardType = CardType.STRING.type
-            )
-        )
-        notifyDataSetChanged()
-        val commonData = data.filter { it.cardType == CardType.COMMON.type }
-        commonData.forEach {
-            setData(it)
-        }
-        displayData.add(
-            MainScreenDataModel(
-                cardType = CardType.LOADING.type
-            )
-        )
-        if (!partnersData.isNullOrEmpty()) {
-            displayData.add(
-                MainScreenDataModel(
-                    itemDescription = "Наши магазины",
-                    backgroundColor = Color.WHITE,
-                    padding = arrayListOf(13, 32, 0, 8),
-                    fontSize = 28F,
-                    gravity = Gravity.START,
-                    cardType = CardType.STRING.type
-                )
-            )
-            displayData.add(MainScreenDataModel(cardType = CardType.PARTNERS.type))
-        }
-    }
-
-    fun addData(data: List<MainScreenDataModel>?) {
-        if (data.isNullOrEmpty()) return
-        else {
-            data.forEach {
-                setData(it, itemCount - 1)
-            }
-        }
-    }
-
-    private fun setData(data: MainScreenDataModel?, index: Int = itemCount) {
-        data?.let {
-            if (it.cardType == CardType.COMMON.type) {
-                displayData.add(index, it)
-                notifyItemInserted(index)
-            }
-        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
-            CardType.COMMON.type -> object : CardItemViewHolder(
+            CardType.COMMON.type -> CardItemViewHolder(
                 ListItemCardBinding.inflate(
                     LayoutInflater.from(parent.context),
                     parent,
@@ -129,24 +132,12 @@ class MainRecyclerAdapter(
                 ),
                 imageLoader,
                 onListItemClickListener
-            ) {}
+            )
             CardType.TOP.type -> {
                 topCardsRecycler = RecyclerView(parent.context)
                 topCardsRecycler.layoutManager =
                     LinearLayoutManager(parent.context, LinearLayoutManager.HORIZONTAL, false)
                 TopCardsViewHolder(topCardsRecycler, topRecyclerAdapter)
-            }
-            CardType.PARTNERS.type -> {
-                partnersCardsRecycler = RecyclerView(parent.context)
-                partnersCardsRecycler.layoutManager =
-                    LinearLayoutManager(parent.context, LinearLayoutManager.HORIZONTAL, false)
-                val params = LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT
-                )
-                params.setMargins(0, 0, 0, 140)
-                partnersCardsRecycler.layoutParams = params
-                PartnersViewHolder(partnersCardsRecycler, partnersRecyclerAdapter)
             }
             CardType.STRING.type -> StringHolder(MaterialTextView(parent.context))
             CardType.BUTTON.type -> ButtonHolder(
@@ -154,15 +145,17 @@ class MainRecyclerAdapter(
                     LayoutInflater.from(parent.context),
                     parent,
                     false
-                )
+                ),
+                onButtonMoreClickListener
             )
-            CardType.LOADING.type -> object : RecyclerView.ViewHolder(
-                LoadingLayoutBinding.inflate(
+            CardType.LOADING.type -> {
+                loadingLayout = LoadingLayoutBinding.inflate(
                     LayoutInflater.from(parent.context),
                     parent,
                     false
-                ).root
-            ) {}
+                )
+                object : RecyclerView.ViewHolder(loadingLayout!!.root) {}
+            }
             else -> throw RuntimeException("No Such viewType: $viewType")
         }
     }
@@ -185,10 +178,6 @@ class MainRecyclerAdapter(
                     holder.bind(topData)
                 }
             }
-            CardType.PARTNERS.type -> {
-                holder as PartnersViewHolder
-                holder.bind(partnersData)
-            }
             CardType.STRING.type -> {
                 holder as StringHolder
                 holder.bind(displayData[position])
@@ -200,6 +189,28 @@ class MainRecyclerAdapter(
             CardType.LOADING.type -> Unit
             else -> throw RuntimeException("No binder for holder: $holder")
         }
+    }
+
+    fun changeLoadingAnimation(enable: Boolean) {
+        loadingLayout?.let {
+            if (!isLoadingHidden && it.root.isVisible) {
+                if (enable) {
+                    if (!it.loadingProgress.isIndeterminate) {
+                        it.loadingProgress.visibility = View.INVISIBLE
+                        it.loadingProgress.isIndeterminate = true
+                        it.loadingProgress.visibility = View.VISIBLE
+                    }
+                } else if (it.loadingProgress.isIndeterminate)
+                    it.loadingProgress.setProgressCompat(20, true)
+            }
+        }
+    }
+
+    override fun clear() {
+        topData.clear()
+        commonData.clear()
+        topRecyclerAdapter.clear()
+        super.clear()
     }
 
     interface CancellableHolder {

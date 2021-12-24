@@ -13,8 +13,8 @@ android {
         applicationId "com.example.sarawan"
         minSdk 23
         targetSdk 31
-        versionCode 1
-        versionName "1.0"
+        versionCode 4
+        versionName "1.245"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -35,14 +35,6 @@ android {
     buildFeatures {
         viewBinding true
     }
-    buildTypes.each {
-        Properties properties = new Properties()
-        properties.load(project.rootProject.file("app.properties").newDataInputStream())
-        def userToken  = properties.getProperty("USER_TOKEN", "")
-        def userId = properties.getProperty("USER_ID", "")
-        it.buildConfigField "String", "USER_TOKEN", userToken
-        it.buildConfigField "String", "USER_ID", userId
-    }
 }
 
 dependencies {
@@ -62,9 +54,9 @@ dependencies {
     implementation 'androidx.navigation:navigation-ui-ktx:2.3.5'
 
     // Room
-    implementation 'androidx.room:room-runtime:2.3.0'
-    implementation "androidx.room:room-rxjava3:2.3.0"
-    kapt 'androidx.room:room-compiler:2.3.0'
+    implementation 'androidx.room:room-runtime:2.4.0'
+    implementation "androidx.room:room-rxjava3:2.4.0"
+    kapt 'androidx.room:room-compiler:2.4.0'
 
     // FireBase
     implementation 'com.google.firebase:firebase-messaging:23.0.0'
@@ -72,7 +64,7 @@ dependencies {
 
     // RxJava 3
     implementation 'io.reactivex.rxjava3:rxandroid:3.0.0'
-    implementation 'io.reactivex.rxjava3:rxjava:3.1.2'
+    implementation 'io.reactivex.rxjava3:rxjava:3.1.3'
 
     // Coil
     implementation 'io.coil-kt:coil:1.4.0'

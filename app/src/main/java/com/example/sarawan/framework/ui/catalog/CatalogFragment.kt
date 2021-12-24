@@ -29,21 +29,29 @@ class CatalogFragment : BaseMainCatalogFragment() {
     private val onCatalogItemClickListener: CatalogRecyclerAdapter.OnListItemClickListener =
         object : CatalogRecyclerAdapter.OnListItemClickListener {
             override fun onItemClick(data: MainScreenDataModel) {
-                val bundle = Bundle()
-                bundle.putInt(CategoryFragment.KEY_CATEGORY, data.id?.toInt() ?: -1)
-                bundle.putString(CategoryFragment.KEY_CATEGORY_NAME, data.itemDescription)
-                App.navController.navigate(R.id.action_catalogFragment_to_categoryFragment, bundle)
+                if (isOnline) {
+                    val bundle = Bundle()
+                    bundle.putInt(CategoryFragment.KEY_CATEGORY, data.id?.toInt() ?: -1)
+                    bundle.putString(CategoryFragment.KEY_CATEGORY_NAME, data.itemDescription)
+                    App.navController.navigate(
+                        R.id.action_catalogFragment_to_categoryFragment,
+                        bundle
+                    )
+                } else handleNetworkErrorWithToast()
             }
         }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        if (savedInstanceState == null && isOnline) viewModel.getStartData(isOnline)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         initCatalogRecyclerAdapter()
+        if (isOnline) viewModel.getStartData(isOnline) else handleNetworkErrorWithLayout()
         super.onViewCreated(view, savedInstanceState)
+    }
+
+    override fun refresh() {
+        if (isOnline) {
+            viewModel.getStartData(isOnline)
+            binding.noConnectionLayout.root.visibility = View.GONE
+        }
     }
 
     override fun attachAdapterToView() {
@@ -54,7 +62,7 @@ class CatalogFragment : BaseMainCatalogFragment() {
     private fun initCatalogRecyclerAdapter() {
         if (catalogAdapter == null) {
             catalogAdapter = CatalogRecyclerAdapter(onCatalogItemClickListener)
-        }
+        } else catalogAdapter?.clear()
     }
 
     override fun subscribeToViewModel() {
@@ -63,16 +71,17 @@ class CatalogFragment : BaseMainCatalogFragment() {
                 is AppState.Success<*> -> {
                     val listData = appState.data as List<*>?
                     if (listData.isNullOrEmpty()) {
-                        mainRecyclerAdapter?.clearData()
-                        catalogAdapter?.clearData()
                         binding.loadingLayout.visibility = View.GONE
                     } else when (listData.first()) {
-                        is MainScreenDataModel -> {
+                        is Pair<*, *> -> {
                             binding.mainRecyclerView.layoutManager = gridLayoutManager
                             binding.mainRecyclerView.adapter = mainRecyclerAdapter
+                            maxCount =
+                                (listData.first() as Pair<Int, List<MainScreenDataModel>>).first
                             mainRecyclerAdapter?.setData(
-                                listData as List<MainScreenDataModel>,
-                                binding.searchField.editText?.text.isNullOrEmpty()
+                                (listData.first() as Pair<Int, List<MainScreenDataModel>>).second,
+                                binding.searchField.editText?.text.isNullOrEmpty(),
+                                maxCount
                             )
                         }
                         is CategoryDataModel -> {
@@ -87,11 +96,11 @@ class CatalogFragment : BaseMainCatalogFragment() {
                             }
                         }
                     }
-                    binding.topBarLayout.setExpanded(true, true)
-                    binding.mainRecyclerView.scrollToPosition(0)
+                    isDataLoaded = true
                 }
-                is AppState.Error -> Unit
+                is AppState.Error -> handleNetworkErrorWithToast()
                 AppState.Loading -> binding.loadingLayout.visibility = View.VISIBLE
+                AppState.Empty -> Unit
             }
         }
     }

@@ -12,11 +12,9 @@ import com.example.sarawan.app.App.Companion.navController
 import com.example.sarawan.databinding.ActivityMainBinding
 import com.example.sarawan.framework.ui.profile.phone_fragment.ProfilePhoneFragment
 import com.example.sarawan.model.data.AppState
-import com.example.sarawan.model.data.ProductsItem
 import com.example.sarawan.rx.ISchedulerProvider
 import com.example.sarawan.utils.NetworkStatus
 import com.example.sarawan.utils.exstentions.userId
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.android.AndroidInjection
 import io.reactivex.rxjava3.subjects.BehaviorSubject
 import javax.inject.Inject
@@ -52,7 +50,6 @@ class MainActivity : AppCompatActivity(), FabChanger {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         initNavigation()
-        observeOnlineStatus()
         initFAB()
         viewModel.getStateLiveData().observe(this) { appState: AppState<*> ->
             updateFab(appState)
@@ -61,8 +58,8 @@ class MainActivity : AppCompatActivity(), FabChanger {
 
     private fun updateFab(appState: AppState<*>) {
         if (appState is AppState.Success<*>) {
-            val data = appState.data as List<ProductsItem>
-            putPrice(data.sumOf { it.basketProduct?.price!!.toDouble() * it.quantity!! }.toFloat())
+            val data = appState.data as List<Float?>
+            putPrice(data.firstOrNull() ?: 0f)
         }
     }
 
@@ -80,20 +77,14 @@ class MainActivity : AppCompatActivity(), FabChanger {
     }
 
     private fun initNavigation() {
-        val navView: BottomNavigationView = binding.bottomNavigationView
+        val navView = binding.bottomNavigationView
         navController = findNavController(R.id.nav_fragment)
         navView.setupWithNavController(navController)
 
         navView.setOnItemSelectedListener {
-            if (it.itemId == R.id.profileFragment) {
-/*
-                Toast.makeText(this, "Switched to profile", Toast.LENGTH_SHORT).show()
-                // тут можно вызвать попап при проверке сохранненго номера телефона или токена вместо навигации
-                navController.navigate(it.itemId)
-                // тут можно возвращать false чтобы не выделять отмеченный элемент
-                return@setOnItemSelectedListener true
-*/
-                return@setOnItemSelectedListener showProfile()
+            when (it.itemId) {
+                R.id.profileFragment -> return@setOnItemSelectedListener showProfile()
+                R.id.basketFragment -> return@setOnItemSelectedListener showBasket()
             }
             navController.navigate(it.itemId)
             true
@@ -115,19 +106,22 @@ class MainActivity : AppCompatActivity(), FabChanger {
             true
         }
 
+    private fun showBasket(): Boolean =
+        if (sharedPreferences.userId == -1L) {
+            ProfilePhoneFragment.newInstance { navigateToProfile() }
+                .show(supportFragmentManager, null)
+            false
+        } else {
+            navigateToBasket()
+            true
+        }
+
     private fun navigateToProfile() {
         navController.navigate(R.id.profileFragment)
     }
 
-    private fun observeOnlineStatus() {
-        networkStatus
-            .isOnline()
-            .subscribeOn(schedulerProvider.io)
-            .observeOn(schedulerProvider.ui)
-            .subscribe { isOnline ->
-                val message = if (isOnline) "You now Online" else "You are Offline!"
-                Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
-            }
+    private fun navigateToBasket() {
+        navController.navigate(R.id.basketFragment)
     }
 
     override fun onBackPressed() {
@@ -137,7 +131,7 @@ class MainActivity : AppCompatActivity(), FabChanger {
     }
 
     private fun checkExit() {
-        Toast.makeText(this, "Press BACK again to exit", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, getString(R.string.press_back_again_to_exit), Toast.LENGTH_SHORT).show()
         if (System.currentTimeMillis() - lastTimeBackPressed < BACK_BUTTON_EXIT_DELAY && isBackShown) {
             exitProcess(0)
         } else isBackShown = false
@@ -149,7 +143,7 @@ class MainActivity : AppCompatActivity(), FabChanger {
     }
 
     override fun changePrice(price: Float) {
-        totalPrice.onNext(totalPrice.value ?: 0 + price)
+        totalPrice.onNext((totalPrice.value ?: 0f) + price)
     }
 
     companion object {

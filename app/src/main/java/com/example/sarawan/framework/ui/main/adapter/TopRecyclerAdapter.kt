@@ -21,8 +21,7 @@ class TopRecyclerAdapter(
     @SuppressLint("NotifyDataSetChanged")
     fun setData(data: List<MainScreenDataModel>?) {
         displayData.clear()
-        if (data == null) return
-        displayData.addAll(data.sortedByDescending { it.discount })
+        if (!data.isNullOrEmpty()) displayData.addAll(data.sortedByDescending { it.discount })
         notifyDataSetChanged()
     }
 
@@ -36,11 +35,11 @@ class TopRecyclerAdapter(
                 width = parent.width / 2
             }
         }
-        return object : CardItemViewHolder(
+        return CardItemViewHolder(
             view,
             imageLoader,
             onListItemClickListener
-        ) {}
+        )
     }
 
     override fun onBindViewHolder(holder: CardItemViewHolder, position: Int) {
@@ -53,6 +52,12 @@ class TopRecyclerAdapter(
     override fun onViewRecycled(holder: CardItemViewHolder) {
         holder.cancelTask()
         super.onViewRecycled(holder)
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun clear() {
+        displayData.clear()
+        notifyDataSetChanged()
     }
 
     override fun getItemCount(): Int = displayData.size

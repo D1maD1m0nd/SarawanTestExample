@@ -1,6 +1,7 @@
 package com.example.sarawan.model.datasource
 
 import com.example.sarawan.model.data.Query
+import com.example.sarawan.utils.SortBy
 import io.reactivex.rxjava3.core.Single
 import javax.inject.Inject
 
@@ -14,33 +15,49 @@ class RetrofitImplementation @Inject constructor(private val apiService: ApiServ
                 is Query.Get.Users -> when (query) {
                     is Query.Get.Users.UserData -> apiService
                         .getUser(query.id)
-                        .map { listOf(it) }
+                        .map { mutableListOf(it) }
                 }
                 is Query.Get.Products -> when (query) {
                     is Query.Get.Products.DiscountProducts -> apiService
-                        .getDiscountProducts(page = query.page)
-                        .map { it.results }
+                        .getDiscountProducts(
+                            page = query.page,
+                            order = when (query.sortBy) {
+                                SortBy.PRICE_ASC -> "price"
+                                SortBy.PRICE_DES -> "-price"
+                                SortBy.ALPHABET -> "name"
+                                SortBy.DISCOUNT -> "-discount"
+                            }
+                        )
+                        .map { mutableListOf(it) }
 
                     is Query.Get.Products.Id -> apiService
                         .getProduct(query.id)
-                        .map { listOf(it) }
+                        .map { mutableListOf(it) }
 
                     is Query.Get.Products.PopularProducts -> apiService
                         .getPopularProducts(page = query.page)
-                        .map { it.results }
+                        .map { mutableListOf(it) }
 
                     is Query.Get.Products.ProductName -> apiService
                         .search(query.productName, query.page)
-                        .map { it.results }
+                        .map { mutableListOf(it) }
                     is Query.Get.Products.SimilarProducts -> apiService
                         .getSimilarProducts(query.id, query.page)
                         .map { it.results }
                     is Query.Get.Products.ProductCategory -> apiService
-                        .getCategoryProducts(query.productCategory, query.page)
-                        .map { it.results }
+                        .getCategoryProducts(
+                            query.productCategory, query.page,
+                            order = when (query.sortBy) {
+                                SortBy.PRICE_ASC -> "price"
+                                SortBy.PRICE_DES -> "-price"
+                                SortBy.ALPHABET -> "name"
+                                SortBy.DISCOUNT -> "-discount"
+                            }
+                        )
+                        .map { mutableListOf(it) }
                 }
                 is Query.Get.Orders -> {
-                    when(query) {
+                    when (query) {
                         is Query.Get.Orders.Order -> apiService
                             .getPreCalculationOrder(query.address)
                             .map { listOf(it) }

@@ -23,7 +23,7 @@ class DeliveryTimeFragment : DialogFragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentDeliveryTimeBinding.inflate(inflater, container, false);
+        _binding = FragmentDeliveryTimeBinding.inflate(inflater, container, false)
         return binding.root
     }
 

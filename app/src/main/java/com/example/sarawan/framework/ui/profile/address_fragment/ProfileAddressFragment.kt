@@ -11,13 +11,18 @@ import android.widget.Toast
 import androidx.core.content.getSystemService
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
+import com.example.sarawan.app.App
+import com.example.sarawan.app.App.Companion.navController
 import com.example.sarawan.databinding.FragmentProfileAddressBinding
 import com.example.sarawan.framework.ui.modals.ProfileAlertFragment
+import com.example.sarawan.framework.ui.profile.ProfileFragment
 import com.example.sarawan.framework.ui.profile.address_fragment.viewModel.ProfileAddressViewModel
 import com.example.sarawan.model.data.AddressItem
 import com.example.sarawan.model.data.AppState
+import com.example.sarawan.utils.exstentions.basketAddressId
 import com.example.sarawan.utils.exstentions.userId
 import dagger.android.support.AndroidSupportInjection
+import retrofit2.HttpException
 import javax.inject.Inject
 
 class ProfileAddressFragment : DialogFragment() {
@@ -134,19 +139,27 @@ class ProfileAddressFragment : DialogFragment() {
     private fun setState(appState: AppState<*>) {
         when (appState) {
             is AppState.Success<*> -> {
+                appState.data as List<AddressItem>
+                var address = appState.data.first()
+                sharedPreferences.basketAddressId = address.id
                 Toast.makeText(context, "Сохранение прошло успешно", Toast.LENGTH_SHORT).show()
-
                 hideKeyboard()
                 onSaveDataCallback?.invoke()
                 dismiss()
             }
             is AppState.Error -> {
-                Toast.makeText(
-                    context,
-                    "Ошибка",
-                    Toast.LENGTH_SHORT
-                )
-                    .show()
+                var error = appState.error
+                if(error is HttpException) {
+                    Toast.makeText(
+                        context,
+                        error.response().toString(),
+                        Toast.LENGTH_SHORT
+                    )
+                        .show()
+
+
+                }
+
             }
             AppState.Loading -> Unit
         }

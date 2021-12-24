@@ -22,7 +22,8 @@ interface ApiService {
     @GET("api/products/")
     fun getDiscountProducts(
         @Query("discount_products") discountProducts: Boolean = true,
-        @Query("page") page: Int
+        @Query("page") page: Int,
+        @Query("order") order: String,
     ): Single<Response>
 
     /**
@@ -31,7 +32,8 @@ interface ApiService {
     @GET("api/products/")
     fun getCategoryProducts(
         @Query("main_category") categoryProducts: Int,
-        @Query("page") page: Int
+        @Query("page") page: Int,
+        @Query("order") order: String,
     ): Single<Response>
 
     /**
@@ -77,13 +79,13 @@ interface ApiService {
      * Добавление продукта в корзину
      */
     @POST("api/basket/")
-    fun putBasketProduct(@Body productItem: ProductsUpdate): Single<Basket>
+    fun putBasketProduct(@Body productItem: ProductsUpdate): Single<BasketResponse>
 
     /**
      * Обновление продукта
      */
     @PUT("api/basket/{id}/")
-    fun updateBasketProduct(@Path("id") id: Int, @Body productItem: ProductsUpdate): Single<Basket>
+    fun updateBasketProduct(@Path("id") id: Int, @Body productItem: ProductsUpdate): Single<BasketResponse>
 
     /**
      * Удаление продукта из корзины
@@ -119,7 +121,7 @@ interface ApiService {
      * Создание нового адреса
      */
     @POST("api/user_address/")
-    fun createAddress(@Body address : AddressItem) : Single<Address>
+    fun createAddress(@Body address : AddressItem) : Single<AddressItem>
 
     /**
      * Получение списка адресов
@@ -136,6 +138,6 @@ interface ApiService {
     /**
      * Оформление заказа
      */
-    @POST("api/api/order_approve/")
-    fun createOrder(@Body address : AddressItem) : Single<Order>
+    @POST("api/order_approve/")
+    fun createOrder(@Body address : AddressItem) : Single<OrderApprove>
 }
