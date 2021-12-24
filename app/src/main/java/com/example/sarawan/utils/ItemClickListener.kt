@@ -8,6 +8,6 @@ interface ItemClickListener {
     fun update(pos : Int = 0, mode : Boolean = false)
     fun deleteItem(basketId : Int, pos : Int, item : BasketListItem)
     fun openProductCard(productId : Int)
+    fun openOrderCard()
     fun clear()
-    fun create()
 }

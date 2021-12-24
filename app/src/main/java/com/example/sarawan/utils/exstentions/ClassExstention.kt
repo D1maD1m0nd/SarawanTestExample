@@ -27,3 +27,5 @@ fun ProductsItem.toProductShortItem() : ProductShortItem{
     ProductShortItem(id, count)
     return ProductShortItem(id, count)
 }
+
+fun Double.toFormatString(postfix : String)  = String.format("%.2f $postfix", this)

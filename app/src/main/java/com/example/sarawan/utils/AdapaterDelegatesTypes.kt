@@ -89,22 +89,12 @@ object AdapterDelegatesTypes {
             binding.apply {
                 weightValueTextView.text = String.format("%.2f кг", item.weight)
                 costValueTextView.text = String.format("%.2f ₽", item.price)
-                diliveryPriceValueTextView.text = String.format("%.2f ₽", item.deliveryPrice)
-                resultValuePaymentTextView.text = String.format("%.2f ₽", item.resultPrice)
-                weightValueTextView.text = item.weight.toString()
-                addressButton.text = item.address
-                addressButton.setOnClickListener {
-                    itemClickListener.showModal(ProfileAddressFragment.newInstance())
-                }
-
-                setOrderButton.setOnClickListener {
-                    itemClickListener.create()
-                }
-
                 clearButton.setOnClickListener {
                     itemClickListener.clear()
                 }
-
+                navigateOrderButton.setOnClickListener {
+                    itemClickListener.openOrderCard()
+                }
             }
         }
     }

@@ -24,43 +24,6 @@ class BasketViewModel @Inject constructor(
         )
     }
 
-    fun getAddress() {
-        compositeDisposable.add(
-            interactor.getData(Query.Get.Address, true)
-                .subscribeOn(schedulerProvider.io)
-                .observeOn(schedulerProvider.io)
-                .subscribe(
-                    { stateLiveData.postValue(AppState.Success(it)) },
-                    { stateLiveData.postValue(AppState.Error(it)) }),
-        )
-    }
-
-    fun getOrder(address: AddressItem) {
-        compositeDisposable.add(
-            interactor.getData(Query.Get.Orders.Order(address), true)
-                .subscribeOn(schedulerProvider.io)
-                .observeOn(schedulerProvider.io)
-                .subscribe(
-                    { stateLiveData.postValue(AppState.Success(it)) },
-                    { stateLiveData.postValue(AppState.Error(it)) }),
-        )
-    }
-
-    fun createOrder(address: AddressItem){
-        basketID?.let {
-            compositeDisposable.add(
-                interactor.getData(Query.Post.Order.Create(address), true)
-                    .subscribeOn(schedulerProvider.io)
-                    .observeOn(schedulerProvider.io)
-                    .doOnSubscribe { stateLiveData.postValue(AppState.Loading) }
-                    .subscribe(
-                        {stateLiveData.postValue(AppState.Success(it))},
-                        { stateLiveData.postValue(AppState.Error(it)) }),
-            )
-        }
-        if (basketID == null) stateLiveData.value =
-            AppState.Error(RuntimeException("Should init BasketID first"))
-    }
 
     fun clearBasket() {
         basketID?.let {
