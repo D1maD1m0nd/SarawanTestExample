@@ -7,6 +7,7 @@ import com.example.sarawan.framework.ui.basket.viewModel.BasketViewModel
 import com.example.sarawan.framework.ui.catalog.viewModel.CatalogViewModel
 import com.example.sarawan.framework.ui.category.viewModel.CategoryViewModel
 import com.example.sarawan.framework.ui.main.viewModel.MainViewModel
+import com.example.sarawan.framework.ui.order.viewModel.OrderViewModel
 import com.example.sarawan.framework.ui.product_card.viewModel.ProductCardViewModel
 import com.example.sarawan.framework.ui.profile.address_fragment.viewModel.ProfileAddressViewModel
 import com.example.sarawan.framework.ui.profile.name_fragment.viewModel.NameViewModel
@@ -79,6 +80,11 @@ abstract class ViewModelModule {
     @ViewModelKey(NameViewModel::class)
     @IntoMap
     protected abstract fun nameViewModel(nameViewModel: NameViewModel): ViewModel
+
+    @Binds
+    @ViewModelKey(OrderViewModel::class)
+    @IntoMap
+    protected abstract fun orderViewModel(orderViewModel: OrderViewModel): ViewModel
 }
 
 @Target(

@@ -113,4 +113,9 @@
     <string name="error_500">Что то пошло не так, повторите попытку позже</string>
     <string name="no_items">К сожалению, такого товара нет.</string>
     <string name="press_back_again_to_exit">Для выхода нажмите "Назад" еще раз</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="nav_order">Перейти к оформленю</string>
+    <string name="order">Заказ</string>
+    <string name="rub_symbol">₽</string>
 </resources>

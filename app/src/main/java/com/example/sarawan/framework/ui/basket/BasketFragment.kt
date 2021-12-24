@@ -39,7 +39,6 @@ class BasketFragment : Fragment() {
     lateinit var viewModelFactory: ViewModelProvider.Factory
     private var _binding: FragmentBasketBinding? = null
     private val binding get() = _binding!!
-    private var addressItem : AddressItem? = null
     //основной список для отображения
     private val list: MutableList<BasketListItem> = ArrayList(
         listOf(
@@ -66,11 +65,8 @@ class BasketFragment : Fragment() {
             showProductFragment(productId)
         }
 
-        override fun create() {
-            addressItem?.let {
-                viewModel.createOrder(it)
-            }
-
+        override fun openOrderCard() {
+            navController.navigate(R.id.action_basketFragment_to_orderFragment)
         }
 
         override fun clear() {
@@ -106,18 +102,10 @@ class BasketFragment : Fragment() {
     }
 
     private fun initData() {
-        if (sharedPreferences.userId == -1L) {
-            ProfilePhoneFragment.newInstance { navigateToProfile() }
-                .show(requireActivity().supportFragmentManager, null)
-        } else {
-            initRcView()
-            viewModel.getBasket()
-            viewModel.getAddress()
-        }
+        initRcView()
+        viewModel.getBasket()
     }
-    private fun navigateToProfile() {
-        navController.navigate(R.id.profileFragment)
-    }
+
     private fun initRcView() = with(binding) {
         cardContainerRcView.itemAnimator?.changeDuration = 0
         cardContainerRcView.layoutManager = LinearLayoutManager(context)
@@ -129,7 +117,7 @@ class BasketFragment : Fragment() {
             is AppState.Success<*> -> {
                 val data = appState.data
                 if (data.isNotEmpty()) {
-                    when (val item = data.first()) {
+                    when (data.first()) {
                         is BasketResponse -> {
                             if(list.size >= LIMIT) {
                                 this@BasketFragment.recalculateData()
@@ -143,30 +131,6 @@ class BasketFragment : Fragment() {
                                 initDataRcView(data)
                             }
                             progressBar.visibility = View.GONE
-                        }
-                        is AddressItem -> {
-                            addressItem = AddressItem(idAddressOrder = item.id)
-                            addressItem?.let {
-                                viewModel.getOrder(it)
-                            }
-                            val footer = (list.last() as BasketFooter)
-                            footer.apply {
-                                address = formatAddress(item)
-                            }
-                        }
-
-                        is Order -> {
-                            setFooterData(item, true)
-                        }
-
-                        is OrderApprove -> {
-                            item.orderName?.let {
-                                val message = "Заказ №${it} оформлен"
-                                itemClickListener.showModal(SuccessOrderFragment.newInstance(message))
-                                progressBar.visibility = View.GONE
-                                removeItems()
-                                emptyStatus()
-                            }
                         }
                     }
                 }
@@ -193,13 +157,6 @@ class BasketFragment : Fragment() {
         infoBasketTextView.text = getString(R.string.basket_empty)
         actionBasketTextView.text = getString(R.string.nav_sales)
         actionBasketTextView.setOnClickListener { navController.navigate(R.id.mainFragment)}
-    }
-    private fun formatAddress(address: AddressItem): String {
-        val city = address.city
-        val street = address.street
-        val house = address.house
-        val roomNum = address.roomNumber
-        return "$city, ул $street, д $house, кв $roomNum"
     }
 
     private fun initDataRcView(data: List<ProductsItem>) {
@@ -233,23 +190,12 @@ class BasketFragment : Fragment() {
         )
     }
 
-    private fun setFooterData(order: Order, isRemote : Boolean = false) {
+    private fun setFooterData(order: Order) {
         val footer = (list.last() as BasketFooter)
         footer.apply {
             price = order.basketSumm ?: 0.0
+            weight = order.weight ?: 0.0
 
-            if(deliveryPrice == 0.0 || isRemote) {
-                deliveryPrice = order.paymentAmount ?: 0.0
-            }
-            if(weight == 0.0) {
-                weight = order.weight ?: 0.0
-            }
-            if(resultPrice == 0.0 || isRemote) {
-                resultPrice = order.paymentAmount?.plus(order.basketSumm!!) ?: 0.0
-            }
-            this@BasketFragment.addressItem?.let{
-                this.addressItem = it
-            }
         }
         adapter.updateFooter()
     }
@@ -281,6 +227,7 @@ class BasketFragment : Fragment() {
             } else {
                 items = list
                 notifyItemRemoved(pos)
+                recalculateData()
                 updateHolders()
             }
         }
@@ -310,9 +257,6 @@ class BasketFragment : Fragment() {
             val order = productItemsToOrder(items)
             setFooterData(order)
             setHeaderData(order)
-            addressItem?.let {
-                viewModel.getOrder(address = it)
-            }
         }
     }
     private fun showProductFragment(idProduct: Int) {

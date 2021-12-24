@@ -43,7 +43,7 @@ class MaskedEditText @JvmOverloads constructor(
         a.recycle()
         addTextChangedListener(MaskTextWatcher())
 
-        if (mask.isNotEmpty()) setText(text) // sets the text to create the mask
+        if (mask.isNotEmpty()) text = text // sets the text to create the mask
     }
 
     fun getText(removeMask: Boolean): Editable? {

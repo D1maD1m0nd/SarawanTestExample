@@ -17,7 +17,7 @@ class PaymentMethodFragment : DialogFragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentPaymentMethodBinding.inflate(inflater, container, false);
+        _binding = FragmentPaymentMethodBinding.inflate(inflater, container, false)
         return binding.root
     }
 
