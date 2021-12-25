@@ -1,5 +1,6 @@
 package com.example.sarawan.framework.ui.product_card
 
+import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -11,6 +12,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import coil.load
 import com.example.sarawan.R
+import com.example.sarawan.activity.FabChanger
 import com.example.sarawan.app.App.Companion.navController
 import com.example.sarawan.databinding.FragmentProductCardBinding
 import com.example.sarawan.framework.ui.basket.BasketFragment
@@ -42,6 +44,9 @@ class ProductCardFragment : Fragment() {
 
         override fun create(product: Product, pos: Int, type: TypeCardEnum) {
             itemSave(product, pos, true, type)
+            product.storePrices?.first()?.let {
+                fabChanger?.changePrice(it.price.toFloat())
+            }
         }
     }
     @Inject
@@ -58,6 +63,7 @@ class ProductCardFragment : Fragment() {
     private val similarProducts : MutableList<Product> = ArrayList(20)
     private var storeProducts : MutableList<StorePrice> = ArrayList(5)
     private val similarAdapter = SimilarAdapter(itemClickListener)
+    private var fabChanger: FabChanger? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.apply {
@@ -95,7 +101,15 @@ class ProductCardFragment : Fragment() {
         _binding = null
         super.onDestroyView()
     }
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        fabChanger = context as FabChanger
+    }
 
+    override fun onDetach() {
+        fabChanger = null
+        super.onDetach()
+    }
 
     private fun setState(appState: AppState<*>) {
         when (appState) {
@@ -167,8 +181,18 @@ class ProductCardFragment : Fragment() {
     private fun updateDataBasket(pos : Int, mode : Boolean) {
         val product = similarProducts[pos]
         when(mode) {
-            true -> product.count++
-            false -> product.count--
+            true -> {
+                product.count++
+                product.storePrices?.first()?.let {
+                    fabChanger?.changePrice(it.price.toFloat())
+                }
+            }
+            false -> {
+                product.count--
+                product.storePrices?.first()?.let {
+                    fabChanger?.changePrice(it.price.toFloat() * -1)
+                }
+            }
         }
         itemSave(product, pos, false, TypeCardEnum.SIMILAR)
     }
@@ -176,8 +200,18 @@ class ProductCardFragment : Fragment() {
     private fun updateDataBasketIntoStore(pos : Int, mode : Boolean) {
         val store = storeProducts[pos]
         when(mode) {
-            true -> store.count++
-            false -> store.count--
+            true -> {
+                store.count++
+                store.let {
+                    fabChanger?.changePrice(it.price.toFloat())
+                }
+            }
+            false -> {
+                store.count--
+                store.let {
+                    fabChanger?.changePrice(it.price.toFloat())
+                }
+            }
         }
         val product = Product(count = store.count, storePrices = mutableListOf(store))
         itemSave(product , pos, false, TypeCardEnum.STORE)
@@ -208,7 +242,6 @@ class ProductCardFragment : Fragment() {
             setButtonAddBasketVisible(it)
         }
     }
-
     private fun showProductFragment(idProduct: Long) {
         val bundle = Bundle()
         bundle.putLong(BasketFragment.PRODUCT_ID, idProduct)

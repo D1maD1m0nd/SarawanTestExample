@@ -53,6 +53,9 @@ class StoreAdapter(val itemClickListener: ItemClickListener)  : RecyclerView.Ada
             if(isNotEmptyCount) {
               basketButton.isEnabled = false
               basketButton.isClickable = false
+            } else {
+                basketButton.isEnabled = true
+                basketButton.isClickable = true
             }
             if(store.count > 0) {
                 basketButton.visibility = INVISIBLE
