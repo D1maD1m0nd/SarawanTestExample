@@ -40,6 +40,15 @@ class ProductCardViewModel @Inject constructor(
                                 val similarEq = similarProduct.id == basketSingleData.basketProduct?.basketProduct?.id
                                 if (similarEq) {
                                     similarProduct.count = basketSingleData.quantity!!
+                                    val storeIdProduct = basketSingleData.basketProduct?.productStoreId
+                                    storeIdProduct?.let { idProduct ->
+                                        similarProduct
+                                            .storePrices
+                                            ?.findLast { it.id == idProduct }
+                                            ?.let {
+                                                it.count = basketSingleData.quantity!!
+                                            }
+                                    }
                                 }
                             }
                             similarProduct
