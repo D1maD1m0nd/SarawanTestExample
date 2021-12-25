@@ -176,11 +176,12 @@ class ProductCardFragment : Fragment() {
         when(type) {
             TypeCardEnum.SIMILAR -> {
                 similarProducts[pos] = product
-                similarAdapter.notifyItemChanged(pos)
+                similarAdapter.itemUpdate(pos, similarProducts)
             }
             TypeCardEnum.STORE -> {
                 storeProducts[pos].count = product.count
-                storeAdapter.notifyItemChanged(pos)
+                storeAdapter.itemUpdate(pos,storeProducts)
+
             }
             TypeCardEnum.DEFAULT -> {
                 binding.addBasketButton.visibility = GONE

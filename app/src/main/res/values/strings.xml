@@ -117,7 +117,7 @@
     <string name="refresh">Обновить</string>
     <string name="no_connection">Нет соединения</string>
     <string name="check_network_and_refresh">Проверьте соединение с сетью и обновите страницу</string>
-    <string name="nav_order">Перейти к оформленю</string>
+    <string name="nav_order">Перейти к оформлению</string>
     <string name="order">Заказ</string>
     <string name="rub_symbol">₽</string>
 </resources>
