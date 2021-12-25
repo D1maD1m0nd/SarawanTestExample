@@ -43,6 +43,9 @@ class StoreAdapter(val itemClickListener: ItemClickListener)  : RecyclerView.Ada
             if(store.count > 0) {
                 basketButton.visibility = INVISIBLE
                 counterContainer.visibility = VISIBLE
+            } else {
+                basketButton.visibility = VISIBLE
+                counterContainer.visibility = INVISIBLE
             }
             basketButton.setOnClickListener {
                 itemClickListener.create(
@@ -61,11 +64,13 @@ class StoreAdapter(val itemClickListener: ItemClickListener)  : RecyclerView.Ada
             }
 
             minusImageButton.setOnClickListener {
-                itemClickListener.update(
-                    absoluteAdapterPosition,
-                    mode = false,
-                    TypeCardEnum.STORE
-                )
+                if(store.count >= 1) {
+                    itemClickListener.update(
+                        absoluteAdapterPosition,
+                        mode = false,
+                        TypeCardEnum.STORE
+                    )
+                }
             }
         }
     }
