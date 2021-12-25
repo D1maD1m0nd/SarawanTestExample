@@ -81,7 +81,6 @@ class ProductCardFragment : Fragment() {
         binding.productCloseButton.setOnClickListener {
             navController.popBackStack()
         }
-        viewModel.getProduct(productId)
         viewModel.similarProducts(productId)
     }
     private fun clearViewState() {
@@ -102,12 +101,13 @@ class ProductCardFragment : Fragment() {
         when (appState) {
             is AppState.Success<*> -> {
                 val data = appState.data as MutableList<Product>
-                if(data.size > 1) {
-                    similarProducts.addAll(data)
-                    initSimilarList(similarProducts)
-                } else {
-                    val product = data.first()
-                    initViewData(product)
+                val product = data.findLast { it.id == productId }
+                data.remove(product)
+
+                similarProducts.addAll(data)
+                initSimilarList(similarProducts)
+                product?.let {
+                    initViewData(it)
                 }
             }
             is AppState.Error -> Unit

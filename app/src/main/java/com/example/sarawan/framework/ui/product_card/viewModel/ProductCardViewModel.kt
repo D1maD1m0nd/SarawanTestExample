@@ -2,10 +2,8 @@ package com.example.sarawan.framework.ui.product_card.viewModel
 
 import com.example.sarawan.framework.MainInteractor
 import com.example.sarawan.framework.ui.base.BaseViewModel
-import com.example.sarawan.framework.ui.base.mainCatalog.CardType
 import com.example.sarawan.model.data.*
 import com.example.sarawan.rx.ISchedulerProvider
-import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.observers.DisposableSingleObserver
 import javax.inject.Inject
@@ -18,55 +16,43 @@ class ProductCardViewModel @Inject constructor(
     fun clear() {
         stateLiveData.value = AppState.Empty
     }
-    fun getProduct(storeId : Long?) {
-        storeId?.let {
-            compositeDisposable.add(
-                interactor.getData(Query.Get.Products.Id(storeId), true)
-                    .map{
-                        val data  =  (it as List<Product>).map { product ->
-                            product.storePrices?.sortBy { storeItem ->
-                                storeItem.price
-                            }
-                            product
-                        }
-                        data
-                    }
-                    .subscribeOn(schedulerProvider.io)
-                    .observeOn(schedulerProvider.ui)
-                    .subscribe(
-                        {
-                            stateLiveData.postValue(AppState.Success(it))
-                        },
-                        { stateLiveData.postValue(AppState.Error(it)) }),
-            )
-
-        }
-    }
     fun similarProducts(storeId : Long?) {
         storeId?.let { store ->
             val basket =  interactor.getData(Query.Get.Basket, true).onErrorReturnItem(listOf(Basket()))
             val similar = interactor.getData(Query.Get.Products.SimilarProducts(store), true)
+            val product = interactor.getData(Query.Get.Products.Id(storeId), true)
             compositeDisposable.add(
-                Single.zip(similar, basket) {similarData, basketData ->
-                    val similars = similarData as MutableList<Product>
+                Single.zip(similar, basket, product) {similarData, basketData, productData->
+                    productData as MutableList<Product>
                     basketData as MutableList<Basket>
-                    var data: List<Product> = mutableListOf()
+                    similarData as MutableList<Product>
+                    similarData.addAll(productData)
+
+                    var data: List<Product>
                     val basketObject = (basketData as List<Basket>).firstOrNull()
                     basketID = basketObject?.basketId
                     if(basketData.isNotEmpty()) {
-                        data = similars.map {
-                            it.storePrices?.sortBy { storeItem ->
+                        data = similarData.map { similarProduct ->
+                            similarProduct.storePrices?.sortBy { storeItem ->
                                 storeItem.price
                             }
                             basketObject?.products?.forEach { basketSingleData ->
-                                if (it.id == basketSingleData.basketProduct?.basketProduct?.id) {
-                                    it.count = basketSingleData.quantity!!
+                                val similarEq = similarProduct.id == basketSingleData.basketProduct?.basketProduct?.id
+                                if (similarEq) {
+                                    similarProduct.count = basketSingleData.quantity!!
                                 }
                             }
-                            it
+                            similarProduct
+                        }
+
+                    } else {
+                        data = similarData.map { similarProduct ->
+                            similarProduct.storePrices?.sortBy { storeItem ->
+                                storeItem.price
+                            }
+                            similarProduct
                         }
                     }
-
                     data
                 }
                     .subscribeOn(schedulerProvider.io)
