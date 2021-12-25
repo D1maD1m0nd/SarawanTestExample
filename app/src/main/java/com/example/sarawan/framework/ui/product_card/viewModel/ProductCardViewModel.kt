@@ -15,6 +15,9 @@ class ProductCardViewModel @Inject constructor(
     private val schedulerProvider: ISchedulerProvider
 ) : BaseViewModel<AppState<*>>(){
     private var basketID: Int? = null
+    fun clear() {
+        stateLiveData.value = AppState.Empty
+    }
     fun getProduct(storeId : Long?) {
         storeId?.let {
             compositeDisposable.add(
@@ -29,7 +32,7 @@ class ProductCardViewModel @Inject constructor(
                         data
                     }
                     .subscribeOn(schedulerProvider.io)
-                    .observeOn(schedulerProvider.io)
+                    .observeOn(schedulerProvider.ui)
                     .subscribe(
                         {
                             stateLiveData.postValue(AppState.Success(it))
@@ -67,7 +70,7 @@ class ProductCardViewModel @Inject constructor(
                     data
                 }
                     .subscribeOn(schedulerProvider.io)
-                    .observeOn(schedulerProvider.io)
+                    .observeOn(schedulerProvider.ui)
                     .subscribe(
                         { stateLiveData.postValue(AppState.Success(it)) },
                         { stateLiveData.postValue(AppState.Error(it)) }

@@ -69,10 +69,10 @@ class ProductCardFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentProductCardBinding.inflate(inflater, container, false)
         viewModel.getStateLiveData().observe(viewLifecycleOwner) { appState: AppState<*> ->
             setState(appState)
         }
+        _binding = FragmentProductCardBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -84,11 +84,19 @@ class ProductCardFragment : Fragment() {
         viewModel.getProduct(productId)
         viewModel.similarProducts(productId)
     }
-
+    private fun clearViewState() {
+        viewModel.clear()
+        binding.containerStoreRecyclerView.layoutManager = null
+        binding.containerStoreRecyclerView.adapter = null
+        binding.similarProductRecyclerView.layoutManager = null
+        binding.similarProductRecyclerView.adapter = null
+    }
     override fun onDestroyView() {
+        clearViewState()
         _binding = null
         super.onDestroyView()
     }
+
 
     private fun setState(appState: AppState<*>) {
         when (appState) {

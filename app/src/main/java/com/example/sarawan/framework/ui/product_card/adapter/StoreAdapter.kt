@@ -14,12 +14,11 @@ import com.example.sarawan.utils.TypeCardEnum
 
 
 class StoreAdapter(val itemClickListener: ItemClickListener)  : RecyclerView.Adapter<StoreAdapter.StoreViewHolder>(){
-    private val stores : MutableList<StorePrice> = ArrayList(10)
+    private var stores : List<StorePrice> = ArrayList(10)
 
     @SuppressLint("NotifyDataSetChanged")
     fun setData(store : List<StorePrice>) {
-        stores.clear()
-        stores.addAll(store)
+        stores = store
         notifyDataSetChanged()
     }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =

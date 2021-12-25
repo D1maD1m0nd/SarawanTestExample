@@ -15,7 +15,6 @@ class MainViewModel @Inject constructor(
     private val schedulerProvider: ISchedulerProvider,
     private val stringProvider: StringProvider
 ) : BaseMainCatalogViewModel(interactor, schedulerProvider, stringProvider) {
-
     override fun getStartData(isOnline: Boolean) {
         searchWord = null
         val discount = interactor.getData(Query.Get.Products.DiscountProducts(), isOnline)

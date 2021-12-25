@@ -18,6 +18,7 @@ class SimilarAdapter(val itemClickListener: ItemClickListener) : RecyclerView.Ad
     @SuppressLint("NotifyDataSetChanged")
     fun setData(products : MutableList<Product>) {
         similarList = products
+        notifyDataSetChanged()
     }
 
     fun updateItem(products : MutableList<Product>, position: Int) {
