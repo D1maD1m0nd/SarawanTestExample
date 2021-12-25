@@ -1,16 +1,18 @@
 package com.example.sarawan.framework.ui.product_card
 
+import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.GONE
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import coil.load
 import com.example.sarawan.R
+import com.example.sarawan.activity.FabChanger
 import com.example.sarawan.app.App.Companion.navController
 import com.example.sarawan.databinding.FragmentProductCardBinding
 import com.example.sarawan.framework.ui.basket.BasketFragment
@@ -42,6 +44,9 @@ class ProductCardFragment : Fragment() {
 
         override fun create(product: Product, pos: Int, type: TypeCardEnum) {
             itemSave(product, pos, true, type)
+            product.storePrices?.first()?.let {
+                fabChanger?.changePrice(it.price.toFloat())
+            }
         }
     }
     @Inject
@@ -56,8 +61,9 @@ class ProductCardFragment : Fragment() {
     private  var productId : Long? = null
     private val storeAdapter  = StoreAdapter(itemClickListener)
     private val similarProducts : MutableList<Product> = ArrayList(20)
-    private val storeProducts : MutableList<StorePrice> = ArrayList(5)
+    private var storeProducts : MutableList<StorePrice> = ArrayList(5)
     private val similarAdapter = SimilarAdapter(itemClickListener)
+    private var fabChanger: FabChanger? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.apply {
@@ -69,10 +75,10 @@ class ProductCardFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentProductCardBinding.inflate(inflater, container, false)
         viewModel.getStateLiveData().observe(viewLifecycleOwner) { appState: AppState<*> ->
             setState(appState)
         }
+        _binding = FragmentProductCardBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -81,29 +87,53 @@ class ProductCardFragment : Fragment() {
         binding.productCloseButton.setOnClickListener {
             navController.popBackStack()
         }
-        viewModel.getProduct(productId)
         viewModel.similarProducts(productId)
     }
-
+    private fun clearViewState() {
+        viewModel.clear()
+        binding.containerStoreRecyclerView.layoutManager = null
+        binding.containerStoreRecyclerView.adapter = null
+        binding.similarProductRecyclerView.layoutManager = null
+        binding.similarProductRecyclerView.adapter = null
+    }
     override fun onDestroyView() {
+        clearViewState()
         _binding = null
         super.onDestroyView()
+    }
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        fabChanger = context as FabChanger
+    }
+
+    override fun onDetach() {
+        fabChanger = null
+        super.onDetach()
     }
 
     private fun setState(appState: AppState<*>) {
         when (appState) {
             is AppState.Success<*> -> {
                 val data = appState.data as MutableList<Product>
-                if(data.size > 1) {
-                    similarProducts.addAll(data)
-                    initSimilarList(similarProducts)
-                } else {
-                    val product = data.first()
-                    initViewData(product)
+                val product = data.findLast { it.id == productId }
+                data.remove(product)
+
+                similarProducts.addAll(data)
+                initSimilarList(similarProducts)
+                product?.let {
+                    initViewData(it)
                 }
+                binding.progressBar.visibility = View.GONE
+                binding.contentNestedScrollView.visibility = View.VISIBLE
             }
-            is AppState.Error -> Unit
-            AppState.Loading -> Unit
+            is AppState.Error -> {
+                Toast.makeText(context, "Произошла ошибка", Toast.LENGTH_SHORT).show()
+                binding.progressBar.visibility = View.GONE
+            }
+            is AppState.Loading -> {
+                binding.contentNestedScrollView.visibility = View.GONE
+                binding.progressBar.visibility = View.VISIBLE
+            }
             else -> {}
         }
     }
@@ -124,9 +154,10 @@ class ProductCardFragment : Fragment() {
             itemSave(data, 0, true, TypeCardEnum.DEFAULT)
         }
         data.storePrices?.let {
+            setButtonAddBasketVisible(it)
             priceTextView.text = it.first().price.toString()
             storeTextView.text = it.first().store
-            storeProducts.addAll(it)
+            storeProducts = it
             storeAdapter.setData(storeProducts)
         }
         data.images?.let {
@@ -139,11 +170,29 @@ class ProductCardFragment : Fragment() {
             }
         }
     }
+    private fun setButtonAddBasketVisible(stores : List<StorePrice>) {
+        val isAddedBasket = stores.count { it.count > 0 } > 0
+        if(isAddedBasket) {
+            binding.addBasketButton.visibility = View.GONE
+        } else {
+            binding.addBasketButton.visibility = View.VISIBLE
+        }
+    }
     private fun updateDataBasket(pos : Int, mode : Boolean) {
         val product = similarProducts[pos]
         when(mode) {
-            true -> product.count++
-            false -> product.count--
+            true -> {
+                product.count++
+                product.storePrices?.first()?.let {
+                    fabChanger?.changePrice(it.price.toFloat())
+                }
+            }
+            false -> {
+                product.count--
+                product.storePrices?.first()?.let {
+                    fabChanger?.changePrice(it.price.toFloat() * -1)
+                }
+            }
         }
         itemSave(product, pos, false, TypeCardEnum.SIMILAR)
     }
@@ -151,8 +200,18 @@ class ProductCardFragment : Fragment() {
     private fun updateDataBasketIntoStore(pos : Int, mode : Boolean) {
         val store = storeProducts[pos]
         when(mode) {
-            true -> store.count++
-            false -> store.count--
+            true -> {
+                store.count++
+                store.let {
+                    fabChanger?.changePrice(it.price.toFloat())
+                }
+            }
+            false -> {
+                store.count--
+                store.let {
+                    fabChanger?.changePrice(it.price.toFloat())
+                }
+            }
         }
         val product = Product(count = store.count, storePrices = mutableListOf(store))
         itemSave(product , pos, false, TypeCardEnum.STORE)
@@ -168,18 +227,21 @@ class ProductCardFragment : Fragment() {
         when(type) {
             TypeCardEnum.SIMILAR -> {
                 similarProducts[pos] = product
-                similarAdapter.notifyItemChanged(pos)
+                similarAdapter.itemUpdate(pos, similarProducts)
             }
             TypeCardEnum.STORE -> {
                 storeProducts[pos].count = product.count
-                storeAdapter.notifyItemChanged(pos)
+                storeAdapter.itemUpdate(pos,storeProducts)
+
             }
             TypeCardEnum.DEFAULT -> {
-                binding.addBasketButton.visibility = GONE
+                binding.addBasketButton.visibility = View.GONE
             }
         }
+        product.storePrices?.let {
+            setButtonAddBasketVisible(it)
+        }
     }
-
     private fun showProductFragment(idProduct: Long) {
         val bundle = Bundle()
         bundle.putLong(BasketFragment.PRODUCT_ID, idProduct)

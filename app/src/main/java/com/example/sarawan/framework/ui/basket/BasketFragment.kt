@@ -31,6 +31,10 @@ import com.example.sarawan.utils.exstentions.userId
 import dagger.android.support.AndroidSupportInjection
 import retrofit2.HttpException
 import javax.inject.Inject
+import androidx.recyclerview.widget.DividerItemDecoration
+
+
+
 
 class BasketFragment : Fragment() {
     @Inject
@@ -107,6 +111,12 @@ class BasketFragment : Fragment() {
     }
 
     private fun initRcView() = with(binding) {
+        val mLayoutManager = LinearLayoutManager(context)
+        val dividerItemDecoration = DividerItemDecoration(
+            cardContainerRcView.context,
+            mLayoutManager.orientation
+        )
+        cardContainerRcView.addItemDecoration(dividerItemDecoration)
         cardContainerRcView.itemAnimator?.changeDuration = 0
         cardContainerRcView.layoutManager = LinearLayoutManager(context)
         cardContainerRcView.adapter = adapter

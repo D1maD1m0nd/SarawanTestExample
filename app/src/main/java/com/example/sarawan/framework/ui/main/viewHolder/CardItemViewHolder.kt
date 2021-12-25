@@ -85,7 +85,7 @@ class CardItemViewHolder(
                 }
 
                 val discountNumber = data.discount
-                if (discountNumber != null && discountNumber > 0) "-${discountNumber}%".also {
+                if (discountNumber != null && discountNumber > 0) "-$discountNumber%".also {
                     discount.visibility = View.VISIBLE
                     discount.text = it
                 }

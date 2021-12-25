@@ -92,6 +92,7 @@ class MainActivity : AppCompatActivity(), FabChanger {
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
             if (destination.id == R.id.basketFragment) binding.fabPrice.hide()
+            if (destination.id == R.id.orderFragment) binding.fabPrice.hide()
             else viewModel.getBasket()
         }
     }

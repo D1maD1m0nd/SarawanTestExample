@@ -6,18 +6,24 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import com.example.sarawan.R
 import com.example.sarawan.databinding.FragmentOrderBinding
 import com.example.sarawan.framework.ui.basket.viewModel.BasketViewModel
+import com.example.sarawan.framework.ui.modals.SuccessOrderFragment
 import com.example.sarawan.framework.ui.order.viewModel.OrderViewModel
+import com.example.sarawan.framework.ui.profile.address_fragment.ProfileAddressFragment
 import com.example.sarawan.model.data.AddressItem
 import com.example.sarawan.model.data.AppState
 import com.example.sarawan.model.data.Order
 import com.example.sarawan.model.data.OrderApprove
 import com.example.sarawan.utils.exstentions.toFormatString
 import dagger.android.support.AndroidSupportInjection
+import retrofit2.HttpException
 import javax.inject.Inject
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
 
 
 class OrderFragment : Fragment() {
@@ -52,6 +58,25 @@ class OrderFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel.getAddress()
+        initView()
+    }
+
+    private fun initView() = with(binding){
+        addressButton.setOnClickListener {
+            ProfileAddressFragment.newInstance(addressItem){}.show(childFragmentManager, null)
+        }
+
+        setOrderButton.setOnClickListener {
+            addressItem?.let {
+                viewModel.createOrder(it)
+            }
+        }
+
+        swipeContainer.setOnRefreshListener(OnRefreshListener {
+            //your method to refresh content
+            viewModel.getAddress()
+            swipeContainer.isRefreshing = false;
+        })
     }
 
     override fun onDestroyView() {
@@ -78,8 +103,12 @@ class OrderFragment : Fragment() {
                         }
 
                         is OrderApprove -> {
+                            binding.progressBar.visibility = View.GONE
                             item.orderName?.let {
                                 val message = "Заказ №${it} оформлен"
+                                SuccessOrderFragment
+                                    .newInstance(message)
+                                    .show(childFragmentManager, null)
                             }
                         }
                     }
@@ -93,6 +122,15 @@ class OrderFragment : Fragment() {
 
             is AppState.Error -> {
                 binding.progressBar.visibility = View.GONE
+                val error = state.error
+                if(error is HttpException) {
+                    when(error.code()) {
+                        500 -> {
+
+                        }
+                    }
+
+                }
             }
 
             is AppState.Empty -> {

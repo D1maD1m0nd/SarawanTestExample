@@ -10,6 +10,7 @@ import coil.load
 import com.example.sarawan.R
 import com.example.sarawan.databinding.ListItemCardBinding
 import com.example.sarawan.model.data.Product
+import com.example.sarawan.model.data.StorePrice
 import com.example.sarawan.utils.TypeCardEnum
 
 class SimilarAdapter(val itemClickListener: ItemClickListener) : RecyclerView.Adapter<SimilarAdapter.ProductViewHolder>() {
@@ -18,6 +19,12 @@ class SimilarAdapter(val itemClickListener: ItemClickListener) : RecyclerView.Ad
     @SuppressLint("NotifyDataSetChanged")
     fun setData(products : MutableList<Product>) {
         similarList = products
+        notifyDataSetChanged()
+    }
+
+    fun itemUpdate(pos : Int,products : List<Product>) {
+        this.similarList = products
+        notifyItemChanged(pos)
     }
 
     fun updateItem(products : MutableList<Product>, position: Int) {
