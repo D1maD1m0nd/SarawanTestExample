@@ -4,8 +4,8 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.GONE
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -109,9 +109,17 @@ class ProductCardFragment : Fragment() {
                 product?.let {
                     initViewData(it)
                 }
+                binding.progressBar.visibility = View.GONE
+                binding.contentNestedScrollView.visibility = View.VISIBLE
             }
-            is AppState.Error -> Unit
-            AppState.Loading -> Unit
+            is AppState.Error -> {
+                Toast.makeText(context, "Произошла ошибка", Toast.LENGTH_SHORT).show()
+                binding.progressBar.visibility = View.GONE
+            }
+            is AppState.Loading -> {
+                binding.contentNestedScrollView.visibility = View.GONE
+                binding.progressBar.visibility = View.VISIBLE
+            }
             else -> {}
         }
     }
@@ -132,6 +140,7 @@ class ProductCardFragment : Fragment() {
             itemSave(data, 0, true, TypeCardEnum.DEFAULT)
         }
         data.storePrices?.let {
+            setButtonAddBasketVisible(it)
             priceTextView.text = it.first().price.toString()
             storeTextView.text = it.first().store
             storeProducts = it
@@ -145,6 +154,14 @@ class ProductCardFragment : Fragment() {
                     error(R.drawable.card_placeholder)
                 }
             }
+        }
+    }
+    private fun setButtonAddBasketVisible(stores : List<StorePrice>) {
+        val isAddedBasket = stores.count { it.count > 0 } > 0
+        if(isAddedBasket) {
+            binding.addBasketButton.visibility = View.GONE
+        } else {
+            binding.addBasketButton.visibility = View.VISIBLE
         }
     }
     private fun updateDataBasket(pos : Int, mode : Boolean) {
@@ -184,8 +201,11 @@ class ProductCardFragment : Fragment() {
 
             }
             TypeCardEnum.DEFAULT -> {
-                binding.addBasketButton.visibility = GONE
+                binding.addBasketButton.visibility = View.GONE
             }
+        }
+        product.storePrices?.let {
+            setButtonAddBasketVisible(it)
         }
     }
 

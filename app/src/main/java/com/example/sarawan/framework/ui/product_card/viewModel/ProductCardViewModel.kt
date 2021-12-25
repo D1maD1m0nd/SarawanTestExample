@@ -36,7 +36,9 @@ class ProductCardViewModel @Inject constructor(
                             similarProduct.storePrices?.sortBy { storeItem ->
                                 storeItem.price
                             }
-                            basketObject?.products?.forEach { basketSingleData ->
+                            basketObject
+                                ?.products
+                                ?.forEach { basketSingleData ->
                                 val similarEq = similarProduct.id == basketSingleData.basketProduct?.basketProduct?.id
                                 if (similarEq) {
                                     similarProduct.count = basketSingleData.quantity!!
@@ -66,6 +68,7 @@ class ProductCardViewModel @Inject constructor(
                 }
                     .subscribeOn(schedulerProvider.io)
                     .observeOn(schedulerProvider.ui)
+                    .doOnSubscribe { stateLiveData.postValue(AppState.Loading) }
                     .subscribe(
                         { stateLiveData.postValue(AppState.Success(it)) },
                         { stateLiveData.postValue(AppState.Error(it)) }
