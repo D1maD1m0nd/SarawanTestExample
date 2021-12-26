@@ -103,8 +103,11 @@ class ProfileFragment : Fragment() {
     }
 
     private fun showPhone() {
+        /*
+        оставил, вдруг понадобится протестировать еще что-то без выхода
         ProfilePhoneFragment.newInstance { callback() }
             .show(requireActivity().supportFragmentManager, null)
+        */
     }
 
     private fun callback() {
