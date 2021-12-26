@@ -81,7 +81,7 @@
         app:layout_constraintStart_toEndOf="@+id/date_edit_text"
         app:layout_constraintTop_toTopOf="@+id/date_edit_text" />
 
-    <com.example.sarawan.framework.ui.profile.MaskedEditText
+    <com.example.sarawan.utils.MaskedEditText
         android:id="@+id/date_edit_text"
         android:layout_marginTop="@dimen/cost_order_20"
         android:layout_width="wrap_content"
@@ -93,7 +93,7 @@
         app:mask="99.99.9999"
         app:placeholder="_" />
 
-    <com.example.sarawan.framework.ui.profile.MaskedEditText
+    <com.example.sarawan.utils.MaskedEditText
         android:id="@+id/time_edit_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

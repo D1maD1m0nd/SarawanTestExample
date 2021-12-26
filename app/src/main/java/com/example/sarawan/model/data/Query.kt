@@ -27,6 +27,8 @@ sealed interface Query {
         object Category : Get
 
         object Address : Get
+
+        object OrdersApproves : Get
     }
 
     sealed interface Post : Query {
@@ -64,6 +66,9 @@ sealed interface Query {
         sealed interface Basket : Delete {
             data class Remove(val id: Int) : Basket
             object Clear :Basket
+        }
+        sealed interface Order : Delete {
+            data class Delete(val id : Int) : Order
         }
     }
 }

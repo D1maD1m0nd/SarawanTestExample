@@ -40,7 +40,7 @@ data class OrderApprove(
 	@field:Json(name="error")
 	val error: Boolean? = null,
 
-	@field:Json(name="order_id")
+	@field:Json(name="dostavista_order_id")
 	val orderId: Int? = null,
 
 	@field:Json(name="tracking_url")
@@ -53,5 +53,11 @@ data class OrderApprove(
 	val orderName: String? = null,
 
 	@field:Json(name="status")
-	val status: String? = null
+	val status: OrderStatus? = null,
+
+	@field:Json(name="order_status")
+	val orderStatus: OrderStatus? = null,
+
+	@field:Json(name="information")
+	val information : OrderInformation? = null
 )
