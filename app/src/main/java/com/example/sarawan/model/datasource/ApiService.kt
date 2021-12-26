@@ -146,4 +146,10 @@ interface ApiService {
      */
     @GET("api/order/")
     fun getOrders() : Single<List<OrderApprove>>
+
+    /**
+     * Удаление заказа
+     */
+    @DELETE("api/order/{id}/")
+    fun deleteOrder(@Path("id") id: Int) : Single<OrderApprove>
 }

@@ -49,12 +49,14 @@ class OrdersAdapter(val itemClickListener: ItemClickListener) : RecyclerView.Ada
                 OrderStatus.CAN -> statusAssemblyTextView
                 else -> null
             }
-
             currentStatus
                 ?.setTextColor(
                     context
                         .resources
                         .getColor(R.color.secondary_orange, null))
+            cancelImageButton.setOnClickListener {
+                itemClickListener.cancel(absoluteAdapterPosition)
+            }
 
         }
     }

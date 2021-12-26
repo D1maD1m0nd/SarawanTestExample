@@ -116,6 +116,9 @@ class RetrofitImplementation @Inject constructor(private val apiService: ApiServ
                 is Query.Delete.Basket.Clear -> apiService
                     .clearBasket()
                     .map { listOf(it) }
+                is Query.Delete.Order.Delete -> apiService.deleteOrder(query.id).map {
+                    listOf(it)
+                }
             }
         }
     }

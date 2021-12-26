@@ -40,7 +40,7 @@ data class OrderApprove(
 	@field:Json(name="error")
 	val error: Boolean? = null,
 
-	@field:Json(name="order_id")
+	@field:Json(name="dostavista_order_id")
 	val orderId: Int? = null,
 
 	@field:Json(name="tracking_url")

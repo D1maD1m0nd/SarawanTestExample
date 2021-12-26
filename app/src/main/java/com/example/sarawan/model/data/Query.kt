@@ -67,5 +67,8 @@ sealed interface Query {
             data class Remove(val id: Int) : Basket
             object Clear :Basket
         }
+        sealed interface Order : Delete {
+            data class Delete(val id : Int) : Order
+        }
     }
 }

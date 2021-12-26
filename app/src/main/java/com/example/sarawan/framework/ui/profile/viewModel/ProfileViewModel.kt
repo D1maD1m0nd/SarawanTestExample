@@ -32,9 +32,19 @@ class ProfileViewModel  @Inject constructor(
         compositeDisposable.add(
             interactor.getData(Query.Get.OrdersApproves, true)
                 .subscribeOn(schedulerProvider.io)
-                .observeOn(schedulerProvider.io)
+                .observeOn(schedulerProvider.ui)
                 .subscribe({stateLiveData.postValue(AppState.Success(it))},
                             {stateLiveData.postValue(AppState.Error(it)) })
+        )
+    }
+
+    fun deleteOrder(id : Int) {
+        compositeDisposable.add(
+            interactor.getData(Query.Delete.Order.Delete(id), true)
+                .subscribeOn(schedulerProvider.io)
+                .observeOn(schedulerProvider.ui)
+                .subscribe({stateLiveData.postValue(AppState.Success(it))},
+                    {stateLiveData.postValue(AppState.Error(it)) })
         )
     }
 

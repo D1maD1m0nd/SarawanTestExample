@@ -18,10 +18,7 @@ import com.example.sarawan.framework.ui.profile.adapter.OrdersAdapter
 import com.example.sarawan.framework.ui.profile.address_fragment.ProfileAddressFragment
 import com.example.sarawan.framework.ui.profile.name_fragment.ProfileNameFragment
 import com.example.sarawan.framework.ui.profile.viewModel.ProfileViewModel
-import com.example.sarawan.model.data.AddressItem
-import com.example.sarawan.model.data.AppState
-import com.example.sarawan.model.data.OrderApprove
-import com.example.sarawan.model.data.UserDataModel
+import com.example.sarawan.model.data.*
 import com.example.sarawan.utils.exstentions.basketId
 import com.example.sarawan.utils.exstentions.token
 import com.example.sarawan.utils.exstentions.userId
@@ -50,11 +47,12 @@ class ProfileFragment : Fragment() {
     private var addressItem: AddressItem? = null
 
     private val itemClickListener = object : ItemClickListener {
-        override fun cancel() {
-            TODO("Not yet implemented")
+        override fun cancel(pos : Int) {
+            cancelOrder(pos)
         }
 
     }
+    private var orders : MutableList<OrderApprove> = ArrayList()
     private val adapter = OrdersAdapter(itemClickListener)
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -165,7 +163,8 @@ class ProfileFragment : Fragment() {
 
                         is OrderApprove -> {
                             val data = appState.data as MutableList<OrderApprove>
-                            initRcView(data)
+                            orders = data
+                            initRcView()
                         }
                     }
                 }
@@ -182,11 +181,11 @@ class ProfileFragment : Fragment() {
             AppState.Empty -> TODO()
         }
     }
-    private fun initRcView(data : MutableList<OrderApprove>) = with(binding) {
+    private fun initRcView() = with(binding) {
         activeOrdersRcView.layoutManager = LinearLayoutManager(root.context)
         activeOrdersRcView.adapter = adapter
         activeOrdersRcView.itemAnimator?.changeDuration = 0
-        adapter.setOrder(data)
+        adapter.setOrder(orders)
     }
     private fun formatPhone(number: String?): String =
         number?.let {
@@ -221,6 +220,15 @@ class ProfileFragment : Fragment() {
         } else {
             getString(R.string.profile_add_name)
         }
+    }
+
+    private fun cancelOrder(pos : Int) {
+        orders.removeAt(pos)
+        adapter.setOrder(orders)
+        adapter.notifyItemRemoved(pos)
+        val order = orders[pos]
+        val id = order.orderId!!
+        viewModel.deleteOrder(id)
     }
 
     override fun onDestroy() {
