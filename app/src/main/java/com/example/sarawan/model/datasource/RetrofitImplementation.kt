@@ -74,6 +74,10 @@ class RetrofitImplementation @Inject constructor(private val apiService: ApiServ
                 Query.Get.Address -> apiService
                     .getAddress()
                     .map { it }
+                Query.Get.OrdersApproves ->
+                    apiService
+                    .getOrders()
+                    .map { it }
             }
 
             is Query.Post -> when (query) {

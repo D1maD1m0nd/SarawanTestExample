@@ -1,4 +1,4 @@
-package com.example.sarawan.framework.ui.profile
+package com.example.sarawan.utils
 
 import android.content.Context
 import android.text.*

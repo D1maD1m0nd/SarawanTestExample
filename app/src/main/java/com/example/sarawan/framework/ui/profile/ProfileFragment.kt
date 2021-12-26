@@ -11,12 +11,14 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.sarawan.R
 import com.example.sarawan.app.App.Companion.navController
 import com.example.sarawan.databinding.FragmentProfileBinding
+import com.example.sarawan.framework.ui.profile.adapter.ItemClickListener
+import com.example.sarawan.framework.ui.profile.adapter.OrdersAdapter
 import com.example.sarawan.framework.ui.profile.address_fragment.ProfileAddressFragment
 import com.example.sarawan.framework.ui.profile.name_fragment.ProfileNameFragment
-import com.example.sarawan.framework.ui.profile.phone_fragment.ProfilePhoneFragment
 import com.example.sarawan.framework.ui.profile.viewModel.ProfileViewModel
 import com.example.sarawan.model.data.AddressItem
 import com.example.sarawan.model.data.AppState
+import com.example.sarawan.model.data.OrderApprove
 import com.example.sarawan.model.data.UserDataModel
 import com.example.sarawan.utils.exstentions.basketId
 import com.example.sarawan.utils.exstentions.token
@@ -45,6 +47,14 @@ class ProfileFragment : Fragment() {
     //аналогично и для адреса
     private var addressItem: AddressItem? = null
 
+    private val itemClickListener = object : ItemClickListener {
+        override fun cancel() {
+            TODO("Not yet implemented")
+        }
+
+    }
+    private val adapter = OrdersAdapter(itemClickListener)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         AndroidSupportInjection.inject(this)
@@ -53,7 +63,7 @@ class ProfileFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View = FragmentProfileBinding
+    ) = FragmentProfileBinding
         .inflate(inflater, container, false)
         .also {
             viewModel.getStateLiveData().observe(viewLifecycleOwner) { appState: AppState<*> ->
@@ -67,6 +77,7 @@ class ProfileFragment : Fragment() {
         if (sharedPreferences.userId != -1L) {
             sharedPreferences.userId?.let {
                 viewModel.getUserData(it)
+                viewModel.getOrders()
             }
         }
     }
@@ -142,13 +153,16 @@ class ProfileFragment : Fragment() {
                             if (sharedPreferences.basketId == -1) {
                                 sharedPreferences.basketId = firstItem.basket?.basketId
                             }
-                            //profilePhoneTextView.text = firstItem.phone
                             profilePhoneTextView.text = formatPhone(firstItem.phone)
 
                             val name = formatName(firstItem)
                             profileNameTextView.text = name
 
                             user = firstItem
+                        }
+
+                        is OrderApprove -> {
+
                         }
                     }
                 }
@@ -162,6 +176,7 @@ class ProfileFragment : Fragment() {
                     .show()
             }
             AppState.Loading -> Unit
+            AppState.Empty -> TODO()
         }
     }
 

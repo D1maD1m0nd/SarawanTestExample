@@ -27,6 +27,8 @@ sealed interface Query {
         object Category : Get
 
         object Address : Get
+
+        object OrdersApproves : Get
     }
 
     sealed interface Post : Query {

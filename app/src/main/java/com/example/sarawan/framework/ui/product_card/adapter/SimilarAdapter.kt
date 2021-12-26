@@ -14,7 +14,7 @@ import com.example.sarawan.model.data.StorePrice
 import com.example.sarawan.utils.TypeCardEnum
 
 class SimilarAdapter(val itemClickListener: ItemClickListener) : RecyclerView.Adapter<SimilarAdapter.ProductViewHolder>() {
-    private var similarList : List<Product> = ArrayList(20)
+    private var similarList : List<Product> = ArrayList(60)
 
     @SuppressLint("NotifyDataSetChanged")
     fun setData(products : MutableList<Product>) {

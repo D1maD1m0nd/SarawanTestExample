@@ -140,4 +140,10 @@ interface ApiService {
      */
     @POST("api/order_approve/")
     fun createOrder(@Body address : AddressItem) : Single<OrderApprove>
+
+    /**
+     * Получение списка заказов
+     */
+    @GET("api/order/")
+    fun getOrders() : Single<List<OrderApprove>>
 }
