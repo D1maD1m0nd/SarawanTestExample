@@ -56,5 +56,8 @@ data class OrderApprove(
 	val status: OrderStatus? = null,
 
 	@field:Json(name="order_status")
-	val orderStatus: OrderStatus? = null
+	val orderStatus: OrderStatus? = null,
+
+	@field:Json(name="information")
+	val information : OrderInformation? = null
 )

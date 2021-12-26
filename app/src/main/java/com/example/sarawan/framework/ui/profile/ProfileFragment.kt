@@ -1,6 +1,7 @@
 package com.example.sarawan.framework.ui.profile
 
 import android.content.SharedPreferences
+import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.sarawan.R
 import com.example.sarawan.app.App.Companion.navController
 import com.example.sarawan.databinding.FragmentProfileBinding
@@ -162,7 +164,8 @@ class ProfileFragment : Fragment() {
                         }
 
                         is OrderApprove -> {
-
+                            val data = appState.data as MutableList<OrderApprove>
+                            initRcView(data)
                         }
                     }
                 }
@@ -179,7 +182,12 @@ class ProfileFragment : Fragment() {
             AppState.Empty -> TODO()
         }
     }
-
+    private fun initRcView(data : MutableList<OrderApprove>) = with(binding) {
+        activeOrdersRcView.layoutManager = LinearLayoutManager(root.context)
+        activeOrdersRcView.adapter = adapter
+        activeOrdersRcView.itemAnimator?.changeDuration = 0
+        adapter.setOrder(data)
+    }
     private fun formatPhone(number: String?): String =
         number?.let {
             var index = 0

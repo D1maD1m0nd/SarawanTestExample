@@ -14,5 +14,9 @@ enum class OrderStatus {
     @field:Json(name="CAN")
     CAN,
     @field:Json(name="DEL")
-    DEL
+    DEL,
+    @field:Json(name="PLD")
+    PLD,
+    @field:Json(name="FAL")
+    FAL
 }
