@@ -6,6 +6,7 @@ import com.example.sarawan.framework.ui.base.mainCatalog.BaseMainCatalogFragment
 import com.example.sarawan.framework.ui.main.viewModel.MainViewModel
 import com.example.sarawan.model.data.AppState
 import com.example.sarawan.model.data.MainScreenDataModel
+import com.example.sarawan.utils.exstentions.token
 
 class MainFragment : BaseMainCatalogFragment() {
 
@@ -19,13 +20,14 @@ class MainFragment : BaseMainCatalogFragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        if (isOnline) viewModel.getStartData(isOnline) else handleNetworkErrorWithLayout()
+        if (isOnline) viewModel.getStartData(isOnline, !sharedPreferences.token.isNullOrEmpty())
+        else handleNetworkErrorWithLayout()
         super.onViewCreated(view, savedInstanceState)
     }
 
     override fun refresh() {
         if (isOnline) {
-            viewModel.getStartData(isOnline)
+            viewModel.getStartData(isOnline, !sharedPreferences.token.isNullOrEmpty())
             binding.noConnectionLayout.root.visibility = View.GONE
         }
     }
@@ -49,7 +51,7 @@ class MainFragment : BaseMainCatalogFragment() {
                         isDataLoaded = true
                     }
                 }
-                is AppState.Error -> handleNetworkErrorWithToast()
+                is AppState.Error -> handleNetworkErrorWithToast(appState.error)
                 AppState.Loading -> binding.loadingLayout.visibility = View.VISIBLE
                 AppState.Empty -> Unit
             }

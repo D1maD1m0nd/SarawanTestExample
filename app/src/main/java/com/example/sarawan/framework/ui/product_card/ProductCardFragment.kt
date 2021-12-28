@@ -22,7 +22,7 @@ import com.example.sarawan.framework.ui.product_card.adapter.StoreAdapter
 import com.example.sarawan.framework.ui.product_card.viewModel.ProductCardViewModel
 import com.example.sarawan.model.data.*
 import com.example.sarawan.utils.TypeCardEnum
-import com.example.sarawan.utils.exstentions.toProductShortItem
+import com.example.sarawan.utils.exstentions.token
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
 
@@ -87,7 +87,7 @@ class ProductCardFragment : Fragment() {
         binding.productCloseButton.setOnClickListener {
             navController.popBackStack()
         }
-        viewModel.similarProducts(productId)
+        viewModel.similarProducts(productId, !sharedPreferences.token.isNullOrEmpty())
     }
     private fun clearViewState() {
         viewModel.clear()
@@ -182,13 +182,13 @@ class ProductCardFragment : Fragment() {
         val product = similarProducts[pos]
         when(mode) {
             true -> {
-                product.count++
+                product.quantity++
                 product.storePrices?.first()?.let {
                     fabChanger?.changePrice(it.price.toFloat())
                 }
             }
             false -> {
-                product.count--
+                product.quantity--
                 product.storePrices?.first()?.let {
                     fabChanger?.changePrice(it.price.toFloat() * -1)
                 }
@@ -213,16 +213,16 @@ class ProductCardFragment : Fragment() {
                 }
             }
         }
-        val product = Product(count = store.count, storePrices = mutableListOf(store))
+        val product = Product(quantity = store.count, storePrices = mutableListOf(store))
         itemSave(product , pos, false, TypeCardEnum.STORE)
     }
 
     private fun itemSave(product : Product, pos:Int, isNew : Boolean, type: TypeCardEnum){
 
         viewModel.saveData(
-            listOf(product.toProductShortItem()),
-            isOnline = true,
-            isNewItem = isNew
+            listOf(product),
+            isNewItem = isNew,
+            isLoggedUser = !sharedPreferences.token.isNullOrEmpty()
         )
         when(type) {
             TypeCardEnum.SIMILAR -> {
@@ -230,7 +230,7 @@ class ProductCardFragment : Fragment() {
                 similarAdapter.itemUpdate(pos, similarProducts)
             }
             TypeCardEnum.STORE -> {
-                storeProducts[pos].count = product.count
+                storeProducts[pos].count = product.quantity
                 storeAdapter.itemUpdate(pos,storeProducts)
 
             }

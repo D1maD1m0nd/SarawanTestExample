@@ -16,9 +16,9 @@ class ProductCardViewModel @Inject constructor(
     fun clear() {
         stateLiveData.value = AppState.Empty
     }
-    fun similarProducts(storeId : Long?) {
+    fun similarProducts(storeId : Long?, isLoggedUser: Boolean) {
         storeId?.let { store ->
-            val basket =  interactor.getData(Query.Get.Basket, true).onErrorReturnItem(listOf(Basket()))
+            val basket =  interactor.getData(Query.Get.Basket, isLoggedUser).onErrorReturnItem(listOf(Basket()))
             val similar = interactor.getData(Query.Get.Products.SimilarProducts(store), true)
             val product = interactor.getData(Query.Get.Products.Id(storeId), true)
             compositeDisposable.add(
@@ -28,7 +28,7 @@ class ProductCardViewModel @Inject constructor(
                     similarData as MutableList<Product>
                     similarData.addAll(productData)
 
-                    var data: List<Product>
+                    val data: List<Product>
                     val basketObject = (basketData as List<Basket>).firstOrNull()
                     basketID = basketObject?.basketId
                     if(basketData.isNotEmpty()) {
@@ -41,7 +41,7 @@ class ProductCardViewModel @Inject constructor(
                                 ?.forEach { basketSingleData ->
                                 val similarEq = similarProduct.id == basketSingleData.basketProduct?.basketProduct?.id
                                 if (similarEq) {
-                                    similarProduct.count = basketSingleData.quantity!!
+                                    similarProduct.quantity = basketSingleData.quantity!!
                                     val storeIdProduct = basketSingleData.basketProduct?.productStoreId
                                     storeIdProduct?.let { idProduct ->
                                         similarProduct
@@ -77,10 +77,10 @@ class ProductCardViewModel @Inject constructor(
         }
     }
 
-    fun saveData(data: List<ProductShortItem>, isOnline: Boolean, isNewItem: Boolean) {
+    fun saveData(data: List<Product>, isNewItem: Boolean, isLoggedUser: Boolean) {
         if (isNewItem) compositeDisposable.add(
             interactor
-                .getData(Query.Post.Basket.Put(ProductsUpdate(data)), isOnline)
+                .getData(Query.Post.Basket.Put(ProductsUpdate(data)), isLoggedUser)
                 .subscribeOn(schedulerProvider.io)
                 .observeOn(schedulerProvider.io)
                 .subscribe({
@@ -90,7 +90,7 @@ class ProductCardViewModel @Inject constructor(
         else basketID?.let { basket ->
             compositeDisposable.add(
                 interactor
-                    .getData(Query.Put.Basket.Update(basket, ProductsUpdate(data)), isOnline)
+                    .getData(Query.Put.Basket.Update(basket, ProductsUpdate(data)), isLoggedUser)
                     .subscribeOn(schedulerProvider.io)
                     .observeOn(schedulerProvider.io)
                     .subscribe({}, { stateLiveData.postValue(AppState.Error(it)) })
@@ -100,10 +100,10 @@ class ProductCardViewModel @Inject constructor(
             AppState.Error(RuntimeException("Should init BasketID first"))
     }
 
-    fun updateBasket(products: ProductsUpdate) {
+    fun updateBasket(products: ProductsUpdate, isLoggedUser: Boolean) {
         basketID?.let { id ->
             compositeDisposable.add(
-                interactor.getData(Query.Put.Basket.Update(id, products), true)
+                interactor.getData(Query.Put.Basket.Update(id, products), isLoggedUser)
                     .subscribeOn(schedulerProvider.io)
                     .observeOn(schedulerProvider.io)
                     .doOnSubscribe { stateLiveData.postValue(AppState.Loading) }

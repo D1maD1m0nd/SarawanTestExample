@@ -1,6 +1,7 @@
 package com.example.sarawan.framework.ui.base.mainCatalog
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -26,6 +27,7 @@ import com.example.sarawan.framework.ui.main.viewHolder.ButtonMoreClickListener
 import com.example.sarawan.model.data.MainScreenDataModel
 import com.example.sarawan.rx.ISchedulerProvider
 import com.example.sarawan.utils.NetworkStatus
+import com.example.sarawan.utils.exstentions.token
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
 
@@ -42,6 +44,9 @@ abstract class BaseMainCatalogFragment : Fragment(), INavigation {
 
     @Inject
     lateinit var imageLoader: ImageLoader
+
+    @Inject
+    lateinit var sharedPreferences: SharedPreferences
 
     private var _binding: FragmentMainBinding? = null
     protected val binding get() = _binding!!
@@ -74,7 +79,7 @@ abstract class BaseMainCatalogFragment : Fragment(), INavigation {
                     if (isOnline) {
                         callback(isOnline)
                         fabChanger?.changePrice(it * diff)
-                        viewModel.saveData(data, isOnline, isNewItem)
+                        viewModel.saveData(data, !sharedPreferences.token.isNullOrEmpty(), isNewItem)
                     } else handleNetworkErrorWithToast()
                 }
             }
@@ -135,7 +140,7 @@ abstract class BaseMainCatalogFragment : Fragment(), INavigation {
                         ) == CardType.LOADING.type
                     ) if (isOnline) {
                         isDataLoaded = false
-                        viewModel.getMoreData(isOnline)
+                        viewModel.getMoreData(isOnline, !sharedPreferences.token.isNullOrEmpty())
                     } else handleNetworkErrorWithToast()
                     adapter.changeLoadingAnimation(isOnline)
                 }
@@ -155,7 +160,7 @@ abstract class BaseMainCatalogFragment : Fragment(), INavigation {
         if (mainRecyclerAdapter == null) {
             mainRecyclerAdapter =
                 MainRecyclerAdapter(onListItemClickListener, imageLoader, buttonMoreClickListener) {
-                    binding.loadingLayout.visibility = View.GONE
+                    _binding?.loadingLayout?.visibility = View.GONE
                 }
         } else mainRecyclerAdapter?.clear()
 
@@ -240,7 +245,8 @@ abstract class BaseMainCatalogFragment : Fragment(), INavigation {
         if (isOnline) {
             viewModel.search(
                 binding.searchField.editText?.text.toString(),
-                isOnline
+                isOnline,
+                !sharedPreferences.token.isNullOrEmpty()
             )
             binding.loadingLayout.visibility = View.VISIBLE
             mainRecyclerAdapter?.clear()
@@ -249,10 +255,10 @@ abstract class BaseMainCatalogFragment : Fragment(), INavigation {
         } else handleNetworkErrorWithToast()
     }
 
-    protected fun handleNetworkErrorWithToast() {
+    protected fun handleNetworkErrorWithToast(throwable: Throwable? = RuntimeException(getString(R.string.no_internet))) {
         Toast.makeText(
             context,
-            getString(R.string.no_internet),
+            throwable?.message,
             Toast.LENGTH_SHORT
         ).show()
     }

@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.View.*
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.example.sarawan.R
 import com.example.sarawan.databinding.StoreItemBinding
@@ -66,7 +65,7 @@ class StoreAdapter(val itemClickListener: ItemClickListener)  : RecyclerView.Ada
             }
             basketButton.setOnClickListener {
                     itemClickListener.create(
-                        Product(count = 1, storePrices = mutableListOf(store)),
+                        Product(quantity = 1, storePrices = mutableListOf(store)),
                         absoluteAdapterPosition,
                         TypeCardEnum.STORE
                     )

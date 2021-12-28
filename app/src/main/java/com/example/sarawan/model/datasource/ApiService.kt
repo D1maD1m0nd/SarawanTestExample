@@ -75,6 +75,7 @@ interface ApiService {
 
     @DELETE("api/basket/")
     fun clearBasket() : Single<Basket>
+
     /**
      * Добавление продукта в корзину
      */

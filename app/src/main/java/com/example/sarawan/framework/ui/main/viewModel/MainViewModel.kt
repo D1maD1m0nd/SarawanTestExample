@@ -15,12 +15,12 @@ class MainViewModel @Inject constructor(
     private val schedulerProvider: ISchedulerProvider,
     private val stringProvider: StringProvider
 ) : BaseMainCatalogViewModel(interactor, schedulerProvider, stringProvider) {
-    override fun getStartData(isOnline: Boolean) {
+    override fun getStartData(isOnline: Boolean, isLoggedUser: Boolean) {
         searchWord = null
         val discount = interactor.getData(Query.Get.Products.DiscountProducts(), isOnline)
         val basket =
-            interactor.getData(Query.Get.Basket, isOnline).onErrorReturnItem(listOf(Basket()))
-        val popular = loadMoreData(isOnline, Query.Get.Products.PopularProducts())
+            interactor.getData(Query.Get.Basket, isLoggedUser).onErrorReturnItem(listOf(Basket()))
+        val popular = loadMoreData(isOnline, Query.Get.Products.PopularProducts(), isLoggedUser)
         compositeDisposable.add(
             Single.zip(discount, popular, basket) { discountData, popularData, basketData ->
                 val data: MutableList<MainScreenDataModel> = mutableListOf()
@@ -50,13 +50,14 @@ class MainViewModel @Inject constructor(
         )
     }
 
-    override fun getMoreData(isOnline: Boolean) {
+    override fun getMoreData(isOnline: Boolean, isLoggedUser: Boolean) {
         val tempWord = searchWord
         (if (tempWord == null) loadMoreData(
             isOnline,
-            Query.Get.Products.PopularProducts()
+            Query.Get.Products.PopularProducts(),
+            isLoggedUser
         )
-        else loadMoreData(isOnline, Query.Get.Products.ProductName(tempWord)))
+        else loadMoreData(isOnline, Query.Get.Products.ProductName(tempWord), isLoggedUser))
             .subscribeOn(schedulerProvider.io)
             .observeOn(schedulerProvider.io)
             .subscribe(

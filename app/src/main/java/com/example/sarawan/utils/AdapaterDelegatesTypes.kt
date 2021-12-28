@@ -54,9 +54,8 @@ object AdapterDelegatesTypes {
                         --counter
                         item.quantity = counter
                         if(counter == 0) {
-                            val basketId = item.basketProductId
-                            basketId?.let {
-                                itemClickListener.deleteItem(basketId, absoluteAdapterPosition, item)
+                            item.let { productsItem ->
+                                itemClickListener.deleteItem(productsItem, absoluteAdapterPosition, item)
                             }
                         } else {
                             itemClickListener.update()
@@ -66,9 +65,8 @@ object AdapterDelegatesTypes {
                 }
 
                 trashImageButton.setOnClickListener {
-                    val basketId = item.basketProductId
-                    basketId?.let {
-                        itemClickListener.deleteItem(basketId, absoluteAdapterPosition, item)
+                    item.let { productsItem ->
+                        itemClickListener.deleteItem(productsItem, absoluteAdapterPosition, item)
                     }
                 }
 

@@ -10,7 +10,6 @@ import coil.load
 import com.example.sarawan.R
 import com.example.sarawan.databinding.ListItemCardBinding
 import com.example.sarawan.model.data.Product
-import com.example.sarawan.model.data.StorePrice
 import com.example.sarawan.utils.TypeCardEnum
 
 class SimilarAdapter(val itemClickListener: ItemClickListener) : RecyclerView.Adapter<SimilarAdapter.ProductViewHolder>() {
@@ -66,8 +65,8 @@ class SimilarAdapter(val itemClickListener: ItemClickListener) : RecyclerView.Ad
             itemDescription.text = product.name
             itemShopName.text = store?.store
             itemPrice.text = store?.price.toString()
-            itemQuantity.text = product.count.toString()
-            if(product.count > 0) {
+            itemQuantity.text = product.quantity.toString()
+            if(product.quantity > 0) {
                 itemBuyButtonFrame.visibility = GONE
                 itemQuantityLayout.visibility = VISIBLE
             } else {
@@ -77,7 +76,7 @@ class SimilarAdapter(val itemClickListener: ItemClickListener) : RecyclerView.Ad
             itemQuantityLayout.setOnClickListener { }
             itemBuyButton.setOnClickListener {
                 //itemClickListener.changeVisible(absoluteAdapterPosition)
-                product.count++
+                product.quantity++
                 itemClickListener.create(product, absoluteAdapterPosition, TypeCardEnum.SIMILAR)
             }
 

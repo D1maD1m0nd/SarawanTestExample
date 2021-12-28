@@ -14,9 +14,9 @@ class BasketViewModel @Inject constructor(
 
     private var basketID: Int? = null
 
-    fun getBasket() {
+    fun getBasket(isLoggedUser: Boolean) {
         compositeDisposable.add(
-            interactor.getData(Query.Get.Basket, true)
+            interactor.getData(Query.Get.Basket, isLoggedUser)
                 .subscribeOn(schedulerProvider.io)
                 .observeOn(schedulerProvider.io)
                 .doOnSubscribe { stateLiveData.postValue(AppState.Loading) }
@@ -25,10 +25,10 @@ class BasketViewModel @Inject constructor(
     }
 
 
-    fun clearBasket() {
+    fun clearBasket(isLoggedUser: Boolean) {
         basketID?.let {
             compositeDisposable.add(
-                interactor.getData(Query.Delete.Basket.Clear, true)
+                interactor.getData(Query.Delete.Basket.Clear, isLoggedUser)
                     .subscribeOn(schedulerProvider.io)
                     .observeOn(schedulerProvider.io)
                     .subscribe(
@@ -40,10 +40,10 @@ class BasketViewModel @Inject constructor(
             AppState.Error(RuntimeException("Should init BasketID first"))
     }
 
-    fun updateBasket(products: ProductsUpdate) {
+    fun updateBasket(products: ProductsUpdate, isLoggedUser: Boolean) {
         basketID?.let { id ->
             compositeDisposable.add(
-                interactor.getData(Query.Put.Basket.Update(id, products), true)
+                interactor.getData(Query.Put.Basket.Update(id, products), isLoggedUser)
                     .subscribeOn(schedulerProvider.io)
                     .observeOn(schedulerProvider.io)
                     .subscribe(
@@ -55,9 +55,9 @@ class BasketViewModel @Inject constructor(
             AppState.Error(RuntimeException("Should init BasketID first"))
     }
 
-    fun deleteBasketProduct(id: Int) {
+    fun deleteBasketProduct(id: Int, isLoggedUser: Boolean) {
         compositeDisposable.add(
-            interactor.getData(Query.Delete.Basket.Remove(id), true)
+            interactor.getData(Query.Delete.Basket.Remove(id), isLoggedUser)
                 .subscribeOn(schedulerProvider.io)
                 .observeOn(schedulerProvider.io)
                 .subscribe(
