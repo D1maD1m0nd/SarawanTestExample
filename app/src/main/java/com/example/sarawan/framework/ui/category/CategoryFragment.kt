@@ -12,6 +12,7 @@ import com.example.sarawan.framework.ui.category.viewModel.CategoryViewModel
 import com.example.sarawan.model.data.AppState
 import com.example.sarawan.model.data.MainScreenDataModel
 import com.example.sarawan.utils.SortBy
+import com.example.sarawan.utils.exstentions.token
 
 class CategoryFragment : BaseMainCatalogFragment() {
 
@@ -91,7 +92,8 @@ class CategoryFragment : BaseMainCatalogFragment() {
                             viewModel.changeSorting(
                                 arguments?.getInt(KEY_CATEGORY) ?: DISCOUNT,
                                 isOnline,
-                                sortType
+                                sortType,
+                                !sharedPreferences.token.isNullOrEmpty()
                             )
                         }
                     } else {
@@ -127,7 +129,7 @@ class CategoryFragment : BaseMainCatalogFragment() {
                     }
                     binding.loadingLayout.visibility = View.GONE
                 }
-                is AppState.Error -> handleNetworkErrorWithToast()
+                is AppState.Error -> handleNetworkErrorWithToast(appState.error)
                 AppState.Loading -> binding.loadingLayout.visibility = View.VISIBLE
                 AppState.Empty -> Unit
             }

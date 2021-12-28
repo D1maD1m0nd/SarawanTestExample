@@ -12,12 +12,13 @@ data class Response(
 data class Product(
     @field: Json(name = "id") val id: Long? = null,
     @field: Json(name = "images") val images: List<Image>? = null,
+    @field: Json(name = "product") val product: Int? = null,
     @field: Json(name = "name") val name: String? = null,
     @field: Json(name = "price_type") val priceType: String? = null,
     @field: Json(name = "store_prices") val storePrices: MutableList<StorePrice>? = null,
     @field: Json(name = "unit_quantity") val unitQuantity: String? = null,
     @field: Json(name = "description") val description: String? = null,
-    var count: Int = 0
+    @field: Json(name = "quantity") var quantity: Int = 0
 )
 
 @Parcelize
@@ -35,11 +36,6 @@ data class Image(
 ) : Parcelable
 
 data class ProductsUpdate(
-    @field: Json(name = "products") val products: List<ProductShortItem>
-)
-
-data class ProductShortItem(
-    @field: Json(name = "product") val product: Int,
-    @field: Json(name = "quantity") val quantity: Int
+    @field: Json(name = "products") val products: List<Product>
 )
 

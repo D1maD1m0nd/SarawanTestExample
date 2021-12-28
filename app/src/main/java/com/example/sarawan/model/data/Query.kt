@@ -15,6 +15,7 @@ sealed interface Query {
             data class Id(val id: Long, override var page: Int = 1) : Products
             data class SimilarProducts(val id : Long, override var page: Int = 1) : Products
         }
+
         sealed interface Users : Get {
             data class UserData(val id : Long) : Users
         }
@@ -22,6 +23,7 @@ sealed interface Query {
         sealed interface Orders : Get {
             data class Order(val address : AddressItem) : Orders
         }
+
         object Basket : Get
 
         object Category : Get
@@ -63,10 +65,12 @@ sealed interface Query {
     }
 
     sealed interface Delete : Query {
+
         sealed interface Basket : Delete {
             data class Remove(val id: Int) : Basket
             object Clear :Basket
         }
+
         sealed interface Order : Delete {
             data class Delete(val id : Int) : Order
         }

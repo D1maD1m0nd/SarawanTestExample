@@ -2,7 +2,6 @@ package com.example.sarawan.di.modules
 
 import android.content.Context
 import android.content.SharedPreferences
-import com.example.sarawan.app.App
 import com.example.sarawan.model.datasource.ApiService
 import com.example.sarawan.utils.AndroidNetworkStatus
 import com.example.sarawan.utils.NetworkStatus
@@ -28,8 +27,8 @@ class NetworkModule {
         httpClient.addInterceptor { chain ->
             val original = chain.request()
             val request = original.newBuilder()
-            val token = shared.token ?: ""
-            if(token.isNotEmpty()) {
+            val token = shared.token
+            if (!token.isNullOrEmpty()) {
                 request.header("Authorization", "Token $token")
             }
             val builder = request.method(original.method, original.body)

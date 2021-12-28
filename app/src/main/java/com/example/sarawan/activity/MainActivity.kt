@@ -14,6 +14,7 @@ import com.example.sarawan.framework.ui.profile.phone_fragment.ProfilePhoneFragm
 import com.example.sarawan.model.data.AppState
 import com.example.sarawan.rx.ISchedulerProvider
 import com.example.sarawan.utils.NetworkStatus
+import com.example.sarawan.utils.exstentions.token
 import com.example.sarawan.utils.exstentions.userId
 import dagger.android.AndroidInjection
 import io.reactivex.rxjava3.subjects.BehaviorSubject
@@ -84,16 +85,20 @@ class MainActivity : AppCompatActivity(), FabChanger {
         navView.setOnItemSelectedListener {
             when (it.itemId) {
                 R.id.profileFragment -> return@setOnItemSelectedListener showProfile()
-                R.id.basketFragment -> return@setOnItemSelectedListener showBasket()
+                else -> {
+                    if (!navController.popBackStack(it.itemId, false))
+                        navController.navigate(it.itemId)
+                    true
+                }
             }
-            navController.navigate(it.itemId)
-            true
         }
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
-            if (destination.id == R.id.basketFragment) binding.fabPrice.hide()
-            if (destination.id == R.id.orderFragment) binding.fabPrice.hide()
-            else viewModel.getBasket()
+            when (destination.id) {
+                R.id.basketFragment -> binding.fabPrice.hide()
+                R.id.orderFragment -> binding.fabPrice.hide()
+                else -> viewModel.getBasket(!sharedPreferences.token.isNullOrEmpty())
+            }
         }
     }
 
@@ -107,22 +112,8 @@ class MainActivity : AppCompatActivity(), FabChanger {
             true
         }
 
-    private fun showBasket(): Boolean =
-        if (sharedPreferences.userId == -1L) {
-            ProfilePhoneFragment.newInstance { navigateToProfile() }
-                .show(supportFragmentManager, null)
-            false
-        } else {
-            navigateToBasket()
-            true
-        }
-
     private fun navigateToProfile() {
         navController.navigate(R.id.profileFragment)
-    }
-
-    private fun navigateToBasket() {
-        navController.navigate(R.id.basketFragment)
     }
 
     override fun onBackPressed() {
@@ -132,7 +123,8 @@ class MainActivity : AppCompatActivity(), FabChanger {
     }
 
     private fun checkExit() {
-        Toast.makeText(this, getString(R.string.press_back_again_to_exit), Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, getString(R.string.press_back_again_to_exit), Toast.LENGTH_SHORT)
+            .show()
         if (System.currentTimeMillis() - lastTimeBackPressed < BACK_BUTTON_EXIT_DELAY && isBackShown) {
             exitProcess(0)
         } else isBackShown = false

@@ -9,5 +9,5 @@ import androidx.room.RoomDatabase
 )
 abstract class SarawanDatabase : RoomDatabase() {
 
-    abstract val searchDao: SearchDao
+    abstract val basketDao: BasketDao
 }

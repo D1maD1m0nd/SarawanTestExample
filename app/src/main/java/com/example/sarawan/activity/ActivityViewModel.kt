@@ -13,10 +13,10 @@ class ActivityViewModel @Inject constructor(
     private val schedulerProvider: ISchedulerProvider
 ) : BaseViewModel<AppState<*>>() {
 
-    fun getBasket() {
+    fun getBasket(isLoggedUser: Boolean) {
         compositeDisposable.clear()
         compositeDisposable.add(
-            interactor.getData(Query.Get.Basket, true)
+            interactor.getData(Query.Get.Basket, isLoggedUser)
                 .subscribeOn(schedulerProvider.io)
                 .observeOn(schedulerProvider.io)
                 .subscribe({ baskets ->

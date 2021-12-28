@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.sarawan.R
 import com.example.sarawan.app.App.Companion.navController
@@ -20,29 +21,26 @@ import com.example.sarawan.framework.ui.modals.DeliveryTimeFragment
 import com.example.sarawan.framework.ui.modals.PaymentMethodFragment
 import com.example.sarawan.framework.ui.modals.SuccessOrderFragment
 import com.example.sarawan.framework.ui.profile.address_fragment.ProfileAddressFragment
-import com.example.sarawan.framework.ui.profile.phone_fragment.ProfilePhoneFragment
 import com.example.sarawan.model.data.*
 import com.example.sarawan.model.data.delegatesModel.BasketFooter
 import com.example.sarawan.model.data.delegatesModel.BasketHeader
 import com.example.sarawan.model.data.delegatesModel.BasketListItem
 import com.example.sarawan.utils.ItemClickListener
-import com.example.sarawan.utils.exstentions.toProductShortItem
-import com.example.sarawan.utils.exstentions.userId
+import com.example.sarawan.utils.exstentions.token
 import dagger.android.support.AndroidSupportInjection
 import retrofit2.HttpException
 import javax.inject.Inject
-import androidx.recyclerview.widget.DividerItemDecoration
-
-
 
 
 class BasketFragment : Fragment() {
     @Inject
     lateinit var sharedPreferences: SharedPreferences
+
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
     private var _binding: FragmentBasketBinding? = null
     private val binding get() = _binding!!
+
     //основной список для отображения
     private val list: MutableList<BasketListItem> = ArrayList(
         listOf(
@@ -60,9 +58,9 @@ class BasketFragment : Fragment() {
             updateBasket()
         }
 
-        override fun deleteItem(basketId: Int, pos: Int, item: BasketListItem) {
+        override fun deleteItem(productsItem: ProductsItem, pos: Int, item: BasketListItem) {
             list.remove(item)
-            deleteBasketItem(pos, basketId)
+            deleteBasketItem(pos, productsItem)
         }
 
         override fun openProductCard(productId: Int) {
@@ -74,7 +72,7 @@ class BasketFragment : Fragment() {
         }
 
         override fun clear() {
-            viewModel.clearBasket()
+            viewModel.clearBasket(!sharedPreferences.token.isNullOrEmpty())
             removeItems()
         }
     }
@@ -107,7 +105,7 @@ class BasketFragment : Fragment() {
 
     private fun initData() {
         initRcView()
-        viewModel.getBasket()
+        viewModel.getBasket(!sharedPreferences.token.isNullOrEmpty())
     }
 
     private fun initRcView() = with(binding) {
@@ -122,22 +120,20 @@ class BasketFragment : Fragment() {
         cardContainerRcView.adapter = adapter
     }
 
-    private fun setState(appState: AppState<*>) = with(binding){
+    private fun setState(appState: AppState<*>) = with(binding) {
         when (appState) {
             is AppState.Success<*> -> {
                 val data = appState.data
                 if (data.isNotEmpty()) {
                     when (data.first()) {
-                        is BasketResponse -> {
-                            if(list.size >= LIMIT) {
-                                this@BasketFragment.recalculateData()
-                            }
+                        is BasketResponse -> if (list.size >= LIMIT) {
+                            this@BasketFragment.recalculateData()
                         }
                         is ProductsItem -> {
                             Log.d("TAG_PRODUCT_ITEM", "ProductsItem THIS")
                             data as MutableList<ProductsItem>
                             Log.d("TAG_PRODUCT_ITEM", "THIS")
-                            if(list.size < LIMIT) {
+                            if (list.size < LIMIT) {
                                 initDataRcView(data)
                             }
                             progressBar.visibility = View.GONE
@@ -148,25 +144,30 @@ class BasketFragment : Fragment() {
             is AppState.Error -> {
                 progressBar.visibility = View.GONE
                 val error = appState.error
-                if(error is HttpException) {
-                    when(error.code()) {
-                        500 -> Toast.makeText(context, getString(R.string.error_500), Toast.LENGTH_SHORT).show()
+                if (error is HttpException) {
+                    when (error.code()) {
+                        500 -> Toast.makeText(
+                            context,
+                            getString(R.string.error_500),
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 }
             }
             is AppState.Loading -> {
                 progressBar.visibility = View.VISIBLE
             }
-            is AppState.Empty ->  {
+            is AppState.Empty -> {
                 emptyStatus()
             }
         }
     }
-    private fun emptyStatus() = with(binding){
+
+    private fun emptyStatus() = with(binding) {
         progressBar.visibility = View.GONE
         infoBasketTextView.text = getString(R.string.basket_empty)
         actionBasketTextView.text = getString(R.string.nav_sales)
-        actionBasketTextView.setOnClickListener { navController.navigate(R.id.mainFragment)}
+        actionBasketTextView.setOnClickListener { navController.navigate(R.id.mainFragment) }
     }
 
     private fun initDataRcView(data: List<ProductsItem>) {
@@ -177,19 +178,22 @@ class BasketFragment : Fragment() {
         recalculateData()
         adapter.notifyItemRangeInserted(start, end)
     }
-    private fun productItemsToOrder(data: List<ProductsItem>) : Order {
+
+    private fun productItemsToOrder(data: List<ProductsItem>): Order {
         val count = data.sumOf { it.quantity ?: 0 }
         val weight = data.sumOf {
             it.basketProduct
-                            ?.basketProduct
-                            ?.unitQuantity
-                            ?.toDouble()
-                            ?.times(it.quantity!!) ?: 0.0 }
+                ?.basketProduct
+                ?.unitQuantity
+                ?.toDouble()
+                ?.times(it.quantity!!) ?: 0.0
+        }
         val price = data.sumOf {
             it.basketProduct
-                            ?.price
-                            ?.toDouble()
-                            ?.times(it.quantity!!) ?: 0.0 }
+                ?.price
+                ?.toDouble()
+                ?.times(it.quantity!!) ?: 0.0
+        }
 
         return Order(
             basketCount = count,
@@ -226,10 +230,10 @@ class BasketFragment : Fragment() {
         }
     }
 
-    private fun deleteBasketItem(pos: Int, basketItemId: Int) {
+    private fun deleteBasketItem(pos: Int, productsItem: ProductsItem) {
         val end = list.size + 1
         adapter.apply {
-            if(list.size == 2) {
+            if (list.size == 2) {
                 list.clear()
                 items = list
                 notifyItemRangeRemoved(0, end)
@@ -241,7 +245,9 @@ class BasketFragment : Fragment() {
                 updateHolders()
             }
         }
-        viewModel.deleteBasketProduct(basketItemId)
+        val productID = if (!sharedPreferences.token.isNullOrEmpty()) productsItem.basketProductId
+        else productsItem.basketProduct?.basketProduct?.id?.toInt()
+        viewModel.deleteBasketProduct(productID ?: -1, !sharedPreferences.token.isNullOrEmpty())
     }
 
     private fun removeItems() {
@@ -254,21 +260,20 @@ class BasketFragment : Fragment() {
 
     private fun updateBasket() {
         val products = adapter.items.filterIsInstance<ProductsItem>()
-        val items = products.map {
-            it.toProductShortItem()
-        }
-        viewModel.updateBasket(ProductsUpdate(items))
+        val items = products.map { it.toProduct() }
+        viewModel.updateBasket(ProductsUpdate(items), !sharedPreferences.token.isNullOrEmpty())
         adapter.updateHolders()
     }
 
     private fun recalculateData() {
         val items: List<ProductsItem> = list.filterIsInstance<ProductsItem>()
-        if(items.isNotEmpty()) {
+        if (items.isNotEmpty()) {
             val order = productItemsToOrder(items)
             setFooterData(order)
             setHeaderData(order)
         }
     }
+
     private fun showProductFragment(idProduct: Int) {
         val bundle = Bundle()
         val products = adapter.items.filterIsInstance<ProductsItem>()
@@ -281,6 +286,7 @@ class BasketFragment : Fragment() {
         _binding = null
         super.onDestroyView()
     }
+
     companion object {
         fun newInstance() = BasketFragment()
         const val PRODUCT_ID = "PRODUCT_ID"

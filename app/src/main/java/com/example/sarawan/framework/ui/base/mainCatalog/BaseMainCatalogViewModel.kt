@@ -25,12 +25,12 @@ abstract class BaseMainCatalogViewModel(
 
     protected var basketID: Int? = null
 
-    fun search(word: String, isOnline: Boolean) {
+    fun search(word: String, isOnline: Boolean, isLoggedUser: Boolean) {
         sortType = SortBy.PRICE_ASC
         lastPage = 1
         searchWord = word
         compositeDisposable.add(
-            loadMoreData(isOnline, Query.Get.Products.ProductName(word))
+            loadMoreData(isOnline, Query.Get.Products.ProductName(word), isLoggedUser)
                 .subscribeOn(schedulerProvider.io)
                 .observeOn(schedulerProvider.io)
                 .doOnSubscribe { stateLiveData.postValue(AppState.Loading) }
@@ -51,11 +51,11 @@ abstract class BaseMainCatalogViewModel(
         )
     }
 
-    fun saveData(data: MainScreenDataModel, isOnline: Boolean, isNewItem: Boolean) {
-        val products = listOf(data.toProductShortItem())
+    fun saveData(data: MainScreenDataModel, isLoggedUser: Boolean, isNewItem: Boolean) {
+        val products = listOf(data.toProduct())
         if (isNewItem) compositeDisposable.add(
             interactor
-                .getData(Query.Post.Basket.Put(ProductsUpdate(products)), isOnline)
+                .getData(Query.Post.Basket.Put(ProductsUpdate(products)), isLoggedUser)
                 .subscribeOn(schedulerProvider.io)
                 .observeOn(schedulerProvider.io)
                 .subscribe({
@@ -65,7 +65,10 @@ abstract class BaseMainCatalogViewModel(
         else basketID?.let { basket ->
             compositeDisposable.add(
                 interactor
-                    .getData(Query.Put.Basket.Update(basket, ProductsUpdate(products)), isOnline)
+                    .getData(
+                        Query.Put.Basket.Update(basket, ProductsUpdate(products)),
+                        isLoggedUser
+                    )
                     .subscribeOn(schedulerProvider.io)
                     .observeOn(schedulerProvider.io)
                     .subscribe({}, { stateLiveData.postValue(AppState.Error(it)) })
@@ -77,10 +80,11 @@ abstract class BaseMainCatalogViewModel(
 
     protected fun loadMoreData(
         isOnline: Boolean,
-        query: Query.Get.Products
+        query: Query.Get.Products,
+        isLoggedUser: Boolean
     ): Single<MutableList<Product>> {
         val basket =
-            interactor.getData(Query.Get.Basket, isOnline).onErrorReturnItem(listOf(Basket()))
+            interactor.getData(Query.Get.Basket, isLoggedUser).onErrorReturnItem(listOf(Basket()))
         val productsData = getProductsData(isOnline, query.apply { page = lastPage })
         return Single.zip(productsData, basket) { responseData, basketData ->
             val data: MutableList<Product> = mutableListOf()
@@ -130,7 +134,7 @@ abstract class BaseMainCatalogViewModel(
         }
     }
 
-    abstract fun getMoreData(isOnline: Boolean)
+    abstract fun getMoreData(isOnline: Boolean, isLoggedUser: Boolean)
 
     fun clear() {
         stateLiveData.value = AppState.Empty

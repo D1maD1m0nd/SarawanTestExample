@@ -39,3 +39,15 @@ data class BasketProduct(
 data class BasketResponse(
     @field:Json(name="id") val basketId: Int? = null
 )
+
+fun ProductsItem.toProduct() =
+    Product(
+        id = basketProduct?.basketProduct?.id,
+        images = basketProduct?.images,
+        product = basketProduct?.productStoreId,
+        name = basketProduct?.basketProduct?.name,
+        priceType = basketProduct?.basketProduct?.priceType,
+        storePrices = basketProduct?.basketProduct?.storePrices?.toMutableList(),
+        unitQuantity = basketProduct?.basketProduct?.unitQuantity,
+        quantity = quantity ?: 0
+    )
