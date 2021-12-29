@@ -61,7 +61,7 @@ abstract class BaseMainCatalogFragment : Fragment(), INavigation {
 
     protected var mainRecyclerAdapter: MainRecyclerAdapter? = null
 
-    private var fabChanger: FabChanger? = null
+    protected var fabChanger: FabChanger? = null
 
     protected val gridLayoutManager: GridLayoutManager by lazy {
         GridLayoutManager(context, 2, GridLayoutManager.VERTICAL, false)
@@ -265,6 +265,7 @@ abstract class BaseMainCatalogFragment : Fragment(), INavigation {
 
     protected fun handleNetworkErrorWithLayout() {
         binding.noConnectionLayout.root.visibility = View.VISIBLE
+        fabChanger?.changeState()
     }
 
     private fun checkOnlineStatus() {

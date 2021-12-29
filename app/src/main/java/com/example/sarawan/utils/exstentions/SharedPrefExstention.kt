@@ -11,7 +11,7 @@ var SharedPreferences.token: String?
     }
 
 var SharedPreferences.userId: Long?
-    get() = this.getLong("userId", -1)
+    get() = this.getLong("userId", UNREGISTERED)
     set(value) {
         if (value != null) {
             this.edit()
@@ -21,7 +21,7 @@ var SharedPreferences.userId: Long?
     }
 
 var SharedPreferences.basketId:Int?
-    get() = this.getInt("basketId", -1)
+    get() = this.getInt("basketId", UNREGISTERED.toInt())
     set(value) {
         if (value != null) {
             this.edit()
@@ -30,13 +30,5 @@ var SharedPreferences.basketId:Int?
         }
     }
 
-var SharedPreferences.basketAddressId:Int?
-    get() = this.getInt("basketAddress", -1)
-    set(value) {
-        if (value != null) {
-            this.edit()
-                .putInt("basketId", value)
-                .apply()
-        }
-    }
+const val UNREGISTERED = 1L
 

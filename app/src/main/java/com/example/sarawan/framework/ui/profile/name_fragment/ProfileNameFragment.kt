@@ -15,6 +15,7 @@ import com.example.sarawan.databinding.FragmentProfileNameBinding
 import com.example.sarawan.framework.ui.profile.name_fragment.viewModel.NameViewModel
 import com.example.sarawan.model.data.AppState
 import com.example.sarawan.model.data.UserDataModel
+import com.example.sarawan.utils.exstentions.UNREGISTERED
 import com.example.sarawan.utils.exstentions.userId
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
@@ -95,7 +96,7 @@ class ProfileNameFragment : DialogFragment() {
     }
 
     private fun saveData() = with(binding) {
-        if (sharedPreferences.userId != 1L) {
+        if (sharedPreferences.userId != UNREGISTERED) {
             sharedPreferences.userId?.let {
                 val firstName = profileNameEditText.text.toString()
                 val lastName = profileLastnameEditText.text.toString()

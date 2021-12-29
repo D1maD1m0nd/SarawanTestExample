@@ -29,6 +29,7 @@ class MainFragment : BaseMainCatalogFragment() {
         if (isOnline) {
             viewModel.getStartData(isOnline, !sharedPreferences.token.isNullOrEmpty())
             binding.noConnectionLayout.root.visibility = View.GONE
+            fabChanger?.changeState()
         }
     }
 

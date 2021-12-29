@@ -1,7 +1,6 @@
 package com.example.sarawan.framework.ui.profile
 
 import android.content.SharedPreferences
-import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -19,6 +18,7 @@ import com.example.sarawan.framework.ui.profile.address_fragment.ProfileAddressF
 import com.example.sarawan.framework.ui.profile.name_fragment.ProfileNameFragment
 import com.example.sarawan.framework.ui.profile.viewModel.ProfileViewModel
 import com.example.sarawan.model.data.*
+import com.example.sarawan.utils.exstentions.UNREGISTERED
 import com.example.sarawan.utils.exstentions.basketId
 import com.example.sarawan.utils.exstentions.token
 import com.example.sarawan.utils.exstentions.userId
@@ -74,7 +74,7 @@ class ProfileFragment : Fragment() {
         .root
 
     private fun getUserData() {
-        if (sharedPreferences.userId != -1L) {
+        if (sharedPreferences.userId != UNREGISTERED) {
             sharedPreferences.userId?.let {
                 viewModel.getUserData(it)
                 viewModel.getOrders()
@@ -102,7 +102,7 @@ class ProfileFragment : Fragment() {
 
     private fun leave() {
         sharedPreferences.token = null
-        sharedPreferences.userId = -1L
+        sharedPreferences.userId = UNREGISTERED
         navController.navigate(R.id.mainFragment)
     }
 
@@ -150,7 +150,7 @@ class ProfileFragment : Fragment() {
                             }
                         }
                         is UserDataModel -> {
-                            if (sharedPreferences.basketId == -1) {
+                            if (sharedPreferences.basketId == UNREGISTERED.toInt()) {
                                 sharedPreferences.basketId = firstItem.basket?.basketId
                             }
                             profilePhoneTextView.text = formatPhone(firstItem.phone)

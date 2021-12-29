@@ -151,9 +151,11 @@ abstract class BaseMainCatalogViewModel(
         }
     }
 
-    protected fun isValidToShow(product: Product) =
-        product.storePrices?.findLast { it.count > 0 } == product.storePrices?.first() ||
-                product.storePrices?.sumOf { it.count } == 0
+    protected fun isValidToShow(product: Product): Boolean {
+        if (product.storePrices.isNullOrEmpty()) return false
+        return product.storePrices.findLast { it.count > 0 } == product.storePrices.first() ||
+                product.storePrices.sumOf { it.count } == 0
+    }
 
     companion object {
         const val PAGES = 3
