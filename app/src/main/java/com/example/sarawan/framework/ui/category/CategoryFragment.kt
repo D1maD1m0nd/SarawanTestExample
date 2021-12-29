@@ -32,14 +32,12 @@ class CategoryFragment : BaseMainCatalogFragment() {
         binding.topBar.visibility = View.GONE
         binding.searchBar.visibility = View.GONE
         binding.barWithSpinner.visibility = View.VISIBLE
-        binding.backButton.setOnClickListener {
-            onFragmentBackStack()
-        }
+        binding.backButton.setOnClickListener { onFragmentBackStack() }
         binding.fragmentCaption.text =
             arguments?.getString(KEY_CATEGORY_NAME) ?: "Выгодные предложения"
     }
 
-    override fun refresh() = Unit
+    override fun refresh() = fabChanger?.changeState() ?: Unit
 
     private fun initSpinner() {
         val spinnerStrings = arrayOf(

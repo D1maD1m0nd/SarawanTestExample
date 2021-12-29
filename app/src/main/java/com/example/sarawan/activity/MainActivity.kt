@@ -2,6 +2,7 @@ package com.example.sarawan.activity
 
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
@@ -10,10 +11,12 @@ import androidx.navigation.ui.setupWithNavController
 import com.example.sarawan.R
 import com.example.sarawan.app.App.Companion.navController
 import com.example.sarawan.databinding.ActivityMainBinding
+import com.example.sarawan.databinding.FragmentMainBinding
 import com.example.sarawan.framework.ui.profile.phone_fragment.ProfilePhoneFragment
 import com.example.sarawan.model.data.AppState
 import com.example.sarawan.rx.ISchedulerProvider
 import com.example.sarawan.utils.NetworkStatus
+import com.example.sarawan.utils.exstentions.UNREGISTERED
 import com.example.sarawan.utils.exstentions.token
 import com.example.sarawan.utils.exstentions.userId
 import dagger.android.AndroidInjection
@@ -39,8 +42,10 @@ class MainActivity : AppCompatActivity(), FabChanger {
         viewModelFactory.create(ActivityViewModel::class.java)
     }
 
-    private lateinit var binding: ActivityMainBinding
+    private var _binding: ActivityMainBinding? = null
+    private val binding get() = _binding!!
 
+    private var isOnline = false
     private var isBackShown = false
     private var lastTimeBackPressed: Long = 0
     private val totalPrice: BehaviorSubject<Float> = BehaviorSubject.create()
@@ -48,29 +53,36 @@ class MainActivity : AppCompatActivity(), FabChanger {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         AndroidInjection.inject(this)
-        binding = ActivityMainBinding.inflate(layoutInflater)
+        _binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         initNavigation()
         initFAB()
+        initNetwork()
         viewModel.getStateLiveData().observe(this) { appState: AppState<*> ->
             updateFab(appState)
         }
     }
 
+    private fun initNetwork() {
+        networkStatus
+            .isOnline()
+            .subscribeOn(schedulerProvider.io)
+            .observeOn(schedulerProvider.io)
+            .subscribe { isOnline = it }
+    }
+
     private fun updateFab(appState: AppState<*>) {
         if (appState is AppState.Success<*>) {
             val data = appState.data as List<Float?>
-            putPrice(data.firstOrNull() ?: 0f)
+            putPrice(data.first() ?: 0f)
         }
     }
 
     private fun initFAB() {
-        binding.fabPrice.setOnClickListener {
-            navController.navigate(R.id.basketFragment)
-        }
+        binding.fabPrice.setOnClickListener { navController.navigate(R.id.basketFragment) }
 
         totalPrice.subscribe { price ->
-            if (price > 0) {
+            if (price.toInt() > 0) {
                 "${price.toInt()} ₽".also { binding.fabPrice.text = it }
                 binding.fabPrice.show()
             } else binding.fabPrice.hide()
@@ -97,13 +109,13 @@ class MainActivity : AppCompatActivity(), FabChanger {
             when (destination.id) {
                 R.id.basketFragment -> binding.fabPrice.hide()
                 R.id.orderFragment -> binding.fabPrice.hide()
-                else -> viewModel.getBasket(!sharedPreferences.token.isNullOrEmpty())
+                else -> if (isOnline) viewModel.getBasket(!sharedPreferences.token.isNullOrEmpty())
             }
         }
     }
 
     private fun showProfile(): Boolean =
-        if (sharedPreferences.userId == -1L) {
+        if (sharedPreferences.userId == UNREGISTERED) {
             ProfilePhoneFragment.newInstance { navigateToProfile() }
                 .show(supportFragmentManager, null)
             false
@@ -131,12 +143,13 @@ class MainActivity : AppCompatActivity(), FabChanger {
         isBackShown = true
     }
 
-    override fun putPrice(price: Float) {
-        totalPrice.onNext(price)
-    }
+    override fun putPrice(price: Float) = totalPrice.onNext(price)
 
-    override fun changePrice(price: Float) {
-        totalPrice.onNext((totalPrice.value ?: 0f) + price)
+    override fun changePrice(price: Float) = totalPrice.onNext((totalPrice.value ?: 0f) + price)
+
+    override fun changeState() {
+        if (isOnline) viewModel.getBasket(!sharedPreferences.token.isNullOrEmpty())
+        else _binding?.fabPrice?.hide()
     }
 
     companion object {
@@ -147,4 +160,5 @@ class MainActivity : AppCompatActivity(), FabChanger {
 interface FabChanger {
     fun putPrice(price: Float)
     fun changePrice(price: Float)
+    fun changeState()
 }
