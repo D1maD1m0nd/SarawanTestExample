@@ -1,8 +1,11 @@
 package com.example.sarawan.framework.ui.base.mainCatalog
 
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.speech.RecognizerIntent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -29,6 +32,7 @@ import com.example.sarawan.rx.ISchedulerProvider
 import com.example.sarawan.utils.NetworkStatus
 import com.example.sarawan.utils.exstentions.token
 import dagger.android.support.AndroidSupportInjection
+import java.util.*
 import javax.inject.Inject
 
 abstract class BaseMainCatalogFragment : Fragment(), INavigation {
@@ -185,14 +189,7 @@ abstract class BaseMainCatalogFragment : Fragment(), INavigation {
     }
 
     private fun initMicButton() {
-        binding.micButton.setOnClickListener {
-            Thread {
-                Thread.sleep(3000)
-                binding.root.post {
-                    if (binding.searchField.editText?.text.toString().isNotEmpty()) makeSearch()
-                }
-            }.run()
-        }
+        binding.micButton.setOnClickListener { displaySpeechRecognizer() }
     }
 
     private fun initSearchButton() {
@@ -206,26 +203,24 @@ abstract class BaseMainCatalogFragment : Fragment(), INavigation {
         binding.searchField.editText?.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
                 binding.clearText.visibility = View.VISIBLE
-//                binding.micButton.visibility = View.INVISIBLE
+                binding.micButton.visibility = View.INVISIBLE
             } else {
                 binding.clearText.visibility = View.INVISIBLE
-//                binding.micButton.visibility = View.VISIBLE
+                binding.micButton.visibility = View.VISIBLE
             }
         }
 
         binding.searchField.editText?.doOnTextChanged { _, _, _, count ->
             if (count > 0) {
                 binding.clearText.visibility = View.VISIBLE
-//                binding.micButton.visibility = View.INVISIBLE
+                binding.micButton.visibility = View.INVISIBLE
             } else {
                 binding.clearText.visibility = View.INVISIBLE
-//                binding.micButton.visibility = View.VISIBLE
+                binding.micButton.visibility = View.VISIBLE
             }
         }
 
-        binding.clearText.setOnClickListener {
-            binding.searchField.editText?.setText("")
-        }
+        binding.clearText.setOnClickListener { binding.searchField.editText?.setText("") }
 
         binding.searchField.editText?.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH
@@ -256,11 +251,28 @@ abstract class BaseMainCatalogFragment : Fragment(), INavigation {
     }
 
     protected fun handleNetworkErrorWithToast(throwable: Throwable? = RuntimeException(getString(R.string.no_internet))) {
-        Toast.makeText(
-            context,
-            throwable?.message,
-            Toast.LENGTH_SHORT
-        ).show()
+        Toast.makeText(context, throwable?.message, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun displaySpeechRecognizer() {
+        val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
+            putExtra(
+                RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM
+            )
+            putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
+            putExtra(RecognizerIntent.EXTRA_PROMPT, getString(R.string.search_in_sarafan))
+        }
+        startActivityForResult(intent, SPEECH_REQUEST_CODE)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == SPEECH_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            val spokenText: String? =
+                data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS).let { it?.get(0) }
+            binding.searchField.editText?.setText(spokenText)
+            makeSearch()
+        }
     }
 
     protected fun handleNetworkErrorWithLayout() {
@@ -273,9 +285,7 @@ abstract class BaseMainCatalogFragment : Fragment(), INavigation {
             .isOnline()
             .observeOn(schedulerProvider.io)
             .subscribeOn(schedulerProvider.io)
-            .subscribe { isOnline ->
-                this.isOnline = isOnline
-            }
+            .subscribe { isOnline = it }
     }
 
     override fun onDestroyView() {
@@ -298,5 +308,9 @@ abstract class BaseMainCatalogFragment : Fragment(), INavigation {
 
     override fun onFragmentBackStack() {
         App.navController.popBackStack()
+    }
+
+    companion object {
+        private const val SPEECH_REQUEST_CODE = 0
     }
 }

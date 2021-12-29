@@ -9,6 +9,9 @@ import com.google.android.material.textview.MaterialTextView
 
 class StringHolder(private val view: MaterialTextView) :
     RecyclerView.ViewHolder(view) {
+
+    private val scale: Float = view.resources.displayMetrics.density
+
     fun bind(data: MainScreenDataModel) {
         with(view) {
             gravity = data.gravity ?: Gravity.START
@@ -20,7 +23,11 @@ class StringHolder(private val view: MaterialTextView) :
             )
             setBackgroundColor(color)
             data.padding?.let {
-                setPadding(it[0], it[1], it[2], it[3])
+                val left = convertToPixels(it[0])
+                val top = convertToPixels(it[1])
+                val right = convertToPixels(it[2])
+                val bottom = convertToPixels(it[3])
+                setPadding(left, top, right, bottom)
             }
             data.fontType?.let {
                 setTypeface(typeface, it)
@@ -28,4 +35,6 @@ class StringHolder(private val view: MaterialTextView) :
             setTextColor(resources.getColor(data.textColor ?: R.color.card_text_color, null))
         }
     }
+
+    private fun convertToPixels(sizeInDp: Int) = (sizeInDp * scale + 0.5f).toInt()
 }

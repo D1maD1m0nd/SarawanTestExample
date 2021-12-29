@@ -77,15 +77,25 @@ class CatalogFragment : BaseMainCatalogFragment() {
                         binding.loadingLayout.visibility = View.GONE
                     } else when (listData.first()) {
                         is Pair<*, *> -> {
-                            binding.mainRecyclerView.layoutManager = gridLayoutManager
-                            binding.mainRecyclerView.adapter = mainRecyclerAdapter
-                            maxCount =
-                                (listData.first() as Pair<Int, List<MainScreenDataModel>>).first
-                            mainRecyclerAdapter?.setData(
-                                (listData.first() as Pair<Int, List<MainScreenDataModel>>).second,
-                                binding.searchField.editText?.text.isNullOrEmpty(),
-                                maxCount
-                            )
+                            listData.first() as Pair<Int, List<MainScreenDataModel>>
+                            if ((listData.first() as Pair<Int, List<MainScreenDataModel>>)
+                                    .second.isNullOrEmpty()
+                            ) {
+                                binding.loadingLayout.visibility = View.GONE
+                                binding.emptyDataLayout.root.visibility = View.VISIBLE
+                            } else {
+                                binding.emptyDataLayout.root.visibility = View.GONE
+                                binding.mainRecyclerView.layoutManager = gridLayoutManager
+                                binding.mainRecyclerView.adapter = mainRecyclerAdapter
+                                maxCount =
+                                    (listData.first() as Pair<Int, List<MainScreenDataModel>>).first
+                                mainRecyclerAdapter?.setData(
+                                    (listData.first() as Pair<Int, List<MainScreenDataModel>>).second,
+                                    binding.searchField.editText?.text.isNullOrEmpty(),
+                                    maxCount
+                                )
+                                isDataLoaded = true
+                            }
                         }
                         is CategoryDataModel -> {
                             binding.mainRecyclerView.layoutManager = linearLayoutManager
@@ -99,7 +109,6 @@ class CatalogFragment : BaseMainCatalogFragment() {
                             }
                         }
                     }
-                    isDataLoaded = true
                 }
                 is AppState.Error -> handleNetworkErrorWithToast(appState.error)
                 AppState.Loading -> binding.loadingLayout.visibility = View.VISIBLE
