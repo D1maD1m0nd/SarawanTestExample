@@ -1,0 +1,109 @@
+package ru.sarawan.android.framework.ui.product_card.adapter
+
+import android.annotation.SuppressLint
+import android.view.LayoutInflater
+import android.view.View.GONE
+import android.view.View.VISIBLE
+import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
+import ru.sarawan.android.R
+import ru.sarawan.android.databinding.ListItemCardBinding
+import ru.sarawan.android.model.data.Product
+import ru.sarawan.android.utils.TypeCardEnum
+
+class SimilarAdapter(val itemClickListener: ItemClickListener) : RecyclerView.Adapter<SimilarAdapter.ProductViewHolder>() {
+    private var similarList : List<Product> = ArrayList(60)
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun setData(products : MutableList<Product>) {
+        similarList = products
+        notifyDataSetChanged()
+    }
+
+    fun itemUpdate(pos : Int,products : List<Product>) {
+        this.similarList = products
+        notifyItemChanged(pos)
+    }
+
+    fun updateItem(products : MutableList<Product>, position: Int) {
+        similarList = products
+        notifyItemChanged(position)
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductViewHolder {
+        val view = ListItemCardBinding.inflate(
+            LayoutInflater.from(parent.context),
+            parent,
+            false
+        ).apply {
+            root.layoutParams.apply {
+                width = parent.width / 2
+            }
+        }
+        return object : ProductViewHolder(
+            view,
+            itemClickListener
+        ) {}
+    }
+
+
+    override fun onBindViewHolder(holder: ProductViewHolder, position: Int) {
+        holder.bind(similarList[position])
+    }
+
+    override fun getItemCount(): Int = similarList.size
+    override fun getItemId(position: Int): Long {
+        return similarList[position].id!!
+    }
+    abstract class ProductViewHolder(
+        private val binding: ListItemCardBinding,
+        private val itemClickListener: ItemClickListener) : RecyclerView.ViewHolder(binding.root) {
+        fun bind(product : Product) = with(binding) {
+            val store = product.storePrices?.first()
+            discount.visibility = GONE
+            itemDescription.text = product.name
+            itemShopName.text = store?.store
+            itemPrice.text = store?.price.toString()
+            itemQuantity.text = product.quantity.toString()
+            if(product.quantity > 0) {
+                itemBuyButtonFrame.visibility = GONE
+                itemQuantityLayout.visibility = VISIBLE
+            } else {
+                itemBuyButtonFrame.visibility = VISIBLE
+                itemQuantityLayout.visibility = GONE
+            }
+            itemQuantityLayout.setOnClickListener { }
+            itemBuyButton.setOnClickListener {
+                //itemClickListener.changeVisible(absoluteAdapterPosition)
+                product.quantity++
+                itemClickListener.create(product, absoluteAdapterPosition, TypeCardEnum.SIMILAR)
+            }
+
+            plusButton.setOnClickListener {
+                itemClickListener.update(absoluteAdapterPosition, true, TypeCardEnum.SIMILAR)
+            }
+
+            minusButton.setOnClickListener {
+                itemClickListener.update(absoluteAdapterPosition, false, TypeCardEnum.SIMILAR)
+            }
+
+            "${product.unitQuantity.toString()} Кг".also { itemWeight.text = it }
+
+            itemCard.setOnClickListener {
+                product.id?.let {
+                    itemClickListener.openProductCard(productId = product.id)
+                }
+            }
+
+            product.images?.let {
+                if(it.isNotEmpty()) {
+                    val image = product.images.first().image
+                    itemImage.load(image) {
+                        placeholder(R.drawable.card_placeholder)
+                        error(R.drawable.card_placeholder)
+                    }
+                }
+            }
+        }
+    }
+}
