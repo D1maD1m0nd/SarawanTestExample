@@ -6,6 +6,7 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import coil.load
 import ru.sarawan.android.R
 import ru.sarawan.android.databinding.ListItemCardBinding
 import ru.sarawan.android.model.data.Product

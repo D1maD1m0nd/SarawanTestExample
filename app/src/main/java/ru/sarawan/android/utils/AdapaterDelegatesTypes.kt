@@ -1,5 +1,6 @@
 package ru.sarawan.android.utils
 
+import coil.load
 import com.hannesdorfmann.adapterdelegates4.dsl.adapterDelegateViewBinding
 import ru.sarawan.android.R
 import ru.sarawan.android.databinding.BasketFooterItemBinding

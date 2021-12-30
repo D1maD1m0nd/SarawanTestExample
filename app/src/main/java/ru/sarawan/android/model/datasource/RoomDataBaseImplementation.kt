@@ -6,6 +6,9 @@ import ru.sarawan.android.model.data.BasketResponse
 import ru.sarawan.android.model.data.Query
 import ru.sarawan.android.model.data.Response
 import ru.sarawan.android.model.datasource.db.SarawanDatabase
+import ru.sarawan.android.model.datasource.db.toProduct
+import ru.sarawan.android.model.datasource.db.toProductsItem
+import ru.sarawan.android.model.datasource.db.toRoomDataModel
 import javax.inject.Inject
 
 class RoomDataBaseImplementation @Inject constructor(

@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import coil.load
 import dagger.android.support.AndroidSupportInjection
 import ru.sarawan.android.R
 import ru.sarawan.android.app.App.Companion.navController
@@ -113,14 +114,16 @@ class ProductCardFragment : Fragment() {
         when (appState) {
             is AppState.Success<*> -> {
                 val data = appState.data as MutableList<Product>
+                val filteredData = data.filter { !it.storePrices.isNullOrEmpty() }
                 val product = data.findLast { it.id == productId }
-                data.remove(product)
-
                 similarProducts.addAll(data)
-                initSimilarList(similarProducts)
-                product?.let {
-                    initViewData(it)
+                if (filteredData.isNullOrEmpty() || (filteredData - product).isNullOrEmpty()) {
+                    binding.semilarTitleTextView.visibility = View.GONE
+                } else {
+                    binding.semilarTitleTextView.visibility = View.VISIBLE
+                    initSimilarList(similarProducts)
                 }
+                product?.let { initViewData(it) }
                 binding.progressBar.visibility = View.GONE
                 binding.contentNestedScrollView.visibility = View.VISIBLE
             }
@@ -140,7 +143,8 @@ class ProductCardFragment : Fragment() {
         similarProductRecyclerView.adapter = similarAdapter
         similarProductRecyclerView.itemAnimator?.changeDuration = 0
         similarProductRecyclerView.layoutManager = LinearLayoutManager(root.context, LinearLayoutManager.HORIZONTAL, false)
-        similarAdapter.setData(data)
+        val product = data.findLast { it.id == productId }
+        similarAdapter.setData(data.filter { !it.storePrices.isNullOrEmpty() && it.id != product?.id }.toMutableList())
     }
     private fun initViewData(data : Product) = with(binding){
         containerStoreRecyclerView.layoutManager = LinearLayoutManager(root.context)
@@ -149,6 +153,7 @@ class ProductCardFragment : Fragment() {
         titleTextView.text = data.name
         contentDescriptionTextView.text = data.description
         addBasketButton.setOnClickListener {
+            data.quantity = 1
             itemSave(data, 0, true, TypeCardEnum.DEFAULT)
         }
         data.storePrices?.let {
@@ -207,11 +212,14 @@ class ProductCardFragment : Fragment() {
             false -> {
                 store.count--
                 store.let {
-                    fabChanger?.changePrice(it.price.toFloat())
+                    fabChanger?.changePrice(it.price.toFloat() * -1)
                 }
             }
         }
-        val product = Product(quantity = store.count, storePrices = mutableListOf(store))
+        val product = similarProducts.find { it.id == productId }?.apply {
+            storePrices?.find { it == store }?.apply { count = store.count }
+            quantity = store.count
+        } ?: return
         itemSave(product , pos, false, TypeCardEnum.STORE)
     }
 
