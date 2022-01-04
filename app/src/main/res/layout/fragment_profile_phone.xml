@@ -51,7 +51,7 @@
                 android:textColor="@color/black"
                 android:textSize="18sp" />
 
-            <com.example.sarawan.utils.MaskedEditText
+            <ru.sarawan.android.utils.MaskedEditText
                 android:id="@+id/profile_phone_masked_edit_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

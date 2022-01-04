@@ -10,7 +10,7 @@ android {
     compileSdk 31
 
     defaultConfig {
-        applicationId "com.example.sarawan"
+        applicationId "ru.sarawan.android"
         minSdk 23
         targetSdk 31
         versionCode 4
@@ -72,7 +72,7 @@ dependencies {
     // Dagger
     implementation 'com.google.dagger:dagger-android:2.40.1'
     implementation 'com.google.dagger:dagger-android-support:2.40.1'
-    kapt 'com.google.dagger:dagger-android-processor:2.35.1'
+    kapt 'com.google.dagger:dagger-android-processor:2.38'
     kapt 'com.google.dagger:dagger-compiler:2.40.1'
 
     // Recycler Delegate

@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/mainFragment"
-        android:name="com.example.sarawan.framework.ui.main.MainFragment"
+        android:name="ru.sarawan.android.framework.ui.main.MainFragment"
         android:label="fragment_main"
         tools:layout="@layout/fragment_main">
         <action
@@ -19,7 +19,7 @@
     </fragment>
     <fragment
         android:id="@+id/basketFragment"
-        android:name="com.example.sarawan.framework.ui.basket.BasketFragment"
+        android:name="ru.sarawan.android.framework.ui.basket.BasketFragment"
         android:label="fragment_basket"
         tools:layout="@layout/fragment_basket">
         <action
@@ -31,7 +31,7 @@
     </fragment>
     <fragment
         android:id="@+id/catalogFragment"
-        android:name="com.example.sarawan.framework.ui.catalog.CatalogFragment"
+        android:name="ru.sarawan.android.framework.ui.catalog.CatalogFragment"
         android:label="fragment_catalog"
         tools:layout="@layout/fragment_main">
         <action
@@ -43,7 +43,7 @@
     </fragment>
     <fragment
         android:id="@+id/productCardFragment"
-        android:name="com.example.sarawan.framework.ui.product_card.ProductCardFragment"
+        android:name="ru.sarawan.android.framework.ui.product_card.ProductCardFragment"
         android:label="fragment_product_card"
         tools:layout="@layout/fragment_product_card" >
         <action
@@ -52,7 +52,7 @@
     </fragment>
     <fragment
         android:id="@+id/categoryFragment"
-        android:name="com.example.sarawan.framework.ui.category.CategoryFragment"
+        android:name="ru.sarawan.android.framework.ui.category.CategoryFragment"
         android:label="CategoryFragment"
         tools:layout="@layout/fragment_main">
         <action
@@ -61,22 +61,22 @@
     </fragment>
     <fragment
         android:id="@+id/infoHowFragment"
-        android:name="com.example.sarawan.framework.ui.info.InfoHowFragment"
+        android:name="ru.sarawan.android.framework.ui.info.InfoHowFragment"
         android:label="InfoHowFragment"
         tools:layout="@layout/fragment_info_how" />
     <fragment
         android:id="@+id/infoSupportFragment"
-        android:name="com.example.sarawan.framework.ui.info.InfoSupportFragment"
+        android:name="ru.sarawan.android.framework.ui.info.InfoSupportFragment"
         android:label="InfoSupportFragment"
         tools:layout="@layout/fragment_info_support" />
     <fragment
         android:id="@+id/infoAboutFragment"
-        android:name="com.example.sarawan.framework.ui.info.InfoAboutFragment"
+        android:name="ru.sarawan.android.framework.ui.info.InfoAboutFragment"
         android:label="InfoAboutFragment"
         tools:layout="@layout/fragment_info_about" />
     <fragment
         android:id="@+id/infoFragment"
-        android:name="com.example.sarawan.framework.ui.info.InfoFragment"
+        android:name="ru.sarawan.android.framework.ui.info.InfoFragment"
         android:label="InfoFragment"
         tools:layout="@layout/fragment_info">
         <action
@@ -91,12 +91,12 @@
     </fragment>
     <fragment
         android:id="@+id/profileFragment"
-        android:name="com.example.sarawan.framework.ui.profile.ProfileFragment"
+        android:name="ru.sarawan.android.framework.ui.profile.ProfileFragment"
         android:label="fragment_profile"
         tools:layout="@layout/fragment_profile" />
     <fragment
         android:id="@+id/orderFragment"
-        android:name="com.example.sarawan.framework.ui.order.OrderFragment"
+        android:name="ru.sarawan.android.framework.ui.order.OrderFragment"
         android:label="OrderFragment"
         tools:layout="@layout/fragment_order"/>
 </navigation>
