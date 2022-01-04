@@ -7,6 +7,20 @@ plugins {
 }
 
 android {
+    signingConfigs {
+        debug {
+            storeFile file('keyStoreAndroid/sarawan_app_key.jks')
+            keyAlias 'Sarawan'
+            keyPassword 'yOusFz16mhJf'
+            storePassword 'yOusFz16mhJf'
+        }
+        Sarawan_release {
+            storeFile file('keyStoreAndroid\\sarawan_app_key.jks')
+            storePassword 'yOusFz16mhJf'
+            keyPassword 'yOusFz16mhJf'
+            keyAlias 'Sarawan'
+        }
+    }
     compileSdk 31
 
     defaultConfig {
@@ -23,6 +37,7 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.Sarawan_release
         }
     }
     compileOptions {

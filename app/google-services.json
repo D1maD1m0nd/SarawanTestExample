@@ -41,6 +41,35 @@
           ]
         }
       }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:254303755123:android:8930bceffd10e90c9e0306",
+        "android_client_info": {
+          "package_name": "ru.sarawan.android"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "254303755123-l5p3moqricmifam4lqp877i1q722n03q.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAryeLLlEY2PCawgAmfZwzvqdtx0MtpkkU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "254303755123-l5p3moqricmifam4lqp877i1q722n03q.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
     }
   ],
   "configuration_version": "1"
