@@ -118,7 +118,6 @@
                 android:background="@android:color/transparent"
                 android:paddingHorizontal="12dp"
                 android:src="@drawable/mic_icon"
-                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/search_button"
                 app:layout_constraintStart_toEndOf="@id/search_field"

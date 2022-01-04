@@ -6,7 +6,20 @@
     android:layout_height="match_parent"
     tools:context=".framework.ui.product_card.ProductCardFragment">
 
+    <com.google.android.material.progressindicator.CircularProgressIndicator
+        android:id="@+id/progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:indeterminate="true"
+        app:indicatorColor="@color/primary_green"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <androidx.core.widget.NestedScrollView
+        android:id="@+id/content_nested_scroll_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -33,7 +46,8 @@
                 android:background="@color/white"
                 android:src="@drawable/close"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/title_text_view"
@@ -122,7 +136,8 @@
                 android:textSize="16sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/store_text_view" />
+                app:layout_constraintTop_toBottomOf="@+id/store_text_view"
+                tools:ignore="TouchTargetSizeCheck" />
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/card_container_rc_view"
@@ -155,7 +170,11 @@
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/container_store_recycler_view"
                         android:layout_width="match_parent"
-                        android:layout_height="150dp"
+                        android:layout_height="175dp"
+                        android:scrollbars="vertical"
+                        android:scrollbarSize="6dp"
+                        style="@style/scrollbar_style"
+                        android:layout_marginTop="10dp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/title_store_price_text_view" />
