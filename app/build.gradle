@@ -9,13 +9,13 @@ plugins {
 android {
     signingConfigs {
         debug {
-            storeFile file('keyStoreAndroid/sarawan_app_key.jks')
+            storeFile file("C:\\Users\\dima\\StudioProjects\\sarawan_Android\\keyStoreAndroid\\sarawan_app_key.jks")
             keyAlias 'Sarawan'
             keyPassword 'yOusFz16mhJf'
             storePassword 'yOusFz16mhJf'
         }
         Sarawan_release {
-            storeFile file('keyStoreAndroid\\sarawan_app_key.jks')
+            storeFile file("C:\\Users\\dima\\StudioProjects\\sarawan_Android\\keyStoreAndroid\\sarawan_app_key.jks")
             storePassword 'yOusFz16mhJf'
             keyPassword 'yOusFz16mhJf'
             keyAlias 'Sarawan'
@@ -38,6 +38,11 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.Sarawan_release
+        }
+        debug {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.debug
         }
     }
     compileOptions {
