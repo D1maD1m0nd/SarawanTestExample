@@ -20,7 +20,9 @@ import ru.sarawan.android.framework.ui.product_card.adapter.ItemClickListener
 import ru.sarawan.android.framework.ui.product_card.adapter.SimilarAdapter
 import ru.sarawan.android.framework.ui.product_card.adapter.StoreAdapter
 import ru.sarawan.android.framework.ui.product_card.viewModel.ProductCardViewModel
-import ru.sarawan.android.model.data.*
+import ru.sarawan.android.model.data.AppState
+import ru.sarawan.android.model.data.Product
+import ru.sarawan.android.model.data.StorePrice
 import ru.sarawan.android.utils.TypeCardEnum
 import ru.sarawan.android.utils.exstentions.token
 import javax.inject.Inject
@@ -154,6 +156,7 @@ class ProductCardFragment : Fragment() {
         contentDescriptionTextView.text = data.description
         addBasketButton.setOnClickListener {
             data.quantity = 1
+            data.storePrices?.firstOrNull()?.count = 1
             itemSave(data, 0, true, TypeCardEnum.DEFAULT)
         }
         data.storePrices?.let {
@@ -240,9 +243,7 @@ class ProductCardFragment : Fragment() {
                 storeAdapter.itemUpdate(pos,storeProducts)
 
             }
-            TypeCardEnum.DEFAULT -> {
-                binding.addBasketButton.visibility = View.GONE
-            }
+            TypeCardEnum.DEFAULT -> storeAdapter.notifyItemChanged(0)
         }
         product.storePrices?.let {
             setButtonAddBasketVisible(it)
