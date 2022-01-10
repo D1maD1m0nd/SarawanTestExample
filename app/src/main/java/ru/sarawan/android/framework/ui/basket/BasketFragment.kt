@@ -12,7 +12,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import coil.ImageLoader
 import dagger.android.support.AndroidSupportInjection
 import retrofit2.HttpException
 import ru.sarawan.android.R
@@ -24,12 +23,15 @@ import ru.sarawan.android.framework.ui.modals.DeliveryTimeFragment
 import ru.sarawan.android.framework.ui.modals.PaymentMethodFragment
 import ru.sarawan.android.framework.ui.modals.SuccessOrderFragment
 import ru.sarawan.android.framework.ui.profile.address_fragment.ProfileAddressFragment
+import ru.sarawan.android.framework.ui.profile.phone_fragment.ProfilePhoneFragment
 import ru.sarawan.android.model.data.*
 import ru.sarawan.android.model.data.delegatesModel.BasketFooter
 import ru.sarawan.android.model.data.delegatesModel.BasketHeader
 import ru.sarawan.android.model.data.delegatesModel.BasketListItem
 import ru.sarawan.android.utils.ItemClickListener
+import ru.sarawan.android.utils.exstentions.UNREGISTERED
 import ru.sarawan.android.utils.exstentions.token
+import ru.sarawan.android.utils.exstentions.userId
 import javax.inject.Inject
 
 
@@ -70,9 +72,13 @@ class BasketFragment : Fragment() {
         }
 
         override fun openOrderCard() {
-            navController.navigate(R.id.action_basketFragment_to_orderFragment)
-        }
+            if(sharedPreferences.token != null) {
+                navController.navigate(R.id.action_basketFragment_to_orderFragment)
+            } else {
+                showProfile()
+            }
 
+        }
         override fun clear() {
             viewModel.clearBasket(!sharedPreferences.token.isNullOrEmpty())
             removeItems()
@@ -105,6 +111,19 @@ class BasketFragment : Fragment() {
         initData()
     }
 
+    private fun showProfile(): Boolean =
+        if (sharedPreferences.userId == UNREGISTERED) {
+            ProfilePhoneFragment.newInstance { navigateToProfile() }
+                .show(requireActivity().supportFragmentManager, null)
+            false
+        } else {
+            navigateToProfile()
+            true
+        }
+
+    private fun navigateToProfile() {
+        navController.navigate(R.id.profileFragment)
+    }
     private fun initData() {
         initRcView()
         viewModel.getBasket(!sharedPreferences.token.isNullOrEmpty())
