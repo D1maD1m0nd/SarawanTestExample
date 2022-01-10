@@ -1,8 +1,6 @@
 package ru.sarawan.android.framework.ui.basket.adapter
 
-import coil.ImageLoader
 import com.hannesdorfmann.adapterdelegates4.AsyncListDifferDelegationAdapter
-import ru.sarawan.android.model.data.ProductsItem
 import ru.sarawan.android.model.data.delegatesModel.BasketListItem
 import ru.sarawan.android.utils.AdapterDelegatesTypes
 import ru.sarawan.android.utils.ItemClickListener
