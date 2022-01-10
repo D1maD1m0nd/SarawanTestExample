@@ -1,5 +1,6 @@
 package ru.sarawan.android.framework.ui.basket.adapter
 
+import coil.ImageLoader
 import com.hannesdorfmann.adapterdelegates4.AsyncListDifferDelegationAdapter
 import ru.sarawan.android.model.data.ProductsItem
 import ru.sarawan.android.model.data.delegatesModel.BasketListItem
@@ -26,13 +27,7 @@ class BasketAdapter(itemClickListener: ItemClickListener) : AsyncListDifferDeleg
         updateHeader()
         updateFooter()
     }
-    private fun filterDataModel() : List<ProductsItem> = items.filterIsInstance<ProductsItem>()
     companion object {
         private const val FIRST_POSITION = 0
-        fun calculateSum(data : List<ProductsItem>) : Double = data.sumOf {
-                it.basketProduct?.price!!.toDouble() * it.quantity!!
-            }
-
-        fun calculateWeight(data : List<ProductsItem>) = 0.0
     }
 }

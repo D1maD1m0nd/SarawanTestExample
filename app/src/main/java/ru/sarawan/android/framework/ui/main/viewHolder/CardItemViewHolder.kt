@@ -94,9 +94,7 @@ class CardItemViewHolder(
                 disposable = imageLoader.enqueue(
                     ImageRequest.Builder(root.context)
                         .data(data.pictureUrl)
-                        .placeholder(R.drawable.card_placeholder)
                         .target(itemImage)
-                        .error(R.drawable.card_placeholder)
                         .build()
                 )
             }

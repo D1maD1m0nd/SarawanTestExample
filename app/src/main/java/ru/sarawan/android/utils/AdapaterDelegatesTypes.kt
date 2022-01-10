@@ -1,5 +1,6 @@
 package ru.sarawan.android.utils
 
+import coil.ImageLoader
 import coil.load
 import com.hannesdorfmann.adapterdelegates4.dsl.adapterDelegateViewBinding
 import ru.sarawan.android.R
@@ -31,14 +32,14 @@ object AdapterDelegatesTypes {
                     productCompanyTextView.text = "Сарафан"
                     productCountryTextView.text = "Россия"
                     productShopTextView.text = it.store
-                    sumTextView.text = String.format("%s ₽", it.price)
+                    sumTextView.text = String.format("%.2f ₽", it.price?.toDouble())
                     counterTextView.text = item.quantity.toString()
                 }
                 val image = item.basketProduct?.basketProduct?.images?.first()?.image ?: ""
 
-                productImageView.load(image) {
-                    placeholder(R.drawable.card_placeholder)
-                    error(R.drawable.card_placeholder)
+                productImageView.load(image){
+                    error(R.drawable.place_holder_image)
+                    placeholder(R.drawable.place_holder_image)
                 }
 
                 var counter = counterTextView.text.toString().toInt()

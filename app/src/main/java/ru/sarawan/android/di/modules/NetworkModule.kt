@@ -2,8 +2,10 @@ package ru.sarawan.android.di.modules
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.squareup.moshi.Moshi
 import dagger.Module
 import dagger.Provides
+import dagger.Reusable
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -13,12 +15,16 @@ import ru.sarawan.android.model.datasource.ApiService
 import ru.sarawan.android.utils.AndroidNetworkStatus
 import ru.sarawan.android.utils.NetworkStatus
 import ru.sarawan.android.utils.exstentions.token
+import javax.inject.Singleton
 
 @Module
 class NetworkModule {
 
     @Provides
     fun getNetworkStatus(context: Context): NetworkStatus = AndroidNetworkStatus(context)
+
+    @Provides
+    fun moshi(): Moshi = Moshi.Builder().build()
 
     @Provides
     fun getHttpClient(shared: SharedPreferences): OkHttpClient {
@@ -40,9 +46,9 @@ class NetworkModule {
     }
 
     @Provides
-    fun getRetrofit(httpClient: OkHttpClient): Retrofit = Retrofit.Builder()
+    fun getRetrofit(httpClient: OkHttpClient,moshi : Moshi): Retrofit = Retrofit.Builder()
         .baseUrl(BASE_URL)
-        .addConverterFactory(MoshiConverterFactory.create())
+        .addConverterFactory(MoshiConverterFactory.create(moshi))
         .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
         .client(httpClient)
         .build()

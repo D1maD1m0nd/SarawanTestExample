@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import coil.ImageLoader
 import dagger.android.support.AndroidSupportInjection
 import retrofit2.HttpException
 import ru.sarawan.android.R
@@ -35,6 +36,7 @@ import javax.inject.Inject
 class BasketFragment : Fragment() {
     @Inject
     lateinit var sharedPreferences: SharedPreferences
+
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
