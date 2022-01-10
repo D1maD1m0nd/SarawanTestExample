@@ -88,7 +88,7 @@ class SimilarAdapter(val itemClickListener: ItemClickListener) : RecyclerView.Ad
                 itemClickListener.update(absoluteAdapterPosition, false, TypeCardEnum.SIMILAR)
             }
 
-            "${product.unitQuantity.toString()} Кг".also { itemWeight.text = it }
+            "${product.unitQuantity.toString()} г".also { itemWeight.text = it }
 
             itemCard.setOnClickListener {
                 product.id?.let {

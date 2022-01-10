@@ -85,7 +85,7 @@ object AdapterDelegatesTypes {
     ){
         bind {
             binding.apply {
-                weightValueTextView.text = String.format("%.2f кг", item.weight)
+                weightValueTextView.text = String.format("%.2f г", item.weight)
                 costValueTextView.text = String.format("%.2f ₽", item.price)
                 clearButton.setOnClickListener {
                     itemClickListener.clear()

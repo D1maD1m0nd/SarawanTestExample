@@ -6,7 +6,7 @@
     <string name="information">Инфо</string>
     <string name="buy">Купить</string>
     <string name="price_text">₽</string>
-    <string name="kg">Кг</string>
+    <string name="kg">г</string>
     <string name="min_price">Мин. цена:</string>
     <string name="max_discount">Макс. скидка:</string>
     <string name="sort_price">Цене</string>
@@ -22,7 +22,7 @@
     <string name="find_text">Найти</string>
     <string name="catalog">Каталог</string>
     <string name="weight_order">Вес заказа:</string>
-    <string name="default_weight">00,00 кг</string>
+    <string name="default_weight">00,00 г</string>
     <string name="cost_order">Стоимость заказа</string>
     <string name="sub_info_basket">Стоимость весового товара может быть пересчитана</string>
     <string name="clear">Очистить</string>
