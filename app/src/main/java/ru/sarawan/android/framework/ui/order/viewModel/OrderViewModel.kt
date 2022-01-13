@@ -2,7 +2,9 @@ package ru.sarawan.android.framework.ui.order.viewModel
 
 import ru.sarawan.android.framework.MainInteractor
 import ru.sarawan.android.framework.ui.base.BaseViewModel
-import ru.sarawan.android.model.data.*
+import ru.sarawan.android.model.data.AddressItem
+import ru.sarawan.android.model.data.AppState
+import ru.sarawan.android.model.data.Query
 import ru.sarawan.android.rx.ISchedulerProvider
 import javax.inject.Inject
 
@@ -15,9 +17,13 @@ class OrderViewModel@Inject constructor(
             interactor.getData(Query.Get.Address, true)
                 .map { list ->
                     list as List<AddressItem>
-                    listOf(list.findLast {
+                    var adress = list.find {
                         it.primary == true
-                    })
+                    }
+                    if(adress == null) {
+                        adress = list.firstOrNull()
+                    }
+                    listOf(adress)
                 }
                 .subscribeOn(schedulerProvider.io)
                 .observeOn(schedulerProvider.io)

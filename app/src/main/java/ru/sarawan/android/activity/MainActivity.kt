@@ -14,6 +14,8 @@ import ru.sarawan.android.app.App.Companion.navController
 import ru.sarawan.android.databinding.ActivityMainBinding
 import ru.sarawan.android.framework.ui.profile.phone_fragment.ProfilePhoneFragment
 import ru.sarawan.android.model.data.AppState
+import ru.sarawan.android.model.data.Product
+import ru.sarawan.android.model.data.ProductsItem
 import ru.sarawan.android.rx.ISchedulerProvider
 import ru.sarawan.android.utils.NetworkStatus
 import ru.sarawan.android.utils.exstentions.UNREGISTERED
@@ -47,7 +49,7 @@ class MainActivity : AppCompatActivity(), ru.sarawan.android.activity.FabChanger
     private var isBackShown = false
     private var lastTimeBackPressed: Long = 0
     private val totalPrice: BehaviorSubject<Float> = BehaviorSubject.create()
-
+    private var data : List<ProductsItem> = mutableListOf()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         AndroidInjection.inject(this)
@@ -71,8 +73,17 @@ class MainActivity : AppCompatActivity(), ru.sarawan.android.activity.FabChanger
 
     private fun updateFab(appState: AppState<*>) {
         if (appState is AppState.Success<*>) {
-            val data = appState.data as List<Float?>
-            putPrice(data.first() ?: 0f)
+            data = appState.data as ArrayList<ProductsItem>
+            val price = data.sumOf {
+                var result = 0.0
+                it.quantity?.let { quantity ->
+                    it.basketProduct?.price?.let { price ->
+                        result += (price.toDouble() * quantity)
+                    }
+                }
+                result
+            }.toFloat()
+            putPrice(price ?: 0f)
         }
     }
 
@@ -114,8 +125,15 @@ class MainActivity : AppCompatActivity(), ru.sarawan.android.activity.FabChanger
 
     private fun showProfile(): Boolean =
         if (sharedPreferences.userId == UNREGISTERED) {
-            ProfilePhoneFragment.newInstance { navigateToProfile() }
-                .show(supportFragmentManager, null)
+            ProfilePhoneFragment.newInstance {
+                navigateToProfile()
+                if(sharedPreferences.userId != UNREGISTERED && data.isNotEmpty()) {
+                    val products = data.map { item ->
+                        Product(id = item.basketProduct?.basketProduct?.id, quantity = item.quantity ?: 0)
+                    }
+                    viewModel.saveData(products, true)
+                }
+            }.show(supportFragmentManager, null)
             false
         } else {
             navigateToProfile()

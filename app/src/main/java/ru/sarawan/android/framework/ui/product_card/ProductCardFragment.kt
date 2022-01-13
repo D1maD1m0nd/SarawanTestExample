@@ -170,8 +170,8 @@ class ProductCardFragment : Fragment() {
             if(it.isNotEmpty()) {
                 val url = it.first().image
                 mainImageProductImageView.load(url) {
-                    placeholder(R.drawable.card_placeholder)
-                    error(R.drawable.card_placeholder)
+                    placeholder(R.drawable.place_holder_image)
+                    error(R.drawable.place_holder_image)
                 }
             }
         }
