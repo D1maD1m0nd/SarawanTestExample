@@ -1,6 +1,5 @@
 package ru.sarawan.android.utils
 
-import coil.ImageLoader
 import coil.load
 import com.hannesdorfmann.adapterdelegates4.dsl.adapterDelegateViewBinding
 import ru.sarawan.android.R
@@ -85,7 +84,7 @@ object AdapterDelegatesTypes {
     ){
         bind {
             binding.apply {
-                weightValueTextView.text = String.format("%.2f г", item.weight)
+                weightValueTextView.text = String.format("%.2f кг", item.weight)
                 costValueTextView.text = String.format("%.2f ₽", item.price)
                 clearButton.setOnClickListener {
                     itemClickListener.clear()

@@ -61,7 +61,7 @@ class ProductCardFragment : Fragment() {
     private val binding get() = _binding!!
     private  var productId : Long? = null
     private val storeAdapter  = StoreAdapter(itemClickListener)
-    private val similarProducts : MutableList<Product> = ArrayList(20)
+    private var similarProducts : MutableList<Product> = ArrayList(20)
     private var storeProducts : MutableList<StorePrice> = ArrayList(5)
     private val similarAdapter = SimilarAdapter(itemClickListener)
     private var fabChanger: ru.sarawan.android.activity.FabChanger? = null
@@ -119,8 +119,10 @@ class ProductCardFragment : Fragment() {
                 val filteredData = data.filter { !it.storePrices.isNullOrEmpty() }
                 val product = data.findLast { it.id == productId }
                 similarProducts.addAll(data)
-                if (filteredData.isNullOrEmpty() || (filteredData - product).isNullOrEmpty()) {
+                similarProducts = similarProducts.filter { !it.storePrices.isNullOrEmpty() && it.id != product?.id }.toMutableList()
+                if (filteredData.isNullOrEmpty() || (filteredData - product).isNullOrEmpty() || similarProducts.isNullOrEmpty()) {
                     binding.semilarTitleTextView.visibility = View.GONE
+                    binding.similarProductRecyclerView.visibility = View.GONE
                 } else {
                     binding.semilarTitleTextView.visibility = View.VISIBLE
                     initSimilarList(similarProducts)
@@ -134,7 +136,7 @@ class ProductCardFragment : Fragment() {
                 binding.progressBar.visibility = View.GONE
             }
             is AppState.Loading -> {
-                binding.contentNestedScrollView.visibility = View.GONE
+                binding.contentNestedScrollView.visibility = View.INVISIBLE
                 binding.progressBar.visibility = View.VISIBLE
             }
             else -> {}
@@ -145,8 +147,7 @@ class ProductCardFragment : Fragment() {
         similarProductRecyclerView.adapter = similarAdapter
         similarProductRecyclerView.itemAnimator?.changeDuration = 0
         similarProductRecyclerView.layoutManager = LinearLayoutManager(root.context, LinearLayoutManager.HORIZONTAL, false)
-        val product = data.findLast { it.id == productId }
-        similarAdapter.setData(data.filter { !it.storePrices.isNullOrEmpty() && it.id != product?.id }.toMutableList())
+        similarAdapter.setData(data)
     }
     private fun initViewData(data : Product) = with(binding){
         containerStoreRecyclerView.layoutManager = LinearLayoutManager(root.context)
