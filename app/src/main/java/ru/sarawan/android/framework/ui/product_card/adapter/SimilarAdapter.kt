@@ -1,6 +1,5 @@
 package ru.sarawan.android.framework.ui.product_card.adapter
 
-import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View.GONE
 import android.view.View.VISIBLE
@@ -13,15 +12,14 @@ import ru.sarawan.android.model.data.Product
 import ru.sarawan.android.utils.TypeCardEnum
 
 class SimilarAdapter(val itemClickListener: ItemClickListener) : RecyclerView.Adapter<SimilarAdapter.ProductViewHolder>() {
-    private var similarList : List<Product> = ArrayList(60)
+    private var similarList : MutableList<Product> = mutableListOf()
 
-    @SuppressLint("NotifyDataSetChanged")
     fun setData(products : MutableList<Product>) {
-        similarList = products
-        notifyDataSetChanged()
+        this.similarList = products
+        notifyItemRangeInserted(0, itemCount)
     }
 
-    fun itemUpdate(pos : Int,products : List<Product>) {
+    fun itemUpdate(pos : Int,products : MutableList<Product>) {
         this.similarList = products
         notifyItemChanged(pos)
     }
@@ -53,9 +51,7 @@ class SimilarAdapter(val itemClickListener: ItemClickListener) : RecyclerView.Ad
     }
 
     override fun getItemCount(): Int = similarList.size
-    override fun getItemId(position: Int): Long {
-        return similarList[position].id!!
-    }
+
     abstract class ProductViewHolder(
         private val binding: ListItemCardBinding,
         private val itemClickListener: ItemClickListener) : RecyclerView.ViewHolder(binding.root) {
@@ -75,7 +71,6 @@ class SimilarAdapter(val itemClickListener: ItemClickListener) : RecyclerView.Ad
             }
             itemQuantityLayout.setOnClickListener { }
             itemBuyButton.setOnClickListener {
-                //itemClickListener.changeVisible(absoluteAdapterPosition)
                 product.quantity++
                 itemClickListener.create(product, absoluteAdapterPosition, TypeCardEnum.SIMILAR)
             }
@@ -88,7 +83,7 @@ class SimilarAdapter(val itemClickListener: ItemClickListener) : RecyclerView.Ad
                 itemClickListener.update(absoluteAdapterPosition, false, TypeCardEnum.SIMILAR)
             }
 
-            "${product.unitQuantity.toString()} г".also { itemWeight.text = it }
+            "${product.unitQuantity.toString()} кг".also { itemWeight.text = it }
 
             itemCard.setOnClickListener {
                 product.id?.let {
@@ -97,13 +92,11 @@ class SimilarAdapter(val itemClickListener: ItemClickListener) : RecyclerView.Ad
             }
 
             product.images?.let {
-                if(it.isNotEmpty()) {
                     val image = product.images.first().image
                     itemImage.load(image) {
                         placeholder(R.drawable.place_holder_image)
                         error(R.drawable.place_holder_image)
                     }
-                }
             }
         }
     }

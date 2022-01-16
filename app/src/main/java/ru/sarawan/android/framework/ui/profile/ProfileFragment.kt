@@ -18,7 +18,10 @@ import ru.sarawan.android.framework.ui.profile.adapter.OrdersAdapter
 import ru.sarawan.android.framework.ui.profile.address_fragment.ProfileAddressFragment
 import ru.sarawan.android.framework.ui.profile.name_fragment.ProfileNameFragment
 import ru.sarawan.android.framework.ui.profile.viewModel.ProfileViewModel
-import ru.sarawan.android.model.data.*
+import ru.sarawan.android.model.data.AddressItem
+import ru.sarawan.android.model.data.AppState
+import ru.sarawan.android.model.data.OrderApprove
+import ru.sarawan.android.model.data.UserDataModel
 import ru.sarawan.android.utils.exstentions.UNREGISTERED
 import ru.sarawan.android.utils.exstentions.basketId
 import ru.sarawan.android.utils.exstentions.token
@@ -223,11 +226,12 @@ class ProfileFragment : Fragment() {
     }
 
     private fun cancelOrder(pos : Int) {
-        orders.removeAt(pos)
-        adapter.setOrder(orders)
-        adapter.notifyItemRemoved(pos)
         val order = orders[pos]
         val id = order.orderId!!
+        orders.remove(order)
+
+        adapter.setOrder(orders)
+        adapter.notifyItemRemoved(pos)
         viewModel.deleteOrder(id)
     }
 
