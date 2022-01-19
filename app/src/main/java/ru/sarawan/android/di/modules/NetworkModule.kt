@@ -5,7 +5,6 @@ import android.content.SharedPreferences
 import com.squareup.moshi.Moshi
 import dagger.Module
 import dagger.Provides
-import dagger.Reusable
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -13,9 +12,9 @@ import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
 import ru.sarawan.android.model.datasource.ApiService
 import ru.sarawan.android.utils.AndroidNetworkStatus
+import ru.sarawan.android.utils.MoshiCustomAdapter
 import ru.sarawan.android.utils.NetworkStatus
 import ru.sarawan.android.utils.exstentions.token
-import javax.inject.Singleton
 
 @Module
 class NetworkModule {
@@ -44,6 +43,8 @@ class NetworkModule {
         }
         return httpClient.build()
     }
+    @Provides
+    fun getMoshiCustomAdapter(moshi : Moshi) : MoshiCustomAdapter = MoshiCustomAdapter(moshi)
 
     @Provides
     fun getRetrofit(httpClient: OkHttpClient,moshi : Moshi): Retrofit = Retrofit.Builder()
