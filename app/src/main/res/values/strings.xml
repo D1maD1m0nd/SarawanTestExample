@@ -6,7 +6,7 @@
     <string name="information">Инфо</string>
     <string name="buy">Купить</string>
     <string name="price_text">₽</string>
-    <string name="kg">г</string>
+    <string name="kg">кг</string>
     <string name="min_price">Мин. цена:</string>
     <string name="max_discount">Макс. скидка:</string>
     <string name="sort_price">Цене</string>

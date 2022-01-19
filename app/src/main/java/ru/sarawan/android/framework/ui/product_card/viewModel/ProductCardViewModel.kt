@@ -53,6 +53,9 @@ class ProductCardViewModel @Inject constructor(
                                     }
                                 }
                             }
+                            if(similarProduct.product == null) {
+                                similarProduct.product = similarProduct.storePrices?.firstOrNull()?.id
+                            }
                             similarProduct
                         }
 
