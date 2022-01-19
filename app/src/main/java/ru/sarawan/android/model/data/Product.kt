@@ -12,7 +12,7 @@ data class Response(
 data class Product(
     @field: Json(name = "id") val id: Long? = null,
     @field: Json(name = "images") val images: List<Image>? = null,
-    @field: Json(name = "product") val product: Int? = null,
+    @field: Json(name = "product") var product: Int? = null,
     @field: Json(name = "name") val name: String? = null,
     @field: Json(name = "price_type") val priceType: String? = null,
     @field: Json(name = "store_prices") val storePrices: MutableList<StorePrice>? = null,
