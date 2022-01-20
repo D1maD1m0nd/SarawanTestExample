@@ -27,6 +27,16 @@ interface ApiService {
     ): Single<Response>
 
     /**
+     * Получение продуктов с скидкой с сортировкой по цене
+     */
+    @GET("api/products/")
+    fun getDiscountProductsByPrice(
+        @Query("discount_products") discountProducts: Boolean = true,
+        @Query("page") page: Int,
+        @Query("ordering_price") ordering_price: String,
+    ): Single<Response>
+
+    /**
      * Получение продуктов по главной категории
      */
     @GET("api/products/")
@@ -34,6 +44,16 @@ interface ApiService {
         @Query("main_category") categoryProducts: Int,
         @Query("page") page: Int,
         @Query("order") order: String,
+    ): Single<Response>
+
+    /**
+     * Получение продуктов по главной категории с сортировкой по цене
+     */
+    @GET("api/products/")
+    fun getCategoryProductsByPrice(
+        @Query("main_category") categoryProducts: Int,
+        @Query("page") page: Int,
+        @Query("ordering_price") ordering_price: String,
     ): Single<Response>
 
     /**

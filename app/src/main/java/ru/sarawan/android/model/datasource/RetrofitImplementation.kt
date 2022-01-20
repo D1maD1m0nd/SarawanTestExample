@@ -20,17 +20,25 @@ class RetrofitImplementation @Inject constructor(private val apiService: ApiServ
                 }
 
                 is Query.Get.Products -> when (query) {
-                    is Query.Get.Products.DiscountProducts -> apiService
-                        .getDiscountProducts(
-                            page = query.page,
-                            order = when (query.sortBy) {
-                                SortBy.PRICE_ASC -> "price"
-                                SortBy.PRICE_DES -> "-price"
-                                SortBy.ALPHABET -> "name"
-                                SortBy.DISCOUNT -> "-discount"
-                            }
-                        )
-                        .map { mutableListOf(it) }
+                    is Query.Get.Products.DiscountProducts ->
+                        when (query.sortBy) {
+                            SortBy.PRICE_ASC -> apiService.getDiscountProductsByPrice(
+                                page = query.page,
+                                ordering_price = "true"
+                            )
+                            SortBy.PRICE_DES -> apiService.getDiscountProductsByPrice(
+                                page = query.page,
+                                ordering_price = "false"
+                            )
+                            SortBy.ALPHABET -> apiService.getDiscountProducts(
+                                page = query.page,
+                                order = "name"
+                            )
+                            SortBy.DISCOUNT -> apiService.getDiscountProducts(
+                                page = query.page,
+                                order = "-discount"
+                            )
+                        }.map { mutableListOf(it) }
 
                     is Query.Get.Products.Id -> apiService
                         .getProduct(query.id)
@@ -48,17 +56,30 @@ class RetrofitImplementation @Inject constructor(private val apiService: ApiServ
                         .getSimilarProducts(query.id, query.page)
                         .map { it.results }
 
-                    is Query.Get.Products.ProductCategory -> apiService
-                        .getCategoryProducts(
-                            query.productCategory, query.page,
-                            order = when (query.sortBy) {
-                                SortBy.PRICE_ASC -> "price"
-                                SortBy.PRICE_DES -> "-price"
-                                SortBy.ALPHABET -> "name"
-                                SortBy.DISCOUNT -> "-discount"
-                            }
-                        )
-                        .map { mutableListOf(it) }
+                    is Query.Get.Products.ProductCategory ->
+
+                        when (query.sortBy) {
+                            SortBy.PRICE_ASC -> apiService.getCategoryProductsByPrice(
+                                categoryProducts = query.productCategory,
+                                page = query.page,
+                                ordering_price = "true"
+                            )
+                            SortBy.PRICE_DES -> apiService.getCategoryProductsByPrice(
+                                categoryProducts = query.productCategory,
+                                page = query.page,
+                                ordering_price = "false"
+                            )
+                            SortBy.ALPHABET -> apiService.getCategoryProducts(
+                                categoryProducts = query.productCategory,
+                                page = query.page,
+                                order = "name"
+                            )
+                            SortBy.DISCOUNT -> apiService.getCategoryProducts(
+                                categoryProducts = query.productCategory,
+                                page = query.page,
+                                order = "-discount"
+                            )
+                        }.map { mutableListOf(it) }
                 }
 
                 is Query.Get.Orders -> {

@@ -136,10 +136,6 @@ abstract class BaseMainCatalogViewModel(
 
     abstract fun getMoreData(isOnline: Boolean, isLoggedUser: Boolean)
 
-    fun clear() {
-        stateLiveData.value = AppState.Empty
-    }
-
     protected fun sortShops(product: Product) {
         product.apply {
             when (sortType) {

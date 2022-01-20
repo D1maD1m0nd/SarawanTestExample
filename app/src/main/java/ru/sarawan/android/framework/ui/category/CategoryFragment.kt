@@ -23,18 +23,17 @@ class CategoryFragment : BaseMainCatalogFragment() {
     private var sortType: SortBy = SortBy.PRICE_ASC
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
         setupAppBar()
         initSpinner()
+        super.onViewCreated(view, savedInstanceState)
     }
 
-    private fun setupAppBar() {
-        binding.topBar.visibility = View.GONE
-        binding.searchBar.visibility = View.GONE
-        binding.barWithSpinner.visibility = View.VISIBLE
-        binding.backButton.setOnClickListener { onFragmentBackStack() }
-        binding.fragmentCaption.text =
-            arguments?.getString(KEY_CATEGORY_NAME) ?: "Выгодные предложения"
+    private fun setupAppBar() = with(binding) {
+        topBar.visibility = View.GONE
+        searchBar.visibility = View.GONE
+        barWithSpinner.visibility = View.VISIBLE
+        backButton.setOnClickListener { onFragmentBackStack() }
+        fragmentCaption.text = arguments?.getString(KEY_CATEGORY_NAME) ?: "Выгодные предложения"
     }
 
     override fun refresh() = fabChanger?.changeState() ?: Unit
@@ -101,10 +100,12 @@ class CategoryFragment : BaseMainCatalogFragment() {
                 }
             }
         binding.catalogSortSpinner.alpha = 1f
-        sortType =
-            if (arguments?.getString(KEY_CATEGORY_NAME) != null) SortBy.PRICE_ASC
-            else SortBy.DISCOUNT
-        binding.catalogSortSpinner.setSelection(sortType.id)
+        if (!isInitCompleted) {
+            sortType =
+                if (arguments?.getString(KEY_CATEGORY_NAME) != null) SortBy.PRICE_ASC
+                else SortBy.DISCOUNT
+            binding.catalogSortSpinner.setSelection(sortType.id)
+        }
     }
 
     override fun attachAdapterToView() {
@@ -116,22 +117,30 @@ class CategoryFragment : BaseMainCatalogFragment() {
         viewModel.getStateLiveData().observe(viewLifecycleOwner) { appState ->
             when (appState) {
                 is AppState.Success<*> -> {
-                    val data = appState.data as List<Pair<Int, List<MainScreenDataModel>>>
-                    if (data.first().second.isNullOrEmpty()) {
-                        binding.emptyDataLayout.root.visibility = View.VISIBLE
-                    } else {
-                        binding.emptyDataLayout.root.visibility = View.GONE
-                        maxCount = data.first().first
-                        mainRecyclerAdapter?.setData(data.first().second, false, maxCount)
-                        isDataLoaded = true
-                    }
-                    binding.loadingLayout.visibility = View.GONE
+                    if (mainRecyclerAdapter != null && mainRecyclerAdapter!!.itemCount > 0) {
+                        if (isInitCompleted) handleSuccessResult(appState)
+                        else binding.loadingLayout.visibility = View.GONE
+                    } else handleSuccessResult(appState)
+                    isInitCompleted = true
                 }
                 is AppState.Error -> handleNetworkErrorWithToast(appState.error)
                 AppState.Loading -> binding.loadingLayout.visibility = View.VISIBLE
                 AppState.Empty -> Unit
             }
         }
+    }
+
+    private fun handleSuccessResult(appState: AppState.Success<*>) {
+        val data = appState.data as List<Pair<Int, List<MainScreenDataModel>>>
+        if (data.first().second.isNullOrEmpty()) {
+            binding.emptyDataLayout.root.visibility = View.VISIBLE
+        } else {
+            binding.emptyDataLayout.root.visibility = View.GONE
+            maxCount = data.first().first
+            mainRecyclerAdapter?.setData(data.first().second, false, maxCount)
+            isDataLoaded = true
+        }
+        binding.loadingLayout.visibility = View.GONE
     }
 
     override fun onFragmentNext() = Unit
