@@ -8,19 +8,22 @@ plugins {
 
 android {
     signingConfigs {
+        def keystoreProperties = new Properties()
+        keystoreProperties.load(project.rootProject.file("keystore.properties").newDataInputStream())
         debug {
-            storeFile file("C:\\Users\\dima\\StudioProjects\\sarawan_Android\\keyStoreAndroid\\sarawan_app_key.jks")
-            keyAlias 'Sarawan'
-            keyPassword 'yOusFz16mhJf'
-            storePassword 'yOusFz16mhJf'
+            storeFile file(keystoreProperties["FILE_PATH"])
+            storePassword keystoreProperties["STORE_PASSWORD"]
+            keyAlias keystoreProperties["ALIAS"]
+            keyPassword keystoreProperties["STORE_PASSWORD"]
         }
         Sarawan_release {
-            storeFile file("C:\\Users\\dima\\StudioProjects\\sarawan_Android\\keyStoreAndroid\\sarawan_app_key.jks")
-            storePassword 'yOusFz16mhJf'
-            keyPassword 'yOusFz16mhJf'
-            keyAlias 'Sarawan'
+            storeFile file(keystoreProperties["FILE_PATH"])
+            storePassword keystoreProperties["STORE_PASSWORD"]
+            keyAlias keystoreProperties["ALIAS"]
+            keyPassword keystoreProperties["STORE_PASSWORD"]
         }
     }
+
     compileSdk 31
 
     defaultConfig {
@@ -28,7 +31,7 @@ android {
         minSdk 23
         targetSdk 31
         versionCode 5
-        versionName "1.11.6"
+        versionName "1.13.12"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
