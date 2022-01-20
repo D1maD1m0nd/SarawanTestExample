@@ -22,6 +22,13 @@ data class ProductsItem(
 }
 
 @Parcelize
+data class ProductInformation(
+    @field:Json(name="product_information") val productInformation : String,
+    @field:Json(name = "brand") val brand : String? = null,
+    @field:Json(name = "manufacturing_country") val country : String? = null
+) : Parcelable
+
+@Parcelize
 data class BasketProduct(
     @field:Json(name="store_prices") val storePrices: List<StorePrice>? = null,
     @field:Json(name="product") val basketProduct: BasketProduct? = null,
@@ -33,7 +40,8 @@ data class BasketProduct(
     @field:Json(name="name") val name: String? = null,
     @field:Json(name="price_type") val priceType: String? = null,
     @field:Json(name="id") val id: Long? = null,
-    @field:Json(name="unit_quantity") val unitQuantity: String? = null
+    @field:Json(name="unit_quantity") val unitQuantity: String? = null,
+    @field:Json(name = "information") var information : ProductInformation? = null
 ) : Parcelable
 
 data class BasketResponse(

@@ -8,19 +8,22 @@ plugins {
 
 android {
     signingConfigs {
+        def keystoreProperties = new Properties()
+        keystoreProperties.load(project.rootProject.file("keystore.properties").newDataInputStream())
         debug {
-            storeFile file("C:\\Users\\dima\\StudioProjects\\sarawan_Android\\keyStoreAndroid\\sarawan_app_key.jks")
-            keyAlias 'Sarawan'
-            keyPassword 'yOusFz16mhJf'
-            storePassword 'yOusFz16mhJf'
+            storeFile file(keystoreProperties["FILE_PATH"])
+            storePassword keystoreProperties["STORE_PASSWORD"]
+            keyAlias keystoreProperties["ALIAS"]
+            keyPassword keystoreProperties["STORE_PASSWORD"]
         }
         Sarawan_release {
-            storeFile file("C:\\Users\\dima\\StudioProjects\\sarawan_Android\\keyStoreAndroid\\sarawan_app_key.jks")
-            storePassword 'yOusFz16mhJf'
-            keyPassword 'yOusFz16mhJf'
-            keyAlias 'Sarawan'
+            storeFile file(keystoreProperties["FILE_PATH"])
+            storePassword keystoreProperties["STORE_PASSWORD"]
+            keyAlias keystoreProperties["ALIAS"]
+            keyPassword keystoreProperties["STORE_PASSWORD"]
         }
     }
+
     compileSdk 31
 
     defaultConfig {
@@ -28,7 +31,7 @@ android {
         minSdk 23
         targetSdk 31
         versionCode 5
-        versionName "1.11.6"
+        versionName "1.13.12"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -74,9 +77,9 @@ dependencies {
     implementation 'androidx.navigation:navigation-ui-ktx:2.3.5'
 
     // Room
-    implementation 'androidx.room:room-runtime:2.4.0'
-    implementation "androidx.room:room-rxjava3:2.4.0"
-    kapt 'androidx.room:room-compiler:2.4.0'
+    implementation 'androidx.room:room-runtime:2.4.1'
+    implementation "androidx.room:room-rxjava3:2.4.1"
+    kapt 'androidx.room:room-compiler:2.4.1'
 
     // FireBase
     implementation 'com.google.firebase:firebase-messaging:23.0.0'
@@ -103,12 +106,12 @@ dependencies {
     // IU
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
     implementation 'androidx.core:core-ktx:1.7.0'
-    implementation 'androidx.appcompat:appcompat:1.4.0'
-    implementation 'com.google.android.material:material:1.4.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.2'
+    implementation 'androidx.appcompat:appcompat:1.4.1'
+    implementation 'com.google.android.material:material:1.5.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.3'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.recyclerview:recyclerview:1.2.1'
-    testImplementation 'junit:junit:'
+    testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
 }

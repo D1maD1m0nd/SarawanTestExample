@@ -28,8 +28,8 @@ object AdapterDelegatesTypes {
                 item.basketProduct?.let {
                     titleProductTextView.text = it.basketProduct?.name
                     propertiesTextView.text = it.basketProduct?.unitQuantity
-                    productCompanyTextView.text = "Сарафан"
-                    productCountryTextView.text = "Россия"
+                    productCompanyTextView.text = it.basketProduct?.information?.brand ?: "Сарафан"
+                    productCountryTextView.text =  it.basketProduct?.information?.country ?: "Россия"
                     productShopTextView.text = it.store
                     sumTextView.text = String.format("%.2f ₽", it.price?.toDouble())
                     counterTextView.text = item.quantity.toString()
