@@ -28,10 +28,14 @@
             android:shadowDx="0.87"
             android:shadowDy="2"
             android:shadowRadius="1"
+            android:ellipsize="end"
+            android:lines="2"
+            android:maxLines="2"
+            android:minLines="2"
             android:text="@string/default_product_title"
             android:textColor="@color/black_product_title"
             android:textSize="@dimen/title_product_text_size"
-            app:layout_constraintEnd_toEndOf="@+id/product_company_text_view"
+            app:layout_constraintEnd_toStartOf="@+id/trash_image_button"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -70,17 +74,20 @@
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/product_company_text_view"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
             android:layout_marginTop="12dp"
+            android:ellipsize="end"
             android:fontFamily="@font/montserrat_regular"
+
             android:shadowColor="@color/black_product_title"
             android:shadowDx="0.87"
             android:text="@string/product_company_owner"
             android:textColor="@color/black"
             android:textSize="@dimen/shop_info_font_size"
             android:textStyle="normal"
+            app:layout_constraintEnd_toEndOf="@+id/trash_image_button"
             app:layout_constraintStart_toEndOf="@+id/product_image_view"
             app:layout_constraintTop_toBottomOf="@+id/properties_text_view" />
 

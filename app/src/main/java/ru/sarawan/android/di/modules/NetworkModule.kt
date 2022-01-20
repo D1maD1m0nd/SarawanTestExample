@@ -13,6 +13,7 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 import ru.sarawan.android.model.datasource.ApiService
 import ru.sarawan.android.utils.AndroidNetworkStatus
 import ru.sarawan.android.utils.MoshiCustomAdapter
+import ru.sarawan.android.utils.MoshiCustomAdapter.Companion.LENIENT_FACTORY
 import ru.sarawan.android.utils.NetworkStatus
 import ru.sarawan.android.utils.exstentions.token
 
@@ -23,7 +24,9 @@ class NetworkModule {
     fun getNetworkStatus(context: Context): NetworkStatus = AndroidNetworkStatus(context)
 
     @Provides
-    fun moshi(): Moshi = Moshi.Builder().build()
+    fun moshi(): Moshi {
+        return  Moshi.Builder().add(LENIENT_FACTORY).build()
+    }
 
     @Provides
     fun getHttpClient(shared: SharedPreferences): OkHttpClient {
