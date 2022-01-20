@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.RecyclerView
 import coil.ImageLoader
 import dagger.android.support.AndroidSupportInjection
 import ru.sarawan.android.R
+import ru.sarawan.android.activity.FabChanger
 import ru.sarawan.android.app.App
 import ru.sarawan.android.databinding.FragmentMainBinding
 import ru.sarawan.android.framework.INavigation
@@ -55,17 +56,12 @@ abstract class BaseMainCatalogFragment : Fragment(), INavigation {
     protected val binding get() = _binding!!
 
     protected abstract val viewModel: BaseMainCatalogViewModel
-
     protected var isOnline = false
-
     protected var maxCount = -1
-
     protected var isDataLoaded = false
-
+    protected var isInitCompleted = false
     protected var mainRecyclerAdapter: MainRecyclerAdapter? = null
-
-    protected var fabChanger: ru.sarawan.android.activity.FabChanger? = null
-
+    protected var fabChanger: FabChanger? = null
     protected val gridLayoutManager: GridLayoutManager by lazy {
         GridLayoutManager(context, 2, GridLayoutManager.VERTICAL, false)
     }
@@ -82,7 +78,11 @@ abstract class BaseMainCatalogFragment : Fragment(), INavigation {
                     if (isOnline) {
                         callback(isOnline)
                         fabChanger?.changePrice(it * diff)
-                        viewModel.saveData(data, !sharedPreferences.token.isNullOrEmpty(), isNewItem)
+                        viewModel.saveData(
+                            data,
+                            !sharedPreferences.token.isNullOrEmpty(),
+                            isNewItem
+                        )
                     } else handleNetworkErrorWithToast()
                 }
             }
@@ -114,6 +114,7 @@ abstract class BaseMainCatalogFragment : Fragment(), INavigation {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        isInitCompleted = false
         initRecyclerAdapter()
         attachAdapterToView()
         initSearchField()
@@ -122,11 +123,10 @@ abstract class BaseMainCatalogFragment : Fragment(), INavigation {
         initRefreshButton()
     }
 
-    private fun initRefreshButton() {
-        binding.noConnectionLayout.refreshButton.setOnClickListener {
-            refresh()
-        }
-    }
+    private fun initRefreshButton() = binding
+        .noConnectionLayout
+        .refreshButton
+        .setOnClickListener { refresh() }
 
     protected abstract fun refresh()
 
@@ -165,7 +165,8 @@ abstract class BaseMainCatalogFragment : Fragment(), INavigation {
                 MainRecyclerAdapter(onListItemClickListener, imageLoader, buttonMoreClickListener) {
                     _binding?.loadingLayout?.visibility = View.GONE
                 }
-        } else mainRecyclerAdapter?.clear()
+        }
+//        else mainRecyclerAdapter?.clear()
 
         gridLayoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
             override fun getSpanSize(position: Int): Int {
@@ -262,6 +263,7 @@ abstract class BaseMainCatalogFragment : Fragment(), INavigation {
             putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
             putExtra(RecognizerIntent.EXTRA_PROMPT, getString(R.string.search_in_sarafan))
         }
+        @Suppress("depricated")
         startActivityForResult(intent, SPEECH_REQUEST_CODE)
     }
 
@@ -292,12 +294,11 @@ abstract class BaseMainCatalogFragment : Fragment(), INavigation {
         binding.mainRecyclerView.layoutManager = null
         binding.mainRecyclerView.adapter = null
         _binding = null
-        viewModel.clear()
     }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        fabChanger = context as ru.sarawan.android.activity.FabChanger
+        fabChanger = context as FabChanger
     }
 
     override fun onDetach() {

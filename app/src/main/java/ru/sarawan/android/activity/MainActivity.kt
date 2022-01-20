@@ -24,7 +24,7 @@ import ru.sarawan.android.utils.exstentions.userId
 import javax.inject.Inject
 import kotlin.system.exitProcess
 
-class MainActivity : AppCompatActivity(), ru.sarawan.android.activity.FabChanger {
+class MainActivity : AppCompatActivity(), FabChanger {
 
     @Inject
     lateinit var sharedPreferences: SharedPreferences
@@ -49,7 +49,7 @@ class MainActivity : AppCompatActivity(), ru.sarawan.android.activity.FabChanger
     private var isBackShown = false
     private var lastTimeBackPressed: Long = 0
     private val totalPrice: BehaviorSubject<Float> = BehaviorSubject.create()
-    private var data : List<ProductsItem> = mutableListOf()
+    private var data: List<ProductsItem> = mutableListOf()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         AndroidInjection.inject(this)
@@ -83,7 +83,7 @@ class MainActivity : AppCompatActivity(), ru.sarawan.android.activity.FabChanger
                 }
                 result
             }.toFloat()
-            putPrice(price ?: 0f)
+            putPrice(price)
         }
     }
 
@@ -107,8 +107,8 @@ class MainActivity : AppCompatActivity(), ru.sarawan.android.activity.FabChanger
             when (it.itemId) {
                 R.id.profileFragment -> return@setOnItemSelectedListener showProfile()
                 else -> {
-                    if (!navController.popBackStack(it.itemId, false))
-                        navController.navigate(it.itemId)
+                    navController.popBackStack(it.itemId, true)
+                    navController.navigate(it.itemId)
                     true
                 }
             }
@@ -127,9 +127,12 @@ class MainActivity : AppCompatActivity(), ru.sarawan.android.activity.FabChanger
         if (sharedPreferences.userId == UNREGISTERED) {
             ProfilePhoneFragment.newInstance {
                 navigateToProfile()
-                if(sharedPreferences.userId != UNREGISTERED && data.isNotEmpty()) {
+                if (sharedPreferences.userId != UNREGISTERED && data.isNotEmpty()) {
                     val products = data.map { item ->
-                        Product(id = item.basketProduct?.basketProduct?.id, quantity = item.quantity ?: 0)
+                        Product(
+                            id = item.basketProduct?.basketProduct?.id,
+                            quantity = item.quantity ?: 0
+                        )
                     }
                     viewModel.saveData(products, true)
                 }
@@ -153,7 +156,7 @@ class MainActivity : AppCompatActivity(), ru.sarawan.android.activity.FabChanger
     private fun checkExit() {
         Toast.makeText(this, getString(R.string.press_back_again_to_exit), Toast.LENGTH_SHORT)
             .show()
-        if (System.currentTimeMillis() - lastTimeBackPressed < ru.sarawan.android.activity.MainActivity.Companion.BACK_BUTTON_EXIT_DELAY && isBackShown) {
+        if (System.currentTimeMillis() - lastTimeBackPressed < BACK_BUTTON_EXIT_DELAY && isBackShown) {
             exitProcess(0)
         } else isBackShown = false
         isBackShown = true

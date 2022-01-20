@@ -44,8 +44,12 @@ class CatalogFragment : BaseMainCatalogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         initCatalogRecyclerAdapter()
-        if (isOnline) viewModel.getStartData(isOnline, !sharedPreferences.token.isNullOrEmpty())
-        else handleNetworkErrorWithLayout()
+        if (isOnline) {
+            if (!isInitCompleted) viewModel.getStartData(
+                isOnline,
+                !sharedPreferences.token.isNullOrEmpty()
+            )
+        } else handleNetworkErrorWithLayout()
         super.onViewCreated(view, savedInstanceState)
     }
 
@@ -57,10 +61,11 @@ class CatalogFragment : BaseMainCatalogFragment() {
         }
     }
 
-    override fun attachAdapterToView() {
-        binding.mainRecyclerView.layoutManager = linearLayoutManager
-        binding.mainRecyclerView.adapter = catalogAdapter
-    }
+    override fun attachAdapterToView() = Unit
+//    {
+//        binding.mainRecyclerView.layoutManager = linearLayoutManager
+//        binding.mainRecyclerView.adapter = catalogAdapter
+//    }
 
     private fun initCatalogRecyclerAdapter() {
         if (catalogAdapter == null) {
@@ -68,45 +73,28 @@ class CatalogFragment : BaseMainCatalogFragment() {
         } else catalogAdapter?.clear()
     }
 
-    override fun subscribeToViewModel() {
+    override fun subscribeToViewModel() = with(binding) {
         viewModel.getStateLiveData().observe(viewLifecycleOwner) { appState ->
             when (appState) {
                 is AppState.Success<*> -> {
                     val listData = appState.data as List<*>?
-                    if (listData.isNullOrEmpty()) {
-                        binding.loadingLayout.visibility = View.GONE
-                    } else when (listData.first()) {
+                    if (listData.isNullOrEmpty()) loadingLayout.visibility = View.GONE
+                    else when (listData.first()) {
                         is Pair<*, *> -> {
-                            listData.first() as Pair<Int, List<MainScreenDataModel>>
-                            if ((listData.first() as Pair<Int, List<MainScreenDataModel>>)
-                                    .second.isNullOrEmpty()
-                            ) {
-                                binding.loadingLayout.visibility = View.GONE
-                                binding.emptyDataLayout.root.visibility = View.VISIBLE
-                            } else {
-                                binding.emptyDataLayout.root.visibility = View.GONE
-                                binding.mainRecyclerView.layoutManager = gridLayoutManager
-                                binding.mainRecyclerView.adapter = mainRecyclerAdapter
-                                maxCount =
-                                    (listData.first() as Pair<Int, List<MainScreenDataModel>>).first
-                                mainRecyclerAdapter?.setData(
-                                    (listData.first() as Pair<Int, List<MainScreenDataModel>>).second,
-                                    binding.searchField.editText?.text.isNullOrEmpty(),
-                                    maxCount
-                                )
-                                isDataLoaded = true
-                            }
+                            if (mainRecyclerAdapter != null && mainRecyclerAdapter!!.itemCount > 0) {
+                                if (isInitCompleted) handleSuccessData(listData)
+                                else binding.loadingLayout.visibility = View.GONE
+                            } else handleSuccessData(listData)
+                            isInitCompleted = true
                         }
                         is CategoryDataModel -> {
-                            binding.mainRecyclerView.layoutManager = linearLayoutManager
-                            binding.mainRecyclerView.adapter = catalogAdapter
+                            mainRecyclerView.layoutManager = linearLayoutManager
+                            mainRecyclerView.adapter = catalogAdapter
                             val result: MutableList<MainScreenDataModel> = mutableListOf()
                             (listData as List<CategoryDataModel>).forEach {
                                 result.add(it.toMainScreenDataModel())
                             }
-                            catalogAdapter?.setData(result) {
-                                binding.loadingLayout.visibility = View.GONE
-                            }
+                            catalogAdapter?.setData(result) { loadingLayout.visibility = View.GONE }
                         }
                     }
                 }
@@ -114,6 +102,28 @@ class CatalogFragment : BaseMainCatalogFragment() {
                 AppState.Loading -> binding.loadingLayout.visibility = View.VISIBLE
                 AppState.Empty -> Unit
             }
+        }
+    }
+
+    private fun handleSuccessData(listData: List<*>?) = with(binding) {
+        listData?.first() as Pair<Int, List<MainScreenDataModel>>
+        if ((listData.first() as Pair<Int, List<MainScreenDataModel>>)
+                .second.isNullOrEmpty()
+        ) {
+            loadingLayout.visibility = View.GONE
+            emptyDataLayout.root.visibility = View.VISIBLE
+        } else {
+            emptyDataLayout.root.visibility = View.GONE
+            mainRecyclerView.layoutManager = gridLayoutManager
+            mainRecyclerView.adapter = mainRecyclerAdapter
+            maxCount =
+                (listData.first() as Pair<Int, List<MainScreenDataModel>>).first
+            mainRecyclerAdapter?.setData(
+                (listData.first() as Pair<Int, List<MainScreenDataModel>>).second,
+                searchField.editText?.text.isNullOrEmpty(),
+                maxCount
+            )
+            isDataLoaded = true
         }
     }
 
