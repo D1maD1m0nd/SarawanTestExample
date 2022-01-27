@@ -5,6 +5,8 @@ import com.squareup.moshi.Json
 enum class OrderStatus {
     @field:Json(name="NEW")
     NEW,
+    @field:Json(name="new")
+    new,
     @field:Json(name="AVL")
     AVL,
     @field:Json(name="ACT")

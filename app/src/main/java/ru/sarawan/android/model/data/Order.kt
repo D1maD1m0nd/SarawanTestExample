@@ -22,24 +22,6 @@ data class Order(
 
 data class OrderApprove(
 
-	@field:Json(name="total_weight_kg")
-	val totalWeightKg: Int? = null,
-
-	@field:Json(name="vehicle_type_id")
-	val vehicleTypeId: Int? = null,
-
-	@field:Json(name="delivery_fee_amount")
-	val deliveryFeeAmount: String? = null,
-
-	@field:Json(name="payment_amount")
-	val paymentAmount: String? = null,
-
-	@field:Json(name="delivery_amount")
-	val deliveryAmount: String? = null,
-
-	@field:Json(name="error")
-	val error: Boolean? = null,
-
 	@field:Json(name="dostavista_order_id")
 	val orderId: Int? = null,
 
