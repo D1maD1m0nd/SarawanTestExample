@@ -13,5 +13,5 @@ open class BasketDiffUtilItemCallback : DiffUtil.ItemCallback<BasketListItem>() 
     override fun areContentsTheSame(
         oldItem: BasketListItem,
         newItem: BasketListItem
-    ): Boolean = oldItem == newItem
+    ): Boolean = newItem == oldItem
 }
