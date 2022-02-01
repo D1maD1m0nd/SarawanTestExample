@@ -16,8 +16,7 @@ class ProfileAddressViewModel @Inject constructor(
         compositeDisposable.add(
             interactor.getData(Query.Post.Address.NewAddress(address), true)
                 .subscribeOn(schedulerProvider.io)
-                .observeOn(schedulerProvider.io)
-                .observeOn(schedulerProvider.io)
+                .observeOn(schedulerProvider.ui)
                 .subscribe(
                     {stateLiveData.postValue(AppState.Success(it))},
                     { stateLiveData.postValue(AppState.Error(it)) })

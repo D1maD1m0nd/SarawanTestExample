@@ -5,25 +5,25 @@ import com.squareup.moshi.Json
 data class UserDataModel(
 
 	@field:Json(name="birthday")
-	val birthday: String? = null,
+	val birthday: String = "",
 
 	@field:Json(name="phone")
-	val phone: String? = null,
+	val phone: String = "",
 
 	@field:Json(name="last_name")
-	val lastName: String? = null,
+	val lastName: String = "",
 
 	@field:Json(name="id")
-	val id: Long? = null,
+	val id: Long = 0,
 
 	@field:Json(name="first_name")
-	val firstName: String? = null,
+	val firstName: String = "",
 
 	@field:Json(name="email")
-	val email: String? = null,
+	val email: String = "",
 
 	@field:Json(name="status")
-	val status: String? = null,
+	val status: String = "",
 
 	@field:Json(name="basket")
 	val basket: Basket? = null,
@@ -31,15 +31,15 @@ data class UserDataModel(
 
 data class UserRegistration(
     @field:Json(name = "phone_number")
-    val phoneNumber: String? = null,
+    val phoneNumber: String = "",
     @field:Json(name = "success")
-    val success: Boolean? = null,
+    val success: Boolean = false,
     @field:Json(name = "error")
-    val error : String? = null,
+    val error : String = "",
     @field:Json(name = "token")
-    val token : String? = null,
+    val token : String = "",
     @field:Json(name = "user_id")
-    val userId : Long? = null,
+    val userId : Long = 0,
 	@field:Json(name = "code")
-	val code : String? = null
+	val code : String = ""
 )

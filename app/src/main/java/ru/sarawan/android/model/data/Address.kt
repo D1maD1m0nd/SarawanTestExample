@@ -11,32 +11,32 @@ data class Address(
 data class AddressItem(
 
     @field:Json(name="city")
-    val city: String? = "",
+    val city: String = "",
 
     @field:Json(name="housing")
-    val housing: String? = "",
+    val housing: String = "",
 
     @field:Json(name="street")
-    val street: String? = "",
+    val street: String = "",
 
     @field:Json(name="room_number")
-    val roomNumber: String? = "",
+    val roomNumber: String = "",
 
     @field:Json(name="id")
-    val id: Int? = null,
+    val id: Int = 0,
 
     @field:Json(name="adress_id")
-    val idAddressOrder : Int? = null,
+    val idAddressOrder : Int = 0,
 
     @field:Json(name="house")
-    val house: String? = "",
+    val house: String = "",
 
     @field:Json(name="user")
-    val user: Long? = null,
+    val user: Long = 0,
 
     @field:Json(name="building")
-    val building: String? = "",
+    val building: String = "",
 
     @field:Json(name="primary")
-    val primary: Boolean? = null
+    val primary: Boolean = false
 )

@@ -16,8 +16,7 @@ class NameViewModel @Inject constructor(
         compositeDisposable.add(
             interactor.getData(Query.Put.Users.Update(id, user), true)
                 .subscribeOn(schedulerProvider.io)
-                .observeOn(schedulerProvider.io)
-                .observeOn(schedulerProvider.io)
+                .observeOn(schedulerProvider.ui)
                 .subscribe(
                     {stateLiveData.postValue(AppState.Success(it))},
                     { stateLiveData.postValue(AppState.Error(it)) })

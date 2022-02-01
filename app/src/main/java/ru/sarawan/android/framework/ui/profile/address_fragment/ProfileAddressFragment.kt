@@ -128,7 +128,7 @@ class ProfileAddressFragment : DialogFragment() {
             house = house,
             roomNumber = apartment,
             primary = true,
-            user = userId
+            user = userId ?: 0
         )
     }
 

@@ -197,7 +197,7 @@ class ProfileFragment : Fragment() {
                 .asSequence()
                 .map { c ->
                     if (index < number.length) {
-                        val cc = number.get(index)
+                        val cc = number[index]
                         if (cc == c || c == '9') {
                             index++
                             cc
@@ -218,16 +218,14 @@ class ProfileFragment : Fragment() {
         val firstName = user.firstName
         val lastName = user.lastName
         val fullName = "$firstName $lastName".trim()
-        return if (fullName.isNotEmpty()) {
-            fullName
-        } else {
+        return fullName.ifEmpty {
             getString(R.string.profile_add_name)
         }
     }
 
     private fun cancelOrder(pos : Int) {
         val order = orders[pos]
-        val id = order.orderId!!
+        val id = order.orderId
         orders.remove(order)
 
         adapter.setOrder(orders)

@@ -41,7 +41,7 @@ class OrdersAdapter(val itemClickListener: ItemClickListener) : RecyclerView.Ada
         private val binding = OrderItemBinding.bind(item)
         private val context = binding.root.context
         fun bind(order : OrderApprove) = with(binding) {
-            val orderName = "№${order.information?.orderName}"
+            val orderName = "№${order.information.orderName}"
             val status = order.orderStatus
             nameOrderValueTextView.text = orderName
             val currentStatus = when(status) {

@@ -228,8 +228,8 @@ class BasketFragment : Fragment() {
     private fun setFooterData(order: Order) {
         val footer = (list.last() as BasketFooter)
         footer.apply {
-            price = order.basketSumm ?: 0.0
-            weight = order.weight ?: 0.0
+            price = order.basketSumm
+            weight = order.weight
 
         }
         adapter.updateFooter()
@@ -237,7 +237,7 @@ class BasketFragment : Fragment() {
 
     private fun setHeaderData(order: Order) {
         val header = (list.first() as BasketHeader)
-        header.counter = order.basketCount!!
+        header.counter = order.basketCount
         adapter.updateHeader()
     }
 

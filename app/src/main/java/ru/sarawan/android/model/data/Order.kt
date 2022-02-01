@@ -6,40 +6,40 @@ data class Order(
 
 
 	@field:Json(name="basket_count")
-	val basketCount: Int? = null,
+	val basketCount: Int,
 
 	@field:Json(name="payment_amount")
-	val paymentAmount: Double? = null,
+	val paymentAmount: Double,
 
 	@field:Json(name="delivery_amount")
-	val deliveryAmount: Double? = null,
+	val deliveryAmount: Double,
 
 	@field:Json(name="basket_summ")
-	val basketSumm: Double? = null,
+	val basketSumm: Double,
 
-	val weight : Double? = null
+	val weight : Double
 )
 
 data class OrderApprove(
 
 	@field:Json(name="dostavista_order_id")
-	val orderId: Int? = null,
+	val orderId: Int,
 
 	@field:Json(name="tracking_url")
-	val trackingUrl: String? = null,
+	val trackingUrl: String,
 
 	@field:Json(name="created_datetime")
-	val createdDatetime: String? = null,
+	val createdDatetime: String,
 
 	@field:Json(name="order_name")
-	val orderName: String? = null,
+	val orderName: String,
 
 	@field:Json(name="status")
-	val status: OrderStatus? = null,
+	val status: OrderStatus,
 
 	@field:Json(name="order_status")
-	val orderStatus: OrderStatus? = null,
+	val orderStatus: OrderStatus,
 
 	@field:Json(name="information")
-	val information : OrderInformation? = null
+	val information : OrderInformation
 )

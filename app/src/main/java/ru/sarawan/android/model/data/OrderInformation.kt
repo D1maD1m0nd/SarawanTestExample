@@ -4,8 +4,8 @@ import com.squareup.moshi.Json
 
 data class OrderInformation(
 	@field:Json(name="order_name")
-	val orderName: String? = null,
+	val orderName: String,
 
 	@field:Json(name="status")
-	val status: String? = null
+	val status: String
 )

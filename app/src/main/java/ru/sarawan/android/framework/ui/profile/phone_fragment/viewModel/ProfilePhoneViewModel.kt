@@ -16,8 +16,7 @@ class ProfilePhoneViewModel @Inject constructor(
             compositeDisposable.addAll(
                 interactor.getData(Query.Post.User.Sms(user), true)
                     .subscribeOn(schedulerProvider.io)
-                    .observeOn(schedulerProvider.io)
-                    .observeOn(schedulerProvider.io)
+                    .observeOn(schedulerProvider.ui)
                     .subscribe(
                         {stateLiveData.postValue(AppState.Success(it))},
                         { stateLiveData.postValue(AppState.Error(it)) }),

@@ -162,7 +162,7 @@ class ProfilePhoneFragment : DialogFragment() {
                 appState.data as MutableList<UserRegistration>
                 if (appState.data.isNotEmpty()) {
                     val result = appState.data.first()
-                    result.success?.let {
+                    result.success.let {
                         if (it) {
                             hideKeyboard()
                             val number = binding.profilePhoneMaskedEditText.text.toString()
@@ -183,6 +183,7 @@ class ProfilePhoneFragment : DialogFragment() {
                     .show()
             }
             AppState.Loading -> Unit
+            AppState.Empty -> TODO()
         }
     }
 
