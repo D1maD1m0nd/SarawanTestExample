@@ -55,8 +55,8 @@
         <androidx.appcompat.widget.AppCompatImageButton
             android:id="@+id/trash_image_button"
             style="@style/TextAppearance.AppCompat.Widget.Button.Inverse"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
             android:layout_margin="5dp"
             android:padding="10dp"
             android:background="@null"
@@ -136,8 +136,8 @@
     <androidx.appcompat.widget.AppCompatImageButton
         android:id="@+id/plus_image_button"
         style="@style/TextAppearance.AppCompat.Widget.Button.Inverse"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
         android:layout_marginStart="12dp"
         android:background="@null"
         android:padding="5dp"
@@ -165,8 +165,8 @@
     <androidx.appcompat.widget.AppCompatImageButton
         android:id="@+id/minus_image_button"
         style="@style/TextAppearance.AppCompat.Widget.Button.Inverse"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
         android:background="@null"
         android:padding="5dp"
         android:src="@drawable/minus_ic"
