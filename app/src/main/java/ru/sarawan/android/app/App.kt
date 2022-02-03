@@ -26,8 +26,4 @@ class App : Application(), HasAndroidInjector {
             .build()
             .inject(this)
     }
-    companion object{
-        lateinit var navController : NavController
-    }
-
 }

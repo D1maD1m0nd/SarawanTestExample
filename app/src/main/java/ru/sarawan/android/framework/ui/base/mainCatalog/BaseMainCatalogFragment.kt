@@ -16,16 +16,17 @@ import androidx.core.content.getSystemService
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import coil.ImageLoader
 import dagger.android.support.AndroidSupportInjection
 import ru.sarawan.android.R
 import ru.sarawan.android.activity.FabChanger
-import ru.sarawan.android.app.App
 import ru.sarawan.android.databinding.FragmentMainBinding
 import ru.sarawan.android.framework.INavigation
-import ru.sarawan.android.framework.ui.basket.BasketFragment
+import ru.sarawan.android.framework.ui.category.CategoryFragment
+import ru.sarawan.android.framework.ui.main.MainFragmentDirections
 import ru.sarawan.android.framework.ui.main.adapter.MainRecyclerAdapter
 import ru.sarawan.android.framework.ui.main.viewHolder.ButtonMoreClickListener
 import ru.sarawan.android.model.data.MainScreenDataModel
@@ -89,9 +90,9 @@ abstract class BaseMainCatalogFragment : Fragment(), INavigation {
 
             override fun onItemClick(data: MainScreenDataModel) {
                 if (isOnline) {
-                    val bundle = Bundle()
-                    bundle.putLong(BasketFragment.PRODUCT_ID, data.id ?: -1)
-                    App.navController.navigate(R.id.productCardFragment, bundle)
+                    val action = MainFragmentDirections
+                        .actionMainFragmentToProductCardFragment(data.id ?: -1)
+                    findNavController().navigate(action)
                 } else handleNetworkErrorWithToast()
             }
 
@@ -157,8 +158,13 @@ abstract class BaseMainCatalogFragment : Fragment(), INavigation {
 
     private fun initRecyclerAdapter() {
         val buttonMoreClickListener = ButtonMoreClickListener {
-            if (isOnline) App.navController.navigate(R.id.action_mainFragment_to_categoryFragment)
-            else handleNetworkErrorWithToast()
+            if (isOnline) {
+                val action = MainFragmentDirections.actionMainFragmentToCategoryFragment(
+                    null,
+                    CategoryFragment.DISCOUNT
+                )
+                findNavController().navigate(action)
+            } else handleNetworkErrorWithToast()
         }
         if (mainRecyclerAdapter == null) {
             mainRecyclerAdapter =
@@ -263,7 +269,7 @@ abstract class BaseMainCatalogFragment : Fragment(), INavigation {
             putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
             putExtra(RecognizerIntent.EXTRA_PROMPT, getString(R.string.search_in_sarafan))
         }
-        @Suppress("depricated")
+        @Suppress("deprecated")
         startActivityForResult(intent, SPEECH_REQUEST_CODE)
     }
 
@@ -307,7 +313,7 @@ abstract class BaseMainCatalogFragment : Fragment(), INavigation {
     }
 
     override fun onFragmentBackStack() {
-        App.navController.popBackStack()
+        findNavController().popBackStack()
     }
 
     companion object {

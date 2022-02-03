@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import ru.sarawan.android.app.App
+import androidx.navigation.fragment.findNavController
 import ru.sarawan.android.databinding.FragmentInfoAboutBinding
 import ru.sarawan.android.framework.INavigation
 
@@ -37,12 +37,8 @@ class InfoAboutFragment : Fragment(), INavigation {
     }
 
     override fun onFragmentBackStack() {
-        App.navController.popBackStack()
+        findNavController().popBackStack()
     }
 
     override fun onFragmentNext() = Unit
-
-    companion object {
-        fun newInstance() = InfoAboutFragment()
-    }
 }

@@ -10,12 +10,12 @@ import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import dagger.android.support.AndroidSupportInjection
 import retrofit2.HttpException
 import ru.sarawan.android.R
-import ru.sarawan.android.app.App.Companion.navController
 import ru.sarawan.android.databinding.FragmentBasketBinding
 import ru.sarawan.android.framework.ui.basket.adapter.BasketAdapter
 import ru.sarawan.android.framework.ui.basket.viewModel.BasketViewModel
@@ -33,7 +33,6 @@ import ru.sarawan.android.utils.exstentions.UNREGISTERED
 import ru.sarawan.android.utils.exstentions.token
 import ru.sarawan.android.utils.exstentions.userId
 import javax.inject.Inject
-
 
 class BasketFragment : Fragment() {
     @Inject
@@ -72,13 +71,14 @@ class BasketFragment : Fragment() {
         }
 
         override fun openOrderCard() {
-            if(sharedPreferences.token != null) {
-                navController.navigate(R.id.action_basketFragment_to_orderFragment)
+            if (sharedPreferences.token != null) {
+                findNavController().navigate(R.id.action_basketFragment_to_orderFragment)
             } else {
                 showProfile()
             }
 
         }
+
         override fun clear() {
             viewModel.clearBasket(!sharedPreferences.token.isNullOrEmpty())
             removeItems()
@@ -122,8 +122,9 @@ class BasketFragment : Fragment() {
         }
 
     private fun navigateToProfile() {
-        navController.navigate(R.id.profileFragment)
+        findNavController().navigate(R.id.action_basketFragment_to_profileFragment)
     }
+
     private fun initData() {
         initRcView()
         viewModel.getBasket(!sharedPreferences.token.isNullOrEmpty())
@@ -188,7 +189,7 @@ class BasketFragment : Fragment() {
         progressBar.visibility = View.GONE
         infoBasketTextView.text = getString(R.string.basket_empty)
         actionBasketTextView.text = getString(R.string.nav_sales)
-        actionBasketTextView.setOnClickListener { navController.navigate(R.id.mainFragment) }
+        actionBasketTextView.setOnClickListener { findNavController().navigate(R.id.action_basketFragment_to_mainFragment) }
     }
 
     private fun initDataRcView(data: List<ProductsItem>) {
@@ -296,11 +297,9 @@ class BasketFragment : Fragment() {
     }
 
     private fun showProductFragment(idProduct: Int) {
-        val bundle = Bundle()
-        val products = adapter.items.filterIsInstance<ProductsItem>()
-        bundle.putLong(PRODUCT_ID, idProduct.toLong())
-        bundle.putParcelableArrayList(PRODUCTS_BASKET, ArrayList(products))
-        navController.navigate(R.id.action_basketFragment_to_productCardFragment, bundle)
+        val action =
+            BasketFragmentDirections.actionBasketFragmentToProductCardFragment(idProduct.toLong())
+        findNavController().navigate(action)
     }
 
     override fun onDestroyView() {
@@ -309,9 +308,6 @@ class BasketFragment : Fragment() {
     }
 
     companion object {
-        fun newInstance() = BasketFragment()
-        const val PRODUCT_ID = "PRODUCT_ID"
-        const val PRODUCTS_BASKET = "PRODUCTS_BASKET"
         private const val LIMIT = 3
     }
 }
