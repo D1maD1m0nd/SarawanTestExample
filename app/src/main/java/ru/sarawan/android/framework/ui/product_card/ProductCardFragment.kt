@@ -9,13 +9,13 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import coil.load
 import dagger.android.support.AndroidSupportInjection
 import ru.sarawan.android.R
-import ru.sarawan.android.app.App.Companion.navController
 import ru.sarawan.android.databinding.FragmentProductCardBinding
-import ru.sarawan.android.framework.ui.basket.BasketFragment
 import ru.sarawan.android.framework.ui.product_card.adapter.ItemClickListener
 import ru.sarawan.android.framework.ui.product_card.adapter.SimilarAdapter
 import ru.sarawan.android.framework.ui.product_card.adapter.StoreAdapter
@@ -27,7 +27,6 @@ import ru.sarawan.android.utils.TypeCardEnum
 import ru.sarawan.android.utils.exstentions.token
 import javax.inject.Inject
 
-
 class ProductCardFragment : Fragment() {
     private val itemClickListener = object : ItemClickListener {
 
@@ -36,7 +35,7 @@ class ProductCardFragment : Fragment() {
         }
 
         override fun update(pos: Int, mode: Boolean, type: TypeCardEnum) {
-            when(type) {
+            when (type) {
                 TypeCardEnum.SIMILAR -> updateDataBasket(pos, mode)
                 TypeCardEnum.STORE -> updateDataBasketIntoStore(pos, mode)
                 TypeCardEnum.DEFAULT -> Unit
@@ -50,8 +49,10 @@ class ProductCardFragment : Fragment() {
             }
         }
     }
+
     @Inject
     lateinit var sharedPreferences: SharedPreferences
+
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
     private val viewModel: ProductCardViewModel by lazy {
@@ -59,19 +60,18 @@ class ProductCardFragment : Fragment() {
     }
     private var _binding: FragmentProductCardBinding? = null
     private val binding get() = _binding!!
-    private  var productId : Long? = null
-    private val storeAdapter  = StoreAdapter(itemClickListener)
-    private var similarProducts : MutableList<Product> = ArrayList(20)
-    private var storeProducts : MutableList<StorePrice> = ArrayList(5)
+    private val storeAdapter = StoreAdapter(itemClickListener)
+    private var similarProducts: MutableList<Product> = ArrayList(20)
+    private var storeProducts: MutableList<StorePrice> = ArrayList(5)
     private val similarAdapter = SimilarAdapter(itemClickListener)
     private var fabChanger: ru.sarawan.android.activity.FabChanger? = null
+    private val args: ProductCardFragmentArgs by navArgs()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.apply {
-            productId = getLong(BasketFragment.PRODUCT_ID, 0)
-        }
         AndroidSupportInjection.inject(this)
     }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -85,23 +85,24 @@ class ProductCardFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.productCloseButton.setOnClickListener {
-            navController.popBackStack()
-        }
-        viewModel.similarProducts(productId, !sharedPreferences.token.isNullOrEmpty())
+        binding.productCloseButton.setOnClickListener { findNavController().popBackStack() }
+        viewModel.similarProducts(args.productID, !sharedPreferences.token.isNullOrEmpty())
     }
-    private fun clearViewState() {
+
+    private fun clearViewState() = with(binding) {
         viewModel.clear()
-        binding.containerStoreRecyclerView.layoutManager = null
-        binding.containerStoreRecyclerView.adapter = null
-        binding.similarProductRecyclerView.layoutManager = null
-        binding.similarProductRecyclerView.adapter = null
+        containerStoreRecyclerView.layoutManager = null
+        containerStoreRecyclerView.adapter = null
+        similarProductRecyclerView.layoutManager = null
+        similarProductRecyclerView.adapter = null
     }
+
     override fun onDestroyView() {
         clearViewState()
         _binding = null
         super.onDestroyView()
     }
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         fabChanger = context as ru.sarawan.android.activity.FabChanger
@@ -117,9 +118,11 @@ class ProductCardFragment : Fragment() {
             is AppState.Success<*> -> {
                 val data = appState.data as MutableList<Product>
                 val filteredData = data.filter { !it.storePrices.isNullOrEmpty() }
-                val product = data.findLast { it.id == productId }
+                val product = data.findLast { it.id == args.productID }
                 similarProducts.addAll(data)
-                similarProducts = similarProducts.filter { !it.storePrices.isNullOrEmpty() && it.id != product?.id }.toMutableList()
+                similarProducts = similarProducts
+                    .filter { !it.storePrices.isNullOrEmpty() && it.id != product?.id }
+                    .toMutableList()
                 if (filteredData.isNullOrEmpty() || (filteredData - product).isNullOrEmpty() || similarProducts.isNullOrEmpty()) {
                     binding.semilarTitleTextView.visibility = View.GONE
                     binding.similarProductRecyclerView.visibility = View.GONE
@@ -143,13 +146,15 @@ class ProductCardFragment : Fragment() {
         }
     }
 
-    private fun initSimilarList(data: MutableList<Product>) = with(binding){
+    private fun initSimilarList(data: MutableList<Product>) = with(binding) {
         similarProductRecyclerView.adapter = similarAdapter
         similarProductRecyclerView.itemAnimator?.changeDuration = 0
-        similarProductRecyclerView.layoutManager = LinearLayoutManager(root.context, LinearLayoutManager.HORIZONTAL, false)
+        similarProductRecyclerView.layoutManager =
+            LinearLayoutManager(root.context, LinearLayoutManager.HORIZONTAL, false)
         similarAdapter.setData(data)
     }
-    private fun initViewData(data : Product) = with(binding){
+
+    private fun initViewData(data: Product) = with(binding) {
         containerStoreRecyclerView.layoutManager = LinearLayoutManager(root.context)
         containerStoreRecyclerView.adapter = storeAdapter
         containerStoreRecyclerView.itemAnimator?.changeDuration = 0
@@ -168,7 +173,7 @@ class ProductCardFragment : Fragment() {
             storeAdapter.setData(storeProducts)
         }
         data.images?.let {
-            if(it.isNotEmpty()) {
+            if (it.isNotEmpty()) {
                 val url = it.first().image
                 mainImageProductImageView.load(url) {
                     placeholder(R.drawable.place_holder_image)
@@ -177,17 +182,19 @@ class ProductCardFragment : Fragment() {
             }
         }
     }
-    private fun setButtonAddBasketVisible(stores : List<StorePrice>) {
+
+    private fun setButtonAddBasketVisible(stores: List<StorePrice>) {
         val isAddedBasket = stores.count { it.count > 0 } > 0
-        if(isAddedBasket) {
+        if (isAddedBasket) {
             binding.addBasketButton.visibility = View.GONE
         } else {
             binding.addBasketButton.visibility = View.VISIBLE
         }
     }
-    private fun updateDataBasket(pos : Int, mode : Boolean) {
+
+    private fun updateDataBasket(pos: Int, mode: Boolean) {
         val product = similarProducts[pos]
-        when(mode) {
+        when (mode) {
             true -> {
                 product.quantity++
                 product.storePrices?.first()?.let {
@@ -204,9 +211,9 @@ class ProductCardFragment : Fragment() {
         itemSave(product, pos, false, TypeCardEnum.SIMILAR)
     }
 
-    private fun updateDataBasketIntoStore(pos : Int, mode : Boolean) {
+    private fun updateDataBasketIntoStore(pos: Int, mode: Boolean) {
         val store = storeProducts[pos]
-        when(mode) {
+        when (mode) {
             true -> {
                 store.count++
                 store.let {
@@ -220,29 +227,27 @@ class ProductCardFragment : Fragment() {
                 }
             }
         }
-        val product = similarProducts.find { it.id == productId }?.apply {
+        val product = similarProducts.find { it.id == args.productID }?.apply {
             storePrices?.find { it == store }?.apply { count = store.count }
             quantity = store.count
         } ?: return
-        itemSave(product , pos, false, TypeCardEnum.STORE)
+        itemSave(product, pos, false, TypeCardEnum.STORE)
     }
 
-    private fun itemSave(product : Product, pos:Int, isNew : Boolean, type: TypeCardEnum){
-
+    private fun itemSave(product: Product, pos: Int, isNew: Boolean, type: TypeCardEnum) {
         viewModel.saveData(
             listOf(product),
             isNewItem = isNew,
             isLoggedUser = !sharedPreferences.token.isNullOrEmpty()
         )
-        when(type) {
+        when (type) {
             TypeCardEnum.SIMILAR -> {
                 similarProducts[pos] = product
                 similarAdapter.itemUpdate(pos, similarProducts)
             }
             TypeCardEnum.STORE -> {
                 storeProducts[pos].count = product.quantity
-                storeAdapter.itemUpdate(pos,storeProducts)
-
+                storeAdapter.itemUpdate(pos, storeProducts)
             }
             TypeCardEnum.DEFAULT -> storeAdapter.notifyItemChanged(0)
         }
@@ -250,13 +255,9 @@ class ProductCardFragment : Fragment() {
             setButtonAddBasketVisible(it)
         }
     }
-    private fun showProductFragment(idProduct: Long) {
-        val bundle = Bundle()
-        bundle.putLong(BasketFragment.PRODUCT_ID, idProduct)
-        navController.navigate(R.id.action_productCardFragment_self, bundle)
-    }
 
-    companion object {
-        fun newInstance() = ProductCardFragment()
+    private fun showProductFragment(idProduct: Long) {
+        val action = ProductCardFragmentDirections.actionProductCardFragmentSelf(idProduct)
+        findNavController().navigate(action)
     }
 }

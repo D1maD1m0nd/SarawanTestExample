@@ -5,8 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import ru.sarawan.android.R
-import ru.sarawan.android.app.App.Companion.navController
+import androidx.navigation.fragment.findNavController
 import ru.sarawan.android.databinding.FragmentInfoBinding
 
 class InfoFragment : Fragment() {
@@ -33,29 +32,28 @@ class InfoFragment : Fragment() {
         infoAboutLayout.setOnClickListener { showAbout() }
         //несмотря на то, что обработчик на весь лейаут, нажатие на кнопки не работает
         //поэтому вешаю и на них обработчики те же
-        infoHowWorkingButton.setOnClickListener { showHowWorking() }
-        infoSupportButton.setOnClickListener { showSupport() }
-        infoAboutButton.setOnClickListener { showAbout() }
+//        infoHowWorkingButton.setOnClickListener { showHowWorking() }
+//        infoSupportButton.setOnClickListener { showSupport() }
+//        infoAboutButton.setOnClickListener { showAbout() }
     }
 
     private fun showHowWorking() {
-        navController.navigate(R.id.action_infoFragment_to_infoHowFragment)
+        val action = InfoFragmentDirections.actionInfoFragmentToInfoHowFragment()
+        findNavController().navigate(action)
     }
 
     private fun showSupport() {
-        navController.navigate(R.id.action_infoFragment_to_infoSupportFragment)
+        val action = InfoFragmentDirections.actionInfoFragmentToInfoSupportFragment()
+        findNavController().navigate(action)
     }
 
     private fun showAbout() {
-        navController.navigate(R.id.action_infoFragment_to_infoAboutFragment)
+        val action = InfoFragmentDirections.actionInfoFragmentToInfoAboutFragment()
+        findNavController().navigate(action)
     }
 
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
-    }
-
-    companion object {
-        fun newInstance() = InfoFragment()
     }
 }

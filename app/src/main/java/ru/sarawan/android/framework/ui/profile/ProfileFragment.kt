@@ -8,10 +8,10 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import dagger.android.support.AndroidSupportInjection
 import ru.sarawan.android.R
-import ru.sarawan.android.app.App.Companion.navController
 import ru.sarawan.android.databinding.FragmentProfileBinding
 import ru.sarawan.android.framework.ui.profile.adapter.ItemClickListener
 import ru.sarawan.android.framework.ui.profile.adapter.OrdersAdapter
@@ -50,12 +50,12 @@ class ProfileFragment : Fragment() {
     private var addressItem: AddressItem? = null
 
     private val itemClickListener = object : ItemClickListener {
-        override fun cancel(pos : Int) {
+        override fun cancel(pos: Int) {
             cancelOrder(pos)
         }
 
     }
-    private var orders : MutableList<OrderApprove> = ArrayList()
+    private var orders: MutableList<OrderApprove> = ArrayList()
     private val adapter = OrdersAdapter(itemClickListener)
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -106,7 +106,8 @@ class ProfileFragment : Fragment() {
     private fun leave() {
         sharedPreferences.token = null
         sharedPreferences.userId = UNREGISTERED
-        navController.navigate(R.id.mainFragment)
+        val action = ProfileFragmentDirections.actionProfileFragmentToMainFragment()
+        findNavController().navigate(action)
     }
 
     private fun showAddress() {
@@ -125,7 +126,8 @@ class ProfileFragment : Fragment() {
     }
 
     private fun callback() {
-        navController.navigate(R.id.profileFragment)
+        val action = ProfileFragmentDirections.actionProfileFragmentToMainFragment()
+        findNavController().navigate(action)
     }
 
     private fun showName() {
@@ -143,7 +145,8 @@ class ProfileFragment : Fragment() {
                         is AddressItem -> {
                             val data = appState.data as MutableList<AddressItem>
                             if (data.isNotEmpty()) {
-                                val primaryAddress = data.findLast { it.primary == true } ?: data.first()
+                                val primaryAddress =
+                                    data.findLast { it.primary == true } ?: data.first()
                                 primaryAddress.let {
                                     val address = formatAddress(it)
                                     profileAddressTextView.text = address
@@ -181,15 +184,17 @@ class ProfileFragment : Fragment() {
                     .show()
             }
             AppState.Loading -> Unit
-            AppState.Empty -> TODO()
+            AppState.Empty -> Unit
         }
     }
+
     private fun initRcView() = with(binding) {
         activeOrdersRcView.layoutManager = LinearLayoutManager(root.context)
         activeOrdersRcView.adapter = adapter
         activeOrdersRcView.itemAnimator?.changeDuration = 0
         adapter.setOrder(orders)
     }
+
     private fun formatPhone(number: String?): String =
         number?.let {
             var index = 0
@@ -223,7 +228,7 @@ class ProfileFragment : Fragment() {
         }
     }
 
-    private fun cancelOrder(pos : Int) {
+    private fun cancelOrder(pos: Int) {
         val order = orders[pos]
         val id = order.orderId
         orders.remove(order)

@@ -167,6 +167,7 @@
                         android:id="@+id/info_how_working_button"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:clickable="false"
                         android:layout_weight="1"
                         android:background="@color/white"
                         android:src="@drawable/arrow_right" />
@@ -226,6 +227,7 @@
                         android:id="@+id/info_support_button"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:clickable="false"
                         android:layout_weight="1"
                         android:background="@color/white"
                         android:src="@drawable/arrow_right" />
@@ -255,6 +257,7 @@
                         android:id="@+id/info_about_button"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:clickable="false"
                         android:layout_weight="1"
                         android:background="@color/white"
                         android:src="@drawable/arrow_right" />

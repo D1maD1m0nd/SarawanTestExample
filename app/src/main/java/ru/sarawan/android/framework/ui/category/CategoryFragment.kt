@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.AdapterView
+import androidx.navigation.fragment.navArgs
 import ru.sarawan.android.R
 import ru.sarawan.android.databinding.SpinnerDropdownViewElementBinding
 import ru.sarawan.android.framework.ui.base.mainCatalog.BaseMainCatalogFragment
@@ -15,6 +16,8 @@ import ru.sarawan.android.utils.SortBy
 import ru.sarawan.android.utils.exstentions.token
 
 class CategoryFragment : BaseMainCatalogFragment() {
+
+    private val args: CategoryFragmentArgs by navArgs()
 
     override val viewModel: CategoryViewModel by lazy {
         viewModelFactory.create(CategoryViewModel::class.java)
@@ -33,7 +36,7 @@ class CategoryFragment : BaseMainCatalogFragment() {
         searchBar.visibility = View.GONE
         barWithSpinner.visibility = View.VISIBLE
         backButton.setOnClickListener { onFragmentBackStack() }
-        fragmentCaption.text = arguments?.getString(KEY_CATEGORY_NAME) ?: "Выгодные предложения"
+        fragmentCaption.text = args.categoryName
     }
 
     override fun refresh() = fabChanger?.changeState() ?: Unit
@@ -87,7 +90,7 @@ class CategoryFragment : BaseMainCatalogFragment() {
                             sortType =
                                 SortBy.values().find { it.id.toLong() == id } ?: SortBy.PRICE_ASC
                             viewModel.changeSorting(
-                                arguments?.getInt(KEY_CATEGORY) ?: DISCOUNT,
+                                args.categoryType,
                                 isOnline,
                                 sortType,
                                 !sharedPreferences.token.isNullOrEmpty()
@@ -102,7 +105,7 @@ class CategoryFragment : BaseMainCatalogFragment() {
         binding.catalogSortSpinner.alpha = 1f
         if (!isInitCompleted) {
             sortType =
-                if (arguments?.getString(KEY_CATEGORY_NAME) != null) SortBy.PRICE_ASC
+                if (args.categoryName != null) SortBy.PRICE_ASC
                 else SortBy.DISCOUNT
             binding.catalogSortSpinner.setSelection(sortType.id)
         }
@@ -147,7 +150,5 @@ class CategoryFragment : BaseMainCatalogFragment() {
 
     companion object {
         const val DISCOUNT = -1
-        const val KEY_CATEGORY = "CATEGORY"
-        const val KEY_CATEGORY_NAME = "CATEGORY NAME"
     }
 }

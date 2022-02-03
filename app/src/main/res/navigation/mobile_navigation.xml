@@ -2,8 +2,34 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/mobile_navigation.xml"
+    android:id="@+id/mobile_navigation"
     app:startDestination="@id/mainFragment">
+
+    <action
+        android:id="@+id/action_global_toMainFragment"
+        app:destination="@id/mainFragment"
+        app:popUpTo="@+id/mainFragment"
+        app:popUpToInclusive="true" />
+
+    <action
+        android:id="@+id/action_global_toCatalogFragment"
+        app:destination="@id/catalogFragment"
+        app:popUpTo="@+id/mainFragment" />
+
+    <action
+        android:id="@+id/action_global_toBasketFragment"
+        app:destination="@id/basketFragment"
+        app:popUpTo="@+id/mainFragment" />
+
+    <action
+        android:id="@+id/action_global_toInfoFragment"
+        app:destination="@id/infoFragment"
+        app:popUpTo="@+id/mainFragment" />
+
+    <action
+        android:id="@+id/action_global_toProfileFragment"
+        app:destination="@id/profileFragment"
+        app:popUpTo="@+id/mainFragment" />
 
     <fragment
         android:id="@+id/mainFragment"
@@ -11,12 +37,13 @@
         android:label="fragment_main"
         tools:layout="@layout/fragment_main">
         <action
-            android:id="@+id/action_mainFragment_to_categoryFragment"
-            app:destination="@id/categoryFragment" />
-        <action
             android:id="@+id/action_mainFragment_to_productCardFragment"
             app:destination="@id/productCardFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_categoryFragment"
+            app:destination="@id/categoryFragment" />
     </fragment>
+
     <fragment
         android:id="@+id/basketFragment"
         android:name="ru.sarawan.android.framework.ui.basket.BasketFragment"
@@ -28,7 +55,14 @@
         <action
             android:id="@+id/action_basketFragment_to_orderFragment"
             app:destination="@id/orderFragment" />
+        <action
+            android:id="@+id/action_basketFragment_to_profileFragment"
+            app:destination="@id/profileFragment" />
+        <action
+            android:id="@+id/action_basketFragment_to_mainFragment"
+            app:destination="@id/mainFragment" />
     </fragment>
+
     <fragment
         android:id="@+id/catalogFragment"
         android:name="ru.sarawan.android.framework.ui.catalog.CatalogFragment"
@@ -41,15 +75,21 @@
             android:id="@+id/action_catalogFragment_to_productCardFragment"
             app:destination="@id/productCardFragment" />
     </fragment>
+
     <fragment
         android:id="@+id/productCardFragment"
         android:name="ru.sarawan.android.framework.ui.product_card.ProductCardFragment"
         android:label="fragment_product_card"
-        tools:layout="@layout/fragment_product_card" >
+        tools:layout="@layout/fragment_product_card">
+        <argument
+            android:name="productID"
+            android:defaultValue="-1L"
+            app:argType="long" />
         <action
             android:id="@+id/action_productCardFragment_self"
             app:destination="@id/productCardFragment" />
     </fragment>
+
     <fragment
         android:id="@+id/categoryFragment"
         android:name="ru.sarawan.android.framework.ui.category.CategoryFragment"
@@ -58,22 +98,34 @@
         <action
             android:id="@+id/action_categoryFragment_to_productCardFragment"
             app:destination="@id/productCardFragment" />
+        <argument
+            android:name="categoryName"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="categoryType"
+            android:defaultValue="-1"
+            app:argType="integer" />
     </fragment>
+
     <fragment
         android:id="@+id/infoHowFragment"
         android:name="ru.sarawan.android.framework.ui.info.InfoHowFragment"
         android:label="InfoHowFragment"
         tools:layout="@layout/fragment_info_how" />
+
     <fragment
         android:id="@+id/infoSupportFragment"
         android:name="ru.sarawan.android.framework.ui.info.InfoSupportFragment"
         android:label="InfoSupportFragment"
         tools:layout="@layout/fragment_info_support" />
+
     <fragment
         android:id="@+id/infoAboutFragment"
         android:name="ru.sarawan.android.framework.ui.info.InfoAboutFragment"
         android:label="InfoAboutFragment"
         tools:layout="@layout/fragment_info_about" />
+
     <fragment
         android:id="@+id/infoFragment"
         android:name="ru.sarawan.android.framework.ui.info.InfoFragment"
@@ -89,14 +141,20 @@
             android:id="@+id/action_infoFragment_to_infoHowFragment"
             app:destination="@id/infoHowFragment" />
     </fragment>
+
     <fragment
         android:id="@+id/profileFragment"
         android:name="ru.sarawan.android.framework.ui.profile.ProfileFragment"
         android:label="fragment_profile"
-        tools:layout="@layout/fragment_profile" />
+        tools:layout="@layout/fragment_profile">
+        <action
+            android:id="@+id/action_profileFragment_to_mainFragment"
+            app:destination="@id/mainFragment" />
+    </fragment>
+
     <fragment
         android:id="@+id/orderFragment"
         android:name="ru.sarawan.android.framework.ui.order.OrderFragment"
         android:label="OrderFragment"
-        tools:layout="@layout/fragment_order"/>
+        tools:layout="@layout/fragment_order" />
 </navigation>

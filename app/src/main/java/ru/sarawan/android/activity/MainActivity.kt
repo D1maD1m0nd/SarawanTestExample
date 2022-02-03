@@ -9,8 +9,8 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
 import dagger.android.AndroidInjection
 import io.reactivex.rxjava3.subjects.BehaviorSubject
+import ru.sarawan.android.MobileNavigationDirections
 import ru.sarawan.android.R
-import ru.sarawan.android.app.App.Companion.navController
 import ru.sarawan.android.databinding.ActivityMainBinding
 import ru.sarawan.android.framework.ui.profile.phone_fragment.ProfilePhoneFragment
 import ru.sarawan.android.model.data.AppState
@@ -87,30 +87,37 @@ class MainActivity : AppCompatActivity(), FabChanger {
         }
     }
 
-    private fun initFAB() {
-        binding.fabPrice.setOnClickListener { navController.navigate(R.id.basketFragment) }
+    private fun initFAB() = with(binding) {
+        fabPrice.setOnClickListener {
+            findNavController(R.id.nav_fragment)
+                .navigate(MobileNavigationDirections.actionGlobalToBasketFragment())
+        }
 
         totalPrice.subscribe { price ->
             if (price.toInt() > 0) {
-                "${price.toInt()} ₽".also { binding.fabPrice.text = it }
-                binding.fabPrice.show()
-            } else binding.fabPrice.hide()
+                "${price.toInt()} ₽".also { fabPrice.text = it }
+                fabPrice.show()
+            } else fabPrice.hide()
         }
     }
 
     private fun initNavigation() {
         val navView = binding.bottomNavigationView
-        navController = findNavController(R.id.nav_fragment)
+        val navController = findNavController(R.id.nav_fragment)
         navView.setupWithNavController(navController)
 
         navView.setOnItemSelectedListener {
-            when (it.itemId) {
-                R.id.profileFragment -> return@setOnItemSelectedListener showProfile()
-                else -> {
-                    navController.popBackStack(it.itemId, true)
-                    navController.navigate(it.itemId)
-                    true
+            if (it.itemId == R.id.profileFragment) return@setOnItemSelectedListener showProfile()
+            else {
+                val action = when (it.itemId) {
+                    R.id.mainFragment -> MobileNavigationDirections.actionGlobalToMainFragment()
+                    R.id.catalogFragment -> MobileNavigationDirections.actionGlobalToCatalogFragment()
+                    R.id.basketFragment -> MobileNavigationDirections.actionGlobalToBasketFragment()
+                    R.id.infoFragment -> MobileNavigationDirections.actionGlobalToInfoFragment()
+                    else -> MobileNavigationDirections.actionGlobalToMainFragment()
                 }
+                navController.navigate(action)
+                true
             }
         }
 
@@ -143,14 +150,25 @@ class MainActivity : AppCompatActivity(), FabChanger {
             true
         }
 
-    private fun navigateToProfile() {
-        navController.navigate(R.id.profileFragment)
-    }
+    private fun navigateToProfile() = findNavController(R.id.nav_fragment)
+        .navigate(MobileNavigationDirections.actionGlobalToProfileFragment())
 
-    override fun onBackPressed() {
-        if (navController.currentDestination?.id == R.id.mainFragment) checkExit()
-        else super.onBackPressed()
-        lastTimeBackPressed = System.currentTimeMillis()
+    override fun onBackPressed() = with(binding) {
+        if (findNavController(R.id.nav_fragment).currentDestination?.id == R.id.mainFragment) checkExit()
+        else {
+            val destination =
+                findNavController(R.id.nav_fragment).previousBackStackEntry?.destination?.id
+            when {
+                destination == null -> {
+                    super.onBackPressed()
+                    return
+                }
+                bottomNavigationView.menu.findItem(destination) != null -> {
+                    bottomNavigationView.selectedItemId = destination
+                }
+                else -> super.onBackPressed()
+            }
+        }
     }
 
     private fun checkExit() {
@@ -160,6 +178,7 @@ class MainActivity : AppCompatActivity(), FabChanger {
             exitProcess(0)
         } else isBackShown = false
         isBackShown = true
+        lastTimeBackPressed = System.currentTimeMillis()
     }
 
     override fun putPrice(price: Float) = totalPrice.onNext(price)

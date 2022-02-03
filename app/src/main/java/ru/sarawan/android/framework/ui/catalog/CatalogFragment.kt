@@ -2,13 +2,11 @@ package ru.sarawan.android.framework.ui.catalog
 
 import android.os.Bundle
 import android.view.View
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import ru.sarawan.android.R
-import ru.sarawan.android.app.App
 import ru.sarawan.android.framework.ui.base.mainCatalog.BaseMainCatalogFragment
 import ru.sarawan.android.framework.ui.catalog.adapter.CatalogRecyclerAdapter
 import ru.sarawan.android.framework.ui.catalog.viewModel.CatalogViewModel
-import ru.sarawan.android.framework.ui.category.CategoryFragment
 import ru.sarawan.android.model.data.AppState
 import ru.sarawan.android.model.data.CategoryDataModel
 import ru.sarawan.android.model.data.MainScreenDataModel
@@ -31,13 +29,11 @@ class CatalogFragment : BaseMainCatalogFragment() {
         object : CatalogRecyclerAdapter.OnListItemClickListener {
             override fun onItemClick(data: MainScreenDataModel) {
                 if (isOnline) {
-                    val bundle = Bundle()
-                    bundle.putInt(CategoryFragment.KEY_CATEGORY, data.id?.toInt() ?: -1)
-                    bundle.putString(CategoryFragment.KEY_CATEGORY_NAME, data.itemDescription)
-                    App.navController.navigate(
-                        R.id.action_catalogFragment_to_categoryFragment,
-                        bundle
+                    val action = CatalogFragmentDirections.actionCatalogFragmentToCategoryFragment(
+                        data.itemDescription.orEmpty(),
+                        data.id?.toInt() ?: -1
                     )
+                    findNavController().navigate(action)
                 } else handleNetworkErrorWithToast()
             }
         }

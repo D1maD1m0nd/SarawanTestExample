@@ -59,8 +59,4 @@ class NetworkModule {
 
     @Provides
     fun getApiService(retrofit: Retrofit): ApiService = retrofit.create(ApiService::class.java)
-
-    companion object {
-        private const val BASE_URL = "https://dev.sarawan.ru/"
-    }
 }
