@@ -153,20 +153,22 @@ class MainActivity : AppCompatActivity(), FabChanger {
     private fun navigateToProfile() = findNavController(R.id.nav_fragment)
         .navigate(MobileNavigationDirections.actionGlobalToProfileFragment())
 
-    override fun onBackPressed() = with(binding) {
-        if (findNavController(R.id.nav_fragment).currentDestination?.id == R.id.mainFragment) checkExit()
-        else {
-            val destination =
-                findNavController(R.id.nav_fragment).previousBackStackEntry?.destination?.id
-            when {
-                destination == null -> {
-                    super.onBackPressed()
-                    return
+    override fun onBackPressed() = with(findNavController(R.id.nav_fragment)) {
+        when (currentDestination?.id) {
+            R.id.mainFragment -> checkExit()
+            R.id.productCardFragment -> super.onBackPressed()
+            else -> {
+                val destination = previousBackStackEntry?.destination?.id
+                when {
+                    destination == null -> {
+                        super.onBackPressed()
+                        return
+                    }
+                    binding.bottomNavigationView.menu.findItem(destination) != null -> {
+                        binding.bottomNavigationView.selectedItemId = destination
+                    }
+                    else -> super.onBackPressed()
                 }
-                bottomNavigationView.menu.findItem(destination) != null -> {
-                    bottomNavigationView.selectedItemId = destination
-                }
-                else -> super.onBackPressed()
             }
         }
     }

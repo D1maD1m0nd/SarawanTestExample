@@ -7,7 +7,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResult
+import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -15,6 +19,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import coil.load
 import dagger.android.support.AndroidSupportInjection
 import ru.sarawan.android.R
+import ru.sarawan.android.activity.FabChanger
 import ru.sarawan.android.databinding.FragmentProductCardBinding
 import ru.sarawan.android.framework.ui.product_card.adapter.ItemClickListener
 import ru.sarawan.android.framework.ui.product_card.adapter.SimilarAdapter
@@ -26,6 +31,7 @@ import ru.sarawan.android.model.data.StorePrice
 import ru.sarawan.android.utils.TypeCardEnum
 import ru.sarawan.android.utils.exstentions.token
 import javax.inject.Inject
+
 
 class ProductCardFragment : Fragment() {
     private val itemClickListener = object : ItemClickListener {
@@ -64,7 +70,8 @@ class ProductCardFragment : Fragment() {
     private var similarProducts: MutableList<Product> = ArrayList(20)
     private var storeProducts: MutableList<StorePrice> = ArrayList(5)
     private val similarAdapter = SimilarAdapter(itemClickListener)
-    private var fabChanger: ru.sarawan.android.activity.FabChanger? = null
+    private var currentProduct: Product? = null
+    private var fabChanger: FabChanger? = null
     private val args: ProductCardFragmentArgs by navArgs()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -85,8 +92,25 @@ class ProductCardFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.productCloseButton.setOnClickListener { findNavController().popBackStack() }
+        binding.productCloseButton.setOnClickListener { onFragmentClose() }
         viewModel.similarProducts(args.productID, !sharedPreferences.token.isNullOrEmpty())
+        setBackButtonListener()
+        setFragmentResultListener(REQUEST_KEY) { key, bundle ->
+            // read from the bundle
+        }
+    }
+
+    private fun setBackButtonListener() {
+        requireActivity().onBackPressedDispatcher.addCallback(
+            viewLifecycleOwner,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() = onFragmentClose()
+            })
+    }
+
+    private fun onFragmentClose(){
+        setFragmentResult(REQUEST_KEY, bundleOf(PRODUCT_KEY to currentProduct))
+        findNavController().popBackStack()
     }
 
     private fun clearViewState() = with(binding) {
@@ -105,7 +129,7 @@ class ProductCardFragment : Fragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        fabChanger = context as ru.sarawan.android.activity.FabChanger
+        fabChanger = context as FabChanger
     }
 
     override fun onDetach() {
@@ -142,7 +166,7 @@ class ProductCardFragment : Fragment() {
                 binding.contentNestedScrollView.visibility = View.INVISIBLE
                 binding.progressBar.visibility = View.VISIBLE
             }
-            else -> {}
+            else -> Unit
         }
     }
 
@@ -254,10 +278,16 @@ class ProductCardFragment : Fragment() {
         product.storePrices?.let {
             setButtonAddBasketVisible(it)
         }
+        currentProduct = product
     }
 
     private fun showProductFragment(idProduct: Long) {
         val action = ProductCardFragmentDirections.actionProductCardFragmentSelf(idProduct)
         findNavController().navigate(action)
+    }
+
+    companion object {
+        const val REQUEST_KEY = "Product Card Result"
+        const val PRODUCT_KEY = "Product"
     }
 }
