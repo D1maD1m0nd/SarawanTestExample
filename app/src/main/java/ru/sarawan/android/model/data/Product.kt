@@ -9,6 +9,7 @@ data class Response(
     @field: Json(name = "count") val count: Int
 )
 
+@Parcelize
 data class Product(
     @field: Json(name = "id") val id: Long? = null,
     @field: Json(name = "images") val images: List<Image>? = null,
@@ -19,7 +20,7 @@ data class Product(
     @field: Json(name = "unit_quantity") val unitQuantity: String? = null,
     @field: Json(name = "description") val description: String? = null,
     @field: Json(name = "quantity") var quantity: Int = 0
-)
+) : Parcelable
 
 @Parcelize
 data class StorePrice(
