@@ -9,6 +9,7 @@ import ru.sarawan.android.databinding.ListItemCardBinding
 import ru.sarawan.android.framework.ui.base.mainCatalog.BaseMainCatalogAdapter
 import ru.sarawan.android.framework.ui.main.viewHolder.CardItemViewHolder
 import ru.sarawan.android.model.data.MainScreenDataModel
+import ru.sarawan.android.model.data.Product
 
 class TopRecyclerAdapter(
     private var onListItemClickListener: BaseMainCatalogAdapter.OnListItemClickListener,
@@ -23,6 +24,17 @@ class TopRecyclerAdapter(
         displayData.clear()
         if (!data.isNullOrEmpty()) displayData.addAll(data.sortedByDescending { it.discount })
         notifyDataSetChanged()
+    }
+
+    fun deleteProduct(product: MainScreenDataModel) {
+        notifyItemRemoved(displayData.indexOf(product))
+        displayData.remove(product)
+    }
+
+    fun changeProduct(product: MainScreenDataModel) {
+        displayData.find { it.id == product.id }?.apply {
+            quantity = product.quantity
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CardItemViewHolder {

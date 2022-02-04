@@ -8,10 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
-import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.setFragmentResult
-import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -95,9 +92,6 @@ class ProductCardFragment : Fragment() {
         binding.productCloseButton.setOnClickListener { onFragmentClose() }
         viewModel.similarProducts(args.productID, !sharedPreferences.token.isNullOrEmpty())
         setBackButtonListener()
-        setFragmentResultListener(REQUEST_KEY) { key, bundle ->
-            // read from the bundle
-        }
     }
 
     private fun setBackButtonListener() {
@@ -108,9 +102,10 @@ class ProductCardFragment : Fragment() {
             })
     }
 
-    private fun onFragmentClose(){
-        setFragmentResult(REQUEST_KEY, bundleOf(PRODUCT_KEY to currentProduct))
-        findNavController().popBackStack()
+    private fun onFragmentClose() = with(findNavController()) {
+        previousBackStackEntry?.savedStateHandle?.set(REQUEST_KEY, arrayOf(currentProduct))
+        popBackStack()
+        Unit
     }
 
     private fun clearViewState() = with(binding) {
@@ -251,10 +246,10 @@ class ProductCardFragment : Fragment() {
                 }
             }
         }
-        val product = similarProducts.find { it.id == args.productID }?.apply {
+        val product = Product(id = args.productID, storePrices = storeProducts).apply {
             storePrices?.find { it == store }?.apply { count = store.count }
             quantity = store.count
-        } ?: return
+        }
         itemSave(product, pos, false, TypeCardEnum.STORE)
     }
 
@@ -288,6 +283,5 @@ class ProductCardFragment : Fragment() {
 
     companion object {
         const val REQUEST_KEY = "Product Card Result"
-        const val PRODUCT_KEY = "Product"
     }
 }

@@ -20,12 +20,14 @@ import ru.sarawan.android.framework.ui.base.mainCatalog.BaseMainCatalogAdapter
 import ru.sarawan.android.framework.ui.base.mainCatalog.CardType
 import ru.sarawan.android.framework.ui.main.viewHolder.*
 import ru.sarawan.android.model.data.MainScreenDataModel
+import ru.sarawan.android.model.data.Product
 
 class MainRecyclerAdapter(
     private var onListItemClickListener: OnListItemClickListener,
     private val imageLoader: ImageLoader,
     private val onButtonMoreClickListener: ButtonMoreClickListener,
-    private val callback: () -> Unit
+    private val changeCardCallback: (MainScreenDataModel, Long) -> Unit,
+    private val hideLoadingCallback: () -> Unit
 ) : BaseMainCatalogAdapter() {
 
     private val topData: MutableList<MainScreenDataModel> = mutableListOf()
@@ -38,7 +40,7 @@ class MainRecyclerAdapter(
     private val topRecyclerAdapter =
         TopRecyclerAdapter(onListItemClickListener, imageLoader) { measuredHeight: Int ->
             recyclerHeight = measuredHeight
-            callback()
+            hideLoadingCallback()
         }
     private lateinit var topCardsRecycler: RecyclerView
 
@@ -119,7 +121,67 @@ class MainRecyclerAdapter(
                     cardType = CardType.BUTTON.type
                 )
             )
-        } else callback()
+        } else hideLoadingCallback()
+    }
+
+    fun changeProduct(product: Product) {
+        val dataToRemove: MutableList<MainScreenDataModel> = mutableListOf()
+        changeProductInCommonData(product, dataToRemove)
+        dataToRemove.clear()
+        changeProductInTopData(product, dataToRemove)
+    }
+
+    private fun changeProductInTopData(
+        product: Product,
+        dataToRemove: MutableList<MainScreenDataModel>
+    ) {
+        topData.forEach {
+            if (product.id == it.id) product.storePrices?.forEach { storePrice ->
+                if (storePrice.count > 0) {
+                    if (storePrice.id != it.storeId) {
+                        dataToRemove.add(it)
+                        topRecyclerAdapter.deleteProduct(it)
+                    } else {
+                        it.quantity = storePrice.count
+                        val holder =
+                            topCardsRecycler.findViewHolderForAdapterPosition(topData.indexOf(it))
+                        if (holder != null && holder is CardItemViewHolder) holder.bind(it)
+                        topRecyclerAdapter.changeProduct(it)
+                    }
+                } else if (storePrice.id == it.storeId) {
+                    it.quantity = 0
+                    val holder =
+                        topCardsRecycler.findViewHolderForAdapterPosition(topData.indexOf(it))
+                    if (holder != null && holder is CardItemViewHolder) holder.bind(it)
+                    topRecyclerAdapter.changeProduct(it)
+                }
+            }
+        }
+        topData.removeAll(dataToRemove)
+    }
+
+    private fun changeProductInCommonData(
+        product: Product,
+        dataToRemove: MutableList<MainScreenDataModel>
+    ) {
+        commonData.forEach {
+            if (product.id == it.id) product.storePrices?.forEach { storePrice ->
+                if (storePrice.count > 0) {
+                    if (storePrice.id != it.storeId) {
+                        dataToRemove.add(it)
+                        notifyItemRemoved(displayData.indexOf(it))
+                        displayData.remove(it)
+                    } else {
+                        it.quantity = storePrice.count
+                        changeCardCallback(it, getItemId(displayData.indexOf(it)))
+                    }
+                } else if (storePrice.id == it.storeId) {
+                    it.quantity = 0
+                    changeCardCallback(it, getItemId(displayData.indexOf(it)))
+                }
+            }
+        }
+        commonData.removeAll(dataToRemove)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {

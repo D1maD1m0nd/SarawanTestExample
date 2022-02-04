@@ -29,7 +29,10 @@ import ru.sarawan.android.framework.ui.category.CategoryFragment
 import ru.sarawan.android.framework.ui.main.MainFragmentDirections
 import ru.sarawan.android.framework.ui.main.adapter.MainRecyclerAdapter
 import ru.sarawan.android.framework.ui.main.viewHolder.ButtonMoreClickListener
+import ru.sarawan.android.framework.ui.main.viewHolder.CardItemViewHolder
+import ru.sarawan.android.framework.ui.product_card.ProductCardFragment
 import ru.sarawan.android.model.data.MainScreenDataModel
+import ru.sarawan.android.model.data.Product
 import ru.sarawan.android.rx.ISchedulerProvider
 import ru.sarawan.android.utils.NetworkStatus
 import ru.sarawan.android.utils.exstentions.token
@@ -122,6 +125,17 @@ abstract class BaseMainCatalogFragment : Fragment(), INavigation {
         subscribeToViewModel()
         watchForAdapter()
         initRefreshButton()
+        handleProductCardResult()
+    }
+
+    private fun handleProductCardResult() {
+        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<Array<Product?>>(
+            ProductCardFragment.REQUEST_KEY
+        )?.observe(viewLifecycleOwner) { products ->
+            products.forEach { product ->
+                if (product != null) mainRecyclerAdapter?.changeProduct(product)
+            }
+        }
     }
 
     private fun initRefreshButton() = binding
@@ -167,12 +181,18 @@ abstract class BaseMainCatalogFragment : Fragment(), INavigation {
             } else handleNetworkErrorWithToast()
         }
         if (mainRecyclerAdapter == null) {
-            mainRecyclerAdapter =
-                MainRecyclerAdapter(onListItemClickListener, imageLoader, buttonMoreClickListener) {
+            mainRecyclerAdapter = MainRecyclerAdapter(
+                onListItemClickListener,
+                imageLoader,
+                buttonMoreClickListener,
+                { item, position ->
+                    val holder = binding.mainRecyclerView.findViewHolderForItemId(position)
+                    if (holder != null && holder is CardItemViewHolder) holder.bind(item)
+                },
+                {
                     _binding?.loadingLayout?.visibility = View.GONE
-                }
+                })
         }
-//        else mainRecyclerAdapter?.clear()
 
         gridLayoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
             override fun getSpanSize(position: Int): Int {
@@ -200,7 +220,8 @@ abstract class BaseMainCatalogFragment : Fragment(), INavigation {
 
     private fun initSearchButton() {
         binding.searchButton.setOnClickListener {
-            if (binding.searchField.editText?.text.toString().isNotEmpty()) makeSearch()
+            if (isDataLoaded && binding.searchField.editText?.text.toString().isNotEmpty())
+                makeSearch()
         }
     }
 
@@ -243,6 +264,7 @@ abstract class BaseMainCatalogFragment : Fragment(), INavigation {
         activity?.getSystemService<InputMethodManager>()
             ?.hideSoftInputFromWindow(binding.searchField.windowToken, 0)
         binding.searchField.clearFocus()
+        isDataLoaded = false
         if (isOnline) {
             viewModel.search(
                 binding.searchField.editText?.text.toString(),
@@ -269,7 +291,6 @@ abstract class BaseMainCatalogFragment : Fragment(), INavigation {
             putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
             putExtra(RecognizerIntent.EXTRA_PROMPT, getString(R.string.search_in_sarafan))
         }
-        @Suppress("deprecated")
         startActivityForResult(intent, SPEECH_REQUEST_CODE)
     }
 
