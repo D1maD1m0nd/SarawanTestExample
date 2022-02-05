@@ -51,7 +51,7 @@ data class BasketResponse(
 fun ProductsItem.toProduct() =
     Product(
         id = basketProduct?.basketProduct?.id,
-        images = basketProduct?.images,
+        images = basketProduct?.basketProduct?.images,
         product = basketProduct?.productStoreId,
         name = basketProduct?.basketProduct?.name,
         priceType = basketProduct?.basketProduct?.priceType,

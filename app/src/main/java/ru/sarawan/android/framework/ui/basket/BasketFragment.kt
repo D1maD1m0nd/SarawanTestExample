@@ -57,7 +57,7 @@ class BasketFragment : Fragment() {
         }
 
         override fun update(pos: Int, mode: Boolean) {
-            updateBasket()
+            updateBasket(pos)
         }
 
         override fun deleteItem(productsItem: ProductsItem, pos: Int, item: BasketListItem) {
@@ -256,8 +256,9 @@ class BasketFragment : Fragment() {
         binding.progressBar.visibility = View.GONE
     }
 
-    private fun updateBasket() {
-        val products = adapter.items.filterIsInstance<ProductsItem>()
+    private fun updateBasket(pos: Int) {
+        var product = adapter.items[pos] as ProductsItem
+        val products = listOf(product)
         val items = products.map { it.toProduct() }
         viewModel.updateBasket(ProductsUpdate(items), !sharedPreferences.token.isNullOrEmpty())
         adapter.updateHolders()

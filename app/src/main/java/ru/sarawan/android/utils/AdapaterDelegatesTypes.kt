@@ -45,7 +45,7 @@ object AdapterDelegatesTypes {
                 plusImageButton.setOnClickListener {
                         ++counter
                         item.quantity = counter
-                        itemClickListener.update()
+                        itemClickListener.update(absoluteAdapterPosition)
                         counterTextView.text = counter.toString()
                 }
                 minusImageButton.setOnClickListener {
