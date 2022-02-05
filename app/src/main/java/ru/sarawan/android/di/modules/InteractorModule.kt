@@ -3,6 +3,8 @@ package ru.sarawan.android.di.modules
 import dagger.Module
 import dagger.Provides
 import ru.sarawan.android.framework.MainInteractor
+import ru.sarawan.android.framework.ui.basket.interactor.BasketInteractor
+import ru.sarawan.android.framework.ui.basket.interactor.IBasketInteractor
 import ru.sarawan.android.model.datasource.DataSource
 import javax.inject.Named
 
@@ -15,5 +17,11 @@ class InteractorModule {
         @Named(NAME_LOCAL) localRepo: DataSource<List<*>>,
     ): MainInteractor {
         return MainInteractor(remoteRepo, localRepo)
+    }
+
+
+    @Provides
+    fun provideBasketInteractor() : IBasketInteractor {
+        return BasketInteractor()
     }
 }

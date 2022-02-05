@@ -3,6 +3,7 @@ package ru.sarawan.android.framework.ui.basket.viewModel
 import io.reactivex.rxjava3.observers.DisposableSingleObserver
 import ru.sarawan.android.framework.MainInteractor
 import ru.sarawan.android.framework.ui.base.BaseViewModel
+import ru.sarawan.android.framework.ui.basket.interactor.IBasketInteractor
 import ru.sarawan.android.model.data.*
 import ru.sarawan.android.rx.ISchedulerProvider
 import ru.sarawan.android.utils.MoshiCustomAdapter
@@ -11,10 +12,24 @@ import javax.inject.Inject
 class BasketViewModel @Inject constructor(
     private val interactor: MainInteractor,
     private val schedulerProvider: ISchedulerProvider,
-    private val moshiCustomAdapter: MoshiCustomAdapter
+    private val moshiCustomAdapter: MoshiCustomAdapter,
+    private val basketInteractor: IBasketInteractor
 ) : BaseViewModel<AppState<*>>() {
 
     private var basketID: Int? = null
+
+    private var products : List<ProductsItem> = mutableListOf()
+
+    fun calculateOrder() {
+        basketInteractor
+            .calculateOrder(products)
+            .subscribeOn(schedulerProvider.io)
+            .observeOn(schedulerProvider.ui)
+            .subscribe(
+                { stateLiveData.value = AppState.Success(listOf(it))},
+                {stateLiveData.value = AppState.Error(it)})
+    }
+
 
     fun getBasket(isLoggedUser: Boolean) {
         compositeDisposable.add(
@@ -36,7 +51,7 @@ class BasketViewModel @Inject constructor(
                 }
                 .subscribeOn(schedulerProvider.io)
                 .observeOn(schedulerProvider.ui)
-                .doOnSubscribe { stateLiveData.postValue(AppState.Loading) }
+                .doOnSubscribe { stateLiveData.value = AppState.Loading }
                 .subscribeWith(getObserverBasketList())
         )
     }
@@ -47,10 +62,10 @@ class BasketViewModel @Inject constructor(
             compositeDisposable.add(
                 interactor.getData(Query.Delete.Basket.Clear, isLoggedUser)
                     .subscribeOn(schedulerProvider.io)
-                    .observeOn(schedulerProvider.io)
+                    .observeOn(schedulerProvider.ui)
                     .subscribe(
-                        {stateLiveData.postValue(AppState.Empty)},
-                        {stateLiveData.postValue(AppState.Empty)}),
+                        {stateLiveData.value = AppState.Empty},
+                        {stateLiveData.value = AppState.Empty}),
             )
         }
         if (basketID == null) stateLiveData.value =
@@ -62,10 +77,10 @@ class BasketViewModel @Inject constructor(
             compositeDisposable.add(
                 interactor.getData(Query.Put.Basket.Update(id, products), isLoggedUser)
                     .subscribeOn(schedulerProvider.io)
-                    .observeOn(schedulerProvider.io)
+                    .observeOn(schedulerProvider.ui)
                     .subscribe(
-                        {stateLiveData.postValue(AppState.Success(it))},
-                        {stateLiveData.postValue(AppState.Success(emptyList<ProductsItem>()))})
+                        {stateLiveData.value = AppState.Success(it)},
+                        {stateLiveData.value = AppState.Success(emptyList<ProductsItem>())})
             )
         }
         if (basketID == null) stateLiveData.value =
@@ -76,9 +91,9 @@ class BasketViewModel @Inject constructor(
         compositeDisposable.add(
             interactor.getData(Query.Delete.Basket.Remove(id), isLoggedUser)
                 .subscribeOn(schedulerProvider.io)
-                .observeOn(schedulerProvider.io)
+                .observeOn(schedulerProvider.ui)
                 .subscribe(
-                    {stateLiveData.postValue(AppState.Success(it))},
+                    {stateLiveData.value = AppState.Success(it)},
                     {}),
         )
     }
@@ -91,14 +106,13 @@ class BasketViewModel @Inject constructor(
             if(items.isEmpty()) {
                 stateLiveData.postValue(AppState.Empty)
             } else {
-                stateLiveData.postValue(AppState.Success(items))
+                products = items as List<ProductsItem>
+                stateLiveData.value = AppState.Success(items)
             }
         }
 
         override fun onError(e: Throwable) {
-
-//            stateLiveData.postValue(AppState.Error(e))
-            stateLiveData.postValue(AppState.Success(emptyList<ProductsItem>()))
+            stateLiveData.value = AppState.Success(emptyList<ProductsItem>())
         }
     }
 }
