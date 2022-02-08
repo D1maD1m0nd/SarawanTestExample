@@ -2,7 +2,6 @@ package ru.sarawan.android.framework.ui.basket
 
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -48,7 +47,7 @@ class BasketFragment : Fragment() {
 
     private val itemClickListener = object : ItemClickListener {
         override fun update(pos: Int, mode: Boolean) {
-            updateBasket()
+            updateBasket(pos)
         }
 
         override fun deleteItem(productsItem: ProductsItem, pos: Int, item: BasketListItem) {
@@ -139,18 +138,20 @@ class BasketFragment : Fragment() {
             is AppState.Success<*> -> {
                 val data = appState.data
                 if (data.isNotEmpty()) {
-                    when (data.first()) {
-                        is BasketResponse -> if (list.size >= LIMIT) {
-                            this@BasketFragment.recalculateData()
+                    when (val item  = data.first()) {
+                        is BasketResponse ->{
+                            viewModel.calculateOrder()
                         }
                         is ProductsItem -> {
-                            Log.d("TAG_PRODUCT_ITEM", "ProductsItem THIS")
                             data as MutableList<ProductsItem>
-                            Log.d("TAG_PRODUCT_ITEM", "THIS")
                             if (list.size < LIMIT) {
                                 initDataRcView(data)
                             }
                             progressBar.visibility = View.GONE
+                        }
+
+                        is Order -> {
+                            recalculateData(item)
                         }
                     }
                 }
@@ -192,33 +193,8 @@ class BasketFragment : Fragment() {
         val end = data.size
         list.addAll(start, data)
         adapter.items = list
-        recalculateData()
         adapter.notifyItemRangeInserted(start, end)
-    }
-
-    private fun productItemsToOrder(data: List<ProductsItem>): Order {
-        val count = data.sumOf { it.quantity ?: 0 }
-        val weight = data.sumOf {
-            it.basketProduct
-                ?.basketProduct
-                ?.unitQuantity
-                ?.toDouble()
-                ?.times(it.quantity!!) ?: 0.0
-        }
-        val price = data.sumOf {
-            it.basketProduct
-                ?.price
-                ?.toDouble()
-                ?.times(it.quantity!!) ?: 0.0
-        }
-
-        return Order(
-            basketCount = count,
-            paymentAmount = 0.0,
-            deliveryAmount = 0.0,
-            basketSumm = price,
-            weight = weight
-        )
+        viewModel.calculateOrder()
     }
 
     private fun setFooterData(order: Order) {
@@ -248,8 +224,8 @@ class BasketFragment : Fragment() {
             } else {
                 items = list
                 notifyItemRemoved(pos)
-                recalculateData()
                 updateHolders()
+                viewModel.calculateOrder()
             }
         }
         val productID = if (!sharedPreferences.token.isNullOrEmpty()) productsItem.basketProductId
@@ -265,17 +241,17 @@ class BasketFragment : Fragment() {
         binding.progressBar.visibility = View.GONE
     }
 
-    private fun updateBasket() {
-        val products = adapter.items.filterIsInstance<ProductsItem>()
+    private fun updateBasket(pos: Int) {
+        var product = adapter.items[pos] as ProductsItem
+        val products = listOf(product)
         val items = products.map { it.toProduct() }
         viewModel.updateBasket(ProductsUpdate(items), !sharedPreferences.token.isNullOrEmpty())
         adapter.updateHolders()
     }
 
-    private fun recalculateData() {
+    private fun recalculateData(order : Order) {
         val items: List<ProductsItem> = list.filterIsInstance<ProductsItem>()
         if (items.isNotEmpty()) {
-            val order = productItemsToOrder(items)
             setFooterData(order)
             setHeaderData(order)
         }
