@@ -41,7 +41,7 @@ interface ApiService {
      */
     @GET("api/products/")
     fun getCategoryProducts(
-        @Query("main_category") categoryProducts: Int,
+        @Query("sarawan_category") categoryProducts: Int,
         @Query("page") page: Int,
         @Query("order") order: String,
     ): Single<Response>
@@ -51,7 +51,7 @@ interface ApiService {
      */
     @GET("api/products/")
     fun getCategoryProductsByPrice(
-        @Query("main_category") categoryProducts: Int,
+        @Query("sarawan_category") categoryProducts: Int,
         @Query("page") page: Int,
         @Query("ordering_price") ordering_price: String,
     ): Single<Response>
