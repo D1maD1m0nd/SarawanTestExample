@@ -6,17 +6,18 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.fragment.app.DialogFragment
-import ru.sarawan.android.databinding.FragmentProfileAlertBinding
+import androidx.navigation.fragment.findNavController
+import ru.sarawan.android.databinding.FragmentProfileDialogAlertBinding
 
-class ProfileAlertFragment : DialogFragment() {
+class ProfileAlertDialogFragment : DialogFragment() {
 
-    private var _binding: FragmentProfileAlertBinding? = null
+    private var _binding: FragmentProfileDialogAlertBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View = FragmentProfileAlertBinding
+    ): View = FragmentProfileDialogAlertBinding
         .inflate(inflater, container, false)
         .also { _binding = it }
         .root
@@ -30,15 +31,11 @@ class ProfileAlertFragment : DialogFragment() {
     }
 
     private fun initViews() = with(binding) {
-        profileAlertOkButton.setOnClickListener { dismiss() }
+        profileAlertOkButton.setOnClickListener { findNavController().navigateUp() }
     }
 
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
-    }
-
-    companion object {
-        fun newInstance() = ProfileAlertFragment()
     }
 }

@@ -17,42 +17,29 @@ import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import dagger.android.support.AndroidSupportInjection
 import ru.sarawan.android.R
-import ru.sarawan.android.databinding.FragmentProfilePhoneBinding
+import ru.sarawan.android.databinding.FragmentProfilePhoneDialogBinding
 import ru.sarawan.android.framework.ui.profile.phone_fragment.viewModel.ProfilePhoneViewModel
-import ru.sarawan.android.framework.ui.profile.sms_code_fragment.ProfileCodeFragment
 import ru.sarawan.android.model.data.AppState
 import ru.sarawan.android.model.data.UserRegistration
 import javax.inject.Inject
 
-class ProfilePhoneFragment : DialogFragment() {
+class ProfilePhoneDialogFragment : DialogFragment() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
+
     private val viewModel: ProfilePhoneViewModel by lazy {
         viewModelFactory.create(ProfilePhoneViewModel::class.java)
     }
 
-    private var _binding: FragmentProfilePhoneBinding? = null
+    private var _binding: FragmentProfilePhoneDialogBinding? = null
     private val binding get() = _binding!!
-
-    private lateinit var callback: () -> Unit
 
     private var inputMethodManager: InputMethodManager? = null
     private var keyboardShown = false
-
-    private fun showKeyboard() {
-        inputMethodManager?.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
-        keyboardShown = true
-    }
-
-    private fun hideKeyboard() {
-        if (keyboardShown) {
-            inputMethodManager?.hideSoftInputFromWindow(binding.profilePhoneRootView.windowToken, 0)
-            keyboardShown = false
-        }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,14 +49,9 @@ class ProfilePhoneFragment : DialogFragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View = FragmentProfilePhoneBinding
+    ): View = FragmentProfilePhoneDialogBinding
         .inflate(inflater, container, false)
-        .also {
-            viewModel.getStateLiveData().observe(viewLifecycleOwner) { appState: AppState<*> ->
-                setState(appState)
-            }
-            _binding = it
-        }
+        .also { _binding = it }
         .root
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -78,16 +60,16 @@ class ProfilePhoneFragment : DialogFragment() {
             width = WindowManager.LayoutParams.MATCH_PARENT
             height = WindowManager.LayoutParams.MATCH_PARENT
         }
-
         inputMethodManager = requireActivity().getSystemService()
-
         initViews()
+        viewModel.getStateLiveData()
+            .observe(viewLifecycleOwner) { appState: AppState<*> -> setState(appState) }
     }
 
     private fun initViews() = with(binding) {
         profilePhoneCloseButton.setOnClickListener {
             hideKeyboard()
-            dismiss()
+            findNavController().navigateUp()
         }
         profilePhoneSendButton.setOnClickListener { sendCode() }
         profilePhoneAgreementTextView.setOnClickListener { showAgreement() }
@@ -99,14 +81,24 @@ class ProfilePhoneFragment : DialogFragment() {
         profilePhoneMaskedEditText.doOnTextChanged { text, _, _, _ ->
             text?.let {
                 val number = phoneNumberWithoutMask(it.toString())
-                if (number.length == 12) {
-                    hideKeyboard()
-                }
+                if (number.length == 12) { hideKeyboard() }
             }
         }
 
         profilePhoneMaskedEditText.requestFocus()
         showKeyboard()
+    }
+
+    private fun showKeyboard() {
+        inputMethodManager?.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
+        keyboardShown = true
+    }
+
+    private fun hideKeyboard() {
+        if (keyboardShown) {
+            inputMethodManager?.hideSoftInputFromWindow(binding.profilePhoneRootView.windowToken, 0)
+            keyboardShown = false
+        }
     }
 
     private fun initAgreementTextView() = with(binding) {
@@ -129,19 +121,15 @@ class ProfilePhoneFragment : DialogFragment() {
         profilePhoneNoSendButton.isVisible = !profilePhoneCheckbox.isChecked
     }
 
-    private fun showAgreement() {
-        Toast.makeText(context, "Показать пользовательское соглашение!", Toast.LENGTH_SHORT)
-            .show()
-    }
+    private fun showAgreement() = Toast
+        .makeText(context, "Показать пользовательское соглашение!", Toast.LENGTH_SHORT).show()
 
     private fun sendCode() {
         val number = getFormatNumber()
         if (number.length == 12) {
             val user = UserRegistration(phoneNumber = number)
             viewModel.sendSms(user)
-        } else {
-            Toast.makeText(context, "Номер не корректный", Toast.LENGTH_SHORT).show()
-        }
+        } else Toast.makeText(context, "Номер не корректный", Toast.LENGTH_SHORT).show()
     }
 
     private fun getFormatNumber(): String {
@@ -166,10 +154,9 @@ class ProfilePhoneFragment : DialogFragment() {
                         if (it) {
                             hideKeyboard()
                             val number = binding.profilePhoneMaskedEditText.text.toString()
-                            ProfileCodeFragment.newInstance(
-                                callback,
-                                number
-                            ).show(childFragmentManager, null)
+                            val action = ProfilePhoneDialogFragmentDirections
+                                .actionProfilePhoneDialogFragmentToProfileCodeDialogFragment(number)
+                            findNavController().navigate(action)
                         }
                     }
                 }
@@ -179,11 +166,9 @@ class ProfilePhoneFragment : DialogFragment() {
                     context,
                     "При отправке смс кода произошла ошибка, повторите попытку позднее",
                     Toast.LENGTH_SHORT
-                )
-                    .show()
+                ).show()
             }
-            AppState.Loading -> Unit
-            AppState.Empty -> TODO()
+            else -> Unit
         }
     }
 
@@ -191,12 +176,5 @@ class ProfilePhoneFragment : DialogFragment() {
         super.onDestroy()
         _binding = null
         inputMethodManager = null
-    }
-
-    companion object {
-        fun newInstance(callback: () -> Unit) =
-            ProfilePhoneFragment().apply {
-                this.callback = callback
-            }
     }
 }

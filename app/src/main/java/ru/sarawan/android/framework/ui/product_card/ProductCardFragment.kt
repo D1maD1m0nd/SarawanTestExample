@@ -26,6 +26,8 @@ import ru.sarawan.android.model.data.AppState
 import ru.sarawan.android.model.data.Product
 import ru.sarawan.android.model.data.StorePrice
 import ru.sarawan.android.utils.TypeCardEnum
+import ru.sarawan.android.utils.exstentions.getNavigationResult
+import ru.sarawan.android.utils.exstentions.setNavigationResult
 import ru.sarawan.android.utils.exstentions.token
 import javax.inject.Inject
 
@@ -64,10 +66,11 @@ class ProductCardFragment : Fragment() {
     private var _binding: FragmentProductCardBinding? = null
     private val binding get() = _binding!!
     private val storeAdapter = StoreAdapter(itemClickListener)
-    private var similarProducts: MutableList<Product> = ArrayList(20)
-    private var storeProducts: MutableList<StorePrice> = ArrayList(5)
+    private lateinit var similarProducts: MutableList<Product>
+    private lateinit var storeProducts: MutableList<StorePrice>
     private val similarAdapter = SimilarAdapter(itemClickListener)
     private var currentProduct: Product? = null
+    private var previousProducts: ArrayList<Product> = arrayListOf()
     private var fabChanger: FabChanger? = null
     private val args: ProductCardFragmentArgs by navArgs()
 
@@ -92,6 +95,16 @@ class ProductCardFragment : Fragment() {
         binding.productCloseButton.setOnClickListener { onFragmentClose() }
         viewModel.similarProducts(args.productID, !sharedPreferences.token.isNullOrEmpty())
         setBackButtonListener()
+        handleProductCardResult()
+    }
+
+    private fun handleProductCardResult() {
+        getNavigationResult<ArrayList<Product?>>(REQUEST_KEY) { products ->
+            previousProducts.clear()
+            products.forEach { product ->
+                if (product != null) previousProducts.add(product)
+            }
+        }
     }
 
     private fun setBackButtonListener() {
@@ -103,7 +116,18 @@ class ProductCardFragment : Fragment() {
     }
 
     private fun onFragmentClose() = with(findNavController()) {
-        previousBackStackEntry?.savedStateHandle?.set(REQUEST_KEY, arrayOf(currentProduct))
+        currentProduct?.let { product ->
+            if (previousProducts.contains(product)) previousProducts
+                .find { it.id == product.id }
+                ?.apply {
+                    product.storePrices?.let {
+                        storePrices?.clear()
+                        storePrices?.addAll(it)
+                    }
+                }
+            else previousProducts.add(product)
+        }
+        setNavigationResult(REQUEST_KEY, previousProducts)
         popBackStack()
         Unit
     }
@@ -138,8 +162,7 @@ class ProductCardFragment : Fragment() {
                 val data = appState.data as MutableList<Product>
                 val filteredData = data.filter { !it.storePrices.isNullOrEmpty() }
                 val product = data.findLast { it.id == args.productID }
-                similarProducts.addAll(data)
-                similarProducts = similarProducts
+                similarProducts = data
                     .filter { !it.storePrices.isNullOrEmpty() && it.id != product?.id }
                     .toMutableList()
                 if (filteredData.isNullOrEmpty() || (filteredData - product).isNullOrEmpty() || similarProducts.isNullOrEmpty()) {
@@ -270,9 +293,7 @@ class ProductCardFragment : Fragment() {
             }
             TypeCardEnum.DEFAULT -> storeAdapter.notifyItemChanged(0)
         }
-        product.storePrices?.let {
-            setButtonAddBasketVisible(it)
-        }
+        product.storePrices?.let { setButtonAddBasketVisible(it) }
         currentProduct = product
     }
 

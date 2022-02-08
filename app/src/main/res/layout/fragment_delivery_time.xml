@@ -3,21 +3,20 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-
-    tools:context=".framework.ui.modals.DeliveryTimeFragment">
+    android:layout_height="match_parent">
 
     <androidx.appcompat.widget.AppCompatImageButton
         android:id="@+id/back_button"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="@color/white"
-        android:src="@drawable/arrow_back"
         android:layout_marginStart="20dp"
         android:layout_marginTop="20dp"
+        android:background="@color/white"
+        android:src="@drawable/arrow_back"
         app:layout_constraintBottom_toBottomOf="@+id/materialTextView"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/materialTextView"
@@ -79,7 +78,8 @@
         android:src="@drawable/ic_baseline_calendar_today_24"
         app:layout_constraintBottom_toBottomOf="@+id/date_edit_text"
         app:layout_constraintStart_toEndOf="@+id/date_edit_text"
-        app:layout_constraintTop_toTopOf="@+id/date_edit_text" />
+        app:layout_constraintTop_toTopOf="@+id/date_edit_text"
+        tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
 
     <ru.sarawan.android.utils.MaskedEditText
         android:id="@+id/date_edit_text"
@@ -116,7 +116,8 @@
         app:layout_constraintBottom_toBottomOf="@+id/time_edit_text"
         app:layout_constraintEnd_toEndOf="@+id/chipGroup"
 
-        app:layout_constraintTop_toTopOf="@+id/time_edit_text" />
+        app:layout_constraintTop_toTopOf="@+id/time_edit_text"
+        tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
     <com.google.android.material.button.MaterialButton
         android:id="@+id/profile_address_save_button"
         style="@style/Widget.MaterialComponents.Button.OutlinedButton"

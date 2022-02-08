@@ -1,24 +1,28 @@
 package ru.sarawan.android.framework.ui.modals
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.fragment.app.DialogFragment
-import ru.sarawan.android.databinding.FragmentProfileSuccessBinding
+import androidx.navigation.fragment.findNavController
+import ru.sarawan.android.MobileNavigationDirections
+import ru.sarawan.android.activity.BasketSaver
+import ru.sarawan.android.databinding.FragmentProfileSuccessDialogBinding
 
-class ProfileSuccessFragment : DialogFragment() {
+class ProfileSuccessDialogFragment : DialogFragment() {
 
-    private var _binding: FragmentProfileSuccessBinding? = null
+    private var _binding: FragmentProfileSuccessDialogBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var callback: () -> Unit
+    private var basketSaver: BasketSaver? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View = FragmentProfileSuccessBinding
+    ): View = FragmentProfileSuccessDialogBinding
         .inflate(inflater, container, false)
         .also { _binding = it }
         .root
@@ -28,6 +32,7 @@ class ProfileSuccessFragment : DialogFragment() {
         dialog?.window?.attributes?.apply {
             width = WindowManager.LayoutParams.MATCH_PARENT
         }
+        isCancelable = false
         initViews()
     }
 
@@ -36,26 +41,23 @@ class ProfileSuccessFragment : DialogFragment() {
     }
 
     private fun closeAllDialogs() {
-        val manager = requireActivity().supportFragmentManager
-        for (fragment in manager.fragments) {
-            if (fragment is DialogFragment) {
-                fragment.dismiss()
-            }
-        }
-        dismiss()
+        basketSaver?.saveBasket()
+        val action = MobileNavigationDirections.actionGlobalToProfileFragment()
+        findNavController().navigate(action)
+    }
 
-        callback.invoke()
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        basketSaver = context as BasketSaver
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        basketSaver = null
     }
 
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
-    }
-
-    companion object {
-        fun newInstance(callback: () -> Unit) =
-            ProfileSuccessFragment().apply {
-                this.callback = callback
-            }
     }
 }

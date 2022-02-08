@@ -33,8 +33,10 @@ import ru.sarawan.android.framework.ui.main.viewHolder.CardItemViewHolder
 import ru.sarawan.android.framework.ui.product_card.ProductCardFragment
 import ru.sarawan.android.model.data.MainScreenDataModel
 import ru.sarawan.android.model.data.Product
+import ru.sarawan.android.model.data.toProduct
 import ru.sarawan.android.rx.ISchedulerProvider
 import ru.sarawan.android.utils.NetworkStatus
+import ru.sarawan.android.utils.exstentions.getNavigationResult
 import ru.sarawan.android.utils.exstentions.token
 import java.util.*
 import javax.inject.Inject
@@ -87,6 +89,7 @@ abstract class BaseMainCatalogFragment : Fragment(), INavigation {
                             !sharedPreferences.token.isNullOrEmpty(),
                             isNewItem
                         )
+                        mainRecyclerAdapter?.changeProduct(data.toProduct())
                     } else handleNetworkErrorWithToast()
                 }
             }
@@ -129,9 +132,7 @@ abstract class BaseMainCatalogFragment : Fragment(), INavigation {
     }
 
     private fun handleProductCardResult() {
-        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<Array<Product?>>(
-            ProductCardFragment.REQUEST_KEY
-        )?.observe(viewLifecycleOwner) { products ->
+        getNavigationResult<ArrayList<Product?>>(ProductCardFragment.REQUEST_KEY) { products ->
             products.forEach { product ->
                 if (product != null) mainRecyclerAdapter?.changeProduct(product)
             }

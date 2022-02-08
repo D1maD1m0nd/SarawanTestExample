@@ -9,10 +9,10 @@ import ru.sarawan.android.framework.ui.main.MainFragment
 import ru.sarawan.android.framework.ui.order.OrderFragment
 import ru.sarawan.android.framework.ui.product_card.ProductCardFragment
 import ru.sarawan.android.framework.ui.profile.ProfileFragment
-import ru.sarawan.android.framework.ui.profile.address_fragment.ProfileAddressFragment
-import ru.sarawan.android.framework.ui.profile.name_fragment.ProfileNameFragment
-import ru.sarawan.android.framework.ui.profile.phone_fragment.ProfilePhoneFragment
-import ru.sarawan.android.framework.ui.profile.sms_code_fragment.ProfileCodeFragment
+import ru.sarawan.android.framework.ui.profile.address_fragment.ProfileAddressDialogFragment
+import ru.sarawan.android.framework.ui.profile.name_fragment.ProfileNameDialogFragment
+import ru.sarawan.android.framework.ui.profile.phone_fragment.ProfilePhoneDialogFragment
+import ru.sarawan.android.framework.ui.profile.sms_code_fragment.ProfileCodeDialogFragment
 
 @Module
 abstract class FragmentModule {
@@ -33,16 +33,16 @@ abstract class FragmentModule {
     abstract fun contributeProfileFragment(): ProfileFragment
 
     @ContributesAndroidInjector
-    abstract fun contributeProfilePhoneFragment() : ProfilePhoneFragment
+    abstract fun contributeProfilePhoneFragment() : ProfilePhoneDialogFragment
 
     @ContributesAndroidInjector
-    abstract fun contributeProfileCodeFragment() : ProfileCodeFragment
+    abstract fun contributeProfileCodeFragment() : ProfileCodeDialogFragment
 
     @ContributesAndroidInjector
-    abstract fun contributeProfileAddressFragment() : ProfileAddressFragment
+    abstract fun contributeProfileAddressFragment() : ProfileAddressDialogFragment
 
     @ContributesAndroidInjector
-    abstract fun contributeProfileNameFragment() : ProfileNameFragment
+    abstract fun contributeProfileNameFragment() : ProfileNameDialogFragment
 
     @ContributesAndroidInjector
     abstract fun contributeCategoryFragment() : CategoryFragment
