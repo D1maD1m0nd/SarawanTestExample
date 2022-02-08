@@ -1,5 +1,6 @@
 package ru.sarawan.android.framework.ui.profile.address_fragment
 
+import android.content.DialogInterface
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -11,52 +12,38 @@ import android.widget.Toast
 import androidx.core.content.getSystemService
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import dagger.android.support.AndroidSupportInjection
 import retrofit2.HttpException
-import ru.sarawan.android.databinding.FragmentProfileAddressBinding
-import ru.sarawan.android.framework.ui.modals.ProfileAlertFragment
+import ru.sarawan.android.databinding.FragmentProfileAddressDialogBinding
 import ru.sarawan.android.framework.ui.profile.address_fragment.viewModel.ProfileAddressViewModel
 import ru.sarawan.android.model.data.AddressItem
 import ru.sarawan.android.model.data.AppState
+import ru.sarawan.android.utils.exstentions.setNavigationResult
 import ru.sarawan.android.utils.exstentions.userId
 import javax.inject.Inject
 
-class ProfileAddressFragment : DialogFragment() {
+class ProfileAddressDialogFragment : DialogFragment() {
+
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
     @Inject
     lateinit var sharedPreferences: SharedPreferences
+
     private val viewModel: ProfileAddressViewModel by lazy {
         viewModelFactory.create(ProfileAddressViewModel::class.java)
     }
 
-    private var _binding: FragmentProfileAddressBinding? = null
+    private var _binding: FragmentProfileAddressDialogBinding? = null
     private val binding get() = _binding!!
 
-    private var userCity: String? = null
-    private var userStreet: String? = null
-    private var userHouse: String? = null
-    private var userRoomNumber: String? = null
-    private var onSaveDataCallback: (() -> Unit)? = null
+    private val args: ProfileAddressDialogFragmentArgs by navArgs()
+    private var isSaveSuccess = false
 
     private var inputMethodManager: InputMethodManager? = null
     private var keyboardShown = false
-
-    private fun showKeyboard() {
-        inputMethodManager?.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
-        keyboardShown = true
-    }
-
-    private fun hideKeyboard() {
-        if (keyboardShown) {
-            inputMethodManager?.hideSoftInputFromWindow(
-                binding.profileAddressRootView.windowToken,
-                0
-            )
-            keyboardShown = false
-        }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,14 +53,9 @@ class ProfileAddressFragment : DialogFragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View = FragmentProfileAddressBinding
+    ): View = FragmentProfileAddressDialogBinding
         .inflate(inflater, container, false)
-        .also {
-            viewModel.getStateLiveData().observe(viewLifecycleOwner) { appState: AppState<*> ->
-                setState(appState)
-            }
-            _binding = it
-        }
+        .also { _binding = it }
         .root
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -84,21 +66,32 @@ class ProfileAddressFragment : DialogFragment() {
         }
         inputMethodManager = requireActivity().getSystemService()
         initViews()
+        viewModel.getStateLiveData()
+            .observe(viewLifecycleOwner) { appState: AppState<*> -> setState(appState) }
     }
 
-    private fun initViews() = with(binding) {
-        //город не обновляем
-        //userCity?.let {  }
-        //подъезда почему-то тоже нет в приходящем адресе
+    private fun showKeyboard() {
+        inputMethodManager?.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
+        keyboardShown = true
+    }
 
-        userStreet.let { profileAddressStreetEditText.setText(it) }
-        userHouse.let { profileAddressHouseEditText.setText(it) }
-        userRoomNumber.let { profileAddressApartmentEditText.setText(it) }
+    private fun hideKeyboard() = if (keyboardShown) {
+        inputMethodManager
+            ?.hideSoftInputFromWindow(binding.profileAddressRootView.windowToken, 0)
+        keyboardShown = false
+    } else Unit
+
+    private fun initViews() = with(binding) {
+        args.street.let { profileAddressStreetEditText.setText(it) }
+        args.house.let { profileAddressHouseEditText.setText(it) }
+        args.roomNumber.let { profileAddressApartmentEditText.setText(it) }
 
         profileAddressBackButton.setOnClickListener {
             hideKeyboard()
-            dismiss()
+            isSaveSuccess = false
+            findNavController().navigateUp()
         }
+
         profileAddressSaveButton.setOnClickListener { saveData() }
         profileAddressCityTextView.setOnClickListener { showAlert() }
 
@@ -108,7 +101,9 @@ class ProfileAddressFragment : DialogFragment() {
 
     private fun showAlert() {
         hideKeyboard()
-        ProfileAlertFragment.newInstance().show(childFragmentManager, null)
+        val action = ProfileAddressDialogFragmentDirections
+            .actionProfileAddressDialogFragmentToProfileAlertDialogFragment()
+        findNavController().navigate(action)
     }
 
     private fun saveData() {
@@ -137,23 +132,23 @@ class ProfileAddressFragment : DialogFragment() {
             is AppState.Success<*> -> {
                 Toast.makeText(context, "Сохранение прошло успешно", Toast.LENGTH_SHORT).show()
                 hideKeyboard()
-                onSaveDataCallback?.invoke()
-                dismiss()
+                isSaveSuccess = true
+                findNavController().navigateUp()
             }
 
             is AppState.Error -> {
                 val error = appState.error
-                if(error is HttpException) {
-                    Toast.makeText(
-                        context,
-                        error.response().toString(),
-                        Toast.LENGTH_SHORT
-                    ).show()
+                if (error is HttpException) {
+                    Toast.makeText(context, error.response().toString(), Toast.LENGTH_SHORT).show()
                 }
             }
-            AppState.Loading -> Unit
-            AppState.Empty -> Unit
+            else -> Unit
         }
+    }
+
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+        setNavigationResult(KEY_ADDRESS, isSaveSuccess)
     }
 
     override fun onDestroy() {
@@ -163,18 +158,6 @@ class ProfileAddressFragment : DialogFragment() {
     }
 
     companion object {
-        //для совместимости с вызовом Димы из корзины переопределил временно
-        fun newInstance() = newInstance(null, null)
-
-        fun newInstance(addressItem: AddressItem?, onSaveDataCallback: (() -> Unit)?) =
-            ProfileAddressFragment().apply {
-                this.onSaveDataCallback = onSaveDataCallback
-                addressItem?.let {
-                    userCity = it.city
-                    userStreet = it.street
-                    userHouse = it.house
-                    userRoomNumber = it.roomNumber
-                }
-            }
+        const val KEY_ADDRESS = "Address"
     }
 }

@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -19,11 +18,6 @@ import ru.sarawan.android.R
 import ru.sarawan.android.databinding.FragmentBasketBinding
 import ru.sarawan.android.framework.ui.basket.adapter.BasketAdapter
 import ru.sarawan.android.framework.ui.basket.viewModel.BasketViewModel
-import ru.sarawan.android.framework.ui.modals.DeliveryTimeFragment
-import ru.sarawan.android.framework.ui.modals.PaymentMethodFragment
-import ru.sarawan.android.framework.ui.modals.SuccessOrderFragment
-import ru.sarawan.android.framework.ui.profile.address_fragment.ProfileAddressFragment
-import ru.sarawan.android.framework.ui.profile.phone_fragment.ProfilePhoneFragment
 import ru.sarawan.android.model.data.*
 import ru.sarawan.android.model.data.delegatesModel.BasketFooter
 import ru.sarawan.android.model.data.delegatesModel.BasketHeader
@@ -53,10 +47,6 @@ class BasketFragment : Fragment() {
     )
 
     private val itemClickListener = object : ItemClickListener {
-        override fun showModal(fragment: DialogFragment) {
-            showModalDialog(fragment)
-        }
-
         override fun update(pos: Int, mode: Boolean) {
             updateBasket()
         }
@@ -72,7 +62,8 @@ class BasketFragment : Fragment() {
 
         override fun openOrderCard() {
             if (sharedPreferences.token != null) {
-                findNavController().navigate(R.id.action_basketFragment_to_orderFragment)
+                val action = BasketFragmentDirections.actionBasketFragmentToOrderFragment()
+                findNavController().navigate(action)
             } else {
                 showProfile()
             }
@@ -113,8 +104,8 @@ class BasketFragment : Fragment() {
 
     private fun showProfile(): Boolean =
         if (sharedPreferences.userId == UNREGISTERED) {
-            ProfilePhoneFragment.newInstance { navigateToProfile() }
-                .show(requireActivity().supportFragmentManager, null)
+            val action = BasketFragmentDirections.actionBasketFragmentToProfilePhoneDialogFragment()
+            findNavController().navigate(action)
             false
         } else {
             navigateToProfile()
@@ -122,7 +113,8 @@ class BasketFragment : Fragment() {
         }
 
     private fun navigateToProfile() {
-        findNavController().navigate(R.id.action_basketFragment_to_profileFragment)
+        val action = BasketFragmentDirections.actionBasketFragmentToProfileFragment()
+        findNavController().navigate(action)
     }
 
     private fun initData() {
@@ -189,7 +181,10 @@ class BasketFragment : Fragment() {
         progressBar.visibility = View.GONE
         infoBasketTextView.text = getString(R.string.basket_empty)
         actionBasketTextView.text = getString(R.string.nav_sales)
-        actionBasketTextView.setOnClickListener { findNavController().navigate(R.id.action_basketFragment_to_mainFragment) }
+        actionBasketTextView.setOnClickListener {
+            val action = BasketFragmentDirections.actionBasketFragmentToMainFragment()
+            findNavController().navigate(action)
+        }
     }
 
     private fun initDataRcView(data: List<ProductsItem>) {
@@ -242,16 +237,6 @@ class BasketFragment : Fragment() {
         adapter.updateHeader()
     }
 
-
-    private fun showModalDialog(fragment: DialogFragment) {
-        when (fragment) {
-            is DeliveryTimeFragment -> fragment.show(childFragmentManager, null)
-            is ProfileAddressFragment -> fragment.show(childFragmentManager, null)
-            is PaymentMethodFragment -> fragment.show(childFragmentManager, null)
-            is SuccessOrderFragment -> fragment.show(childFragmentManager, null)
-        }
-    }
-
     private fun deleteBasketItem(pos: Int, productsItem: ProductsItem) {
         val end = list.size + 1
         adapter.apply {
@@ -297,8 +282,8 @@ class BasketFragment : Fragment() {
     }
 
     private fun showProductFragment(idProduct: Int) {
-        val action =
-            BasketFragmentDirections.actionBasketFragmentToProductCardFragment(idProduct.toLong())
+        val action = BasketFragmentDirections
+            .actionBasketFragmentToProductCardFragment(idProduct.toLong())
         findNavController().navigate(action)
     }
 

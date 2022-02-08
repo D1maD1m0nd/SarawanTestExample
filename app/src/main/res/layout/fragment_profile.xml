@@ -50,6 +50,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:clickable="false"
                     android:background="@color/white"
                     android:src="@drawable/arrow_right" />
 
@@ -80,6 +81,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:clickable="false"
                     android:background="@color/white"
                     android:visibility="invisible"
                     android:src="@drawable/arrow_right" />
@@ -111,6 +113,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:clickable="false"
                     android:background="@color/white"
                     android:src="@drawable/arrow_right" />
 
