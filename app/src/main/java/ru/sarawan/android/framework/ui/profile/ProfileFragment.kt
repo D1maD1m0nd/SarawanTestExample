@@ -15,17 +15,14 @@ import ru.sarawan.android.R
 import ru.sarawan.android.databinding.FragmentProfileBinding
 import ru.sarawan.android.framework.ui.profile.adapter.ItemClickListener
 import ru.sarawan.android.framework.ui.profile.adapter.OrdersAdapter
-import ru.sarawan.android.framework.ui.profile.address_fragment.ProfileAddressFragment
-import ru.sarawan.android.framework.ui.profile.name_fragment.ProfileNameFragment
+import ru.sarawan.android.framework.ui.profile.address_fragment.ProfileAddressDialogFragment
+import ru.sarawan.android.framework.ui.profile.name_fragment.ProfileNameDialogFragment
 import ru.sarawan.android.framework.ui.profile.viewModel.ProfileViewModel
 import ru.sarawan.android.model.data.AddressItem
 import ru.sarawan.android.model.data.AppState
 import ru.sarawan.android.model.data.OrderApprove
 import ru.sarawan.android.model.data.UserDataModel
-import ru.sarawan.android.utils.exstentions.UNREGISTERED
-import ru.sarawan.android.utils.exstentions.basketId
-import ru.sarawan.android.utils.exstentions.token
-import ru.sarawan.android.utils.exstentions.userId
+import ru.sarawan.android.utils.exstentions.*
 import javax.inject.Inject
 
 class ProfileFragment : Fragment() {
@@ -42,11 +39,8 @@ class ProfileFragment : Fragment() {
     private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding!!
 
-    //нам нужно отдельно иметь сохраненные имя и фамилию, чтобы передавать в фрагмент
-    //их редактирования, если они не пустые
     private var user: UserDataModel? = null
 
-    //аналогично и для адреса
     private var addressItem: AddressItem? = null
 
     private val itemClickListener = object : ItemClickListener {
@@ -68,38 +62,35 @@ class ProfileFragment : Fragment() {
         savedInstanceState: Bundle?
     ) = FragmentProfileBinding
         .inflate(inflater, container, false)
-        .also {
-            viewModel.getStateLiveData().observe(viewLifecycleOwner) { appState: AppState<*> ->
-                setState(appState)
-            }
-            _binding = it
-        }
+        .also { _binding = it }
         .root
-
-    private fun getUserData() {
-        if (sharedPreferences.userId != UNREGISTERED) {
-            sharedPreferences.userId?.let {
-                viewModel.getUserData(it)
-                viewModel.getOrders()
-            }
-        }
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         getUserData()
         initViews()
+        subscribeToViewModel()
+        getNavigationCallback()
     }
+
+    private fun getNavigationCallback() {
+        getNavigationResult<Boolean>(ProfileAddressDialogFragment.KEY_ADDRESS) { if (it) getUserData() }
+        getNavigationResult<Boolean>(ProfileNameDialogFragment.KEY_NAME) { if (it) getUserData() }
+    }
+
+    private fun subscribeToViewModel() = viewModel.getStateLiveData()
+        .observe(viewLifecycleOwner) { appState: AppState<*> -> setState(appState) }
+
+    private fun getUserData() = if (sharedPreferences.userId != UNREGISTERED) {
+        sharedPreferences.userId?.let {
+            viewModel.getUserData(it)
+            viewModel.getOrders()
+        }
+    } else Unit
 
     private fun initViews() = with(binding) {
         profileNameLayout.setOnClickListener { showName() }
-        profilePhoneLayout.setOnClickListener { showPhone() }
         profileAddressLayout.setOnClickListener { showAddress() }
-
-        profileNameButton.setOnClickListener { showName() }
-        profilePhoneButton.setOnClickListener { showPhone() }
-        profileAddressButton.setOnClickListener { showAddress() }
-
         profileExitButton.setOnClickListener { leave() }
     }
 
@@ -111,30 +102,21 @@ class ProfileFragment : Fragment() {
     }
 
     private fun showAddress() {
-        ProfileAddressFragment.newInstance(addressItem) {
-            getUserData()
-        }
-            .show(childFragmentManager, null)
-    }
-
-    private fun showPhone() {
-        /*
-        оставил, вдруг понадобится протестировать еще что-то без выхода
-        ProfilePhoneFragment.newInstance { callback() }
-            .show(requireActivity().supportFragmentManager, null)
-        */
-    }
-
-    private fun callback() {
-        val action = ProfileFragmentDirections.actionProfileFragmentToMainFragment()
+        val action = ProfileFragmentDirections.actionProfileFragmentToProfileAddressFragment(
+            city = addressItem?.city,
+            street = addressItem?.street,
+            house = addressItem?.house,
+            roomNumber = addressItem?.roomNumber
+        )
         findNavController().navigate(action)
     }
 
     private fun showName() {
-        ProfileNameFragment.newInstance(user) {
-            getUserData()
-        }
-            .show(childFragmentManager, null)
+        val action = ProfileFragmentDirections.actionProfileFragmentToProfileNameDialogFragment(
+            firstName = user?.firstName,
+            lastName = user?.lastName
+        )
+        findNavController().navigate(action)
     }
 
     private fun setState(appState: AppState<*>) = with(binding) {
@@ -146,24 +128,20 @@ class ProfileFragment : Fragment() {
                             val data = appState.data as MutableList<AddressItem>
                             if (data.isNotEmpty()) {
                                 val primaryAddress =
-                                    data.findLast { it.primary == true } ?: data.first()
+                                    data.findLast { it.primary } ?: data.first()
                                 primaryAddress.let {
                                     val address = formatAddress(it)
                                     profileAddressTextView.text = address
-
                                     addressItem = it
                                 }
                             }
                         }
                         is UserDataModel -> {
-                            if (sharedPreferences.basketId == UNREGISTERED.toInt()) {
+                            if (sharedPreferences.basketId == UNREGISTERED.toInt())
                                 sharedPreferences.basketId = firstItem.basket?.basketId
-                            }
                             profilePhoneTextView.text = formatPhone(firstItem.phone)
-
                             val name = formatName(firstItem)
                             profileNameTextView.text = name
-
                             user = firstItem
                         }
 
@@ -180,11 +158,9 @@ class ProfileFragment : Fragment() {
                     context,
                     "При отправке смс кода произошла ошибка, повторите попытку позднее",
                     Toast.LENGTH_SHORT
-                )
-                    .show()
+                ).show()
             }
-            AppState.Loading -> Unit
-            AppState.Empty -> Unit
+            else -> Unit
         }
     }
 
@@ -209,7 +185,7 @@ class ProfileFragment : Fragment() {
                         } else c
                     } else c
                 }.joinToString("")
-        } ?: ""
+        }.orEmpty()
 
     private fun formatAddress(address: AddressItem): String {
         val city = address.city
@@ -223,9 +199,7 @@ class ProfileFragment : Fragment() {
         val firstName = user.firstName
         val lastName = user.lastName
         val fullName = "$firstName $lastName".trim()
-        return fullName.ifEmpty {
-            getString(R.string.profile_add_name)
-        }
+        return fullName.ifEmpty { getString(R.string.profile_add_name) }
     }
 
     private fun cancelOrder(pos: Int) {
@@ -241,9 +215,5 @@ class ProfileFragment : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
-    }
-
-    companion object {
-        fun newInstance() = ProfileFragment()
     }
 }

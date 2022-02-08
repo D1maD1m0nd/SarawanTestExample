@@ -12,7 +12,6 @@ import io.reactivex.rxjava3.subjects.BehaviorSubject
 import ru.sarawan.android.MobileNavigationDirections
 import ru.sarawan.android.R
 import ru.sarawan.android.databinding.ActivityMainBinding
-import ru.sarawan.android.framework.ui.profile.phone_fragment.ProfilePhoneFragment
 import ru.sarawan.android.model.data.AppState
 import ru.sarawan.android.model.data.Product
 import ru.sarawan.android.model.data.ProductsItem
@@ -24,7 +23,7 @@ import ru.sarawan.android.utils.exstentions.userId
 import javax.inject.Inject
 import kotlin.system.exitProcess
 
-class MainActivity : AppCompatActivity(), FabChanger {
+class MainActivity : AppCompatActivity(), FabChanger, BasketSaver {
 
     @Inject
     lateinit var sharedPreferences: SharedPreferences
@@ -45,11 +44,11 @@ class MainActivity : AppCompatActivity(), FabChanger {
     private var _binding: ActivityMainBinding? = null
     private val binding get() = _binding!!
 
-    private var isOnline = false
     private var isBackShown = false
     private var lastTimeBackPressed: Long = 0
     private val totalPrice: BehaviorSubject<Float> = BehaviorSubject.create()
     private var data: List<ProductsItem> = mutableListOf()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         AndroidInjection.inject(this)
@@ -58,9 +57,7 @@ class MainActivity : AppCompatActivity(), FabChanger {
         initNavigation()
         initFAB()
         initNetwork()
-        viewModel.getStateLiveData().observe(this) { appState: AppState<*> ->
-            updateFab(appState)
-        }
+        viewModel.getStateLiveData().observe(this) { appState: AppState<*> -> updateFab(appState) }
     }
 
     private fun initNetwork() {
@@ -68,7 +65,7 @@ class MainActivity : AppCompatActivity(), FabChanger {
             .isOnline()
             .subscribeOn(schedulerProvider.io)
             .observeOn(schedulerProvider.io)
-            .subscribe { isOnline = it }
+            .subscribe { viewModel.getBasket(!sharedPreferences.token.isNullOrEmpty()) }
     }
 
     private fun updateFab(appState: AppState<*>) {
@@ -125,25 +122,15 @@ class MainActivity : AppCompatActivity(), FabChanger {
             when (destination.id) {
                 R.id.basketFragment -> binding.fabPrice.hide()
                 R.id.orderFragment -> binding.fabPrice.hide()
-                else -> if (isOnline) viewModel.getBasket(!sharedPreferences.token.isNullOrEmpty())
+                else -> viewModel.getBasket(!sharedPreferences.token.isNullOrEmpty())
             }
         }
     }
 
     private fun showProfile(): Boolean =
         if (sharedPreferences.userId == UNREGISTERED) {
-            ProfilePhoneFragment.newInstance {
-                navigateToProfile()
-                if (sharedPreferences.userId != UNREGISTERED && data.isNotEmpty()) {
-                    val products = data.map { item ->
-                        Product(
-                            id = item.basketProduct?.basketProduct?.id,
-                            quantity = item.quantity ?: 0
-                        )
-                    }
-                    viewModel.saveData(products, true)
-                }
-            }.show(supportFragmentManager, null)
+            val action = MobileNavigationDirections.actionGlobalToProfilePhoneDialogFragment()
+            findNavController(R.id.nav_fragment).navigate(action)
             false
         } else {
             navigateToProfile()
@@ -187,10 +174,14 @@ class MainActivity : AppCompatActivity(), FabChanger {
 
     override fun changePrice(price: Float) = totalPrice.onNext((totalPrice.value ?: 0f) + price)
 
-    override fun changeState() {
-        if (isOnline) viewModel.getBasket(!sharedPreferences.token.isNullOrEmpty())
-        else _binding?.fabPrice?.hide()
-    }
+    override fun changeState() = viewModel.getBasket(!sharedPreferences.token.isNullOrEmpty())
+
+    override fun saveBasket() = if (sharedPreferences.userId != UNREGISTERED && data.isNotEmpty()) {
+        val products = data.map { item ->
+            Product(id = item.basketProduct?.basketProduct?.id, quantity = item.quantity ?: 0)
+        }
+        viewModel.saveData(products, true)
+    } else Unit
 
     companion object {
         private const val BACK_BUTTON_EXIT_DELAY = 3000
@@ -201,4 +192,8 @@ interface FabChanger {
     fun putPrice(price: Float)
     fun changePrice(price: Float)
     fun changeState()
+}
+
+interface BasketSaver {
+    fun saveBasket()
 }

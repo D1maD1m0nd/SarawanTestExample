@@ -14,10 +14,11 @@ import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import dagger.android.support.AndroidSupportInjection
 import ru.sarawan.android.R
-import ru.sarawan.android.databinding.FragmentProfileCodeBinding
-import ru.sarawan.android.framework.ui.modals.ProfileSuccessFragment
+import ru.sarawan.android.databinding.FragmentProfileCodeDialogBinding
 import ru.sarawan.android.framework.ui.profile.sms_code_fragment.viewModel.SmsCodeViewModel
 import ru.sarawan.android.model.data.AppState
 import ru.sarawan.android.model.data.UserRegistration
@@ -25,7 +26,7 @@ import ru.sarawan.android.utils.exstentions.token
 import ru.sarawan.android.utils.exstentions.userId
 import javax.inject.Inject
 
-class ProfileCodeFragment : DialogFragment() {
+class ProfileCodeDialogFragment : DialogFragment() {
 
     @Inject
     lateinit var sharedPreferences: SharedPreferences
@@ -36,18 +37,46 @@ class ProfileCodeFragment : DialogFragment() {
         viewModelFactory.create(SmsCodeViewModel::class.java)
     }
 
-    private var _binding: FragmentProfileCodeBinding? = null
+    private var _binding: FragmentProfileCodeDialogBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var callback: () -> Unit
+    private val args: ProfileCodeDialogFragmentArgs by navArgs()
 
     private var wrongCode = false
-    private var phoneNumber = ""
 
     private lateinit var timer: CountDownTimer
 
     private var inputMethodManager: InputMethodManager? = null
     private var keyboardShown = false
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        AndroidSupportInjection.inject(this)
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View = FragmentProfileCodeDialogBinding
+        .inflate(inflater, container, false)
+        .also { _binding = it }
+        .root
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        dialog?.window?.attributes?.apply {
+            width = WindowManager.LayoutParams.MATCH_PARENT
+            height = WindowManager.LayoutParams.MATCH_PARENT
+        }
+        inputMethodManager = requireActivity().getSystemService()
+        initViews()
+        setTitle()
+        setCodeBorder()
+        updateTimerText(TIMER_INIT_STRING)
+        initTimer()
+        viewModel.getStateLiveData()
+            .observe(viewLifecycleOwner) { appState: AppState<*> -> setState(appState) }
+    }
 
     private fun showKeyboard() {
         inputMethodManager?.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
@@ -74,43 +103,6 @@ class ProfileCodeFragment : DialogFragment() {
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            phoneNumber = it.getString(ARG_NUMBER, DEFAULT_PHONE_MASK)
-        }
-        AndroidSupportInjection.inject(this)
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View = FragmentProfileCodeBinding
-        .inflate(inflater, container, false)
-        .also {
-            viewModel.getStateLiveData().observe(viewLifecycleOwner) { appState: AppState<*> ->
-                setState(appState)
-            }
-            _binding = it
-        }
-        .root
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        dialog?.window?.attributes?.apply {
-            width = WindowManager.LayoutParams.MATCH_PARENT
-            height = WindowManager.LayoutParams.MATCH_PARENT
-        }
-
-        inputMethodManager = requireActivity().getSystemService()
-
-        initViews()
-        setTitle()
-        setCodeBorder()
-        updateTimerText(TIMER_INIT_STRING)
-        initTimer()
-    }
-
     private fun initTimer() {
         timer = object : CountDownTimer(TIMER_DURATION, TIMER_INTERVAL) {
             override fun onTick(millis: Long) {
@@ -130,7 +122,7 @@ class ProfileCodeFragment : DialogFragment() {
     private fun initViews() = with(binding) {
         profileCodeCloseButton.setOnClickListener {
             hideKeyboard()
-            dismiss()
+            findNavController().navigateUp()
         }
 
         profileCodeSendButton.setOnClickListener { sendCode() }
@@ -139,7 +131,7 @@ class ProfileCodeFragment : DialogFragment() {
         profileCodeNoSendButton.isVisible = false
         profileCodeRequestAgainButton.isVisible = false
 
-        val text = getString(R.string.profile_code_code_sent) + phoneNumber
+        val text = getString(R.string.profile_code_code_sent) + args.number
         profileCodeSentTextView.text = text
 
         initCodeTextViews()
@@ -198,18 +190,14 @@ class ProfileCodeFragment : DialogFragment() {
     private fun getSmsCode() = concatCode()
 
     private fun concatCode() = StringBuilder()
-        .also {
-            profileCodeEdits.forEach { tv -> it.append(tv.text.toString()) }
-        }.toString()
+        .also { profileCodeEdits.forEach { tv -> it.append(tv.text.toString()) } }.toString()
 
-    private fun getFormatNumber(): String {
-        return phoneNumber
-            .replace("(", "")
-            .replace(")", "")
-            .replace("_", "")
-            .replace("-", "")
-            .replace(" ", "")
-    }
+    private fun getFormatNumber(): String = args.number
+        .replace("(", "")
+        .replace(")", "")
+        .replace("_", "")
+        .replace("-", "")
+        .replace(" ", "")
 
     private fun updateTimerText(time: String) = with(binding) {
         val text = getString(R.string.profile_code_re_request_code_in) + " $time"
@@ -221,9 +209,7 @@ class ProfileCodeFragment : DialogFragment() {
         profileCodeWrongCodeTextView.isVisible = wrongCode
     }
 
-    private fun clearCodeText() {
-        profileCodeEdits.forEach { it.setText("") }
-    }
+    private fun clearCodeText() = profileCodeEdits.forEach { it.setText("") }
 
     private fun setCodeBorder() {
         val border = AppCompatResources.getDrawable(
@@ -243,9 +229,9 @@ class ProfileCodeFragment : DialogFragment() {
                     sharedPreferences.token = result.token
                     sharedPreferences.userId = result.userId
                     hideKeyboard()
-                    ProfileSuccessFragment.newInstance(
-                        callback
-                    ).show(childFragmentManager, null)
+                    val action = ProfileCodeDialogFragmentDirections
+                        .actionProfileCodeDialogFragmentToProfileSuccessDialogFragment()
+                    findNavController().navigate(action)
                 }
             }
             is AppState.Error -> {
@@ -256,7 +242,7 @@ class ProfileCodeFragment : DialogFragment() {
                 setTitle()
                 setCodeBorder()
             }
-            AppState.Loading -> Unit
+            else -> Unit
         }
     }
 
@@ -269,21 +255,10 @@ class ProfileCodeFragment : DialogFragment() {
 
     companion object {
         private const val DEFAULT_CODE_LENGTH = 6
-        private const val DEFAULT_PHONE_MASK = "+7 000 000 00 00"
         private const val TIMER_DURATION = 60_000L
         private const val TIMER_INTERVAL = 1_000L
         private const val ZERO = "0"
         private const val TWO_ZERO = "00"
         private const val TIMER_INIT_STRING = "01:00"
-        private const val ARG_NUMBER = "PHONE NUMBER"
-
-        fun newInstance(callback: () -> Unit, number: String) =
-            ProfileCodeFragment().apply {
-                this.callback = callback
-
-                arguments = Bundle().apply {
-                    putString(ARG_NUMBER, number)
-                }
-            }
     }
 }

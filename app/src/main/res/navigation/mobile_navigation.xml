@@ -31,6 +31,11 @@
         app:destination="@id/profileFragment"
         app:popUpTo="@+id/mainFragment" />
 
+    <action
+        android:id="@+id/action_global_toProfilePhoneDialogFragment"
+        app:destination="@id/profilePhoneDialogFragment"
+        app:popUpTo="@+id/profileFragment" />
+
     <fragment
         android:id="@+id/mainFragment"
         android:name="ru.sarawan.android.framework.ui.main.MainFragment"
@@ -61,6 +66,9 @@
         <action
             android:id="@+id/action_basketFragment_to_mainFragment"
             app:destination="@id/mainFragment" />
+        <action
+            android:id="@+id/action_basketFragment_to_profilePhoneDialogFragment"
+            app:destination="@id/profilePhoneDialogFragment" />
     </fragment>
 
     <fragment
@@ -150,11 +158,116 @@
         <action
             android:id="@+id/action_profileFragment_to_mainFragment"
             app:destination="@id/mainFragment" />
+        <action
+            android:id="@+id/action_profileFragment_to_profileAddressFragment"
+            app:destination="@id/profileAddressDialogFragment" />
+        <action
+            android:id="@+id/action_profileFragment_to_profileNameDialogFragment"
+            app:destination="@id/profileNameDialogFragment" />
     </fragment>
 
     <fragment
         android:id="@+id/orderFragment"
         android:name="ru.sarawan.android.framework.ui.order.OrderFragment"
         android:label="OrderFragment"
-        tools:layout="@layout/fragment_order" />
+        tools:layout="@layout/fragment_order">
+        <action
+            android:id="@+id/action_orderFragment_to_profileAddressFragment"
+            app:destination="@id/profileAddressDialogFragment" />
+        <action
+            android:id="@+id/action_orderFragment_to_successOrderDialogFragment"
+            app:destination="@id/successOrderDialogFragment" />
+    </fragment>
+
+    <dialog
+        android:id="@+id/profileAddressDialogFragment"
+        android:name="ru.sarawan.android.framework.ui.profile.address_fragment.ProfileAddressDialogFragment"
+        android:label="profileAddressDialogFragment"
+        tools:layout="@layout/fragment_profile_address_dialog">
+        <argument
+            android:name="city"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="street"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="house"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="roomNumber"
+            app:argType="string"
+            app:nullable="true" />
+        <action
+            android:id="@+id/action_profileAddressDialogFragment_to_profileAlertDialogFragment"
+            app:destination="@id/profileAlertDialogFragment" />
+    </dialog>
+
+    <dialog
+        android:id="@+id/profileNameDialogFragment"
+        android:name="ru.sarawan.android.framework.ui.profile.name_fragment.ProfileNameDialogFragment"
+        android:label="profileNameDialogFragment"
+        tools:layout="@layout/fragment_profile_name_dialog">
+        <argument
+            android:name="firstName"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="lastName"
+            app:argType="string"
+            app:nullable="true" />
+    </dialog>
+
+    <dialog
+        android:id="@+id/profilePhoneDialogFragment"
+        android:name="ru.sarawan.android.framework.ui.profile.phone_fragment.ProfilePhoneDialogFragment"
+        android:label="profilePhoneDialogFragment"
+        tools:layout="@layout/fragment_profile_phone_dialog">
+        <action
+            android:id="@+id/action_profilePhoneDialogFragment_to_profileCodeDialogFragment"
+            app:destination="@id/profileCodeDialogFragment" />
+    </dialog>
+
+    <dialog
+        android:id="@+id/profileCodeDialogFragment"
+        android:name="ru.sarawan.android.framework.ui.profile.sms_code_fragment.ProfileCodeDialogFragment"
+        android:label="profileCodeDialogFragment"
+        tools:layout="@layout/fragment_profile_code_dialog">
+        <argument
+            android:name="number"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_profileCodeDialogFragment_to_profileSuccessDialogFragment"
+            app:destination="@id/profileSuccessDialogFragment" />
+    </dialog>
+
+    <dialog
+        android:id="@+id/profileSuccessDialogFragment"
+        android:name="ru.sarawan.android.framework.ui.modals.ProfileSuccessDialogFragment"
+        android:label="profileSuccessDialogFragment"
+        tools:layout="@layout/fragment_profile_success_dialog">
+        <action
+            android:id="@+id/action_profileSuccessDialogFragment_to_profileFragment"
+            app:destination="@id/profileFragment" />
+    </dialog>
+
+    <dialog
+        android:id="@+id/profileAlertDialogFragment"
+        android:name="ru.sarawan.android.framework.ui.modals.ProfileAlertDialogFragment"
+        android:label="profileAlertDialogFragment"
+        tools:layout="@layout/fragment_profile_dialog_alert" />
+
+    <dialog
+        android:id="@+id/successOrderDialogFragment"
+        android:name="ru.sarawan.android.framework.ui.modals.SuccessOrderDialogFragment"
+        android:label="successOrderDialogFragment"
+        tools:layout="@layout/fragment_success_order_dialog">
+        <argument
+            android:name="message"
+            app:argType="string"
+            app:nullable="true" />
+    </dialog>
+
 </navigation>
