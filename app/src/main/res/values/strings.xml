@@ -28,8 +28,6 @@
     <string name="clear">Очистить</string>
     <string name="delivery">Доставка</string>
     <string name="Address">Адрес</string>
-    <string name="time_delivery">Время доставки</string>
-    <string name="payment_method">Способ оплаты</string>
     <string name="result_payment">Итого к оплате:</string>
     <string name="set_order">Оформить заказ</string>
     <string name="profile_phone_user_agreement">Нажимая на кнопку, я принимаю условия пользовательского соглашения</string>
@@ -43,11 +41,6 @@
     <string name="profile_address_street">Улица</string>
     <string name="profile_address_city">Город Москва</string>
     <string name="profile_address_title">Адрес</string>
-    <string name="faster">Как можно скорее</string>
-    <string name="by_the_time">Ко времени</string>
-    <string name="save_text">Сохранить</string>
-    <string name="pay_courier_cash">Наличные курьеру</string>
-    <string name="pay_courier_card">Картой курьеру</string>
     <string name="info_how_choice_products">Выберите продукты в каталоге. Система сама подберет вам самые выгодные предложения.</string>
     <string name="info_how_order_delivery">Оформите доставку на ближайшее время или нужную дату. Привезем ваш заказ в указанный срок.</string>
     <string name="info_how_subscribe">Оформите подписку и экономьте время, создавая готовые корзины для любых случаев.</string>
@@ -87,12 +80,7 @@
     <string name="profile_name_name">Имя</string>
     <string name="profile_name_lastname">Фамилия</string>
     <string name="profile_name_save">Сохранить</string>
-    <string name="format_date">дд.мм.гггг</string>
-    <string name="format_time">00:00</string>
-    <string name="select_time_delivery">Выберите время доставки</string>
-    <string name="select_date_delivery">Выберите дату доставки</string>
     <string name="default_count">1 шт.</string>
-    <string name="default_store">Ашан</string>
     <string name="add_to_basket">Добавить в корзину</string>
     <string name="price_other_store">Цена в других магазинах:</string>
     <string name="similar_products_view">С этим товаром смотрят:</string>
@@ -109,7 +97,6 @@
     <string name="confirm_order_message">Ваш заказ успешно оформлен!</string>
     <string name="basket_empty">Корзина пуста</string>
     <string name="nav_sales">Перейти к покупкам</string>
-    <string name="product_add">Товар добавлен</string>
     <string name="error_500">Что то пошло не так, повторите попытку позже</string>
     <string name="no_items">К сожалению, такого товара нет.</string>
     <string name="press_back_again_to_exit">Для выхода нажмите \"Назад\" еще раз</string>
