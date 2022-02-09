@@ -6,8 +6,8 @@ import ru.sarawan.android.framework.MainInteractor
 import ru.sarawan.android.framework.ui.base.BaseViewModel
 import ru.sarawan.android.model.data.*
 import ru.sarawan.android.rx.ISchedulerProvider
-import ru.sarawan.android.utils.SortBy
 import ru.sarawan.android.utils.StringProvider
+import ru.sarawan.android.utils.constants.SortBy
 
 abstract class BaseMainCatalogViewModel(
     private val interactor: MainInteractor,

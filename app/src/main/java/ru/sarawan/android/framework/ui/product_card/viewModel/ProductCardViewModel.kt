@@ -11,18 +11,20 @@ import javax.inject.Inject
 class ProductCardViewModel @Inject constructor(
     private val interactor: MainInteractor,
     private val schedulerProvider: ISchedulerProvider
-) : BaseViewModel<AppState<*>>(){
+) : BaseViewModel<AppState<*>>() {
     private var basketID: Int? = null
     fun clear() {
         stateLiveData.value = AppState.Empty
     }
-    fun similarProducts(storeId : Long?, isLoggedUser: Boolean) {
+
+    fun similarProducts(storeId: Long?, isLoggedUser: Boolean) {
         storeId?.let { store ->
-            val basket =  interactor.getData(Query.Get.Basket, isLoggedUser).onErrorReturnItem(listOf(Basket()))
+            val basket = interactor.getData(Query.Get.Basket, isLoggedUser)
+                .onErrorReturnItem(listOf(Basket()))
             val similar = interactor.getData(Query.Get.Products.SimilarProducts(store), true)
             val product = interactor.getData(Query.Get.Products.Id(storeId), true)
             compositeDisposable.add(
-                Single.zip(similar, basket, product) {similarData, basketData, productData->
+                Single.zip(similar, basket, product) { similarData, basketData, productData ->
                     productData as MutableList<Product>
                     basketData as MutableList<Basket>
                     similarData as MutableList<Product>
@@ -31,7 +33,7 @@ class ProductCardViewModel @Inject constructor(
                     val data: List<Product>
                     val basketObject = (basketData as List<Basket>).firstOrNull()
                     basketID = basketObject?.basketId
-                    if(basketData.isNotEmpty()) {
+                    if (basketData.isNotEmpty()) {
                         data = similarData.map { similarProduct ->
                             similarProduct.storePrices?.sortBy { storeItem ->
                                 storeItem.price
@@ -39,22 +41,25 @@ class ProductCardViewModel @Inject constructor(
                             basketObject
                                 ?.products
                                 ?.forEach { basketSingleData ->
-                                val similarEq = similarProduct.id == basketSingleData.basketProduct?.basketProduct?.id
-                                if (similarEq) {
-                                    similarProduct.quantity = basketSingleData.quantity!!
-                                    val storeIdProduct = basketSingleData.basketProduct?.productStoreId
-                                    storeIdProduct?.let { idProduct ->
-                                        similarProduct
-                                            .storePrices
-                                            ?.findLast { it.id == idProduct }
-                                            ?.let {
-                                                it.count = basketSingleData.quantity!!
-                                            }
+                                    val similarEq =
+                                        similarProduct.id == basketSingleData.basketProduct?.basketProduct?.id
+                                    if (similarEq) {
+                                        similarProduct.quantity = basketSingleData.quantity!!
+                                        val storeIdProduct =
+                                            basketSingleData.basketProduct?.productStoreId
+                                        storeIdProduct?.let { idProduct ->
+                                            similarProduct
+                                                .storePrices
+                                                ?.findLast { it.id == idProduct }
+                                                ?.let {
+                                                    it.count = basketSingleData.quantity!!
+                                                }
+                                        }
                                     }
                                 }
-                            }
-                            if(similarProduct.product == null) {
-                                similarProduct.product = similarProduct.storePrices?.firstOrNull()?.id
+                            if (similarProduct.product == null) {
+                                similarProduct.product =
+                                    similarProduct.storePrices?.firstOrNull()?.id
                             }
                             similarProduct
                         }

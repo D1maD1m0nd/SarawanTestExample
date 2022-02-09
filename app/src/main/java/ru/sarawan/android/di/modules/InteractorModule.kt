@@ -5,6 +5,8 @@ import dagger.Provides
 import ru.sarawan.android.framework.MainInteractor
 import ru.sarawan.android.framework.ui.basket.interactor.BasketInteractor
 import ru.sarawan.android.framework.ui.basket.interactor.IBasketInteractor
+import ru.sarawan.android.framework.ui.profile.interactor.IProfileInteractor
+import ru.sarawan.android.framework.ui.profile.interactor.ProfileInteractor
 import ru.sarawan.android.model.datasource.DataSource
 import javax.inject.Named
 
@@ -21,7 +23,12 @@ class InteractorModule {
 
 
     @Provides
-    fun provideBasketInteractor() : IBasketInteractor {
+    fun provideBasketInteractor(): IBasketInteractor {
         return BasketInteractor()
+    }
+
+    @Provides
+    fun provideProfileInteractor(): IProfileInteractor {
+        return ProfileInteractor()
     }
 }

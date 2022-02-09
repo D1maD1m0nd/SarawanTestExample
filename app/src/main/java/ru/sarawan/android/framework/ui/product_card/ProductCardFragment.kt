@@ -25,7 +25,7 @@ import ru.sarawan.android.framework.ui.product_card.viewModel.ProductCardViewMod
 import ru.sarawan.android.model.data.AppState
 import ru.sarawan.android.model.data.Product
 import ru.sarawan.android.model.data.StorePrice
-import ru.sarawan.android.utils.TypeCardEnum
+import ru.sarawan.android.utils.constants.TypeCardEnum
 import ru.sarawan.android.utils.exstentions.getNavigationResult
 import ru.sarawan.android.utils.exstentions.setNavigationResult
 import ru.sarawan.android.utils.exstentions.token

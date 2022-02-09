@@ -5,7 +5,7 @@ import ru.sarawan.android.model.data.Order
 import ru.sarawan.android.model.data.ProductsItem
 
 class BasketInteractor : IBasketInteractor {
-    override fun calculateOrder(data: List<ProductsItem>) : Single<Order> {
+    override fun calculateOrder(data: List<ProductsItem>): Single<Order> {
         val count = data.sumOf { it.quantity ?: 0 }
         val weight = data.sumOf {
             it.basketProduct
@@ -21,12 +21,14 @@ class BasketInteractor : IBasketInteractor {
                 ?.times(it.quantity!!) ?: 0.0
         }
 
-        return Single.just(Order(
-            basketCount = count,
-            paymentAmount = 0.0,
-            deliveryAmount = 0.0,
-            basketSumm = price,
-            weight = weight
-        ))
+        return Single.just(
+            Order(
+                basketCount = count,
+                paymentAmount = 0.0,
+                deliveryAmount = 0.0,
+                basketSumm = price,
+                weight = weight
+            )
+        )
     }
 }

@@ -58,10 +58,6 @@ class CatalogFragment : BaseMainCatalogFragment() {
     }
 
     override fun attachAdapterToView() = Unit
-//    {
-//        binding.mainRecyclerView.layoutManager = linearLayoutManager
-//        binding.mainRecyclerView.adapter = catalogAdapter
-//    }
 
     private fun initCatalogRecyclerAdapter() {
         if (catalogAdapter == null) {

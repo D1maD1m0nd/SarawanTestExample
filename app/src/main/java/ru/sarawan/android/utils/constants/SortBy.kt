@@ -1,4 +1,4 @@
-package ru.sarawan.android.utils
+package ru.sarawan.android.utils.constants
 
 import androidx.annotation.StringRes
 import ru.sarawan.android.R

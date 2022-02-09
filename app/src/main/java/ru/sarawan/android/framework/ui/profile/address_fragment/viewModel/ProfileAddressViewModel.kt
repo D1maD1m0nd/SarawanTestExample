@@ -11,14 +11,14 @@ import javax.inject.Inject
 class ProfileAddressViewModel @Inject constructor(
     private val interactor: MainInteractor,
     private val schedulerProvider: ISchedulerProvider
-) : BaseViewModel<AppState<*>>()  {
-    fun createAddress(address : AddressItem) {
+) : BaseViewModel<AppState<*>>() {
+    fun createAddress(address: AddressItem) {
         compositeDisposable.add(
             interactor.getData(Query.Post.Address.NewAddress(address), true)
                 .subscribeOn(schedulerProvider.io)
                 .observeOn(schedulerProvider.ui)
                 .subscribe(
-                    {stateLiveData.postValue(AppState.Success(it))},
+                    { stateLiveData.postValue(AppState.Success(it)) },
                     { stateLiveData.postValue(AppState.Error(it)) })
         )
     }

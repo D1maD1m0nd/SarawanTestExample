@@ -10,5 +10,5 @@ class BasketFooter(
     var deliveryPrice: Double = 0.0,
     var resultPrice: Double = 0.0,
     var address: String = "Адрес",
-    var addressItem : AddressItem? = null
+    var addressItem: AddressItem? = null
 ) : BasketListItem

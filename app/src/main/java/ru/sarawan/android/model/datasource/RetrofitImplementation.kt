@@ -2,7 +2,7 @@ package ru.sarawan.android.model.datasource
 
 import io.reactivex.rxjava3.core.Single
 import ru.sarawan.android.model.data.Query
-import ru.sarawan.android.utils.SortBy
+import ru.sarawan.android.utils.constants.SortBy
 import javax.inject.Inject
 
 class RetrofitImplementation @Inject constructor(private val apiService: ApiService) :

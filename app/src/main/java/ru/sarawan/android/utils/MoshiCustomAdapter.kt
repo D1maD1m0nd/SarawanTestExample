@@ -6,9 +6,10 @@ import ru.sarawan.android.model.data.ProductInformation
 import java.lang.reflect.Type
 
 class MoshiCustomAdapter(val moshi: Moshi) {
-    private val jsonAdapter: JsonAdapter<ProductInformation> = moshi.adapter(ProductInformation ::class.java)
+    private val jsonAdapter: JsonAdapter<ProductInformation> =
+        moshi.adapter(ProductInformation::class.java)
 
-    fun infoFromJson(json : String) : ProductInformation? {
+    fun infoFromJson(json: String): ProductInformation? {
         return jsonAdapter.fromJson(json)
     }
 

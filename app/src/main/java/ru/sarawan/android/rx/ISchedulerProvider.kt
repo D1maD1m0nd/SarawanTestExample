@@ -6,4 +6,5 @@ interface ISchedulerProvider {
 
     val ui: Scheduler
     val io: Scheduler
+    val computation: Scheduler
 }

@@ -5,5 +5,5 @@ import ru.sarawan.android.model.data.Order
 import ru.sarawan.android.model.data.ProductsItem
 
 interface IBasketInteractor {
-    fun calculateOrder(data: List<ProductsItem>) : Single<Order>
+    fun calculateOrder(data: List<ProductsItem>): Single<Order>
 }

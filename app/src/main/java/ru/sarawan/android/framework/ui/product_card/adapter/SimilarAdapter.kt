@@ -9,22 +9,23 @@ import coil.load
 import ru.sarawan.android.R
 import ru.sarawan.android.databinding.ListItemCardBinding
 import ru.sarawan.android.model.data.Product
-import ru.sarawan.android.utils.TypeCardEnum
+import ru.sarawan.android.utils.constants.TypeCardEnum
 
-class SimilarAdapter(val itemClickListener: ItemClickListener) : RecyclerView.Adapter<SimilarAdapter.ProductViewHolder>() {
-    private var similarList : MutableList<Product> = mutableListOf()
+class SimilarAdapter(val itemClickListener: ItemClickListener) :
+    RecyclerView.Adapter<SimilarAdapter.ProductViewHolder>() {
+    private var similarList: MutableList<Product> = mutableListOf()
 
-    fun setData(products : MutableList<Product>) {
+    fun setData(products: MutableList<Product>) {
         this.similarList = products
         notifyItemRangeInserted(0, itemCount)
     }
 
-    fun itemUpdate(pos : Int,products : MutableList<Product>) {
+    fun itemUpdate(pos: Int, products: MutableList<Product>) {
         this.similarList = products
         notifyItemChanged(pos)
     }
 
-    fun updateItem(products : MutableList<Product>, position: Int) {
+    fun updateItem(products: MutableList<Product>, position: Int) {
         similarList = products
         notifyItemChanged(position)
     }
@@ -54,15 +55,16 @@ class SimilarAdapter(val itemClickListener: ItemClickListener) : RecyclerView.Ad
 
     abstract class ProductViewHolder(
         private val binding: ListItemCardBinding,
-        private val itemClickListener: ItemClickListener) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(product : Product) = with(binding) {
+        private val itemClickListener: ItemClickListener
+    ) : RecyclerView.ViewHolder(binding.root) {
+        fun bind(product: Product) = with(binding) {
             val store = product.storePrices?.first()
             discount.visibility = GONE
             itemDescription.text = product.name
             itemShopName.text = store?.store
             itemPrice.text = store?.price.toString()
             itemQuantity.text = product.quantity.toString()
-            if(product.quantity > 0) {
+            if (product.quantity > 0) {
                 itemBuyButtonFrame.visibility = GONE
                 itemQuantityLayout.visibility = VISIBLE
             } else {
@@ -92,11 +94,11 @@ class SimilarAdapter(val itemClickListener: ItemClickListener) : RecyclerView.Ad
             }
 
             product.images?.let {
-                    val image = product.images.first().image
-                    itemImage.load(image) {
-                        placeholder(R.drawable.place_holder_image)
-                        error(R.drawable.place_holder_image)
-                    }
+                val image = product.images.first().image
+                itemImage.load(image) {
+                    placeholder(R.drawable.place_holder_image)
+                    error(R.drawable.place_holder_image)
+                }
             }
         }
     }

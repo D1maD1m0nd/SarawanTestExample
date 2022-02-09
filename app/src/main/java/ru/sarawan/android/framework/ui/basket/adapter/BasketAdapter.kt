@@ -6,11 +6,20 @@ import ru.sarawan.android.utils.AdapterDelegatesTypes
 import ru.sarawan.android.utils.ItemClickListener
 
 
-class BasketAdapter(itemClickListener: ItemClickListener) : AsyncListDifferDelegationAdapter<BasketListItem>(BasketDiffUtilItemCallback()) {
+class BasketAdapter(itemClickListener: ItemClickListener) :
+    AsyncListDifferDelegationAdapter<BasketListItem>(BasketDiffUtilItemCallback()) {
     init {
         delegatesManager.addDelegate(AdapterDelegatesTypes.headerDelegateViewBindingViewHolder)
-        delegatesManager.addDelegate(AdapterDelegatesTypes.itemDelegateViewBindingViewHolder(itemClickListener))
-        delegatesManager.addDelegate(AdapterDelegatesTypes.footerDelegateViewBindingViewHolder(itemClickListener))
+        delegatesManager.addDelegate(
+            AdapterDelegatesTypes.itemDelegateViewBindingViewHolder(
+                itemClickListener
+            )
+        )
+        delegatesManager.addDelegate(
+            AdapterDelegatesTypes.footerDelegateViewBindingViewHolder(
+                itemClickListener
+            )
+        )
     }
 
     fun updateHeader() {
@@ -25,6 +34,7 @@ class BasketAdapter(itemClickListener: ItemClickListener) : AsyncListDifferDeleg
         updateHeader()
         updateFooter()
     }
+
     companion object {
         private const val FIRST_POSITION = 0
     }

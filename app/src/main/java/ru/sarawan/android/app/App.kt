@@ -1,7 +1,6 @@
 package ru.sarawan.android.app
 
 import android.app.Application
-import androidx.navigation.NavController
 import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasAndroidInjector

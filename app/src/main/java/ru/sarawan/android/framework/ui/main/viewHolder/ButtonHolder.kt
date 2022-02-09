@@ -6,7 +6,10 @@ import ru.sarawan.android.R
 import ru.sarawan.android.databinding.ListItemButtonBinding
 import ru.sarawan.android.model.data.MainScreenDataModel
 
-class ButtonHolder(private val binding: ListItemButtonBinding, private val listener: ButtonMoreClickListener) :
+class ButtonHolder(
+    private val binding: ListItemButtonBinding,
+    private val listener: ButtonMoreClickListener
+) :
     RecyclerView.ViewHolder(binding.root) {
     fun bind(data: MainScreenDataModel) {
         with(binding) {

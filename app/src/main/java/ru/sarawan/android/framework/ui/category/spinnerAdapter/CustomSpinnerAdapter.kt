@@ -10,7 +10,7 @@ import androidx.annotation.LayoutRes
 import androidx.appcompat.widget.AppCompatImageView
 import ru.sarawan.android.R
 import ru.sarawan.android.databinding.SpinnerDropdownViewElementBinding
-import ru.sarawan.android.utils.SortBy
+import ru.sarawan.android.utils.constants.SortBy
 
 class CustomSpinnerAdapter(
     context: Context,
@@ -23,8 +23,12 @@ class CustomSpinnerAdapter(
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         return super.getView(position, convertView, parent).apply {
             when (position) {
-                SortBy.PRICE_ASC.id -> findViewById<AppCompatImageView>(R.id.item_icon).setImageResource(R.drawable.spinner_arrow_up)
-                SortBy.PRICE_DES.id -> findViewById<AppCompatImageView>(R.id.item_icon).setImageResource(R.drawable.spinner_arrow_down)
+                SortBy.PRICE_ASC.id -> findViewById<AppCompatImageView>(R.id.item_icon).setImageResource(
+                    R.drawable.spinner_arrow_up
+                )
+                SortBy.PRICE_DES.id -> findViewById<AppCompatImageView>(R.id.item_icon).setImageResource(
+                    R.drawable.spinner_arrow_down
+                )
             }
             alpha = 1f
         }
