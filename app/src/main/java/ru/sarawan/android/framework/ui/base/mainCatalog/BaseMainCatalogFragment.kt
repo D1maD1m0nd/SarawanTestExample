@@ -24,8 +24,11 @@ import dagger.android.support.AndroidSupportInjection
 import ru.sarawan.android.R
 import ru.sarawan.android.activity.FabChanger
 import ru.sarawan.android.databinding.FragmentMainBinding
-import ru.sarawan.android.framework.INavigation
+import ru.sarawan.android.framework.ui.catalog.CatalogFragment
+import ru.sarawan.android.framework.ui.catalog.CatalogFragmentDirections
 import ru.sarawan.android.framework.ui.category.CategoryFragment
+import ru.sarawan.android.framework.ui.category.CategoryFragmentDirections
+import ru.sarawan.android.framework.ui.main.MainFragment
 import ru.sarawan.android.framework.ui.main.MainFragmentDirections
 import ru.sarawan.android.framework.ui.main.adapter.MainRecyclerAdapter
 import ru.sarawan.android.framework.ui.main.viewHolder.ButtonMoreClickListener
@@ -41,7 +44,7 @@ import ru.sarawan.android.utils.exstentions.token
 import java.util.*
 import javax.inject.Inject
 
-abstract class BaseMainCatalogFragment : Fragment(), INavigation {
+abstract class BaseMainCatalogFragment : Fragment() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
@@ -96,8 +99,15 @@ abstract class BaseMainCatalogFragment : Fragment(), INavigation {
 
             override fun onItemClick(data: MainScreenDataModel) {
                 if (isOnline) {
-                    val action = MainFragmentDirections
-                        .actionMainFragmentToProductCardFragment(data.id ?: -1)
+                    val action = when (this@BaseMainCatalogFragment) {
+                        is MainFragment -> MainFragmentDirections
+                            .actionMainFragmentToProductCardFragment(data.id ?: -1)
+                        is CatalogFragment -> CatalogFragmentDirections
+                            .actionCatalogFragmentToProductCardFragment(data.id ?: -1)
+                        is CategoryFragment -> CategoryFragmentDirections
+                            .actionCategoryFragmentToProductCardFragment(data.id ?: -1)
+                        else -> throw RuntimeException("Wrong fragment $this")
+                    }
                     findNavController().navigate(action)
                 } else handleNetworkErrorWithToast()
             }
@@ -114,10 +124,9 @@ abstract class BaseMainCatalogFragment : Fragment(), INavigation {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentMainBinding.inflate(inflater, container, false)
-        return binding.root
-    }
+    ): View = FragmentMainBinding.inflate(inflater, container, false)
+        .also { _binding = it }
+        .root
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -332,10 +341,6 @@ abstract class BaseMainCatalogFragment : Fragment(), INavigation {
     override fun onDetach() {
         fabChanger = null
         super.onDetach()
-    }
-
-    override fun onFragmentBackStack() {
-        findNavController().popBackStack()
     }
 
     companion object {
