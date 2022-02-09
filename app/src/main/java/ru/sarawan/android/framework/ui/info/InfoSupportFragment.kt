@@ -7,9 +7,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import ru.sarawan.android.databinding.FragmentInfoSupportBinding
-import ru.sarawan.android.framework.INavigation
 
-class InfoSupportFragment : Fragment(), INavigation {
+class InfoSupportFragment : Fragment() {
 
     private var _binding: FragmentInfoSupportBinding? = null
     private val binding get() = _binding!!
@@ -28,17 +27,11 @@ class InfoSupportFragment : Fragment(), INavigation {
     }
 
     private fun initViews() = with(binding) {
-        infoSupportBackButton.setOnClickListener { onFragmentBackStack() }
+        infoSupportBackButton.setOnClickListener { findNavController().popBackStack() }
     }
 
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
     }
-
-    override fun onFragmentBackStack() {
-        findNavController().popBackStack()
-    }
-
-    override fun onFragmentNext() = Unit
 }
