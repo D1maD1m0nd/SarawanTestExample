@@ -25,7 +25,7 @@ class NetworkModule {
 
     @Provides
     fun moshi(): Moshi {
-        return  Moshi.Builder().add(LENIENT_FACTORY).build()
+        return Moshi.Builder().add(LENIENT_FACTORY).build()
     }
 
     @Provides
@@ -46,11 +46,12 @@ class NetworkModule {
         }
         return httpClient.build()
     }
-    @Provides
-    fun getMoshiCustomAdapter(moshi : Moshi) : MoshiCustomAdapter = MoshiCustomAdapter(moshi)
 
     @Provides
-    fun getRetrofit(httpClient: OkHttpClient,moshi : Moshi): Retrofit = Retrofit.Builder()
+    fun getMoshiCustomAdapter(moshi: Moshi): MoshiCustomAdapter = MoshiCustomAdapter(moshi)
+
+    @Provides
+    fun getRetrofit(httpClient: OkHttpClient, moshi: Moshi): Retrofit = Retrofit.Builder()
         .baseUrl(BASE_URL)
         .addConverterFactory(MoshiConverterFactory.create(moshi))
         .addCallAdapterFactory(RxJava3CallAdapterFactory.create())

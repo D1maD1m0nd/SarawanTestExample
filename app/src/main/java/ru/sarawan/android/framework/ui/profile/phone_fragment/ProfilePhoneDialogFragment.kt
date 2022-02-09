@@ -81,7 +81,9 @@ class ProfilePhoneDialogFragment : DialogFragment() {
         profilePhoneMaskedEditText.doOnTextChanged { text, _, _, _ ->
             text?.let {
                 val number = phoneNumberWithoutMask(it.toString())
-                if (number.length == 12) { hideKeyboard() }
+                if (number.length == 12) {
+                    hideKeyboard()
+                }
             }
         }
 
@@ -102,15 +104,17 @@ class ProfilePhoneDialogFragment : DialogFragment() {
     }
 
     private fun initAgreementTextView() = with(binding) {
+        val start = 0
+        val end = 38
         val spannable = SpannableString(getString(R.string.profile_phone_user_agreement))
         spannable.setSpan(
             ForegroundColorSpan(Color.BLACK),
-            0, 38,
+            start, end,
             Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
         )
         spannable.setSpan(
             UnderlineSpan(),
-            38, spannable.length,
+            end, spannable.length,
             Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
         )
         profilePhoneAgreementTextView.text = spannable
@@ -122,14 +126,15 @@ class ProfilePhoneDialogFragment : DialogFragment() {
     }
 
     private fun showAgreement() = Toast
-        .makeText(context, "Показать пользовательское соглашение!", Toast.LENGTH_SHORT).show()
+        .makeText(context, getString(R.string.show_user_reference), Toast.LENGTH_SHORT).show()
 
     private fun sendCode() {
         val number = getFormatNumber()
         if (number.length == 12) {
             val user = UserRegistration(phoneNumber = number)
             viewModel.sendSms(user)
-        } else Toast.makeText(context, "Номер не корректный", Toast.LENGTH_SHORT).show()
+        } else Toast.makeText(context, getString(R.string.incorrect_number), Toast.LENGTH_SHORT)
+            .show()
     }
 
     private fun getFormatNumber(): String {
@@ -137,12 +142,7 @@ class ProfilePhoneDialogFragment : DialogFragment() {
         return phoneNumberWithoutMask(number)
     }
 
-    private fun phoneNumberWithoutMask(number: String) = number
-        .replace("(", "")
-        .replace(")", "")
-        .replace("_", "")
-        .replace("-", "")
-        .replace(" ", "")
+    private fun phoneNumberWithoutMask(number: String) = "+"+number.replace(Regex("\\D"), "")
 
     private fun setState(appState: AppState<*>) {
         when (appState) {
@@ -164,7 +164,7 @@ class ProfilePhoneDialogFragment : DialogFragment() {
             is AppState.Error -> {
                 Toast.makeText(
                     context,
-                    "При отправке смс кода произошла ошибка, повторите попытку позднее",
+                    getString(R.string.smd_send_error),
                     Toast.LENGTH_SHORT
                 ).show()
             }

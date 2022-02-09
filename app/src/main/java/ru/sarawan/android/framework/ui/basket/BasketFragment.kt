@@ -138,8 +138,8 @@ class BasketFragment : Fragment() {
             is AppState.Success<*> -> {
                 val data = appState.data
                 if (data.isNotEmpty()) {
-                    when (val item  = data.first()) {
-                        is BasketResponse ->{
+                    when (val item = data.first()) {
+                        is BasketResponse -> {
                             viewModel.calculateOrder()
                         }
                         is ProductsItem -> {
@@ -249,7 +249,7 @@ class BasketFragment : Fragment() {
         adapter.updateHolders()
     }
 
-    private fun recalculateData(order : Order) {
+    private fun recalculateData(order: Order) {
         val items: List<ProductsItem> = list.filterIsInstance<ProductsItem>()
         if (items.isNotEmpty()) {
             setFooterData(order)

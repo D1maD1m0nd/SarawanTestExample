@@ -4,29 +4,29 @@ import com.squareup.moshi.Json
 
 data class UserDataModel(
 
-	@field:Json(name="birthday")
-	val birthday: String = "",
+    @field:Json(name = "birthday")
+    val birthday: String = "",
 
-	@field:Json(name="phone")
-	val phone: String = "",
+    @field:Json(name = "phone")
+    val phone: String = "",
 
-	@field:Json(name="last_name")
-	val lastName: String = "",
+    @field:Json(name = "last_name")
+    val lastName: String = "",
 
-	@field:Json(name="id")
-	val id: Long = 0,
+    @field:Json(name = "id")
+    val id: Long = 0,
 
-	@field:Json(name="first_name")
-	val firstName: String = "",
+    @field:Json(name = "first_name")
+    val firstName: String = "",
 
-	@field:Json(name="email")
-	val email: String = "",
+    @field:Json(name = "email")
+    val email: String = "",
 
-	@field:Json(name="status")
-	val status: String = "",
+    @field:Json(name = "status")
+    val status: String = "",
 
-	@field:Json(name="basket")
-	val basket: Basket? = null,
+    @field:Json(name = "basket")
+    val basket: Basket? = null,
 )
 
 data class UserRegistration(
@@ -35,11 +35,11 @@ data class UserRegistration(
     @field:Json(name = "success")
     val success: Boolean = false,
     @field:Json(name = "error")
-    val error : String = "",
+    val error: String = "",
     @field:Json(name = "token")
-    val token : String = "",
+    val token: String = "",
     @field:Json(name = "user_id")
-    val userId : Long = 0,
-	@field:Json(name = "code")
-	val code : String = ""
+    val userId: Long = 0,
+    @field:Json(name = "code")
+    val code: String = ""
 )

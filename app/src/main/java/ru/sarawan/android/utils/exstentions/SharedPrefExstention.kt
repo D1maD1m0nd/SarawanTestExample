@@ -20,7 +20,7 @@ var SharedPreferences.userId: Long?
         }
     }
 
-var SharedPreferences.basketId:Int?
+var SharedPreferences.basketId: Int?
     get() = this.getInt("basketId", UNREGISTERED.toInt())
     set(value) {
         if (value != null) {

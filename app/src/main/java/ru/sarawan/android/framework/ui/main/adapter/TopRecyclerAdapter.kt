@@ -9,7 +9,6 @@ import ru.sarawan.android.databinding.ListItemCardBinding
 import ru.sarawan.android.framework.ui.base.mainCatalog.BaseMainCatalogAdapter
 import ru.sarawan.android.framework.ui.main.viewHolder.CardItemViewHolder
 import ru.sarawan.android.model.data.MainScreenDataModel
-import ru.sarawan.android.model.data.Product
 
 class TopRecyclerAdapter(
     private var onListItemClickListener: BaseMainCatalogAdapter.OnListItemClickListener,

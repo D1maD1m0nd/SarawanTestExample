@@ -103,9 +103,9 @@ class ProfileNameDialogFragment : DialogFragment() {
     }
 
     private fun hideKeyboard() = if (keyboardShown) {
-            inputMethodManager?.hideSoftInputFromWindow(binding.profileNameRootView.windowToken, 0)
-            keyboardShown = false
-        } else Unit
+        inputMethodManager?.hideSoftInputFromWindow(binding.profileNameRootView.windowToken, 0)
+        keyboardShown = false
+    } else Unit
 
     private fun setState(appState: AppState<*>) {
         when (appState) {

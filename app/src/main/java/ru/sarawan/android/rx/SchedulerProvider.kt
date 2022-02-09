@@ -8,4 +8,6 @@ class SchedulerProvider : ISchedulerProvider {
 
     override val ui: Scheduler = AndroidSchedulers.mainThread()
     override val io: Scheduler = Schedulers.io()
+    override val computation: Scheduler = Schedulers.computation()
+
 }

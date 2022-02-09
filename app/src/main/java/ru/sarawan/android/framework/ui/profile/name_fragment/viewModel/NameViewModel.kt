@@ -12,13 +12,13 @@ class NameViewModel @Inject constructor(
     private val interactor: MainInteractor,
     private val schedulerProvider: ISchedulerProvider
 ) : BaseViewModel<AppState<*>>() {
-    fun updateUser(user : UserDataModel, id : Long) {
+    fun updateUser(user: UserDataModel, id: Long) {
         compositeDisposable.add(
             interactor.getData(Query.Put.Users.Update(id, user), true)
                 .subscribeOn(schedulerProvider.io)
                 .observeOn(schedulerProvider.ui)
                 .subscribe(
-                    {stateLiveData.postValue(AppState.Success(it))},
+                    { stateLiveData.postValue(AppState.Success(it)) },
                     { stateLiveData.postValue(AppState.Error(it)) })
         )
     }

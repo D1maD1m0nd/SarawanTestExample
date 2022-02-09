@@ -8,8 +8,8 @@ import ru.sarawan.android.model.data.MainScreenDataModel
 import ru.sarawan.android.model.data.Query
 import ru.sarawan.android.model.data.toMainScreenDataModel
 import ru.sarawan.android.rx.ISchedulerProvider
-import ru.sarawan.android.utils.SortBy
 import ru.sarawan.android.utils.StringProvider
+import ru.sarawan.android.utils.constants.SortBy
 import javax.inject.Inject
 
 class CategoryViewModel @Inject constructor(
@@ -24,8 +24,16 @@ class CategoryViewModel @Inject constructor(
 
     override fun getMoreData(isOnline: Boolean, isLoggedUser: Boolean) {
         (if (category == CategoryFragment.DISCOUNT) {
-            loadMoreData(isOnline, Query.Get.Products.DiscountProducts(sortBy = this.sortType), isLoggedUser)
-        } else loadMoreData(isOnline, Query.Get.Products.ProductCategory(category, sortBy = this.sortType), isLoggedUser))
+            loadMoreData(
+                isOnline,
+                Query.Get.Products.DiscountProducts(sortBy = this.sortType),
+                isLoggedUser
+            )
+        } else loadMoreData(
+            isOnline,
+            Query.Get.Products.ProductCategory(category, sortBy = this.sortType),
+            isLoggedUser
+        ))
             .subscribeOn(schedulerProvider.io)
             .observeOn(schedulerProvider.io)
             .subscribe(
@@ -44,7 +52,7 @@ class CategoryViewModel @Inject constructor(
             )
     }
 
-    fun changeSorting(category: Int, isOnline: Boolean, sortType: SortBy, isLoggedUser: Boolean){
+    fun changeSorting(category: Int, isOnline: Boolean, sortType: SortBy, isLoggedUser: Boolean) {
         stateLiveData.value = AppState.Loading
         lastPage = 1
         this.category = category

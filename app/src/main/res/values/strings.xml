@@ -125,4 +125,7 @@
     <string name="assembly">В сборке</string>
     <string name="assambled">Собран</string>
     <string name="handed_courier">Передан курьеру</string>
+    <string name="smd_send_error">При отправке смс кода произошла ошибка, повторите попытку позднее</string>
+    <string name="incorrect_number">Номер не корректный</string>
+    <string name="show_user_reference">Показать пользовательское соглашение!</string>
 </resources>

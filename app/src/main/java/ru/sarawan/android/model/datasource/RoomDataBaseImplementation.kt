@@ -38,7 +38,7 @@ class RoomDataBaseImplementation @Inject constructor(
                             db.basketDao.deleteById(query.id.toLong())
                             listOf(BasketResponse(-1))
                         }
-                        Query.Delete.Basket.Clear ->  {
+                        Query.Delete.Basket.Clear -> {
                             db.basketDao.deleteAll()
                             listOf(BasketResponse(-1))
                         }
@@ -54,7 +54,9 @@ class RoomDataBaseImplementation @Inject constructor(
                 }
                 is Query.Put -> when (query) {
                     is Query.Put.Basket.Update -> {
-                        if (query.products.products.first().quantity == 0) db.basketDao.deleteById(query.products.products.first().id ?: -1)
+                        if (query.products.products.first().quantity == 0) db.basketDao.deleteById(
+                            query.products.products.first().id ?: -1
+                        )
                         else db.basketDao.insert(query.products.products.first().toRoomDataModel())
                         listOf(BasketResponse(-1))
                     }

@@ -33,20 +33,20 @@ abstract class FragmentModule {
     abstract fun contributeProfileFragment(): ProfileFragment
 
     @ContributesAndroidInjector
-    abstract fun contributeProfilePhoneFragment() : ProfilePhoneDialogFragment
+    abstract fun contributeProfilePhoneFragment(): ProfilePhoneDialogFragment
 
     @ContributesAndroidInjector
-    abstract fun contributeProfileCodeFragment() : ProfileCodeDialogFragment
+    abstract fun contributeProfileCodeFragment(): ProfileCodeDialogFragment
 
     @ContributesAndroidInjector
-    abstract fun contributeProfileAddressFragment() : ProfileAddressDialogFragment
+    abstract fun contributeProfileAddressFragment(): ProfileAddressDialogFragment
 
     @ContributesAndroidInjector
-    abstract fun contributeProfileNameFragment() : ProfileNameDialogFragment
+    abstract fun contributeProfileNameFragment(): ProfileNameDialogFragment
 
     @ContributesAndroidInjector
-    abstract fun contributeCategoryFragment() : CategoryFragment
+    abstract fun contributeCategoryFragment(): CategoryFragment
 
     @ContributesAndroidInjector
-    abstract fun contributeOrderFragment() : OrderFragment
+    abstract fun contributeOrderFragment(): OrderFragment
 }

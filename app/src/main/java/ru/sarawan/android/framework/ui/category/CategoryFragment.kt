@@ -13,7 +13,7 @@ import ru.sarawan.android.framework.ui.category.spinnerAdapter.CustomSpinnerAdap
 import ru.sarawan.android.framework.ui.category.viewModel.CategoryViewModel
 import ru.sarawan.android.model.data.AppState
 import ru.sarawan.android.model.data.MainScreenDataModel
-import ru.sarawan.android.utils.SortBy
+import ru.sarawan.android.utils.constants.SortBy
 import ru.sarawan.android.utils.exstentions.token
 
 class CategoryFragment : BaseMainCatalogFragment() {

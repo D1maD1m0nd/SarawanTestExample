@@ -89,10 +89,13 @@ class OrderFragment : Fragment() {
                 val data = state.data
                 if (data.isNotEmpty()) {
                     when (val item = data.first()) {
+                        is String -> {
+                            binding.addressButton.text = item
+                        }
                         is AddressItem -> {
                             addressItem = AddressItem(idAddressOrder = item.id)
                             addressItem?.let { viewModel.getOrder(it) }
-                            binding.addressButton.text = formatAddress(item)
+                            viewModel.getFormatAddress(item)
                         }
 
                         is Order -> {
@@ -129,14 +132,6 @@ class OrderFragment : Fragment() {
 
             is AppState.Empty -> Unit
         }
-    }
-
-    private fun formatAddress(address: AddressItem): String {
-        val city = address.city
-        val street = address.street
-        val house = address.house
-        val roomNum = address.roomNumber
-        return "$city, ул $street, д $house, кв $roomNum"
     }
 
     private fun setOrderData(order: Order) = with(binding) {

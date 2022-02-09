@@ -18,16 +18,16 @@ class BasketViewModel @Inject constructor(
 
     private var basketID: Int? = null
 
-    private var products : List<ProductsItem> = mutableListOf()
+    private var products: List<ProductsItem> = mutableListOf()
 
     fun calculateOrder() {
         basketInteractor
             .calculateOrder(products)
-            .subscribeOn(schedulerProvider.io)
+            .subscribeOn(schedulerProvider.computation)
             .observeOn(schedulerProvider.ui)
             .subscribe(
-                { stateLiveData.value = AppState.Success(listOf(it))},
-                {stateLiveData.value = AppState.Error(it)})
+                { stateLiveData.value = AppState.Success(listOf(it)) },
+                { stateLiveData.value = AppState.Error(it) })
     }
 
 
@@ -35,11 +35,12 @@ class BasketViewModel @Inject constructor(
         compositeDisposable.add(
             interactor.getData(Query.Get.Basket, isLoggedUser)
                 .map {
-                    if(it.isNotEmpty()) {
+                    if (it.isNotEmpty()) {
                         val basket = it.first() as Basket
                         basket.products?.map { item ->
-                            var info : ProductInformation? = null
-                            val json = item.basketProduct?.basketProduct?.information?.productInformation
+                            var info: ProductInformation? = null
+                            val json =
+                                item.basketProduct?.basketProduct?.information?.productInformation
                             json?.let { newJson ->
                                 info = moshiCustomAdapter.infoFromJson(newJson)
                             }
@@ -64,8 +65,8 @@ class BasketViewModel @Inject constructor(
                     .subscribeOn(schedulerProvider.io)
                     .observeOn(schedulerProvider.ui)
                     .subscribe(
-                        {stateLiveData.value = AppState.Empty},
-                        {stateLiveData.value = AppState.Empty}),
+                        { stateLiveData.value = AppState.Empty },
+                        { stateLiveData.value = AppState.Empty }),
             )
         }
         if (basketID == null) stateLiveData.value =
@@ -79,8 +80,8 @@ class BasketViewModel @Inject constructor(
                     .subscribeOn(schedulerProvider.io)
                     .observeOn(schedulerProvider.ui)
                     .subscribe(
-                        {stateLiveData.value = AppState.Success(it)},
-                        {stateLiveData.value = AppState.Success(emptyList<ProductsItem>())})
+                        { stateLiveData.value = AppState.Success(it) },
+                        { stateLiveData.value = AppState.Success(emptyList<ProductsItem>()) })
             )
         }
         if (basketID == null) stateLiveData.value =
@@ -93,7 +94,7 @@ class BasketViewModel @Inject constructor(
                 .subscribeOn(schedulerProvider.io)
                 .observeOn(schedulerProvider.ui)
                 .subscribe(
-                    {stateLiveData.value = AppState.Success(it)},
+                    { stateLiveData.value = AppState.Success(it) },
                     {}),
         )
     }
@@ -103,7 +104,7 @@ class BasketViewModel @Inject constructor(
             val basket = result.first() as Basket
             basketID = basket.basketId
             val items = basket.products as List<*>
-            if(items.isEmpty()) {
+            if (items.isEmpty()) {
                 stateLiveData.postValue(AppState.Empty)
             } else {
                 products = items as List<ProductsItem>

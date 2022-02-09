@@ -22,6 +22,7 @@ import ru.sarawan.android.model.data.AddressItem
 import ru.sarawan.android.model.data.AppState
 import ru.sarawan.android.model.data.OrderApprove
 import ru.sarawan.android.model.data.UserDataModel
+import ru.sarawan.android.utils.constants.TypeCase
 import ru.sarawan.android.utils.exstentions.*
 import javax.inject.Inject
 
@@ -130,19 +131,40 @@ class ProfileFragment : Fragment() {
                                 val primaryAddress =
                                     data.findLast { it.primary } ?: data.first()
                                 primaryAddress.let {
-                                    val address = formatAddress(it)
-                                    profileAddressTextView.text = address
+                                    viewModel.getFormatAddress(it)
                                     addressItem = it
                                 }
                             }
                         }
+                        is String -> {
+                            when (appState.case) {
+                                TypeCase.FORMAT_NAME -> {
+                                    profileNameTextView.text = firstItem
+                                }
+                                TypeCase.FORMAT_PHONE -> {
+                                    profilePhoneTextView.text = firstItem
+                                }
+                                TypeCase.DEFAULT -> {}
+                                TypeCase.ADDRESS -> {
+                                    profileAddressTextView.text = firstItem
+                                }
+                            }
+
+                        }
                         is UserDataModel -> {
-                            if (sharedPreferences.basketId == UNREGISTERED.toInt())
+                            if (sharedPreferences.basketId == UNREGISTERED.toInt()) {
                                 sharedPreferences.basketId = firstItem.basket?.basketId
-                            profilePhoneTextView.text = formatPhone(firstItem.phone)
-                            val name = formatName(firstItem)
-                            profileNameTextView.text = name
+                            }
+                            viewModel.getFormatPhone(
+                                firstItem.phone,
+                                getString(R.string.profile_phone_mask)
+                            )
+                            viewModel.getFormatName(
+                                firstItem,
+                                getString(R.string.profile_add_name)
+                            )
                             user = firstItem
+
                         }
 
                         is OrderApprove -> {
@@ -156,7 +178,7 @@ class ProfileFragment : Fragment() {
             is AppState.Error -> {
                 Toast.makeText(
                     context,
-                    "При отправке смс кода произошла ошибка, повторите попытку позднее",
+                    getText(R.string.smd_send_error),
                     Toast.LENGTH_SHORT
                 ).show()
             }
@@ -169,37 +191,6 @@ class ProfileFragment : Fragment() {
         activeOrdersRcView.adapter = adapter
         activeOrdersRcView.itemAnimator?.changeDuration = 0
         adapter.setOrder(orders)
-    }
-
-    private fun formatPhone(number: String?): String =
-        number?.let {
-            var index = 0
-            getString(R.string.profile_phone_mask)
-                .asSequence()
-                .map { c ->
-                    if (index < number.length) {
-                        val cc = number[index]
-                        if (cc == c || c == '9') {
-                            index++
-                            cc
-                        } else c
-                    } else c
-                }.joinToString("")
-        }.orEmpty()
-
-    private fun formatAddress(address: AddressItem): String {
-        val city = address.city
-        val street = address.street
-        val house = address.house
-        val roomNum = address.roomNumber
-        return "$city, ул $street, д $house, кв $roomNum"
-    }
-
-    private fun formatName(user: UserDataModel): String {
-        val firstName = user.firstName
-        val lastName = user.lastName
-        val fullName = "$firstName $lastName".trim()
-        return fullName.ifEmpty { getString(R.string.profile_add_name) }
     }
 
     private fun cancelOrder(pos: Int) {

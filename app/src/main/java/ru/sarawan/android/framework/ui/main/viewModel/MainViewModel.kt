@@ -6,8 +6,8 @@ import ru.sarawan.android.framework.ui.base.mainCatalog.BaseMainCatalogViewModel
 import ru.sarawan.android.framework.ui.base.mainCatalog.CardType
 import ru.sarawan.android.model.data.*
 import ru.sarawan.android.rx.ISchedulerProvider
-import ru.sarawan.android.utils.SortBy
 import ru.sarawan.android.utils.StringProvider
+import ru.sarawan.android.utils.constants.SortBy
 import javax.inject.Inject
 
 class MainViewModel @Inject constructor(

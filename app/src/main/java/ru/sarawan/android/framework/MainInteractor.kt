@@ -1,6 +1,7 @@
 package ru.sarawan.android.framework
 
 import io.reactivex.rxjava3.core.Single
+import ru.sarawan.android.model.data.AddressItem
 import ru.sarawan.android.model.data.Query
 import ru.sarawan.android.model.datasource.DataSource
 import javax.inject.Inject
@@ -19,5 +20,14 @@ class MainInteractor @Inject constructor(
         } else {
             localRepository.getData(query)
         }
+    }
+
+    override fun formatAddress(address: AddressItem): Single<String> {
+        val city = address.city
+        val street = address.street
+        val house = address.house
+        val roomNum = address.roomNumber
+        var result = "$city, ул $street, д $house, кв $roomNum"
+        return Single.just(result)
     }
 }

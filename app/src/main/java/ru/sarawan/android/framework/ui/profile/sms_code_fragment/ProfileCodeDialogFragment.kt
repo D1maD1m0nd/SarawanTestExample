@@ -150,8 +150,6 @@ class ProfileCodeDialogFragment : DialogFragment() {
                             hideKeyboard()
                         } else {
                             profileCodeEdits[currentIndex + 1].requestFocus()
-                            //это почему-то ее прячет, работает, когда заремлено
-                            //showKeyboard()
                         }
                     }
                 }
@@ -192,12 +190,7 @@ class ProfileCodeDialogFragment : DialogFragment() {
     private fun concatCode() = StringBuilder()
         .also { profileCodeEdits.forEach { tv -> it.append(tv.text.toString()) } }.toString()
 
-    private fun getFormatNumber(): String = args.number
-        .replace("(", "")
-        .replace(")", "")
-        .replace("_", "")
-        .replace("-", "")
-        .replace(" ", "")
+    private fun getFormatNumber(): String = "+" + args.number.replace(Regex("\\D"), "")
 
     private fun updateTimerText(time: String) = with(binding) {
         val text = getString(R.string.profile_code_re_request_code_in) + " $time"

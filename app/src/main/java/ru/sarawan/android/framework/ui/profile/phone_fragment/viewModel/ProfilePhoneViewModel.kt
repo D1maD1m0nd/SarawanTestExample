@@ -12,15 +12,15 @@ class ProfilePhoneViewModel @Inject constructor(
     private val interactor: MainInteractor,
     private val schedulerProvider: ISchedulerProvider
 ) : BaseViewModel<AppState<*>>() {
-    fun sendSms(user : UserRegistration) {
-            compositeDisposable.addAll(
-                interactor.getData(Query.Post.User.Sms(user), true)
-                    .subscribeOn(schedulerProvider.io)
-                    .observeOn(schedulerProvider.ui)
-                    .subscribe(
-                        {stateLiveData.postValue(AppState.Success(it))},
-                        { stateLiveData.postValue(AppState.Error(it)) }),
-            )
+    fun sendSms(user: UserRegistration) {
+        compositeDisposable.addAll(
+            interactor.getData(Query.Post.User.Sms(user), true)
+                .subscribeOn(schedulerProvider.io)
+                .observeOn(schedulerProvider.ui)
+                .subscribe(
+                    { stateLiveData.value = AppState.Success(it) },
+                    { stateLiveData.value = AppState.Error(it) }),
+        )
     }
 
 }
