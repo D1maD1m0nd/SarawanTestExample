@@ -8,7 +8,7 @@
     android:orientation="vertical"
     tools:context=".framework.ui.profile.ProfileFragment">
 
-    <androidx.appcompat.widget.AppCompatTextView
+    <com.google.android.material.textview.MaterialTextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
@@ -34,7 +34,7 @@
                 android:layout_marginEnd="5dp"
                 android:orientation="horizontal">
 
-                <androidx.appcompat.widget.AppCompatTextView
+                <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/profile_name_text_view"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -65,7 +65,7 @@
                 android:layout_marginEnd="5dp"
                 android:orientation="horizontal">
 
-                <androidx.appcompat.widget.AppCompatTextView
+                <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/profile_phone_text_view"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -97,7 +97,7 @@
                 android:layout_marginEnd="5dp"
                 android:orientation="horizontal">
 
-                <androidx.appcompat.widget.AppCompatTextView
+                <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/profile_address_text_view"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
