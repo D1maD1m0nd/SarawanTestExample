@@ -2,28 +2,29 @@ package ru.sarawan.android.framework.ui.profile.address_fragment.interactor
 
 import io.reactivex.rxjava3.core.Single
 import ru.sarawan.android.model.data.AddressItem
+import ru.sarawan.android.utils.constants.AddressState
 
 class AddressInteractor : IAddressInteractor {
-    override fun validateAddress(addressItem: AddressItem) : Single<String> {
+    override fun validateAddress(addressItem: AddressItem) : Single<AddressState> {
         val city  = addressItem.city
         val street = addressItem.street
         val house = addressItem.house
         val roomNumber = addressItem.roomNumber
-        val message = when {
+        val state = when {
             city.isEmpty() -> {
-                "Город не заполнен"
+                AddressState.CITY
             }
             street.isEmpty() -> {
-                "Улица не заполнен"
+                AddressState.STREET
             }
             house.isEmpty() -> {
-                "Дом не заполнен"
+                AddressState.HOUSE
             }
             roomNumber.isEmpty() -> {
-                "Номер не заполнен"
+                AddressState.NUMBER
             }
-            else -> {""}
+            else -> {AddressState.VALID}
         }
-        return Single.just(message)
+        return Single.just(state)
     }
 }

@@ -23,6 +23,7 @@ class ProfileAddressViewModel @Inject constructor(
                 .subscribe(
                     { stateLiveData.value = AppState.Success(it) },
                     { stateLiveData.value = AppState.Error(it) })
+
         )
     }
 
