@@ -63,7 +63,7 @@ class ProfileViewModel @Inject constructor(
 
     fun getFormatPhone(number: String, mask: String) {
         profileInteractor.formatPhone(number, mask)
-            .subscribeOn(schedulerProvider.computation)
+            .subscribeOn(schedulerProvider.io)
             .observeOn(schedulerProvider.ui)
             .subscribe(
                 { stateLiveData.value = AppState.Success(listOf(it), TypeCase.FORMAT_PHONE) },

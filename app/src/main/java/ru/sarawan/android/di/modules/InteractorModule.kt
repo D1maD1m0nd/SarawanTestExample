@@ -5,6 +5,8 @@ import dagger.Provides
 import ru.sarawan.android.framework.MainInteractor
 import ru.sarawan.android.framework.ui.basket.interactor.BasketInteractor
 import ru.sarawan.android.framework.ui.basket.interactor.IBasketInteractor
+import ru.sarawan.android.framework.ui.profile.address_fragment.interactor.AddressInteractor
+import ru.sarawan.android.framework.ui.profile.address_fragment.interactor.IAddressInteractor
 import ru.sarawan.android.framework.ui.profile.interactor.IProfileInteractor
 import ru.sarawan.android.framework.ui.profile.interactor.ProfileInteractor
 import ru.sarawan.android.model.datasource.DataSource
@@ -30,5 +32,10 @@ class InteractorModule {
     @Provides
     fun provideProfileInteractor(): IProfileInteractor {
         return ProfileInteractor()
+    }
+
+    @Provides
+    fun provideAddressInteractor(): IAddressInteractor {
+        return AddressInteractor()
     }
 }

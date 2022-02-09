@@ -92,7 +92,7 @@ class ProfileAddressDialogFragment : DialogFragment() {
             findNavController().navigateUp()
         }
 
-        profileAddressSaveButton.setOnClickListener { saveData() }
+        profileAddressSaveButton.setOnClickListener { onSaved() }
         profileAddressCityTextView.setOnClickListener { showAlert() }
 
         profileAddressStreetEditText.requestFocus()
@@ -105,7 +105,10 @@ class ProfileAddressDialogFragment : DialogFragment() {
             .actionProfileAddressDialogFragmentToProfileAlertDialogFragment()
         findNavController().navigate(action)
     }
-
+    private fun onSaved() {
+        val address = getAddress()
+        viewModel.validateAddress(address)
+    }
     private fun saveData() {
         val address = getAddress()
         viewModel.createAddress(address)
@@ -130,10 +133,26 @@ class ProfileAddressDialogFragment : DialogFragment() {
     private fun setState(appState: AppState<*>) {
         when (appState) {
             is AppState.Success<*> -> {
-                Toast.makeText(context, "Сохранение прошло успешно", Toast.LENGTH_SHORT).show()
-                hideKeyboard()
-                isSaveSuccess = true
-                findNavController().navigateUp()
+                if(appState.data.isNotEmpty()) {
+                    when(val item = appState.data.firstOrNull()) {
+                        is AddressItem -> {
+                            Toast.makeText(context, "Сохранение прошло успешно", Toast.LENGTH_SHORT).show()
+                            hideKeyboard()
+                            isSaveSuccess = true
+                            findNavController().navigateUp()
+                        }
+
+                        is String -> {
+                            if(item.isNotEmpty()) {
+                                Toast.makeText(context, item, Toast.LENGTH_SHORT).show()
+                            } else {
+                                saveData()
+                            }
+                        }
+
+                    }
+                }
+
             }
 
             is AppState.Error -> {
