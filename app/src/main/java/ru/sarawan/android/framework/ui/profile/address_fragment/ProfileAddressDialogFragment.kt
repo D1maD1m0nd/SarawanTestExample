@@ -16,7 +16,9 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import dagger.android.support.AndroidSupportInjection
 import retrofit2.HttpException
+import ru.sarawan.android.R
 import ru.sarawan.android.databinding.FragmentProfileAddressDialogBinding
+import ru.sarawan.android.utils.constants.AddressState
 import ru.sarawan.android.framework.ui.profile.address_fragment.viewModel.ProfileAddressViewModel
 import ru.sarawan.android.model.data.AddressItem
 import ru.sarawan.android.model.data.AppState
@@ -109,6 +111,20 @@ class ProfileAddressDialogFragment : DialogFragment() {
         val address = getAddress()
         viewModel.validateAddress(address)
     }
+    private fun setError(error : AddressState) = with(binding) {
+        when(error) {
+            AddressState.STREET -> {
+                profileAddressStreetEditText.error = getString(R.string.street_empty)
+            }
+            AddressState.HOUSE -> {
+                profileAddressHouseEditText.error = getString(R.string.house_empty)
+            }
+            AddressState.NUMBER -> {
+                profileAddressApartmentEditText.error = getString(R.string.room_number_empty)
+            }
+            else -> {}
+        }
+    }
     private fun saveData() {
         val address = getAddress()
         viewModel.createAddress(address)
@@ -136,15 +152,15 @@ class ProfileAddressDialogFragment : DialogFragment() {
                 if(appState.data.isNotEmpty()) {
                     when(val item = appState.data.firstOrNull()) {
                         is AddressItem -> {
-                            Toast.makeText(context, "Сохранение прошло успешно", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, getString(R.string.save_success), Toast.LENGTH_SHORT).show()
                             hideKeyboard()
                             isSaveSuccess = true
                             findNavController().navigateUp()
                         }
 
-                        is String -> {
-                            if(item.isNotEmpty()) {
-                                Toast.makeText(context, item, Toast.LENGTH_SHORT).show()
+                        is AddressState -> {
+                            if(item != AddressState.VALID) {
+                                setError(item)
                             } else {
                                 saveData()
                             }

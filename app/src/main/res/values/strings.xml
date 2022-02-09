@@ -128,4 +128,8 @@
     <string name="smd_send_error">При отправке смс кода произошла ошибка, повторите попытку позднее</string>
     <string name="incorrect_number">Номер не корректный</string>
     <string name="show_user_reference">Показать пользовательское соглашение!</string>
+    <string name="save_success">Сохранение прошло успешно</string>
+    <string name="street_empty">Улица не заполнена</string>
+    <string name="house_empty">Дом не заполнена</string>
+    <string name="room_number_empty">Номер квартиры не заполнена</string>
 </resources>
