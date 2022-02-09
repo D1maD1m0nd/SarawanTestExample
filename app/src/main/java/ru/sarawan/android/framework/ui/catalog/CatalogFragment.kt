@@ -122,6 +122,4 @@ class CatalogFragment : BaseMainCatalogFragment() {
             isDataLoaded = true
         }
     }
-
-    override fun onFragmentNext() = Unit
 }

@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.AdapterView
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import ru.sarawan.android.R
 import ru.sarawan.android.databinding.SpinnerDropdownViewElementBinding
@@ -35,7 +36,7 @@ class CategoryFragment : BaseMainCatalogFragment() {
         topBar.visibility = View.GONE
         searchBar.visibility = View.GONE
         barWithSpinner.visibility = View.VISIBLE
-        backButton.setOnClickListener { onFragmentBackStack() }
+        backButton.setOnClickListener { findNavController().popBackStack() }
         fragmentCaption.text = args.categoryName
     }
 
@@ -145,8 +146,6 @@ class CategoryFragment : BaseMainCatalogFragment() {
         }
         binding.loadingLayout.visibility = View.GONE
     }
-
-    override fun onFragmentNext() = Unit
 
     companion object {
         const val DISCOUNT = -1
