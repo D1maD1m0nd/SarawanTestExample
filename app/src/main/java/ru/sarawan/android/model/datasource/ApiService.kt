@@ -12,7 +12,7 @@ interface ApiService {
      */
     @GET("api/products/")
     fun search(
-        @Query("search") productName: String,
+        @Query("product_name") productName: String,
         @Query("page") page: Int
     ): Single<Response>
 
