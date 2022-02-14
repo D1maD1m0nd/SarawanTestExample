@@ -218,6 +218,10 @@
             android:name="lastName"
             app:argType="string"
             app:nullable="true" />
+        <argument
+            android:name="phone"
+            app:argType="string"
+            app:nullable="true"/>
     </dialog>
 
     <dialog

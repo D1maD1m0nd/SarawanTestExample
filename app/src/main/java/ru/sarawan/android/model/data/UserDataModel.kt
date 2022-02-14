@@ -4,9 +4,6 @@ import com.squareup.moshi.Json
 
 data class UserDataModel(
 
-    @field:Json(name = "birthday")
-    val birthday: String = "",
-
     @field:Json(name = "phone")
     val phone: String = "",
 
@@ -18,12 +15,6 @@ data class UserDataModel(
 
     @field:Json(name = "first_name")
     val firstName: String = "",
-
-    @field:Json(name = "email")
-    val email: String = "",
-
-    @field:Json(name = "status")
-    val status: String = "",
 
     @field:Json(name = "basket")
     val basket: Basket? = null,

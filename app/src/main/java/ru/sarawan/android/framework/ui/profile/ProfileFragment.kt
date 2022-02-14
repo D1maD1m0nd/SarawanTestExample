@@ -113,11 +113,15 @@ class ProfileFragment : Fragment() {
     }
 
     private fun showName() {
-        val action = ProfileFragmentDirections.actionProfileFragmentToProfileNameDialogFragment(
-            firstName = user?.firstName,
-            lastName = user?.lastName
-        )
-        findNavController().navigate(action)
+        user?.let {
+            val action = ProfileFragmentDirections.actionProfileFragmentToProfileNameDialogFragment(
+                firstName = it.firstName,
+                lastName = it.lastName,
+                phone = it.phone
+            )
+            findNavController().navigate(action)
+        }
+
     }
 
     private fun setState(appState: AppState<*>) = with(binding) {

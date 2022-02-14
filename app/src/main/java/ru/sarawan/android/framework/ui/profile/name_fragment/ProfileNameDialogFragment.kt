@@ -25,7 +25,7 @@ import ru.sarawan.android.utils.exstentions.userId
 import javax.inject.Inject
 
 class ProfileNameDialogFragment : DialogFragment() {
-
+    var phone = "";
     @Inject
     lateinit var sharedPreferences: SharedPreferences
 
@@ -73,6 +73,7 @@ class ProfileNameDialogFragment : DialogFragment() {
     private fun initViews() = with(binding) {
         args.firstName?.let { profileNameEditText.setText(it) }
         args.lastName?.let { profileLastnameEditText.setText(it) }
+        args.phone?.let { phone = it }
 
         profileNameBackButton.setOnClickListener {
             hideKeyboard()
@@ -91,7 +92,7 @@ class ProfileNameDialogFragment : DialogFragment() {
             sharedPreferences.userId?.let {
                 val firstName = profileNameEditText.text.toString()
                 val lastName = profileLastnameEditText.text.toString()
-                val user = UserDataModel(firstName = firstName, lastName = lastName)
+                val user = UserDataModel(firstName = firstName, lastName = lastName, phone = phone)
                 viewModel.updateUser(user, it)
             }
         }

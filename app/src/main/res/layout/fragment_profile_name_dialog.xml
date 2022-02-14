@@ -48,7 +48,7 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <com.google.android.material.textview.MaterialTextView
+            <androidx.appcompat.widget.AppCompatEditText
                 android:id="@+id/profile_name_edit_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
