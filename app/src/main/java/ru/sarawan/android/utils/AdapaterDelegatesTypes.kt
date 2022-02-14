@@ -1,6 +1,7 @@
 package ru.sarawan.android.utils
 
 import coil.load
+import coil.transform.CircleCropTransformation
 import com.hannesdorfmann.adapterdelegates4.dsl.adapterDelegateViewBinding
 import ru.sarawan.android.R
 import ru.sarawan.android.databinding.BasketFooterItemBinding
@@ -44,6 +45,9 @@ object AdapterDelegatesTypes {
                     productImageView.load(image) {
                         error(R.drawable.place_holder_image)
                         placeholder(R.drawable.place_holder_image)
+                        transformations(
+                            CircleCropTransformation()
+                        )
                     }
 
                     var counter = counterTextView.text.toString().toInt()
@@ -66,7 +70,7 @@ object AdapterDelegatesTypes {
                                     )
                                 }
                             } else {
-                                itemClickListener.update()
+                                itemClickListener.update(absoluteAdapterPosition)
                                 counterTextView.text = counter.toString()
                             }
                         }
