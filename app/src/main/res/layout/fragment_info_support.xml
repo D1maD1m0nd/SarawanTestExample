@@ -18,10 +18,11 @@
 
         <androidx.appcompat.widget.AppCompatImageButton
             android:id="@+id/info_support_back_button"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:layout_weight="1"
             android:background="@color/white"
+            android:contentDescription="@string/press_back_again_to_exit"
             android:paddingHorizontal="10dp"
             android:src="@drawable/arrow_back" />
 
@@ -44,7 +45,7 @@
         android:layout_gravity="center_vertical"
         android:layout_margin="20dp"
         android:fontFamily="@font/montserrat_medium"
-        android:text="@string/info_support_foo_phone"
+        android:text="@string/profile_phone_mask"
         android:textColor="@color/black"
         android:textSize="18sp" />
 
