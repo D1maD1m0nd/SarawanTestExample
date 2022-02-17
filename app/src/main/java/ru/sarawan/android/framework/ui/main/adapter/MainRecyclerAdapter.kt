@@ -19,19 +19,19 @@ import ru.sarawan.android.databinding.LoadingLayoutBinding
 import ru.sarawan.android.framework.ui.base.mainCatalog.BaseMainCatalogAdapter
 import ru.sarawan.android.framework.ui.base.mainCatalog.CardType
 import ru.sarawan.android.framework.ui.main.viewHolder.*
-import ru.sarawan.android.model.data.MainScreenDataModel
+import ru.sarawan.android.model.data.CardScreenDataModel
 import ru.sarawan.android.model.data.Product
 
 class MainRecyclerAdapter(
     private var onListItemClickListener: OnListItemClickListener,
     private val imageLoader: ImageLoader,
     private val onButtonMoreClickListener: ButtonMoreClickListener,
-    private val changeCardCallback: (MainScreenDataModel, Long) -> Unit,
+    private val changeCardCallback: (CardScreenDataModel, Long) -> Unit,
     private val hideLoadingCallback: () -> Unit
 ) : BaseMainCatalogAdapter() {
 
-    private val topData: MutableList<MainScreenDataModel> = mutableListOf()
-    private val commonData: MutableList<MainScreenDataModel> = mutableListOf()
+    private val topData: MutableList<CardScreenDataModel> = mutableListOf()
+    private val commonData: MutableList<CardScreenDataModel> = mutableListOf()
 
     private var isLoadingHidden = false
 
@@ -44,7 +44,7 @@ class MainRecyclerAdapter(
         }
     private lateinit var topCardsRecycler: RecyclerView
 
-    fun setData(data: List<MainScreenDataModel>?, isRecommended: Boolean, maxCommonData: Int) {
+    fun setData(data: List<CardScreenDataModel>?, isRecommended: Boolean, maxCommonData: Int) {
         if (data.isNullOrEmpty()) return
         setTopData(data)
         setRecommendedString(isRecommended)
@@ -63,19 +63,19 @@ class MainRecyclerAdapter(
 
     private fun setLoading() {
         if (!isLoadingHidden && displayData.none { it.cardType == CardType.LOADING.type }) displayData.add(
-            MainScreenDataModel(
+            CardScreenDataModel(
                 cardType = CardType.LOADING.type
             )
         )
     }
 
-    private fun setCommonData(data: List<MainScreenDataModel>) {
+    private fun setCommonData(data: List<CardScreenDataModel>) {
         val filteredData = data.filter { it.cardType == CardType.COMMON.type }
         commonData.addAll(filteredData)
         filteredData.forEach { setData(it) }
     }
 
-    private fun setData(data: MainScreenDataModel) {
+    private fun setData(data: CardScreenDataModel) {
         val index = if (isLoadingHidden) itemCount else itemCount - 1
         displayData.add(index, data)
         notifyItemInserted(index)
@@ -86,7 +86,7 @@ class MainRecyclerAdapter(
     private fun setRecommendedString(isRecommended: Boolean) {
         if (displayData.none { it.cardType == CardType.COMMON.type }) {
             displayData.add(
-                MainScreenDataModel(
+                CardScreenDataModel(
                     itemDescription = if (isRecommended) "Мы рекомендуем" else null,
                     fontSize = if (isRecommended) 18F else 0F,
                     backgroundColor = Color.WHITE,
@@ -101,12 +101,12 @@ class MainRecyclerAdapter(
         }
     }
 
-    private fun setTopData(data: List<MainScreenDataModel>) {
+    private fun setTopData(data: List<CardScreenDataModel>) {
         val filteredTopData = data.filter { it.cardType == CardType.TOP.type }
         if (filteredTopData.isNotEmpty()) {
             topData.addAll(filteredTopData)
             displayData.add(
-                MainScreenDataModel(
+                CardScreenDataModel(
                     itemDescription = "Выгодные предложения",
                     fontSize = 28F,
                     padding = arrayListOf(0, 32, 0, 14),
@@ -114,9 +114,9 @@ class MainRecyclerAdapter(
                     cardType = CardType.STRING.type
                 )
             )
-            displayData.add(MainScreenDataModel(cardType = CardType.TOP.type))
+            displayData.add(CardScreenDataModel(cardType = CardType.TOP.type))
             displayData.add(
-                MainScreenDataModel(
+                CardScreenDataModel(
                     itemDescription = "Посмотреть всё",
                     cardType = CardType.BUTTON.type
                 )
@@ -125,7 +125,7 @@ class MainRecyclerAdapter(
     }
 
     fun changeProduct(product: Product) {
-        val dataToRemove: MutableList<MainScreenDataModel> = mutableListOf()
+        val dataToRemove: MutableList<CardScreenDataModel> = mutableListOf()
         changeProductInCommonData(product, dataToRemove)
         dataToRemove.clear()
         changeProductInTopData(product, dataToRemove)
@@ -133,7 +133,7 @@ class MainRecyclerAdapter(
 
     private fun changeProductInTopData(
         product: Product,
-        dataToRemove: MutableList<MainScreenDataModel>
+        dataToRemove: MutableList<CardScreenDataModel>
     ) {
         topData.forEach {
             if (product.id == it.id) product.storePrices?.forEach { storePrice ->
@@ -162,7 +162,7 @@ class MainRecyclerAdapter(
 
     private fun changeProductInCommonData(
         product: Product,
-        dataToRemove: MutableList<MainScreenDataModel>
+        dataToRemove: MutableList<CardScreenDataModel>
     ) {
         commonData.forEach {
             if (product.id == it.id) product.storePrices?.forEach { storePrice ->

@@ -8,71 +8,12 @@ import ru.sarawan.android.model.data.*
 interface ApiService {
 
     /**
-     * Получение продукта по имени
+     * Получение продуктов
      */
     @GET("api/products/")
-    fun search(
-        @Query("product_name") productName: String,
-        @Query("page") page: Int
-    ): Single<Response>
-
-    /**
-     * Получение продуктов с скидкой
-     */
-    @GET("api/products/")
-    fun getDiscountProducts(
-        @Query("discount_products") discountProducts: Boolean = true,
-        @Query("page") page: Int,
-        @Query("order") order: String,
-    ): Single<Response>
-
-    /**
-     * Получение продуктов с скидкой с сортировкой по цене
-     */
-    @GET("api/products/")
-    fun getDiscountProductsByPrice(
-        @Query("discount_products") discountProducts: Boolean = true,
-        @Query("page") page: Int,
-        @Query("ordering_price") ordering_price: String,
-    ): Single<Response>
-
-    /**
-     * Получение продуктов по главной категории
-     */
-    @GET("api/products/")
-    fun getCategoryProducts(
-        @Query("sarawan_category") categoryProducts: Int,
-        @Query("page") page: Int,
-        @Query("order") order: String,
-    ): Single<Response>
-
-    /**
-     * Получение продуктов по главной категории с сортировкой по цене
-     */
-    @GET("api/products/")
-    fun getCategoryProductsByPrice(
-        @Query("sarawan_category") categoryProducts: Int,
-        @Query("page") page: Int,
-        @Query("ordering_price") ordering_price: String,
-    ): Single<Response>
-
-    /**
-     * Получение популярных продуктов
-     */
-    @GET("api/products/")
-    fun getPopularProducts(
-        @Query("popular_products") popularProducts: Boolean = true,
-        @Query("page") page: Int
-    ): Single<Response>
-
-    /**
-     * Получение похожих продуктов
-     */
-    @GET("api/products/")
-    fun getSimilarProducts(
-        @Query("similar_product") storeId: Long,
-        @Query("page") page: Int
-    ): Single<Response>
+    fun getProducts(
+        @QueryMap map:Map<String, String?>
+    ) : Single<Response>
 
     /**
      * Получение категорий
@@ -94,7 +35,7 @@ interface ApiService {
     fun getBasket(): Single<Basket>
 
     @DELETE("api/basket/")
-    fun clearBasket(): Single<Basket>
+    fun clearBasket() : Single<Basket>
 
     /**
      * Добавление продукта в корзину
@@ -106,10 +47,7 @@ interface ApiService {
      * Обновление продукта
      */
     @PUT("api/basket/{id}/")
-    fun updateBasketProduct(
-        @Path("id") id: Int,
-        @Body productItem: ProductsUpdate
-    ): Single<BasketResponse>
+    fun updateBasketProduct(@Path("id") id: Int, @Body productItem: ProductsUpdate): Single<BasketResponse>
 
     /**
      * Удаление продукта из корзины
@@ -121,59 +59,59 @@ interface ApiService {
      * Получение пользователя по id
      */
     @GET("api/user/{id}/")
-    fun getUser(@Path("id") id: Long): Single<UserDataModel>
+    fun getUser(@Path("id") id : Long) : Single<UserDataModel>
 
     /**
      * Обновление пользователя
      */
     @PUT("api/user/{id}/")
-    fun updateUser(@Path("id") id: Long, @Body user: UserDataModel): Single<UserDataModel>
+    fun updateUser(@Path("id") id : Long, @Body user : UserDataModel) : Single<UserDataModel>
 
     /**
      * Создание пользователя
      */
     @POST("users/authentication/api/get-token/")
-    fun createUser(@Body user: UserRegistration): Single<UserRegistration>
+    fun createUser(@Body user : UserRegistration) : Single<UserRegistration>
 
     /**
      * Отправка смс
      */
     @POST("users/authentication/api/sms-send/")
-    fun sendSms(@Body user: UserRegistration): Single<UserRegistration>
+    fun sendSms(@Body user : UserRegistration) : Single<UserRegistration>
 
     /**
      * Создание нового адреса
      */
     @POST("api/user_address/")
-    fun createAddress(@Body address: AddressItem): Single<AddressItem>
+    fun createAddress(@Body address : AddressItem) : Single<AddressItem>
 
     /**
      * Получение списка адресов
      */
     @GET("api/user_address/")
-    fun getAddress(): Single<MutableList<AddressItem>>
+    fun getAddress() : Single<MutableList<AddressItem>>
 
     /**
      * Расчет стоимости заказа
      */
     @POST("api/order_calculate/")
-    fun getPreCalculationOrder(@Body address: AddressItem): Single<Order>
+    fun getPreCalculationOrder(@Body address: AddressItem) : Single<Order>
 
     /**
      * Оформление заказа
      */
     @POST("api/order_approve/")
-    fun createOrder(@Body address: AddressItem): Single<OrderApprove>
+    fun createOrder(@Body address : AddressItem) : Single<OrderApprove>
 
     /**
      * Получение списка заказов
      */
     @GET("api/order/")
-    fun getOrders(): Single<List<OrderApprove>>
+    fun getOrders() : Single<List<OrderApprove>>
 
     /**
      * Удаление заказа
      */
     @DELETE("api/order/{id}/")
-    fun deleteOrder(@Path("id") id: Int): Single<OrderApprove>
+    fun deleteOrder(@Path("id") id: Int) : Single<OrderApprove>
 }

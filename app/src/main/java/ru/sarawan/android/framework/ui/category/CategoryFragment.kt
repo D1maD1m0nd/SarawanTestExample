@@ -27,6 +27,7 @@ class CategoryFragment : BaseMainCatalogFragment() {
     private var sortType: SortBy = SortBy.PRICE_ASC
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        viewModel.getStartData(isOnline, !sharedPreferences.token.isNullOrEmpty())
         setupAppBar()
         initSpinner()
         super.onViewCreated(view, savedInstanceState)
@@ -135,13 +136,14 @@ class CategoryFragment : BaseMainCatalogFragment() {
     }
 
     private fun handleSuccessResult(appState: AppState.Success<*>) {
-        val data = appState.data as List<Pair<Int, List<MainScreenDataModel>>>
-        if (data.first().second.isNullOrEmpty()) {
+        val data = (appState.data as List<MainScreenDataModel>).first()
+        fillChips(data.filters)
+        if (data.listOfElements.isNullOrEmpty()) {
             binding.emptyDataLayout.root.visibility = View.VISIBLE
         } else {
             binding.emptyDataLayout.root.visibility = View.GONE
-            maxCount = data.first().first
-            mainRecyclerAdapter?.setData(data.first().second, false, maxCount)
+            maxCount = data.maxElement
+            mainRecyclerAdapter?.setData(data.listOfElements, false, maxCount)
             isDataLoaded = true
         }
         binding.loadingLayout.visibility = View.GONE

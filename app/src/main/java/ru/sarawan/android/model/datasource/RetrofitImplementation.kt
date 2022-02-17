@@ -19,68 +19,33 @@ class RetrofitImplementation @Inject constructor(private val apiService: ApiServ
                         .map { mutableListOf(it) }
                 }
 
-                is Query.Get.Products -> when (query) {
-                    is Query.Get.Products.DiscountProducts ->
-                        when (query.sortBy) {
-                            SortBy.PRICE_ASC -> apiService.getDiscountProductsByPrice(
-                                page = query.page,
-                                ordering_price = "true"
-                            )
-                            SortBy.PRICE_DES -> apiService.getDiscountProductsByPrice(
-                                page = query.page,
-                                ordering_price = "false"
-                            )
-                            SortBy.ALPHABET -> apiService.getDiscountProducts(
-                                page = query.page,
-                                order = "name"
-                            )
-                            SortBy.DISCOUNT -> apiService.getDiscountProducts(
-                                page = query.page,
-                                order = "-discount"
-                            )
-                        }.map { mutableListOf(it) }
+                is Query.Get.Products -> {
+                    val queryMap: MutableMap<String, String?> = mutableMapOf(
+                        "page" to query.page.toString()
+                    )
+                    query.categoryFilter?.let { queryMap["sarawan_category"] = it.toString() }
+                    query.discountProduct?.let { queryMap["discount_products"] = it.toString() }
+                    query.id?.let { queryMap["id"] = it.toString() }
+                    query.popularProducts?.let { queryMap["popular_products"] = it.toString() }
+                    query.productName?.let { queryMap["product_name"] = it }
+                    query.similarProducts?.let { queryMap["similar_product"] = it.toString() }
+                    query.sortBy?.let { sorting ->
+                        when (sorting) {
+                            SortBy.PRICE_ASC -> queryMap["ordering_price"] = "true"
+                            SortBy.PRICE_DES -> queryMap["ordering_price"] = "false"
+                            SortBy.ALPHABET -> queryMap["order"] = "name"
+                            SortBy.DISCOUNT -> queryMap["order"] = "-discount"
+                        }
+                    }
 
-                    is Query.Get.Products.Id -> apiService
-                        .getProduct(query.id)
+                    apiService
+                        .getProducts(queryMap)
                         .map { mutableListOf(it) }
-
-                    is Query.Get.Products.PopularProducts -> apiService
-                        .getPopularProducts(page = query.page)
-                        .map { mutableListOf(it) }
-
-                    is Query.Get.Products.ProductName -> apiService
-                        .search(query.productName, query.page)
-                        .map { mutableListOf(it) }
-
-                    is Query.Get.Products.SimilarProducts -> apiService
-                        .getSimilarProducts(query.id, query.page)
-                        .map { it.results }
-
-                    is Query.Get.Products.ProductCategory ->
-
-                        when (query.sortBy) {
-                            SortBy.PRICE_ASC -> apiService.getCategoryProductsByPrice(
-                                categoryProducts = query.productCategory,
-                                page = query.page,
-                                ordering_price = "true"
-                            )
-                            SortBy.PRICE_DES -> apiService.getCategoryProductsByPrice(
-                                categoryProducts = query.productCategory,
-                                page = query.page,
-                                ordering_price = "false"
-                            )
-                            SortBy.ALPHABET -> apiService.getCategoryProducts(
-                                categoryProducts = query.productCategory,
-                                page = query.page,
-                                order = "name"
-                            )
-                            SortBy.DISCOUNT -> apiService.getCategoryProducts(
-                                categoryProducts = query.productCategory,
-                                page = query.page,
-                                order = "-discount"
-                            )
-                        }.map { mutableListOf(it) }
                 }
+
+                is Query.Get.ProductByID -> apiService
+                    .getProduct(query.id)
+                    .map { mutableListOf(it) }
 
                 is Query.Get.Orders -> {
                     when (query) {

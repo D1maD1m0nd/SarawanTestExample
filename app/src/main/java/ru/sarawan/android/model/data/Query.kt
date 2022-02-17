@@ -6,25 +6,18 @@ sealed interface Query {
 
     sealed interface Get : Query {
 
-        sealed interface Products : Get {
-            var page: Int
+        data class Products(
+            val id: Long? = null,
+            val productName: String? = null,
+            var page: Int = 1,
+            val discountProduct: Boolean? = null,
+            val popularProducts: Boolean? = null,
+            val similarProducts: Boolean? = null,
+            val categoryFilter: Int? = null,
+            val sortBy: SortBy? = null,
+        ) : Get
 
-            data class ProductName(val productName: String, override var page: Int = 1) : Products
-            data class ProductCategory(
-                val productCategory: Int,
-                override var page: Int = 1,
-                val sortBy: SortBy = SortBy.PRICE_ASC
-            ) : Products
-
-            data class DiscountProducts(
-                override var page: Int = 1,
-                val sortBy: SortBy = SortBy.DISCOUNT
-            ) : Products
-
-            data class PopularProducts(override var page: Int = 1) : Products
-            data class Id(val id: Long, override var page: Int = 1) : Products
-            data class SimilarProducts(val id: Long, override var page: Int = 1) : Products
-        }
+        data class ProductByID(val id: Long) : Get
 
         sealed interface Users : Get {
             data class UserData(val id: Long) : Users

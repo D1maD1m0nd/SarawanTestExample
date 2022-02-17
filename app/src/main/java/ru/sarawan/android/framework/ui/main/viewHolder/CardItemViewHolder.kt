@@ -9,7 +9,7 @@ import ru.sarawan.android.R
 import ru.sarawan.android.databinding.ListItemCardBinding
 import ru.sarawan.android.framework.ui.base.mainCatalog.BaseMainCatalogAdapter
 import ru.sarawan.android.framework.ui.main.adapter.MainRecyclerAdapter
-import ru.sarawan.android.model.data.MainScreenDataModel
+import ru.sarawan.android.model.data.CardScreenDataModel
 
 class CardItemViewHolder(
     private val binding: ListItemCardBinding,
@@ -19,7 +19,7 @@ class CardItemViewHolder(
 
     private var disposable: Disposable? = null
 
-    fun bind(data: MainScreenDataModel) {
+    fun bind(data: CardScreenDataModel) {
         if (layoutPosition != RecyclerView.NO_POSITION) {
             var quantity = data.quantity ?: 0
             data.quantity = quantity

@@ -2,11 +2,11 @@ package ru.sarawan.android.framework.ui.base.mainCatalog
 
 import android.annotation.SuppressLint
 import androidx.recyclerview.widget.RecyclerView
-import ru.sarawan.android.model.data.MainScreenDataModel
+import ru.sarawan.android.model.data.CardScreenDataModel
 
 abstract class BaseMainCatalogAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    protected val displayData: MutableList<MainScreenDataModel> = mutableListOf()
+    protected val displayData: MutableList<CardScreenDataModel> = mutableListOf()
 
     override fun getItemCount(): Int = displayData.size
 
@@ -22,13 +22,13 @@ abstract class BaseMainCatalogAdapter : RecyclerView.Adapter<RecyclerView.ViewHo
 
     interface OnListItemClickListener {
         fun onItemPriceChangeClick(
-            data: MainScreenDataModel,
+            data: CardScreenDataModel,
             diff: Int,
             isNewItem: Boolean,
             callback: (isOnline: Boolean) -> Unit
         )
 
-        fun onItemClick(data: MainScreenDataModel)
+        fun onItemClick(data: CardScreenDataModel)
     }
 }
 

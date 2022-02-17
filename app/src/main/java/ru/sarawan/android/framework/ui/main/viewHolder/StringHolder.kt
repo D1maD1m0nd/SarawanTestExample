@@ -5,14 +5,14 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textview.MaterialTextView
 import ru.sarawan.android.R
-import ru.sarawan.android.model.data.MainScreenDataModel
+import ru.sarawan.android.model.data.CardScreenDataModel
 
 class StringHolder(private val view: MaterialTextView) :
     RecyclerView.ViewHolder(view) {
 
     private val scale: Float = view.resources.displayMetrics.density
 
-    fun bind(data: MainScreenDataModel) {
+    fun bind(data: CardScreenDataModel) {
         with(view) {
             gravity = data.gravity ?: Gravity.START
             textSize = data.fontSize ?: 0F

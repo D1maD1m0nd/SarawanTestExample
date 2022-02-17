@@ -19,12 +19,11 @@ class RoomDataBaseImplementation @Inject constructor(
         return Single.fromCallable {
             when (query) {
                 is Query.Get -> when (query) {
-                    is Query.Get.Products -> when (query) {
-                        is Query.Get.Products.ProductName -> db.basketDao
-                            .getByProductName(name = query.productName)
+                    is Query.Get.Products -> query.productName?.let { productName ->
+                        db.basketDao
+                            .getByProductName(name = productName)
                             ?.map { it.toProduct() }
-                            ?.also { return@fromCallable listOf(Response(it, it.size)) }
-                        else -> throwError()
+                            ?.also { return@fromCallable listOf(Response(it, it.size, null)) }
                     }
                     Query.Get.Basket -> db.basketDao
                         .getAll()

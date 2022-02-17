@@ -3,6 +3,7 @@ package ru.sarawan.android.framework.ui.main
 import android.os.Bundle
 import android.view.View
 import ru.sarawan.android.framework.ui.base.mainCatalog.BaseMainCatalogFragment
+import ru.sarawan.android.framework.ui.base.mainCatalog.CardType
 import ru.sarawan.android.framework.ui.main.viewModel.MainViewModel
 import ru.sarawan.android.model.data.AppState
 import ru.sarawan.android.model.data.MainScreenDataModel
@@ -55,15 +56,16 @@ class MainFragment : BaseMainCatalogFragment() {
     }
 
     private fun handleSuccessResult(appState: AppState.Success<*>) {
-        val data = appState.data as List<Pair<Int, List<MainScreenDataModel>>>
-        if (data.first().second.isNullOrEmpty()) {
+        val data = (appState.data as List<MainScreenDataModel>).first()
+        if (data.listOfElements.find { it.cardType == CardType.TOP.type } == null) fillChips(data.filters)
+        if (data.listOfElements.isNullOrEmpty()) {
             binding.loadingLayout.visibility = View.GONE
             binding.emptyDataLayout.root.visibility = View.VISIBLE
         } else {
             binding.emptyDataLayout.root.visibility = View.GONE
-            maxCount = data.first().first
+            maxCount = data.maxElement
             mainRecyclerAdapter?.setData(
-                data.first().second,
+                data.listOfElements,
                 binding.searchField.editText?.text.isNullOrEmpty(),
                 maxCount
             )
