@@ -8,7 +8,7 @@ import coil.ImageLoader
 import ru.sarawan.android.databinding.ListItemCardBinding
 import ru.sarawan.android.framework.ui.base.mainCatalog.BaseMainCatalogAdapter
 import ru.sarawan.android.framework.ui.main.viewHolder.CardItemViewHolder
-import ru.sarawan.android.model.data.MainScreenDataModel
+import ru.sarawan.android.model.data.CardScreenDataModel
 
 class TopRecyclerAdapter(
     private var onListItemClickListener: BaseMainCatalogAdapter.OnListItemClickListener,
@@ -16,21 +16,21 @@ class TopRecyclerAdapter(
     private val callback: (measuredHeight: Int) -> Unit
 ) : RecyclerView.Adapter<CardItemViewHolder>() {
 
-    private val displayData: MutableList<MainScreenDataModel> = mutableListOf()
+    private val displayData: MutableList<CardScreenDataModel> = mutableListOf()
 
     @SuppressLint("NotifyDataSetChanged")
-    fun setData(data: List<MainScreenDataModel>?) {
+    fun setData(data: List<CardScreenDataModel>?) {
         displayData.clear()
         if (!data.isNullOrEmpty()) displayData.addAll(data.sortedByDescending { it.discount })
         notifyDataSetChanged()
     }
 
-    fun deleteProduct(product: MainScreenDataModel) {
+    fun deleteProduct(product: CardScreenDataModel) {
         notifyItemRemoved(displayData.indexOf(product))
         displayData.remove(product)
     }
 
-    fun changeProduct(product: MainScreenDataModel) {
+    fun changeProduct(product: CardScreenDataModel) {
         displayData.find { it.id == product.id }?.apply {
             quantity = product.quantity
         }

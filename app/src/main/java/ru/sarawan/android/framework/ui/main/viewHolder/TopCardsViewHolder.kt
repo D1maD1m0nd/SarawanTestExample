@@ -4,7 +4,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import ru.sarawan.android.R
 import ru.sarawan.android.framework.ui.main.adapter.TopRecyclerAdapter
-import ru.sarawan.android.model.data.MainScreenDataModel
+import ru.sarawan.android.model.data.CardScreenDataModel
 
 class TopCardsViewHolder(
     view: RecyclerView,
@@ -21,7 +21,7 @@ class TopCardsViewHolder(
         )
     }
 
-    fun bind(data: List<MainScreenDataModel>?) {
+    fun bind(data: List<CardScreenDataModel>?) {
         topRecyclerAdapter.setData(data)
     }
 }

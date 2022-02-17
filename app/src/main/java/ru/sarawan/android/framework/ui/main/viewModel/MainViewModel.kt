@@ -17,13 +17,15 @@ class MainViewModel @Inject constructor(
 ) : BaseMainCatalogViewModel(interactor, schedulerProvider, stringProvider) {
     override fun getStartData(isOnline: Boolean, isLoggedUser: Boolean) {
         searchWord = null
-        val discount = interactor.getData(Query.Get.Products.DiscountProducts(), isOnline)
+        category = null
+        val discount = interactor.getData(Query.Get.Products(discountProduct = true), isOnline)
         val basket =
             interactor.getData(Query.Get.Basket, isLoggedUser).onErrorReturnItem(listOf(Basket()))
-        val popular = loadMoreData(isOnline, Query.Get.Products.PopularProducts(), isLoggedUser)
+        val popular =
+            loadMoreData(isOnline, Query.Get.Products(popularProducts = true), isLoggedUser)
         compositeDisposable.add(
             Single.zip(discount, popular, basket) { discountData, popularData, basketData ->
-                val data: MutableList<MainScreenDataModel> = mutableListOf()
+                val data: MutableList<CardScreenDataModel> = mutableListOf()
                 popularData.forEach { product ->
                     sortShops(product)
                     if (isValidToShow(product))
@@ -44,25 +46,32 @@ class MainViewModel @Inject constructor(
                 .subscribeOn(schedulerProvider.io)
                 .observeOn(schedulerProvider.io)
                 .subscribe(
-                    { stateLiveData.postValue(AppState.Success(listOf(Pair(maxElement, it)))) },
+                    {
+                        stateLiveData.postValue(
+                            AppState.Success(listOf(MainScreenDataModel(it, maxElement, filters)))
+                        )
+                    },
                     { stateLiveData.postValue(AppState.Error(it)) }
                 )
         )
     }
 
     override fun getMoreData(isOnline: Boolean, isLoggedUser: Boolean) {
-        val tempWord = searchWord
-        (if (tempWord == null) loadMoreData(
-            isOnline,
-            Query.Get.Products.PopularProducts(),
-            isLoggedUser
+        val query: Query.Get.Products = if (searchWord == null) Query.Get.Products(
+            popularProducts = true,
+            categoryFilter = category
+        ) else Query.Get.Products(
+            productName = searchWord,
+            categoryFilter = category,
+            sortBy = sortType
         )
-        else loadMoreData(isOnline, Query.Get.Products.ProductName(tempWord), isLoggedUser))
+
+        loadMoreData(isOnline, query, isLoggedUser)
             .subscribeOn(schedulerProvider.io)
             .observeOn(schedulerProvider.io)
             .subscribe(
                 { productsList ->
-                    val result: MutableList<MainScreenDataModel> = mutableListOf()
+                    val result: MutableList<CardScreenDataModel> = mutableListOf()
                     productsList.forEach { product ->
                         sortShops(product)
                         if (isValidToShow(product))
@@ -70,7 +79,9 @@ class MainViewModel @Inject constructor(
                                 product.toMainScreenDataModel(stringProvider.getString(sortType.description))
                             )
                     }
-                    stateLiveData.postValue(AppState.Success(listOf(Pair(maxElement, result))))
+                    stateLiveData.postValue(
+                        AppState.Success(listOf(MainScreenDataModel(result, maxElement, filters)))
+                    )
                 },
                 { stateLiveData.postValue(AppState.Error(it)) }
             )

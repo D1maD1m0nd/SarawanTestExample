@@ -13,6 +13,8 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.core.content.getSystemService
+import androidx.core.view.isEmpty
+import androidx.core.view.size
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -20,6 +22,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import coil.ImageLoader
+import com.google.android.material.chip.Chip
 import dagger.android.support.AndroidSupportInjection
 import ru.sarawan.android.R
 import ru.sarawan.android.activity.FabChanger
@@ -34,7 +37,8 @@ import ru.sarawan.android.framework.ui.main.adapter.MainRecyclerAdapter
 import ru.sarawan.android.framework.ui.main.viewHolder.ButtonMoreClickListener
 import ru.sarawan.android.framework.ui.main.viewHolder.CardItemViewHolder
 import ru.sarawan.android.framework.ui.product_card.ProductCardFragment
-import ru.sarawan.android.model.data.MainScreenDataModel
+import ru.sarawan.android.model.data.CardScreenDataModel
+import ru.sarawan.android.model.data.Filter
 import ru.sarawan.android.model.data.Product
 import ru.sarawan.android.model.data.toProduct
 import ru.sarawan.android.rx.ISchedulerProvider
@@ -75,10 +79,14 @@ abstract class BaseMainCatalogFragment : Fragment() {
         GridLayoutManager(context, 2, GridLayoutManager.VERTICAL, false)
     }
 
+    private var wordToSearch = ""
+    private var filterCategory: Int? = null
+    private val filterList: MutableList<Filter> = mutableListOf()
+
     private val onListItemClickListener: BaseMainCatalogAdapter.OnListItemClickListener =
         object : BaseMainCatalogAdapter.OnListItemClickListener {
             override fun onItemPriceChangeClick(
-                data: MainScreenDataModel,
+                data: CardScreenDataModel,
                 diff: Int,
                 isNewItem: Boolean,
                 callback: (isOnline: Boolean) -> Unit
@@ -97,7 +105,7 @@ abstract class BaseMainCatalogFragment : Fragment() {
                 }
             }
 
-            override fun onItemClick(data: MainScreenDataModel) {
+            override fun onItemClick(data: CardScreenDataModel) {
                 if (isOnline) {
                     val action = when (this@BaseMainCatalogFragment) {
                         is MainFragment -> MainFragmentDirections
@@ -137,7 +145,31 @@ abstract class BaseMainCatalogFragment : Fragment() {
         subscribeToViewModel()
         watchForAdapter()
         initRefreshButton()
+        initFilterChips()
         handleProductCardResult()
+    }
+
+    private fun initFilterChips() = with(binding) {
+        filterGroup.setOnCheckedChangeListener { _, checkedId ->
+            filterCategory = checkedId
+            makeSearch()
+        }
+    }
+
+    protected fun fillChips(filters: List<Filter>?) = with(binding) {
+        if (filters.isNullOrEmpty()) return@with
+        if (!filterList.containsAll(filters)) {
+            filterList.clear()
+            filterList.addAll(filters)
+            filterGroup.removeAllViews()
+            filters.forEach {
+                val chip = layoutInflater
+                    .inflate(R.layout.filter_chip_layout, filterGroup, false) as Chip
+                chip.id = it.id
+                chip.text = it.name
+                filterGroup.addView(chip)
+            }
+        }
     }
 
     private fun handleProductCardResult() {
@@ -228,41 +260,44 @@ abstract class BaseMainCatalogFragment : Fragment() {
         binding.micButton.setOnClickListener { displaySpeechRecognizer() }
     }
 
-    private fun initSearchButton() {
-        binding.searchButton.setOnClickListener {
-            if (isDataLoaded && binding.searchField.editText?.text.toString().isNotEmpty())
+    private fun initSearchButton() = with(binding) {
+        searchButton.setOnClickListener {
+            if (isDataLoaded && searchField.editText?.text.toString().isNotEmpty()) {
+                wordToSearch = searchField.editText?.text.toString()
                 makeSearch()
+            }
         }
     }
 
-    private fun initSearchInput() {
+    private fun initSearchInput() = with(binding) {
 
-        binding.searchField.editText?.setOnFocusChangeListener { _, hasFocus ->
+        searchField.editText?.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
-                binding.clearText.visibility = View.VISIBLE
-                binding.micButton.visibility = View.INVISIBLE
+                clearText.visibility = View.VISIBLE
+                micButton.visibility = View.INVISIBLE
             } else {
-                binding.clearText.visibility = View.INVISIBLE
-                binding.micButton.visibility = View.VISIBLE
+                clearText.visibility = View.INVISIBLE
+                micButton.visibility = View.VISIBLE
             }
         }
 
-        binding.searchField.editText?.doOnTextChanged { _, _, _, count ->
+        searchField.editText?.doOnTextChanged { _, _, _, count ->
             if (count > 0) {
-                binding.clearText.visibility = View.VISIBLE
-                binding.micButton.visibility = View.INVISIBLE
+                clearText.visibility = View.VISIBLE
+                micButton.visibility = View.INVISIBLE
             } else {
-                binding.clearText.visibility = View.INVISIBLE
-                binding.micButton.visibility = View.VISIBLE
+                clearText.visibility = View.INVISIBLE
+                micButton.visibility = View.VISIBLE
             }
         }
 
-        binding.clearText.setOnClickListener { binding.searchField.editText?.setText("") }
+        clearText.setOnClickListener { searchField.editText?.setText("") }
 
-        binding.searchField.editText?.setOnEditorActionListener { _, actionId, _ ->
+        searchField.editText?.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH
-                && binding.searchField.editText?.text.toString().isNotEmpty()
+                && searchField.editText?.text.toString().isNotEmpty()
             ) {
+                wordToSearch = searchField.editText?.text.toString()
                 makeSearch()
                 return@setOnEditorActionListener true
             }
@@ -270,21 +305,23 @@ abstract class BaseMainCatalogFragment : Fragment() {
         }
     }
 
-    private fun makeSearch() {
+    private fun makeSearch() = with(binding) {
         activity?.getSystemService<InputMethodManager>()
-            ?.hideSoftInputFromWindow(binding.searchField.windowToken, 0)
-        binding.searchField.clearFocus()
+            ?.hideSoftInputFromWindow(searchField.windowToken, 0)
+        searchField.clearFocus()
         isDataLoaded = false
         if (isOnline) {
             viewModel.search(
-                binding.searchField.editText?.text.toString(),
+                wordToSearch,
+                filterCategory,
                 isOnline,
                 !sharedPreferences.token.isNullOrEmpty()
             )
-            binding.loadingLayout.visibility = View.VISIBLE
+            loadingLayout.visibility = View.VISIBLE
             mainRecyclerAdapter?.clear()
-            binding.topBarLayout.setExpanded(true, true)
-            binding.mainRecyclerView.scrollToPosition(0)
+            filtersBar.visibility = View.VISIBLE
+            topBarLayout.setExpanded(true, true)
+            mainRecyclerView.scrollToPosition(0)
         } else handleNetworkErrorWithToast()
     }
 
@@ -309,6 +346,7 @@ abstract class BaseMainCatalogFragment : Fragment() {
             val spokenText: String? =
                 data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS).let { it?.get(0) }
             binding.searchField.editText?.setText(spokenText)
+            wordToSearch = binding.searchField.editText?.text.toString()
             makeSearch()
         }
     }

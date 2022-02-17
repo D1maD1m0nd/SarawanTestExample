@@ -22,36 +22,56 @@ abstract class BaseMainCatalogViewModel(
     protected var maxElement = 0
 
     protected var searchWord: String? = null
+    protected var category: Int? = null
+
+    protected var filters: List<Filter>? = null
 
     protected var basketID: Int? = null
 
-    fun search(word: String, isOnline: Boolean, isLoggedUser: Boolean) {
-        sortType = SortBy.PRICE_ASC
+    fun search(
+        word: String?,
+        categoryFilter: Int?,
+        isOnline: Boolean,
+        isLoggedUser: Boolean,
+        searchType: SortBy = SortBy.PRICE_ASC
+    ) {
+        sortType = searchType
         lastPage = 1
         searchWord = word
+        category = categoryFilter
         compositeDisposable.add(
-            loadMoreData(isOnline, Query.Get.Products.ProductName(word), isLoggedUser)
+            loadMoreData(
+                isOnline,
+                Query.Get.Products(
+                    productName = word,
+                    categoryFilter = categoryFilter,
+                    sortBy = searchType
+                ),
+                isLoggedUser
+            )
                 .subscribeOn(schedulerProvider.io)
                 .observeOn(schedulerProvider.io)
                 .doOnSubscribe { stateLiveData.postValue(AppState.Loading) }
                 .subscribe(
                     { productsList ->
-                        val result: MutableList<MainScreenDataModel> = mutableListOf()
+                        val result: MutableList<CardScreenDataModel> = mutableListOf()
                         productsList.forEach { product ->
                             sortShops(product)
-                            if (isValidToShow(product))
-                                result.add(
-                                    product.toMainScreenDataModel(stringProvider.getString(sortType.description))
-                                )
+                            if (isValidToShow(product)) result
+                                .add(product.toMainScreenDataModel(stringProvider.getString(sortType.description)))
                         }
-                        stateLiveData.postValue(AppState.Success(listOf(Pair(maxElement, result))))
+                        stateLiveData.postValue(
+                            AppState.Success(
+                                listOf(MainScreenDataModel(result, maxElement, filters))
+                            )
+                        )
                     },
                     { stateLiveData.postValue(AppState.Error(it)) }
                 )
         )
     }
 
-    fun saveData(data: MainScreenDataModel, isLoggedUser: Boolean, isNewItem: Boolean) {
+    fun saveData(data: CardScreenDataModel, isLoggedUser: Boolean, isNewItem: Boolean) {
         val products = listOf(data.toProduct())
         if (isNewItem) compositeDisposable.add(
             interactor
@@ -90,9 +110,16 @@ abstract class BaseMainCatalogViewModel(
             val data: MutableList<Product> = mutableListOf()
             val basketObject = (basketData as List<Basket>).firstOrNull()
             basketID = basketObject?.basketId
-            responseData.forEach {
-                maxElement = it.count
-                it.results.forEach { singleData ->
+            responseData.forEach { response ->
+                filters = response.filters
+                maxElement = when {
+                    category != null -> {
+                        response.filters?.find { it.id == category }?.let { return@let it }
+                        response.count
+                    }
+                    else -> response.count
+                }
+                response.results.forEach { singleData ->
                     data.add(singleData)
                     getQuantityFromBasket(basketObject, singleData)
                 }

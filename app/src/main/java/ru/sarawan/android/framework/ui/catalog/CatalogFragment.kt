@@ -7,10 +7,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import ru.sarawan.android.framework.ui.base.mainCatalog.BaseMainCatalogFragment
 import ru.sarawan.android.framework.ui.catalog.adapter.CatalogRecyclerAdapter
 import ru.sarawan.android.framework.ui.catalog.viewModel.CatalogViewModel
-import ru.sarawan.android.model.data.AppState
-import ru.sarawan.android.model.data.CategoryDataModel
-import ru.sarawan.android.model.data.MainScreenDataModel
-import ru.sarawan.android.model.data.toMainScreenDataModel
+import ru.sarawan.android.model.data.*
 import ru.sarawan.android.utils.exstentions.token
 
 class CatalogFragment : BaseMainCatalogFragment() {
@@ -27,7 +24,7 @@ class CatalogFragment : BaseMainCatalogFragment() {
 
     private val onCatalogItemClickListener: CatalogRecyclerAdapter.OnListItemClickListener =
         object : CatalogRecyclerAdapter.OnListItemClickListener {
-            override fun onItemClick(data: MainScreenDataModel) {
+            override fun onItemClick(data: CardScreenDataModel) {
                 if (isOnline) {
                     val action = CatalogFragmentDirections.actionCatalogFragmentToCategoryFragment(
                         data.itemDescription.orEmpty(),
@@ -72,21 +69,22 @@ class CatalogFragment : BaseMainCatalogFragment() {
                     val listData = appState.data as List<*>?
                     if (listData.isNullOrEmpty()) loadingLayout.visibility = View.GONE
                     else when (listData.first()) {
-                        is Pair<*, *> -> {
+                        is MainScreenDataModel -> {
                             if (mainRecyclerAdapter != null && mainRecyclerAdapter!!.itemCount > 0) {
-                                if (isInitCompleted) handleSuccessData(listData)
+                                if (isInitCompleted) handleSuccessData(listData.first() as MainScreenDataModel)
                                 else binding.loadingLayout.visibility = View.GONE
-                            } else handleSuccessData(listData)
+                            } else handleSuccessData(listData.first() as MainScreenDataModel)
                             isInitCompleted = true
                         }
                         is CategoryDataModel -> {
                             mainRecyclerView.layoutManager = linearLayoutManager
                             mainRecyclerView.adapter = catalogAdapter
-                            val result: MutableList<MainScreenDataModel> = mutableListOf()
+                            val result: MutableList<CardScreenDataModel> = mutableListOf()
                             (listData as List<CategoryDataModel>).forEach {
                                 result.add(it.toMainScreenDataModel())
                             }
                             catalogAdapter?.setData(result) { loadingLayout.visibility = View.GONE }
+                            isDataLoaded = true
                         }
                     }
                 }
@@ -97,21 +95,18 @@ class CatalogFragment : BaseMainCatalogFragment() {
         }
     }
 
-    private fun handleSuccessData(listData: List<*>?) = with(binding) {
-        listData?.first() as Pair<Int, List<MainScreenDataModel>>
-        if ((listData.first() as Pair<Int, List<MainScreenDataModel>>)
-                .second.isNullOrEmpty()
-        ) {
+    private fun handleSuccessData(data: MainScreenDataModel) = with(binding) {
+        fillChips(data.filters)
+        if (data.listOfElements.isNullOrEmpty()) {
             loadingLayout.visibility = View.GONE
             emptyDataLayout.root.visibility = View.VISIBLE
         } else {
             emptyDataLayout.root.visibility = View.GONE
             mainRecyclerView.layoutManager = gridLayoutManager
             mainRecyclerView.adapter = mainRecyclerAdapter
-            maxCount =
-                (listData.first() as Pair<Int, List<MainScreenDataModel>>).first
+            maxCount = data.maxElement
             mainRecyclerAdapter?.setData(
-                (listData.first() as Pair<Int, List<MainScreenDataModel>>).second,
+                data.listOfElements,
                 searchField.editText?.text.isNullOrEmpty(),
                 maxCount
             )

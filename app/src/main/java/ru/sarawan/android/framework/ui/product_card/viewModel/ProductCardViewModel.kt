@@ -21,20 +21,22 @@ class ProductCardViewModel @Inject constructor(
         storeId?.let { store ->
             val basket = interactor.getData(Query.Get.Basket, isLoggedUser)
                 .onErrorReturnItem(listOf(Basket()))
-            val similar = interactor.getData(Query.Get.Products.SimilarProducts(store), true)
-            val product = interactor.getData(Query.Get.Products.Id(storeId), true)
+            val similar =
+                interactor.getData(Query.Get.Products(id = store, similarProducts = true), true)
+            val product = interactor.getData(Query.Get.ProductByID(storeId), true)
             compositeDisposable.add(
                 Single.zip(similar, basket, product) { similarData, basketData, productData ->
-                    productData as MutableList<Product>
-                    basketData as MutableList<Basket>
-                    similarData as MutableList<Product>
-                    similarData.addAll(productData)
-
+                    productData as List<Product>
+                    basketData as List<Basket>
+                    similarData as List<Response>
+                    val result: MutableList<Product> = mutableListOf()
+                    result.addAll(similarData.first().results)
+                    result.addAll(productData)
                     val data: List<Product>
-                    val basketObject = (basketData as List<Basket>).firstOrNull()
+                    val basketObject = (basketData).firstOrNull()
                     basketID = basketObject?.basketId
                     if (basketData.isNotEmpty()) {
-                        data = similarData.map { similarProduct ->
+                        data = result.map { similarProduct ->
                             similarProduct.storePrices?.sortBy { storeItem ->
                                 storeItem.price
                             }
@@ -65,7 +67,7 @@ class ProductCardViewModel @Inject constructor(
                         }
 
                     } else {
-                        data = similarData.map { similarProduct ->
+                        data = result.map { similarProduct ->
                             similarProduct.storePrices?.sortBy { storeItem ->
                                 storeItem.price
                             }

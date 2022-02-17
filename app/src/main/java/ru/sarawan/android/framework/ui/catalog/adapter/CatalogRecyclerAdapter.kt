@@ -13,21 +13,21 @@ import ru.sarawan.android.framework.ui.base.mainCatalog.BaseMainCatalogAdapter
 import ru.sarawan.android.framework.ui.base.mainCatalog.CardType
 import ru.sarawan.android.framework.ui.catalog.viewHolder.ListItemHolder
 import ru.sarawan.android.framework.ui.main.viewHolder.StringHolder
-import ru.sarawan.android.model.data.MainScreenDataModel
+import ru.sarawan.android.model.data.CardScreenDataModel
 
 class CatalogRecyclerAdapter(
     private var onListItemClickListener: OnListItemClickListener
 ) : BaseMainCatalogAdapter() {
 
     @SuppressLint("NotifyDataSetChanged")
-    fun setData(data: List<MainScreenDataModel>?, callback: () -> Unit) {
+    fun setData(data: List<CardScreenDataModel>?, callback: () -> Unit) {
         if (data == null) {
             callback()
             return
         }
         displayData.clear()
         displayData.add(
-            MainScreenDataModel(
+            CardScreenDataModel(
                 itemDescription = "Каталог",
                 fontSize = 28f,
                 backgroundColor = Color.WHITE,
@@ -39,7 +39,7 @@ class CatalogRecyclerAdapter(
         )
         displayData.addAll(data)
         displayData.add(
-            MainScreenDataModel(
+            CardScreenDataModel(
                 cardType = CardType.TOP.type,
                 backgroundColor = Color.WHITE,
                 fontSize = 28f
@@ -79,6 +79,6 @@ class CatalogRecyclerAdapter(
     }
 
     interface OnListItemClickListener {
-        fun onItemClick(data: MainScreenDataModel)
+        fun onItemClick(data: CardScreenDataModel)
     }
 }

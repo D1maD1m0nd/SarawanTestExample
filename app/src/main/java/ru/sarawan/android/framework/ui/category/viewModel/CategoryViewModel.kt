@@ -3,10 +3,7 @@ package ru.sarawan.android.framework.ui.category.viewModel
 import ru.sarawan.android.framework.MainInteractor
 import ru.sarawan.android.framework.ui.base.mainCatalog.BaseMainCatalogViewModel
 import ru.sarawan.android.framework.ui.category.CategoryFragment
-import ru.sarawan.android.model.data.AppState
-import ru.sarawan.android.model.data.MainScreenDataModel
-import ru.sarawan.android.model.data.Query
-import ru.sarawan.android.model.data.toMainScreenDataModel
+import ru.sarawan.android.model.data.*
 import ru.sarawan.android.rx.ISchedulerProvider
 import ru.sarawan.android.utils.StringProvider
 import ru.sarawan.android.utils.constants.SortBy
@@ -18,27 +15,23 @@ class CategoryViewModel @Inject constructor(
     private val stringProvider: StringProvider
 ) : BaseMainCatalogViewModel(interactor, schedulerProvider, stringProvider) {
 
-    private var category: Int = CategoryFragment.DISCOUNT
-
-    override fun getStartData(isOnline: Boolean, isLoggedUser: Boolean) = Unit
+    override fun getStartData(isOnline: Boolean, isLoggedUser: Boolean) {
+        category = CategoryFragment.DISCOUNT
+    }
 
     override fun getMoreData(isOnline: Boolean, isLoggedUser: Boolean) {
-        (if (category == CategoryFragment.DISCOUNT) {
-            loadMoreData(
-                isOnline,
-                Query.Get.Products.DiscountProducts(sortBy = this.sortType),
-                isLoggedUser
-            )
-        } else loadMoreData(
-            isOnline,
-            Query.Get.Products.ProductCategory(category, sortBy = this.sortType),
-            isLoggedUser
-        ))
+        val query: Query.Get.Products =
+            if (category == CategoryFragment.DISCOUNT) Query.Get.Products(
+                sortBy = sortType,
+                discountProduct = true
+            ) else Query.Get.Products(categoryFilter = category, sortBy = sortType)
+
+        loadMoreData(isOnline, query, isLoggedUser)
             .subscribeOn(schedulerProvider.io)
             .observeOn(schedulerProvider.io)
             .subscribe(
                 { productsList ->
-                    val result: MutableList<MainScreenDataModel> = mutableListOf()
+                    val result: MutableList<CardScreenDataModel> = mutableListOf()
                     productsList.forEach { product ->
                         sortShops(product)
                         if (isValidToShow(product))
@@ -46,13 +39,15 @@ class CategoryViewModel @Inject constructor(
                                 product.toMainScreenDataModel(stringProvider.getString(sortType.description))
                             )
                     }
-                    stateLiveData.postValue(AppState.Success(listOf(Pair(maxElement, result))))
+                    stateLiveData.postValue(
+                        AppState.Success(listOf(MainScreenDataModel(result, maxElement, filters)))
+                    )
                 },
                 { stateLiveData.postValue(AppState.Error(it)) }
             )
     }
 
-    fun changeSorting(category: Int, isOnline: Boolean, sortType: SortBy, isLoggedUser: Boolean) {
+    fun changeSorting(category: Int?, isOnline: Boolean, sortType: SortBy, isLoggedUser: Boolean) {
         stateLiveData.value = AppState.Loading
         lastPage = 1
         this.category = category

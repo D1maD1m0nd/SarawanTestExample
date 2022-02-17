@@ -4,14 +4,14 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import ru.sarawan.android.R
 import ru.sarawan.android.databinding.ListItemButtonBinding
-import ru.sarawan.android.model.data.MainScreenDataModel
+import ru.sarawan.android.model.data.CardScreenDataModel
 
 class ButtonHolder(
     private val binding: ListItemButtonBinding,
     private val listener: ButtonMoreClickListener
 ) :
     RecyclerView.ViewHolder(binding.root) {
-    fun bind(data: MainScreenDataModel) {
+    fun bind(data: CardScreenDataModel) {
         with(binding) {
             button.text = data.itemDescription
             root.setBackgroundColor(

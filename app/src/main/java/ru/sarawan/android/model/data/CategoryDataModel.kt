@@ -8,8 +8,8 @@ data class CategoryDataModel(
     @field:Json(name = "name") val name: String? = null
 )
 
-fun CategoryDataModel.toMainScreenDataModel(): MainScreenDataModel {
-    return MainScreenDataModel(
+fun CategoryDataModel.toMainScreenDataModel(): CardScreenDataModel {
+    return CardScreenDataModel(
         id = id?.toLong(),
         itemDescription = name,
         cardType = CardType.STRING.type

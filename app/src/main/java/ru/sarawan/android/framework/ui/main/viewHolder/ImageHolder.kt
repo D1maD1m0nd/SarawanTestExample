@@ -10,14 +10,14 @@ import coil.request.Disposable
 import coil.request.ImageRequest
 import ru.sarawan.android.R
 import ru.sarawan.android.framework.ui.main.adapter.MainRecyclerAdapter
-import ru.sarawan.android.model.data.MainScreenDataModel
+import ru.sarawan.android.model.data.CardScreenDataModel
 
 class ImageHolder(private val view: ImageView, private val imageLoader: ImageLoader) :
     RecyclerView.ViewHolder(view), MainRecyclerAdapter.CancellableHolder {
 
     private var disposable: Disposable? = null
 
-    fun bind(data: MainScreenDataModel) {
+    fun bind(data: CardScreenDataModel) {
         with(view) {
             val color = data.backgroundColor ?: ContextCompat.getColor(
                 view.context,

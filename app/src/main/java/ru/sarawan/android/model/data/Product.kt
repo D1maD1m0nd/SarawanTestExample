@@ -6,6 +6,13 @@ import kotlinx.parcelize.Parcelize
 
 data class Response(
     @field: Json(name = "results") val results: List<Product>,
+    @field: Json(name = "count") val count: Int,
+    @field: Json(name = "search_filters") val filters: List<Filter>?
+)
+
+data class Filter(
+    @field: Json(name = "id") val id: Int,
+    @field: Json(name = "name") val name: String,
     @field: Json(name = "count") val count: Int
 )
 
