@@ -112,6 +112,6 @@ interface ApiService {
     /**
      * Удаление заказа
      */
-    @DELETE("api/order/{id}/")
-    fun deleteOrder(@Path("id") id: Int) : Single<OrderApprove>
+    @POST("api/order/{id}/cancel/ ")
+    fun cancelOrder(@Path("id") id: Int) : Single<OrderApprove>
 }

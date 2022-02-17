@@ -2,6 +2,7 @@ package ru.sarawan.android.model.datasource
 
 import io.reactivex.rxjava3.core.Single
 import ru.sarawan.android.model.data.Query
+import ru.sarawan.android.model.data.UserDataModel
 import ru.sarawan.android.utils.constants.SortBy
 import javax.inject.Inject
 
@@ -95,6 +96,13 @@ class RetrofitImplementation @Inject constructor(private val apiService: ApiServ
                 is Query.Post.Order.Create -> apiService
                     .createOrder(query.address)
                     .map { listOf(it) }
+
+                is Query.Post.Order.Cancel -> {
+                    apiService.cancelOrder(query.id)
+                        .map {
+                            listOf(it)
+                        }
+                }
             }
 
             is Query.Put -> when (query) {
@@ -119,10 +127,8 @@ class RetrofitImplementation @Inject constructor(private val apiService: ApiServ
                         .clearBasket()
                         .map { listOf(it) }
                 }
-
-                is Query.Delete.Order.Delete -> apiService
-                    .deleteOrder(query.id)
-                    .map { listOf(it) }
+                is Query.Delete.Order.Delete -> {
+                    Single.just(emptyList<UserDataModel>())}
             }
         }
     }

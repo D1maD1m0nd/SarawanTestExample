@@ -3,10 +3,7 @@ package ru.sarawan.android.framework.ui.profile.viewModel
 import ru.sarawan.android.framework.MainInteractor
 import ru.sarawan.android.framework.ui.base.BaseViewModel
 import ru.sarawan.android.framework.ui.profile.interactor.IProfileInteractor
-import ru.sarawan.android.model.data.AddressItem
-import ru.sarawan.android.model.data.AppState
-import ru.sarawan.android.model.data.Query
-import ru.sarawan.android.model.data.UserDataModel
+import ru.sarawan.android.model.data.*
 import ru.sarawan.android.rx.ISchedulerProvider
 import ru.sarawan.android.utils.constants.TypeCase
 import javax.inject.Inject
@@ -36,6 +33,11 @@ class ProfileViewModel @Inject constructor(
     fun getOrders() {
         compositeDisposable.add(
             interactor.getData(Query.Get.OrdersApproves, true)
+                .map {
+                    var data = it as List<OrderApprove>
+                    var dataList = data.filter { orderApprove ->  orderApprove.orderStatus != OrderStatus.CAN }
+                    dataList
+                }
                 .subscribeOn(schedulerProvider.io)
                 .observeOn(schedulerProvider.ui)
                 .subscribe({ stateLiveData.postValue(AppState.Success(it)) },
@@ -45,10 +47,11 @@ class ProfileViewModel @Inject constructor(
 
     fun deleteOrder(id: Int) {
         compositeDisposable.add(
-            interactor.getData(Query.Delete.Order.Delete(id), true)
+            interactor.getData(Query.Post.Order.Cancel(id), true)
                 .subscribeOn(schedulerProvider.io)
                 .observeOn(schedulerProvider.ui)
-                .subscribe({ stateLiveData.value = AppState.Success(it) },
+                .subscribe(
+                    {},
                     { stateLiveData.value = AppState.Error(it) })
         )
     }

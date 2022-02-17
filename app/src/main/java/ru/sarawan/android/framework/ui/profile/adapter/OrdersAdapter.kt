@@ -49,7 +49,6 @@ class OrdersAdapter(val itemClickListener: ItemClickListener) :
             nameOrderValueTextView.text = orderName
             val currentStatus = when (status) {
                 OrderStatus.NEW -> statusReceivedTextView
-                OrderStatus.CAN -> statusAssemblyTextView
                 else -> null
             }
             currentStatus

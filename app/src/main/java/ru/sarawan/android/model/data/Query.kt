@@ -43,7 +43,8 @@ sealed interface Query {
         }
 
         sealed interface Order : Post {
-            data class Create(val address: AddressItem) : Basket
+            data class Create(val address: AddressItem) : Order
+            data class Cancel(val id : Int) : Order
         }
 
         sealed interface User : Post {
@@ -54,6 +55,8 @@ sealed interface Query {
         sealed interface Address : Post {
             data class NewAddress(val address: AddressItem) : Address
         }
+
+
     }
 
     sealed interface Put : Query {

@@ -21,6 +21,8 @@ data class Order(
 )
 
 data class OrderApprove(
+    @field:Json(name = "id")
+    val id: Int,
 
     @field:Json(name = "dostavista_order_id")
     val orderId: Int,

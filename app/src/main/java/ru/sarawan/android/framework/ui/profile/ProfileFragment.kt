@@ -199,7 +199,7 @@ class ProfileFragment : Fragment() {
 
     private fun cancelOrder(pos: Int) {
         val order = orders[pos]
-        val id = order.orderId
+        val id = order.id
         orders.remove(order)
 
         adapter.setOrder(orders)
