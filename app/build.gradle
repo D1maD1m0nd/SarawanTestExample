@@ -31,8 +31,8 @@ android {
         applicationId "ru.sarawan.android"
         minSdk 23
         targetSdk 31
-        versionCode 13
-        versionName "1.16.102"
+        versionCode 14
+        versionName "1.16.103"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
