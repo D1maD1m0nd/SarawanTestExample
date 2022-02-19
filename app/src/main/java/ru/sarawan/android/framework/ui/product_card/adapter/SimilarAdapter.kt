@@ -25,11 +25,6 @@ class SimilarAdapter(val itemClickListener: ItemClickListener) :
         notifyItemChanged(pos)
     }
 
-    fun updateItem(products: MutableList<Product>, position: Int) {
-        similarList = products
-        notifyItemChanged(position)
-    }
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductViewHolder {
         val view = ListItemCardBinding.inflate(
             LayoutInflater.from(parent.context),

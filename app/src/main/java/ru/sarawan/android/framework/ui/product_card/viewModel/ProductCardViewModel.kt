@@ -22,7 +22,7 @@ class ProductCardViewModel @Inject constructor(
             val basket = interactor.getData(Query.Get.Basket, isLoggedUser)
                 .onErrorReturnItem(listOf(Basket()))
             val similar =
-                interactor.getData(Query.Get.Products(id = store, similarProducts = true), true)
+                interactor.getData(Query.Get.Products(similarProducts = store), true)
             val product = interactor.getData(Query.Get.ProductByID(storeId), true)
             compositeDisposable.add(
                 Single.zip(similar, basket, product) { similarData, basketData, productData ->

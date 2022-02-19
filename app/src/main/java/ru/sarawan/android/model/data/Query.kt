@@ -12,7 +12,7 @@ sealed interface Query {
             var page: Int = 1,
             val discountProduct: Boolean? = null,
             val popularProducts: Boolean? = null,
-            val similarProducts: Boolean? = null,
+            val similarProducts: Long? = null,
             val categoryFilter: Int? = null,
             val sortBy: SortBy? = null,
         ) : Get
