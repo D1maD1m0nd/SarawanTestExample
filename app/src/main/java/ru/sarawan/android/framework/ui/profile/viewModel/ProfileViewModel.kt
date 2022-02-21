@@ -35,7 +35,8 @@ class ProfileViewModel @Inject constructor(
             interactor.getData(Query.Get.OrdersApproves, true)
                 .map {
                     var data = it as List<OrderApprove>
-                    var dataList = data.filter { orderApprove ->  orderApprove.orderStatus != OrderStatus.CAN }
+                    var dataList =
+                        data.filter { orderApprove -> orderApprove.orderStatus != OrderStatus.CAN }
                     dataList
                 }
                 .subscribeOn(schedulerProvider.io)
@@ -61,7 +62,7 @@ class ProfileViewModel @Inject constructor(
             .subscribeOn(schedulerProvider.io)
             .observeOn(schedulerProvider.ui)
             .subscribe({ stateLiveData.value = AppState.Success(listOf(it), TypeCase.ADDRESS) },
-                         { stateLiveData.value = AppState.Error(it) })
+                { stateLiveData.value = AppState.Error(it) })
     }
 
     fun getFormatPhone(number: String, mask: String) {

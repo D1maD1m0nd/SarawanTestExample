@@ -2,7 +2,6 @@ package ru.sarawan.android.framework.ui.profile.address_fragment.viewModel
 
 import ru.sarawan.android.framework.MainInteractor
 import ru.sarawan.android.framework.ui.base.BaseViewModel
-import ru.sarawan.android.framework.ui.profile.address_fragment.interactor.AddressInteractor
 import ru.sarawan.android.framework.ui.profile.address_fragment.interactor.IAddressInteractor
 import ru.sarawan.android.model.data.AddressItem
 import ru.sarawan.android.model.data.AppState

@@ -15,7 +15,7 @@ data class Filter(
     @field: Json(name = "id") val id: Long,
     @field: Json(name = "name") val name: String,
     @field: Json(name = "count") val count: Int? = null
-): Parcelable
+) : Parcelable
 
 @Parcelize
 data class Product(

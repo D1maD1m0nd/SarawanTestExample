@@ -3,7 +3,6 @@ package ru.sarawan.android.framework.ui.catalog.viewModel
 import ru.sarawan.android.framework.MainInteractor
 import ru.sarawan.android.framework.ui.base.mainCatalog.BaseMainCatalogViewModel
 import ru.sarawan.android.model.data.AppState
-import ru.sarawan.android.model.data.CategoryDataModel
 import ru.sarawan.android.model.data.Query
 import ru.sarawan.android.rx.ISchedulerProvider
 import ru.sarawan.android.utils.StringProvider

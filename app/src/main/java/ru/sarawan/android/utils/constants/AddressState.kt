@@ -1,5 +1,5 @@
 package ru.sarawan.android.utils.constants
 
-enum class AddressState{
+enum class AddressState {
     STREET, HOUSE, NUMBER, VALID, CITY
 }

@@ -2,7 +2,6 @@ package ru.sarawan.android.model.datasource
 
 import io.reactivex.rxjava3.core.Single
 import retrofit2.http.*
-import retrofit2.http.Query
 import ru.sarawan.android.model.data.*
 
 interface ApiService {
@@ -12,8 +11,8 @@ interface ApiService {
      */
     @GET("api/products/")
     fun getProducts(
-        @QueryMap map:Map<String, String?>
-    ) : Single<Response>
+        @QueryMap map: Map<String, String?>
+    ): Single<Response>
 
     /**
      * Получение категорий
@@ -35,7 +34,7 @@ interface ApiService {
     fun getBasket(): Single<Basket>
 
     @DELETE("api/basket/")
-    fun clearBasket() : Single<Basket>
+    fun clearBasket(): Single<Basket>
 
     /**
      * Добавление продукта в корзину
@@ -47,7 +46,10 @@ interface ApiService {
      * Обновление продукта
      */
     @PUT("api/basket/{id}/")
-    fun updateBasketProduct(@Path("id") id: Int, @Body productItem: ProductsUpdate): Single<BasketResponse>
+    fun updateBasketProduct(
+        @Path("id") id: Int,
+        @Body productItem: ProductsUpdate
+    ): Single<BasketResponse>
 
     /**
      * Удаление продукта из корзины
@@ -59,59 +61,59 @@ interface ApiService {
      * Получение пользователя по id
      */
     @GET("api/user/{id}/")
-    fun getUser(@Path("id") id : Long) : Single<UserDataModel>
+    fun getUser(@Path("id") id: Long): Single<UserDataModel>
 
     /**
      * Обновление пользователя
      */
     @PUT("api/user/{id}/")
-    fun updateUser(@Path("id") id : Long, @Body user : UserDataModel) : Single<UserDataModel>
+    fun updateUser(@Path("id") id: Long, @Body user: UserDataModel): Single<UserDataModel>
 
     /**
      * Создание пользователя
      */
     @POST("users/authentication/api/get-token/")
-    fun createUser(@Body user : UserRegistration) : Single<UserRegistration>
+    fun createUser(@Body user: UserRegistration): Single<UserRegistration>
 
     /**
      * Отправка смс
      */
     @POST("users/authentication/api/sms-send/")
-    fun sendSms(@Body user : UserRegistration) : Single<UserRegistration>
+    fun sendSms(@Body user: UserRegistration): Single<UserRegistration>
 
     /**
      * Создание нового адреса
      */
     @POST("api/user_address/")
-    fun createAddress(@Body address : AddressItem) : Single<AddressItem>
+    fun createAddress(@Body address: AddressItem): Single<AddressItem>
 
     /**
      * Получение списка адресов
      */
     @GET("api/user_address/")
-    fun getAddress() : Single<MutableList<AddressItem>>
+    fun getAddress(): Single<MutableList<AddressItem>>
 
     /**
      * Расчет стоимости заказа
      */
     @POST("api/order_calculate/")
-    fun getPreCalculationOrder(@Body address: AddressItem) : Single<Order>
+    fun getPreCalculationOrder(@Body address: AddressItem): Single<Order>
 
     /**
      * Оформление заказа
      */
     @POST("api/order_approve/")
-    fun createOrder(@Body address : AddressItem) : Single<OrderApprove>
+    fun createOrder(@Body address: AddressItem): Single<OrderApprove>
 
     /**
      * Получение списка заказов
      */
     @GET("api/order/")
-    fun getOrders() : Single<List<OrderApprove>>
+    fun getOrders(): Single<List<OrderApprove>>
 
     /**
      * Удаление заказа
      */
     @POST("api/order/{id}/cancel/ ")
-    fun cancelOrder(@Path("id") id: Int) : Single<OrderApprove>
+    fun cancelOrder(@Path("id") id: Int): Single<OrderApprove>
 }

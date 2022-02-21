@@ -269,10 +269,11 @@ class ProductCardFragment : Fragment() {
                 }
             }
         }
-        val product = Product(id = args.productID, storePrices = storeProducts, product = store.id).apply {
-            storePrices?.find { it == store }?.apply { count = store.count }
-            quantity = store.count
-        }
+        val product =
+            Product(id = args.productID, storePrices = storeProducts, product = store.id).apply {
+                storePrices?.find { it == store }?.apply { count = store.count }
+                quantity = store.count
+            }
         itemSave(product, pos, false, TypeCardEnum.STORE)
     }
 

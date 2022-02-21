@@ -25,7 +25,8 @@ import ru.sarawan.android.utils.exstentions.userId
 import javax.inject.Inject
 
 class ProfileNameDialogFragment : DialogFragment() {
-    var phone = "";
+    var phone = ""
+
     @Inject
     lateinit var sharedPreferences: SharedPreferences
 

@@ -129,7 +129,8 @@ class RetrofitImplementation @Inject constructor(private val apiService: ApiServ
                         .map { listOf(it) }
                 }
                 is Query.Delete.Order.Delete -> {
-                    Single.just(emptyList<UserDataModel>())}
+                    Single.just(emptyList<UserDataModel>())
+                }
             }
         }
     }

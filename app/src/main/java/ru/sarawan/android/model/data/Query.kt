@@ -45,7 +45,7 @@ sealed interface Query {
 
         sealed interface Order : Post {
             data class Create(val address: AddressItem) : Order
-            data class Cancel(val id : Int) : Order
+            data class Cancel(val id: Int) : Order
         }
 
         sealed interface User : Post {

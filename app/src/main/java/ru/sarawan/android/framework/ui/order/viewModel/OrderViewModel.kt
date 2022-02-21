@@ -17,7 +17,7 @@ class OrderViewModel @Inject constructor(
             .subscribeOn(schedulerProvider.io)
             .observeOn(schedulerProvider.ui)
             .subscribe({ stateLiveData.value = AppState.Success(listOf(it)) },
-                    { stateLiveData.value = AppState.Error(it) })
+                { stateLiveData.value = AppState.Error(it) })
     }
 
     fun getAddress() {

@@ -18,10 +18,10 @@ import dagger.android.support.AndroidSupportInjection
 import retrofit2.HttpException
 import ru.sarawan.android.R
 import ru.sarawan.android.databinding.FragmentProfileAddressDialogBinding
-import ru.sarawan.android.utils.constants.AddressState
 import ru.sarawan.android.framework.ui.profile.address_fragment.viewModel.ProfileAddressViewModel
 import ru.sarawan.android.model.data.AddressItem
 import ru.sarawan.android.model.data.AppState
+import ru.sarawan.android.utils.constants.AddressState
 import ru.sarawan.android.utils.exstentions.setNavigationResult
 import ru.sarawan.android.utils.exstentions.userId
 import javax.inject.Inject
@@ -107,12 +107,14 @@ class ProfileAddressDialogFragment : DialogFragment() {
             .actionProfileAddressDialogFragmentToProfileAlertDialogFragment()
         findNavController().navigate(action)
     }
+
     private fun onSaved() {
         val address = getAddress()
         viewModel.validateAddress(address)
     }
-    private fun setError(error : AddressState) = with(binding) {
-        when(error) {
+
+    private fun setError(error: AddressState) = with(binding) {
+        when (error) {
             AddressState.STREET -> {
                 profileAddressStreetEditText.error = getString(R.string.street_empty)
             }
@@ -125,6 +127,7 @@ class ProfileAddressDialogFragment : DialogFragment() {
             else -> {}
         }
     }
+
     private fun saveData() {
         val address = getAddress()
         viewModel.createAddress(address)
@@ -149,17 +152,21 @@ class ProfileAddressDialogFragment : DialogFragment() {
     private fun setState(appState: AppState<*>) {
         when (appState) {
             is AppState.Success<*> -> {
-                if(appState.data.isNotEmpty()) {
-                    when(val item = appState.data.firstOrNull()) {
+                if (appState.data.isNotEmpty()) {
+                    when (val item = appState.data.firstOrNull()) {
                         is AddressItem -> {
-                            Toast.makeText(context, getString(R.string.save_success), Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                context,
+                                getString(R.string.save_success),
+                                Toast.LENGTH_SHORT
+                            ).show()
                             hideKeyboard()
                             isSaveSuccess = true
                             findNavController().navigateUp()
                         }
 
                         is AddressState -> {
-                            if(item != AddressState.VALID) {
+                            if (item != AddressState.VALID) {
                                 setError(item)
                             } else {
                                 saveData()

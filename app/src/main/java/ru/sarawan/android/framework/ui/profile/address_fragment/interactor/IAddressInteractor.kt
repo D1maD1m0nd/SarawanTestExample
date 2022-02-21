@@ -5,5 +5,5 @@ import ru.sarawan.android.model.data.AddressItem
 import ru.sarawan.android.utils.constants.AddressState
 
 interface IAddressInteractor {
-    fun validateAddress(addressItem: AddressItem) : Single<AddressState>
+    fun validateAddress(addressItem: AddressItem): Single<AddressState>
 }

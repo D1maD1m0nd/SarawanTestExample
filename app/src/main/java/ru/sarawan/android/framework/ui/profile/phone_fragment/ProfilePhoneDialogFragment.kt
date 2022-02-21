@@ -142,7 +142,7 @@ class ProfilePhoneDialogFragment : DialogFragment() {
         return phoneNumberWithoutMask(number)
     }
 
-    private fun phoneNumberWithoutMask(number: String) = "+"+number.replace(Regex("\\D"), "")
+    private fun phoneNumberWithoutMask(number: String) = "+" + number.replace(Regex("\\D"), "")
 
     private fun setState(appState: AppState<*>) {
         when (appState) {
