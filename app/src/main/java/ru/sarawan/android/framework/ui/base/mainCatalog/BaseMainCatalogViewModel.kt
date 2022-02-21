@@ -23,6 +23,7 @@ abstract class BaseMainCatalogViewModel(
 
     protected var searchWord: String? = null
     protected var category: Int? = null
+    protected var subcategory: Int? = null
 
     protected var filters: List<Filter>? = null
 
@@ -31,6 +32,7 @@ abstract class BaseMainCatalogViewModel(
     fun search(
         word: String?,
         categoryFilter: Int?,
+        subcategory: Int?,
         isOnline: Boolean,
         isLoggedUser: Boolean,
         searchType: SortBy = SortBy.PRICE_ASC
@@ -38,13 +40,14 @@ abstract class BaseMainCatalogViewModel(
         sortType = searchType
         lastPage = 1
         searchWord = word
-        category = categoryFilter
+        category = if (subcategory != null) null else categoryFilter
         compositeDisposable.add(
             loadMoreData(
                 isOnline,
                 Query.Get.Products(
                     productName = word,
                     categoryFilter = categoryFilter,
+                    subcategory = subcategory,
                     sortBy = searchType
                 ),
                 isLoggedUser
@@ -114,7 +117,7 @@ abstract class BaseMainCatalogViewModel(
                 filters = response.filters
                 maxElement = when {
                     category != null -> {
-                        response.filters?.find { it.id == category }?.let { return@let it }
+                        response.filters?.find { it.id.toInt() == category }?.let { return@let it }
                         response.count
                     }
                     else -> response.count

@@ -10,11 +10,12 @@ data class Response(
     @field: Json(name = "search_filters") val filters: List<Filter>?
 )
 
+@Parcelize
 data class Filter(
-    @field: Json(name = "id") val id: Int,
+    @field: Json(name = "id") val id: Long,
     @field: Json(name = "name") val name: String,
-    @field: Json(name = "count") val count: Int
-)
+    @field: Json(name = "count") val count: Int? = null
+): Parcelable
 
 @Parcelize
 data class Product(

@@ -30,6 +30,7 @@ class CategoryFragment : BaseMainCatalogFragment() {
         viewModel.getStartData(isOnline, !sharedPreferences.token.isNullOrEmpty())
         setupAppBar()
         initSpinner()
+        if (args.filterList != null) isFilterSubcategory = true
         super.onViewCreated(view, savedInstanceState)
     }
 
@@ -93,6 +94,7 @@ class CategoryFragment : BaseMainCatalogFragment() {
                                 SortBy.values().find { it.id.toLong() == id } ?: SortBy.PRICE_ASC
                             viewModel.changeSorting(
                                 args.categoryType,
+                                filterCategory,
                                 isOnline,
                                 sortType,
                                 !sharedPreferences.token.isNullOrEmpty()
@@ -137,7 +139,8 @@ class CategoryFragment : BaseMainCatalogFragment() {
 
     private fun handleSuccessResult(appState: AppState.Success<*>) {
         val data = (appState.data as List<MainScreenDataModel>).first()
-        fillChips(data.filters)
+        val filters = args.filterList?.toList() ?: data.filters
+        fillChips(filters)
         if (data.listOfElements.isNullOrEmpty()) {
             binding.emptyDataLayout.root.visibility = View.VISIBLE
         } else {

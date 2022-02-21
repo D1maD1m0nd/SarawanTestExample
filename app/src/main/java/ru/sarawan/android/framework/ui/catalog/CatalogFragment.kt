@@ -13,6 +13,7 @@ import ru.sarawan.android.utils.exstentions.token
 class CatalogFragment : BaseMainCatalogFragment() {
 
     private var catalogAdapter: CatalogRecyclerAdapter? = null
+    private val categories: MutableList<CategoryDataModel> = mutableListOf()
 
     override val viewModel: CatalogViewModel by lazy {
         viewModelFactory.create(CatalogViewModel::class.java)
@@ -26,9 +27,19 @@ class CatalogFragment : BaseMainCatalogFragment() {
         object : CatalogRecyclerAdapter.OnListItemClickListener {
             override fun onItemClick(data: CardScreenDataModel) {
                 if (isOnline) {
+                    val categoryType = data.id?.toInt() ?: -1
+                    var filterArray: Array<Filter>? = null
+                    if (categoryType != -1) {
+                        filterArray = categories
+                            .find { it.id == data.id }
+                            ?.categories
+                            ?.map { it.toFilter() }
+                            ?.toTypedArray()
+                    }
                     val action = CatalogFragmentDirections.actionCatalogFragmentToCategoryFragment(
-                        data.itemDescription.orEmpty(),
-                        data.id?.toInt() ?: -1
+                        categoryName = data.itemDescription.orEmpty(),
+                        categoryType = categoryType,
+                        filterList = filterArray
                     )
                     findNavController().navigate(action)
                 } else handleNetworkErrorWithToast()
@@ -77,10 +88,12 @@ class CatalogFragment : BaseMainCatalogFragment() {
                             isInitCompleted = true
                         }
                         is CategoryDataModel -> {
+                            categories.clear()
+                            categories.addAll(listData as List<CategoryDataModel>)
                             mainRecyclerView.layoutManager = linearLayoutManager
                             mainRecyclerView.adapter = catalogAdapter
                             val result: MutableList<CardScreenDataModel> = mutableListOf()
-                            (listData as List<CategoryDataModel>).forEach {
+                            listData.forEach {
                                 result.add(it.toMainScreenDataModel())
                             }
                             catalogAdapter?.setData(result) { loadingLayout.visibility = View.GONE }

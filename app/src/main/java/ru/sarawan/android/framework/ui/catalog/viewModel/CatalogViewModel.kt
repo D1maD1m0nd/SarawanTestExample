@@ -22,7 +22,7 @@ class CatalogViewModel @Inject constructor(
                 .observeOn(schedulerProvider.io)
                 .doOnSubscribe { stateLiveData.postValue(AppState.Loading) }
                 .subscribe(
-                    { stateLiveData.postValue(AppState.Success(it as List<CategoryDataModel>)) },
+                    { stateLiveData.postValue(AppState.Success(it)) },
                     { stateLiveData.postValue(AppState.Error(it)) }
                 )
         )
