@@ -69,7 +69,7 @@ class MainFragment : BaseMainCatalogFragment() {
                 binding.searchField.editText?.text.isNullOrEmpty(),
                 maxCount
             )
-            isDataLoaded = true
         }
+        isDataLoaded = true
     }
 }

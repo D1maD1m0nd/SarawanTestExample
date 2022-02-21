@@ -31,11 +31,10 @@ android {
         applicationId "ru.sarawan.android"
         minSdk 23
         targetSdk 31
-        versionCode 14
+        versionCode 16
         versionName "1.16.103"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
-
     buildTypes {
         release {
             minifyEnabled false

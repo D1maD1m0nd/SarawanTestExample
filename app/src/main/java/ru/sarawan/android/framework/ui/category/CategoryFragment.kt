@@ -147,9 +147,9 @@ class CategoryFragment : BaseMainCatalogFragment() {
             binding.emptyDataLayout.root.visibility = View.GONE
             maxCount = data.maxElement
             mainRecyclerAdapter?.setData(data.listOfElements, false, maxCount)
-            isDataLoaded = true
         }
         binding.loadingLayout.visibility = View.GONE
+        isDataLoaded = true
     }
 
     companion object {
