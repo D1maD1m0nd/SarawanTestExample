@@ -13,8 +13,6 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.core.content.getSystemService
-import androidx.core.view.isEmpty
-import androidx.core.view.size
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -79,8 +77,9 @@ abstract class BaseMainCatalogFragment : Fragment() {
         GridLayoutManager(context, 2, GridLayoutManager.VERTICAL, false)
     }
 
-    private var wordToSearch = ""
-    private var filterCategory: Int? = null
+    private var wordToSearch: String? = null
+    protected var filterCategory: Int? = null
+    protected var isFilterSubcategory = false
     private val filterList: MutableList<Filter> = mutableListOf()
 
     private val onListItemClickListener: BaseMainCatalogAdapter.OnListItemClickListener =
@@ -151,21 +150,30 @@ abstract class BaseMainCatalogFragment : Fragment() {
 
     private fun initFilterChips() = with(binding) {
         filterGroup.setOnCheckedChangeListener { _, checkedId ->
-            filterCategory = checkedId
-            makeSearch()
+            if (isFilterSubcategory) {
+                filterCategory = null
+                makeSearch(checkedId)
+            } else {
+                filterCategory = checkedId
+                makeSearch()
+            }
         }
     }
 
     protected fun fillChips(filters: List<Filter>?) = with(binding) {
-        if (filters.isNullOrEmpty()) return@with
+        if (filters.isNullOrEmpty()) {
+            filtersBar.visibility = View.GONE
+            return@with
+        }
         if (!filterList.containsAll(filters)) {
+            filtersBar.visibility = View.VISIBLE
             filterList.clear()
             filterList.addAll(filters)
             filterGroup.removeAllViews()
             filters.forEach {
                 val chip = layoutInflater
                     .inflate(R.layout.filter_chip_layout, filterGroup, false) as Chip
-                chip.id = it.id
+                chip.id = it.id.toInt()
                 chip.text = it.name
                 filterGroup.addView(chip)
             }
@@ -305,7 +313,7 @@ abstract class BaseMainCatalogFragment : Fragment() {
         }
     }
 
-    private fun makeSearch() = with(binding) {
+    private fun makeSearch(subcategory: Int? = null) = with(binding) {
         activity?.getSystemService<InputMethodManager>()
             ?.hideSoftInputFromWindow(searchField.windowToken, 0)
         searchField.clearFocus()
@@ -314,6 +322,7 @@ abstract class BaseMainCatalogFragment : Fragment() {
             viewModel.search(
                 wordToSearch,
                 filterCategory,
+                subcategory,
                 isOnline,
                 !sharedPreferences.token.isNullOrEmpty()
             )

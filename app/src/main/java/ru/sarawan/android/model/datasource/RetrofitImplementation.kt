@@ -30,6 +30,7 @@ class RetrofitImplementation @Inject constructor(private val apiService: ApiServ
                     query.popularProducts?.let { queryMap["popular_products"] = it.toString() }
                     query.productName?.let { queryMap["product_name"] = it }
                     query.similarProducts?.let { queryMap["similar_product"] = it.toString() }
+                    query.subcategory?.let { queryMap["category"] = it.toString() }
                     query.sortBy?.let { sorting ->
                         when (sorting) {
                             SortBy.PRICE_ASC -> queryMap["ordering_price"] = "true"

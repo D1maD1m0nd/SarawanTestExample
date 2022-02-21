@@ -114,6 +114,11 @@
             android:name="categoryType"
             android:defaultValue="-1"
             app:argType="integer" />
+        <argument
+            android:name="filterList"
+            android:defaultValue="@null"
+            app:argType="ru.sarawan.android.model.data.Filter[]"
+            app:nullable="true" />
     </fragment>
 
     <fragment

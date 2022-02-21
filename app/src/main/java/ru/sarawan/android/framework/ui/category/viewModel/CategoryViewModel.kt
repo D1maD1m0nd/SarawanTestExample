@@ -24,7 +24,11 @@ class CategoryViewModel @Inject constructor(
             if (category == CategoryFragment.DISCOUNT) Query.Get.Products(
                 sortBy = sortType,
                 discountProduct = true
-            ) else Query.Get.Products(categoryFilter = category, sortBy = sortType)
+            ) else Query.Get.Products(
+                categoryFilter = category,
+                subcategory = subcategory,
+                sortBy = sortType
+            )
 
         loadMoreData(isOnline, query, isLoggedUser)
             .subscribeOn(schedulerProvider.io)
@@ -47,11 +51,18 @@ class CategoryViewModel @Inject constructor(
             )
     }
 
-    fun changeSorting(category: Int?, isOnline: Boolean, sortType: SortBy, isLoggedUser: Boolean) {
+    fun changeSorting(
+        category: Int?,
+        subcategory: Int?,
+        isOnline: Boolean,
+        sortType: SortBy,
+        isLoggedUser: Boolean
+    ) {
         stateLiveData.value = AppState.Loading
         lastPage = 1
-        this.category = category
+        this.category = if (subcategory != null) null else category
         this.sortType = sortType
+        this.subcategory = subcategory
         getMoreData(isOnline, isLoggedUser)
     }
 }

@@ -5,7 +5,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:fontFamily="@font/montserrat_regular"
-    android:textColor="@color/black"
+    android:textColor="@color/text_filter_chip_color"
     android:textSize="16sp"
     app:chipBackgroundColor="@color/background_filter_chip_state_list"
     app:chipMinTouchTargetSize="36dp"
