@@ -71,7 +71,7 @@ class StoreAdapter(val itemClickListener: ItemClickListener) :
             }
             basketButton.setOnClickListener {
                 itemClickListener.create(
-                    Product(quantity = 1, product = store.id),
+                    Product(quantity = 1, product = store.id, storePrices = mutableListOf(store)),
                     absoluteAdapterPosition,
                     TypeCardEnum.STORE
                 )

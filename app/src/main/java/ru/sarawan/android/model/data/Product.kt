@@ -19,10 +19,10 @@ data class Filter(
 
 @Parcelize
 data class Product(
-    @field: Json(name = "id") val id: Long? = null,
-    @field: Json(name = "images") val images: List<Image>? = null,
+    @field: Json(name = "id") var id: Long? = null,
+    @field: Json(name = "images") var images: List<Image>? = null,
     @field: Json(name = "product") var product: Int? = null,
-    @field: Json(name = "name") val name: String? = null,
+    @field: Json(name = "name") var name: String? = null,
     @field: Json(name = "price_type") val priceType: String? = null,
     @field: Json(name = "store_prices") val storePrices: MutableList<StorePrice>? = null,
     @field: Json(name = "unit_quantity") val unitQuantity: String? = null,

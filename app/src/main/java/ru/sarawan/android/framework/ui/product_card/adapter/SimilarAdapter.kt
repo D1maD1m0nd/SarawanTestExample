@@ -84,12 +84,12 @@ class SimilarAdapter(val itemClickListener: ItemClickListener) :
 
             itemCard.setOnClickListener {
                 product.id?.let {
-                    itemClickListener.openProductCard(productId = product.id)
+                    itemClickListener.openProductCard(productId = it)
                 }
             }
 
             product.images?.let {
-                val image = product.images.first().image
+                val image = product.images?.first()?.image
                 itemImage.load(image) {
                     placeholder(R.drawable.place_holder_image)
                     error(R.drawable.place_holder_image)

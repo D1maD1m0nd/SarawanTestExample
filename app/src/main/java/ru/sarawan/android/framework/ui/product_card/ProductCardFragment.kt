@@ -48,6 +48,18 @@ class ProductCardFragment : Fragment() {
         }
 
         override fun create(product: Product, pos: Int, type: TypeCardEnum) {
+            when(type) {
+                TypeCardEnum.STORE -> {
+                    mainProduct.let {
+                        product.apply {
+                            id = it?.id
+                            name = it?.name
+                            images = it?.images
+                        }
+                    }
+                }
+            }
+
             itemSave(product, pos, true, type)
             product.storePrices?.first()?.let {
                 fabChanger?.changePrice(it.price.toFloat())
@@ -70,6 +82,7 @@ class ProductCardFragment : Fragment() {
     private lateinit var storeProducts: MutableList<StorePrice>
     private val similarAdapter = SimilarAdapter(itemClickListener)
     private var currentProduct: Product? = null
+    private var mainProduct: Product? = null
     private var previousProducts: ArrayList<Product> = arrayListOf()
     private var fabChanger: FabChanger? = null
     private val args: ProductCardFragmentArgs by navArgs()
@@ -165,6 +178,7 @@ class ProductCardFragment : Fragment() {
                 similarProducts = data
                     .filter { !it.storePrices.isNullOrEmpty() && it.id != product?.id }
                     .toMutableList()
+                mainProduct = product
                 if (filteredData.isNullOrEmpty() || (filteredData - product).isNullOrEmpty() || similarProducts.isNullOrEmpty()) {
                     binding.semilarTitleTextView.visibility = View.GONE
                     binding.similarProductRecyclerView.visibility = View.GONE
