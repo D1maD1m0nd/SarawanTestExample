@@ -6,6 +6,7 @@ import ru.sarawan.android.framework.ui.profile.interactor.IProfileInteractor
 import ru.sarawan.android.model.data.*
 import ru.sarawan.android.rx.ISchedulerProvider
 import ru.sarawan.android.utils.constants.TypeCase
+import ru.sarawan.android.utils.formatAddress
 import javax.inject.Inject
 
 class ProfileViewModel @Inject constructor(
@@ -58,11 +59,7 @@ class ProfileViewModel @Inject constructor(
     }
 
     fun getFormatAddress(address: AddressItem) {
-        interactor.formatAddress(address)
-            .subscribeOn(schedulerProvider.io)
-            .observeOn(schedulerProvider.ui)
-            .subscribe({ stateLiveData.value = AppState.Success(listOf(it), TypeCase.ADDRESS) },
-                { stateLiveData.value = AppState.Error(it) })
+        stateLiveData.value = AppState.Success(listOf(formatAddress(address)))
     }
 
     fun getFormatPhone(number: String, mask: String) {

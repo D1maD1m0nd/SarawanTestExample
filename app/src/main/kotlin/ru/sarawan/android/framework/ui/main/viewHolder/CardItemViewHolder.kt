@@ -31,11 +31,11 @@ class CardItemViewHolder(
                 }
 
                 if (quantity > 0) {
-                    itemBuyButtonFrame.visibility = View.GONE
+                    itemBuyButton.visibility = View.GONE
                     itemQuantityLayout.visibility = View.VISIBLE
                     itemQuantity.text = quantity.toString()
                 } else {
-                    itemBuyButtonFrame.visibility = View.VISIBLE
+                    itemBuyButton.visibility = View.VISIBLE
                     itemQuantityLayout.visibility = View.GONE
                 }
 
@@ -49,7 +49,7 @@ class CardItemViewHolder(
                 itemBuyButton.setOnClickListener {
                     listener.onItemPriceChangeClick(data, 1, true) { isOnline ->
                         if (isOnline) {
-                            itemBuyButtonFrame.visibility = View.GONE
+                            itemBuyButton.visibility = View.GONE
                             itemQuantityLayout.visibility = View.VISIBLE
                             quantity = 1
                             data.quantity = quantity
@@ -66,7 +66,7 @@ class CardItemViewHolder(
                             quantity -= 1
                             data.quantity = quantity
                             if (quantity <= 0) {
-                                itemBuyButtonFrame.visibility = View.VISIBLE
+                                itemBuyButton.visibility = View.VISIBLE
                                 itemQuantityLayout.visibility = View.GONE
                             }
                             itemQuantity.text = quantity.toString()
