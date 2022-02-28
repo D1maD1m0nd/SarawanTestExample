@@ -21,13 +21,4 @@ class MainInteractor @Inject constructor(
             localRepository.getData(query)
         }
     }
-
-    override fun formatAddress(address: AddressItem): Single<String> {
-        val city = address.city
-        val street = address.street
-        val house = address.house
-        val roomNum = address.roomNumber
-        var result = "$city, ул $street, д $house, кв $roomNum"
-        return Single.just(result)
-    }
 }

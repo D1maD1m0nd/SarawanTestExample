@@ -6,6 +6,7 @@ import ru.sarawan.android.model.data.AddressItem
 import ru.sarawan.android.model.data.AppState
 import ru.sarawan.android.model.data.Query
 import ru.sarawan.android.rx.ISchedulerProvider
+import ru.sarawan.android.utils.formatAddress
 import javax.inject.Inject
 
 class OrderViewModel @Inject constructor(
@@ -13,11 +14,7 @@ class OrderViewModel @Inject constructor(
     private val schedulerProvider: ISchedulerProvider
 ) : BaseViewModel<AppState<*>>() {
     fun getFormatAddress(address: AddressItem) {
-        interactor.formatAddress(address)
-            .subscribeOn(schedulerProvider.io)
-            .observeOn(schedulerProvider.ui)
-            .subscribe({ stateLiveData.value = AppState.Success(listOf(it)) },
-                { stateLiveData.value = AppState.Error(it) })
+        stateLiveData.value = AppState.Success(listOf(formatAddress(address)))
     }
 
     fun getAddress() {

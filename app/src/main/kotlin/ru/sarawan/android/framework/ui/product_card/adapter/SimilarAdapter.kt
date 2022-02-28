@@ -60,10 +60,10 @@ class SimilarAdapter(val itemClickListener: ItemClickListener) :
             itemPrice.text = store?.price.toString()
             itemQuantity.text = product.quantity.toString()
             if (product.quantity > 0) {
-                itemBuyButtonFrame.visibility = GONE
+                itemBuyButton.visibility = GONE
                 itemQuantityLayout.visibility = VISIBLE
             } else {
-                itemBuyButtonFrame.visibility = VISIBLE
+                itemBuyButton.visibility = VISIBLE
                 itemQuantityLayout.visibility = GONE
             }
             itemQuantityLayout.setOnClickListener { }
