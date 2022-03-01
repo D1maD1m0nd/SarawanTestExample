@@ -1,15 +1,16 @@
 package ru.sarawan.android.framework.ui.product_card.viewModel
 
 import io.reactivex.rxjava3.core.Single
-import io.reactivex.rxjava3.observers.DisposableSingleObserver
-import ru.sarawan.android.framework.MainInteractor
 import ru.sarawan.android.framework.ui.base.BaseViewModel
 import ru.sarawan.android.model.data.*
+import ru.sarawan.android.model.interactor.BasketInteractor
+import ru.sarawan.android.model.interactor.ProductInteractor
 import ru.sarawan.android.rx.ISchedulerProvider
 import javax.inject.Inject
 
 class ProductCardViewModel @Inject constructor(
-    private val interactor: MainInteractor,
+    private val productInteractor: ProductInteractor,
+    private val basketInteractor: BasketInteractor,
     private val schedulerProvider: ISchedulerProvider
 ) : BaseViewModel<AppState<*>>() {
     private var basketID: Int? = null
@@ -19,46 +20,35 @@ class ProductCardViewModel @Inject constructor(
 
     fun similarProducts(storeId: Long?, isLoggedUser: Boolean) {
         storeId?.let { store ->
-            val basket = interactor.getData(Query.Get.Basket, isLoggedUser)
-                .onErrorReturnItem(listOf(Basket()))
-            val similar =
-                interactor.getData(Query.Get.Products(similarProducts = store), true)
-            val product = interactor.getData(Query.Get.ProductByID(storeId), true)
+            val basket = basketInteractor.getBasket(isLoggedUser)
+                .onErrorReturnItem(Basket())
+            val similar = productInteractor.getProducts(Products(similarProducts = store))
+            val product = productInteractor.getProduct(store)
             compositeDisposable.add(
                 Single.zip(similar, basket, product) { similarData, basketData, productData ->
-                    productData as List<Product>
-                    basketData as List<Basket>
-                    similarData as List<Response>
                     val result: MutableList<Product> = mutableListOf()
-                    result.addAll(similarData.first().results)
-                    result.addAll(productData)
+                    result.addAll(similarData.results)
+                    result.add(productData)
                     val data: List<Product>
-                    val basketObject = (basketData).firstOrNull()
-                    basketID = basketObject?.basketId
-                    if (basketData.isNotEmpty()) {
+                    basketID = basketData.basketId
+                    if (basketData.products?.isNotEmpty() == true) {
                         data = result.map { similarProduct ->
-                            similarProduct.storePrices?.sortBy { storeItem ->
-                                storeItem.price
-                            }
-                            basketObject
-                                ?.products
-                                ?.forEach { basketSingleData ->
-                                    val similarEq =
-                                        similarProduct.id == basketSingleData.basketProduct?.basketProduct?.id
-                                    if (similarEq) {
-                                        similarProduct.quantity = basketSingleData.quantity!!
-                                        val storeIdProduct =
-                                            basketSingleData.basketProduct?.productStoreId
-                                        storeIdProduct?.let { idProduct ->
-                                            similarProduct
-                                                .storePrices
-                                                ?.findLast { it.id == idProduct }
-                                                ?.let {
-                                                    it.count = basketSingleData.quantity!!
-                                                }
-                                        }
+                            similarProduct.storePrices?.sortBy { storeItem -> storeItem.price }
+                            basketData.products.forEach { basketSingleData ->
+                                val similarEq =
+                                    similarProduct.id == basketSingleData.basketProduct?.basketProduct?.id
+                                if (similarEq) {
+                                    similarProduct.quantity = basketSingleData.quantity!!
+                                    val storeIdProduct =
+                                        basketSingleData.basketProduct?.productStoreId
+                                    storeIdProduct?.let { idProduct ->
+                                        similarProduct
+                                            .storePrices
+                                            ?.findLast { it.id == idProduct }
+                                            ?.let { it.count = basketSingleData.quantity!! }
                                     }
                                 }
+                            }
                             if (similarProduct.product == null) {
                                 similarProduct.product =
                                     similarProduct.storePrices?.firstOrNull()?.id
@@ -68,9 +58,7 @@ class ProductCardViewModel @Inject constructor(
 
                     } else {
                         data = result.map { similarProduct ->
-                            similarProduct.storePrices?.sortBy { storeItem ->
-                                storeItem.price
-                            }
+                            similarProduct.storePrices?.sortBy { storeItem -> storeItem.price }
                             similarProduct
                         }
                     }
@@ -89,18 +77,17 @@ class ProductCardViewModel @Inject constructor(
 
     fun saveData(data: List<Product>, isNewItem: Boolean, isLoggedUser: Boolean) {
         if (isNewItem) compositeDisposable.add(
-            interactor
-                .getData(Query.Post.Basket.Put(ProductsUpdate(data)), isLoggedUser)
+            basketInteractor.putProduct(isLoggedUser, ProductsUpdate(data))
                 .subscribeOn(schedulerProvider.io)
                 .observeOn(schedulerProvider.io)
-                .subscribe({
-                    basketID = (it as List<BasketResponse>).first().basketId
-                }, { stateLiveData.postValue(AppState.Error(it)) })
+                .subscribe(
+                    { basketID = it.basketId },
+                    { stateLiveData.postValue(AppState.Error(it)) }
+                )
         )
         else basketID?.let { basket ->
             compositeDisposable.add(
-                interactor
-                    .getData(Query.Put.Basket.Update(basket, ProductsUpdate(data)), isLoggedUser)
+                basketInteractor.updateProduct(isLoggedUser, basket, ProductsUpdate(data))
                     .subscribeOn(schedulerProvider.io)
                     .observeOn(schedulerProvider.io)
                     .subscribe({}, { stateLiveData.postValue(AppState.Error(it)) })
@@ -108,32 +95,5 @@ class ProductCardViewModel @Inject constructor(
         }
         if (basketID == null) stateLiveData.value =
             AppState.Error(RuntimeException("Should init BasketID first"))
-    }
-
-    fun updateBasket(products: ProductsUpdate, isLoggedUser: Boolean) {
-        basketID?.let { id ->
-            compositeDisposable.add(
-                interactor.getData(Query.Put.Basket.Update(id, products), isLoggedUser)
-                    .subscribeOn(schedulerProvider.io)
-                    .observeOn(schedulerProvider.io)
-                    .doOnSubscribe { stateLiveData.postValue(AppState.Loading) }
-                    .subscribeWith(getObserver())
-            )
-        }
-        if (basketID == null) stateLiveData.value =
-            AppState.Error(RuntimeException("Should init BasketID first"))
-    }
-
-    private fun getObserver() = object : DisposableSingleObserver<List<*>>() {
-        override fun onSuccess(result: List<*>) {
-            val basket = result.first() as Basket
-            basketID = basket.basketId
-            val items = basket.products as List<*>
-            stateLiveData.postValue(AppState.Success(items))
-        }
-
-        override fun onError(e: Throwable) {
-            stateLiveData.postValue(AppState.Error(e))
-        }
     }
 }

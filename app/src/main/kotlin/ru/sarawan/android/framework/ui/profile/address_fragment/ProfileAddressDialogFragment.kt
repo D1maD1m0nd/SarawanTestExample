@@ -73,6 +73,7 @@ class ProfileAddressDialogFragment : DialogFragment() {
     }
 
     private fun showKeyboard() {
+        @Suppress("DEPRECATION")
         inputMethodManager?.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
         keyboardShown = true
     }
@@ -152,30 +153,25 @@ class ProfileAddressDialogFragment : DialogFragment() {
     private fun setState(appState: AppState<*>) {
         when (appState) {
             is AppState.Success<*> -> {
-                if (appState.data.isNotEmpty()) {
-                    when (val item = appState.data.firstOrNull()) {
-                        is AddressItem -> {
-                            Toast.makeText(
-                                context,
-                                getString(R.string.save_success),
-                                Toast.LENGTH_SHORT
-                            ).show()
-                            hideKeyboard()
-                            isSaveSuccess = true
-                            findNavController().navigateUp()
-                        }
-
-                        is AddressState -> {
-                            if (item != AddressState.VALID) {
-                                setError(item)
-                            } else {
-                                saveData()
-                            }
-                        }
-
+                when (val item = appState.data) {
+                    is AddressItem -> {
+                        Toast.makeText(
+                            context,
+                            getString(R.string.save_success),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        hideKeyboard()
+                        isSaveSuccess = true
+                        findNavController().navigateUp()
                     }
-                }
 
+                    is AddressState -> {
+                        if (item != AddressState.VALID) setError(item)
+                        else saveData()
+                    }
+
+                    else -> throw RuntimeException("Wrong AppState type $appState")
+                }
             }
 
             is AppState.Error -> {
@@ -184,7 +180,7 @@ class ProfileAddressDialogFragment : DialogFragment() {
                     Toast.makeText(context, error.response().toString(), Toast.LENGTH_SHORT).show()
                 }
             }
-            else -> Unit
+            else -> throw RuntimeException("Wrong AppState type $appState")
         }
     }
 

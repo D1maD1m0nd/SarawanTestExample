@@ -2,40 +2,31 @@ package ru.sarawan.android.di.modules
 
 import dagger.Module
 import dagger.Provides
-import ru.sarawan.android.framework.MainInteractor
-import ru.sarawan.android.framework.ui.basket.interactor.BasketInteractor
-import ru.sarawan.android.framework.ui.basket.interactor.IBasketInteractor
-import ru.sarawan.android.framework.ui.profile.address_fragment.interactor.AddressInteractor
-import ru.sarawan.android.framework.ui.profile.address_fragment.interactor.IAddressInteractor
-import ru.sarawan.android.framework.ui.profile.interactor.IProfileInteractor
-import ru.sarawan.android.framework.ui.profile.interactor.ProfileInteractor
-import ru.sarawan.android.model.datasource.DataSource
+import ru.sarawan.android.model.datasource.*
+import ru.sarawan.android.model.interactor.*
 import javax.inject.Named
 
 @Module
 class InteractorModule {
 
     @Provides
-    fun provideInteractor(
-        @Named(NAME_REMOTE) remoteRepo: DataSource<List<*>>,
-        @Named(NAME_LOCAL) localRepo: DataSource<List<*>>,
-    ): MainInteractor {
-        return MainInteractor(remoteRepo, localRepo)
-    }
-
+    fun provideProductInteractor(
+        productRepo: ProductDataSource,
+        productsRepo: ProductsDataSource,
+        categoriesRepo: CategoriesDataSource
+    ): ProductInteractor = ProductInteractorImpl(productRepo, productsRepo, categoriesRepo)
 
     @Provides
-    fun provideBasketInteractor(): IBasketInteractor {
-        return BasketInteractor()
-    }
+    fun provideBasketInteractor(
+        @Named(NAME_REMOTE) remoteRepo: BasketDataSource,
+        @Named(NAME_LOCAL) localRepo: BasketDataSource,
+    ): BasketInteractor = BasketInteractorImpl(remoteRepo, localRepo)
 
     @Provides
-    fun provideProfileInteractor(): IProfileInteractor {
-        return ProfileInteractor()
-    }
+    fun provideOrderInteractor(remoteRepo: OrderDataSource): OrderInteractor =
+        OrderInteractorImpl(remoteRepo)
 
     @Provides
-    fun provideAddressInteractor(): IAddressInteractor {
-        return AddressInteractor()
-    }
+    fun provideUserInteractor(remoteRepo: UserDataSource): UserInteractor =
+        UserInteractorImpl(remoteRepo)
 }

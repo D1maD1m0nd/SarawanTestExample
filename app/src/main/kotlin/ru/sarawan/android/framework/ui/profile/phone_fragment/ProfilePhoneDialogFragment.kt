@@ -92,6 +92,7 @@ class ProfilePhoneDialogFragment : DialogFragment() {
     }
 
     private fun showKeyboard() {
+        @Suppress("DEPRECATION")
         inputMethodManager?.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
         keyboardShown = true
     }
@@ -147,9 +148,8 @@ class ProfilePhoneDialogFragment : DialogFragment() {
     private fun setState(appState: AppState<*>) {
         when (appState) {
             is AppState.Success<*> -> {
-                appState.data as MutableList<UserRegistration>
-                if (appState.data.isNotEmpty()) {
-                    val result = appState.data.first()
+                if (appState.data is UserRegistration) {
+                    val result = appState.data
                     result.success.let {
                         if (it) {
                             hideKeyboard()
@@ -159,7 +159,7 @@ class ProfilePhoneDialogFragment : DialogFragment() {
                             findNavController().navigate(action)
                         }
                     }
-                }
+                } else throw RuntimeException("Wrong AppState type $appState")
             }
             is AppState.Error -> {
                 Toast.makeText(
@@ -168,7 +168,7 @@ class ProfilePhoneDialogFragment : DialogFragment() {
                     Toast.LENGTH_SHORT
                 ).show()
             }
-            else -> Unit
+            else -> throw RuntimeException("Wrong AppState type $appState")
         }
     }
 

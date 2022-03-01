@@ -86,32 +86,28 @@ class OrderFragment : Fragment() {
     private fun setState(state: AppState<*>) {
         when (state) {
             is AppState.Success -> {
-                val data = state.data
-                if (data.isNotEmpty()) {
-                    when (val item = data.first()) {
-                        is String -> {
-                            binding.addressButton.text = item
-                        }
-                        is AddressItem -> {
-                            addressItem = AddressItem(idAddressOrder = item.id)
-                            addressItem?.let { viewModel.getOrder(it) }
-                            viewModel.getFormatAddress(item)
-                        }
+                when (val item = state.data) {
+                    is String -> binding.addressButton.text = item
 
-                        is Order -> {
-                            setOrderData(item)
-                        }
+                    is AddressItem -> {
+                        addressItem = AddressItem(idAddressOrder = item.id)
+                        addressItem?.let { viewModel.getOrder(it) }
+                        viewModel.getFormatAddress(item)
+                    }
 
-                        is OrderApprove -> {
-                            binding.progressBar.visibility = View.GONE
-                            item.orderName.let {
-                                val message = "Заказ №${it} оформлен"
-                                val action = OrderFragmentDirections
-                                    .actionOrderFragmentToSuccessOrderDialogFragment(message)
-                                findNavController().navigate(action)
-                            }
+                    is Order -> setOrderData(item)
+
+                    is OrderApprove -> {
+                        binding.progressBar.visibility = View.GONE
+                        item.orderName.let {
+                            val message = "Заказ №${it} оформлен"
+                            val action = OrderFragmentDirections
+                                .actionOrderFragmentToSuccessOrderDialogFragment(message)
+                            findNavController().navigate(action)
                         }
                     }
+
+                    else -> throw RuntimeException("Wrong AppState type $state")
                 }
             }
 
@@ -130,7 +126,7 @@ class OrderFragment : Fragment() {
                 }
             }
 
-            is AppState.Empty -> Unit
+            else -> throw RuntimeException("Wrong AppState type $state")
         }
     }
 

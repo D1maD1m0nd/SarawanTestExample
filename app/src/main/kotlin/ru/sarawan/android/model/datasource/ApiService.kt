@@ -40,7 +40,7 @@ interface ApiService {
      * Добавление продукта в корзину
      */
     @POST("api/basket/")
-    fun putBasketProduct(@Body productItem: ProductsUpdate): Single<BasketResponse>
+    fun putBasketProduct(@Body productItem: ProductsUpdate): Single<Basket>
 
     /**
      * Обновление продукта
@@ -49,7 +49,7 @@ interface ApiService {
     fun updateBasketProduct(
         @Path("id") id: Int,
         @Body productItem: ProductsUpdate
-    ): Single<BasketResponse>
+    ): Single<Basket>
 
     /**
      * Удаление продукта из корзины
@@ -91,7 +91,7 @@ interface ApiService {
      * Получение списка адресов
      */
     @GET("api/user_address/")
-    fun getAddress(): Single<MutableList<AddressItem>>
+    fun getAddress(): Single<List<AddressItem>>
 
     /**
      * Расчет стоимости заказа

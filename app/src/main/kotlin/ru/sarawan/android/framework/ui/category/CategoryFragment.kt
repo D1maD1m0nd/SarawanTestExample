@@ -95,7 +95,6 @@ class CategoryFragment : BaseMainCatalogFragment() {
                             viewModel.changeSorting(
                                 args.categoryType,
                                 filterCategory,
-                                isOnline,
                                 sortType,
                                 !sharedPreferences.token.isNullOrEmpty()
                             )
@@ -124,31 +123,34 @@ class CategoryFragment : BaseMainCatalogFragment() {
         viewModel.getStateLiveData().observe(viewLifecycleOwner) { appState ->
             when (appState) {
                 is AppState.Success<*> -> {
-                    if (mainRecyclerAdapter != null && mainRecyclerAdapter!!.itemCount > 0) {
-                        if (isInitCompleted) handleSuccessResult(appState)
-                        else binding.loadingLayout.visibility = View.GONE
-                    } else handleSuccessResult(appState)
-                    isInitCompleted = true
+                    if (appState.data is MainScreenDataModel) {
+                        if (mainRecyclerAdapter != null && mainRecyclerAdapter!!.itemCount > 0) {
+                            if (isInitCompleted) handleSuccessResult(appState.data)
+                            else binding.loadingLayout.visibility = View.GONE
+                        } else handleSuccessResult(appState.data)
+                        isInitCompleted = true
+                    } else throw RuntimeException("Wrong AppState type $appState")
                 }
+
                 is AppState.Error -> handleNetworkErrorWithToast(appState.error)
+
                 AppState.Loading -> binding.loadingLayout.visibility = View.VISIBLE
-                AppState.Empty -> Unit
+
+                else -> throw RuntimeException("Wrong AppState type $appState")
             }
         }
     }
 
-    private fun handleSuccessResult(appState: AppState.Success<*>) {
-        val data = (appState.data as List<MainScreenDataModel>).first()
+    private fun handleSuccessResult(data: MainScreenDataModel) = with(binding) {
         val filters = args.filterList?.toList() ?: data.filters
         fillChips(filters)
         if (data.listOfElements.isNullOrEmpty()) {
-            binding.emptyDataLayout.root.visibility = View.VISIBLE
+            emptyDataLayout.root.visibility = View.VISIBLE
         } else {
-            binding.emptyDataLayout.root.visibility = View.GONE
-            maxCount = data.maxElement
-            mainRecyclerAdapter?.setData(data.listOfElements, false, maxCount)
+            emptyDataLayout.root.visibility = View.GONE
+            mainRecyclerAdapter?.setData(data.listOfElements, false, data.isLastPage)
         }
-        binding.loadingLayout.visibility = View.GONE
+        loadingLayout.visibility = View.GONE
         isDataLoaded = true
     }
 

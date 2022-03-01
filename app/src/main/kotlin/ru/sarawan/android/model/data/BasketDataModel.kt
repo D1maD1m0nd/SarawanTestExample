@@ -8,7 +8,8 @@ import java.util.*
 
 data class Basket(
     @field:Json(name = "basket_id") val basketId: Int? = null,
-    @field:Json(name = "products") val products: List<ProductsItem>? = null
+    @field:Json(name = "products") val products: List<ProductsItem>? = null,
+    @field:Json(name = "id") val id: Int? = null
 )
 
 @Parcelize
@@ -43,10 +44,6 @@ data class BasketProduct(
     @field:Json(name = "unit_quantity") val unitQuantity: String? = null,
     @field:Json(name = "information") var information: ProductInformation? = null
 ) : Parcelable
-
-data class BasketResponse(
-    @field:Json(name = "id") val basketId: Int? = null
-)
 
 fun ProductsItem.toProduct() =
     Product(

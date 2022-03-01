@@ -44,17 +44,17 @@ class MainRecyclerAdapter(
         }
     private lateinit var topCardsRecycler: RecyclerView
 
-    fun setData(data: List<CardScreenDataModel>?, isRecommended: Boolean, maxCommonData: Int) {
+    fun setData(data: List<CardScreenDataModel>?, isRecommended: Boolean, isLastPage: Boolean) {
         if (data.isNullOrEmpty()) return
         setTopData(data)
         setRecommendedString(isRecommended)
         setLoading()
         setCommonData(data)
-        removeLoading(maxCommonData)
+        removeLoading(isLastPage)
     }
 
-    private fun removeLoading(maxCommonData: Int) {
-        if (!isLoadingHidden && maxCommonData - commonData.size < 1) {
+    private fun removeLoading(isLastPage: Boolean) {
+        if (isLastPage) {
             isLoadingHidden = true
             displayData.removeLast()
             notifyItemRemoved(itemCount)

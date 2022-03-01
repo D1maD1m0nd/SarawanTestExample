@@ -12,6 +12,7 @@ class ViewModelFactory @Inject constructor(
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         val creator = viewModels[modelClass]
         return try {
+            @Suppress("UNCHECKED_CAST")
             creator?.get() as T
         } catch (e: Exception) {
             throw RuntimeException(e)

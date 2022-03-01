@@ -1,36 +1,45 @@
 package ru.sarawan.android.framework.ui.category.viewModel
 
-import ru.sarawan.android.framework.MainInteractor
 import ru.sarawan.android.framework.ui.base.mainCatalog.BaseMainCatalogViewModel
 import ru.sarawan.android.framework.ui.category.CategoryFragment
 import ru.sarawan.android.model.data.*
+import ru.sarawan.android.model.interactor.BasketInteractor
+import ru.sarawan.android.model.interactor.ProductInteractor
 import ru.sarawan.android.rx.ISchedulerProvider
 import ru.sarawan.android.utils.StringProvider
 import ru.sarawan.android.utils.constants.SortBy
 import javax.inject.Inject
 
 class CategoryViewModel @Inject constructor(
-    interactor: MainInteractor,
+    productInteractor: ProductInteractor,
+    basketInteractor: BasketInteractor,
     private val schedulerProvider: ISchedulerProvider,
     private val stringProvider: StringProvider
-) : BaseMainCatalogViewModel(interactor, schedulerProvider, stringProvider) {
+) : BaseMainCatalogViewModel(
+    productInteractor,
+    basketInteractor,
+    schedulerProvider,
+    stringProvider
+) {
 
     override fun getStartData(isOnline: Boolean, isLoggedUser: Boolean) {
         category = CategoryFragment.DISCOUNT
     }
 
-    override fun getMoreData(isOnline: Boolean, isLoggedUser: Boolean) {
-        val query: Query.Get.Products =
-            if (category == CategoryFragment.DISCOUNT) Query.Get.Products(
+    override fun getMoreData(isLoggedUser: Boolean) {
+        val products: Products =
+            if (category == CategoryFragment.DISCOUNT) Products(
                 sortBy = sortType,
+                pageSize = PAGE_ELEMENTS,
                 discountProduct = true
-            ) else Query.Get.Products(
+            ) else Products(
                 categoryFilter = category,
+                pageSize = PAGE_ELEMENTS,
                 subcategory = subcategory,
                 sortBy = sortType
             )
 
-        loadMoreData(isOnline, query, isLoggedUser)
+        loadMoreData(products, isLoggedUser)
             .subscribeOn(schedulerProvider.io)
             .observeOn(schedulerProvider.io)
             .subscribe(
@@ -44,7 +53,7 @@ class CategoryViewModel @Inject constructor(
                             )
                     }
                     stateLiveData.postValue(
-                        AppState.Success(listOf(MainScreenDataModel(result, maxElement, filters)))
+                        AppState.Success(MainScreenDataModel(result, isLastPage, filters))
                     )
                 },
                 { stateLiveData.postValue(AppState.Error(it)) }
@@ -54,7 +63,6 @@ class CategoryViewModel @Inject constructor(
     fun changeSorting(
         category: Int?,
         subcategory: Int?,
-        isOnline: Boolean,
         sortType: SortBy,
         isLoggedUser: Boolean
     ) {
@@ -63,6 +71,6 @@ class CategoryViewModel @Inject constructor(
         this.category = if (subcategory != null) null else category
         this.sortType = sortType
         this.subcategory = subcategory
-        getMoreData(isOnline, isLoggedUser)
+        getMoreData(isLoggedUser)
     }
 }

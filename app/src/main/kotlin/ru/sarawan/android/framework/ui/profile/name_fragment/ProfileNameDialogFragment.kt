@@ -100,6 +100,7 @@ class ProfileNameDialogFragment : DialogFragment() {
     }
 
     private fun showKeyboard() {
+        @Suppress("DEPRECATION")
         inputMethodManager?.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
         keyboardShown = true
     }
@@ -120,7 +121,7 @@ class ProfileNameDialogFragment : DialogFragment() {
             is AppState.Error -> {
                 Toast.makeText(context, "Ошибка", Toast.LENGTH_SHORT).show()
             }
-            else -> Unit
+            else -> throw RuntimeException("Wrong AppState type $appState")
         }
     }
 

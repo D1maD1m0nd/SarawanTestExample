@@ -47,7 +47,7 @@ class MainActivity : AppCompatActivity(), FabChanger, BasketSaver {
     private var isBackShown = false
     private var lastTimeBackPressed: Long = 0
     private val totalPrice: BehaviorSubject<Float> = BehaviorSubject.create()
-    private var data: List<ProductsItem> = mutableListOf()
+    private var data: List<ProductsItem> = emptyList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,17 +70,24 @@ class MainActivity : AppCompatActivity(), FabChanger, BasketSaver {
 
     private fun updateFab(appState: AppState<*>) {
         if (appState is AppState.Success<*>) {
-            data = appState.data as ArrayList<ProductsItem>
-            val price = data.sumOf {
-                var result = 0.0
-                it.quantity?.let { quantity ->
-                    it.basketProduct?.price?.let { price ->
-                        result += (price.toDouble() * quantity)
-                    }
+            if (appState.data is List<*>) {
+                if (appState.data.isNotEmpty()) {
+                    if (appState.data.first() is ProductsItem) {
+                        @Suppress("UNCHECKED_CAST")
+                        data = appState.data as List<ProductsItem>
+                        val price = data.sumOf {
+                            var result = 0.0
+                            it.quantity?.let { quantity ->
+                                it.basketProduct?.price?.let { price ->
+                                    result += (price.toDouble() * quantity)
+                                }
+                            }
+                            result
+                        }.toFloat()
+                        putPrice(price)
+                    } else throw RuntimeException("Wrong List type ${appState.data}")
                 }
-                result
-            }.toFloat()
-            putPrice(price)
+            } else throw RuntimeException("Wrong AppState type $appState")
         }
     }
 

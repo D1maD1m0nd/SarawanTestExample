@@ -79,6 +79,7 @@ class ProfileCodeDialogFragment : DialogFragment() {
     }
 
     private fun showKeyboard() {
+        @Suppress("DEPRECATION")
         inputMethodManager?.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
         keyboardShown = true
     }
@@ -216,16 +217,14 @@ class ProfileCodeDialogFragment : DialogFragment() {
     private fun setState(appState: AppState<*>) = with(binding) {
         when (appState) {
             is AppState.Success<*> -> {
-                appState.data as MutableList<UserRegistration>
-                if (appState.data.isNotEmpty()) {
-                    val result = appState.data.first()
-                    sharedPreferences.token = result.token
-                    sharedPreferences.userId = result.userId
+                if (appState.data is UserRegistration) {
+                    sharedPreferences.token = appState.data.token
+                    sharedPreferences.userId = appState.data.userId
                     hideKeyboard()
                     val action = ProfileCodeDialogFragmentDirections
                         .actionProfileCodeDialogFragmentToProfileSuccessDialogFragment()
                     findNavController().navigate(action)
-                }
+                } else throw RuntimeException("Wrong AppState type $appState")
             }
             is AppState.Error -> {
                 //при неверном коде возвращает ошибку 500
@@ -235,7 +234,7 @@ class ProfileCodeDialogFragment : DialogFragment() {
                 setTitle()
                 setCodeBorder()
             }
-            else -> Unit
+            else -> throw RuntimeException("Wrong AppState type $appState")
         }
     }
 

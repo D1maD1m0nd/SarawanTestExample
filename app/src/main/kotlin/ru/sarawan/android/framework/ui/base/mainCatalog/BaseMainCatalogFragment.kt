@@ -68,7 +68,6 @@ abstract class BaseMainCatalogFragment : Fragment() {
 
     protected abstract val viewModel: BaseMainCatalogViewModel
     protected var isOnline = false
-    protected var maxCount = -1
     protected var isDataLoaded = false
     protected var isInitCompleted = false
     protected var mainRecyclerAdapter: MainRecyclerAdapter? = null
@@ -208,7 +207,7 @@ abstract class BaseMainCatalogFragment : Fragment() {
                         ) == CardType.LOADING.type
                     ) if (isOnline) {
                         isDataLoaded = false
-                        viewModel.getMoreData(isOnline, !sharedPreferences.token.isNullOrEmpty())
+                        viewModel.getMoreData(!sharedPreferences.token.isNullOrEmpty())
                     } else handleNetworkErrorWithToast()
                     adapter.changeLoadingAnimation(isOnline)
                 }
@@ -323,7 +322,6 @@ abstract class BaseMainCatalogFragment : Fragment() {
                 wordToSearch,
                 filterCategory,
                 subcategory,
-                isOnline,
                 !sharedPreferences.token.isNullOrEmpty()
             )
             loadingLayout.visibility = View.VISIBLE
