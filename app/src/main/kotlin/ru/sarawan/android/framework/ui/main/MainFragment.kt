@@ -12,7 +12,7 @@ import ru.sarawan.android.utils.exstentions.token
 class MainFragment : BaseMainCatalogFragment() {
 
     override val viewModel: MainViewModel by lazy {
-        viewModelFactory.create(MainViewModel::class.java)
+        viewModelFactory.get().create(MainViewModel::class.java)
     }
 
     override fun attachAdapterToView() {

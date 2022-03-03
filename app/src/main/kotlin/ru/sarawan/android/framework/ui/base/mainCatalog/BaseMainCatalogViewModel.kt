@@ -31,23 +31,28 @@ abstract class BaseMainCatalogViewModel(
 
     protected var basketID: Int? = null
 
+    protected var prevCategory: Int? = null
+
     fun search(
         word: String?,
         categoryFilter: Int?,
         subcategory: Int?,
         isLoggedUser: Boolean,
-        searchType: SortBy = SortBy.PRICE_ASC
+        searchType: SortBy = sortType
     ) {
+        onCleared()
         sortType = searchType
         lastPage = 1
+        if (categoryFilter != null && word.isNullOrEmpty()) prevCategory = categoryFilter
         searchWord = word
-        category = if (subcategory != null) null else categoryFilter
+        category = if (subcategory != null) null else (categoryFilter ?: prevCategory)
+//        val foundSubcategory = filters?.find { it.id == subcategory?.toLong() }?.id?.toInt()
         compositeDisposable.add(
             loadMoreData(
                 Products(
                     productName = word,
                     pageSize = PAGE_ELEMENTS,
-                    categoryFilter = categoryFilter,
+                    categoryFilter = if (subcategory == null) categoryFilter ?: prevCategory else null,
                     subcategory = subcategory,
                     sortBy = searchType
                 ),
@@ -74,6 +79,7 @@ abstract class BaseMainCatalogViewModel(
     }
 
     fun saveData(data: CardScreenDataModel, isLoggedUser: Boolean, isNewItem: Boolean) {
+        onCleared()
         val products = listOf(data.toProduct())
         if (isNewItem) compositeDisposable.add(
             basketInteractor

@@ -17,7 +17,7 @@ class CatalogFragment : BaseMainCatalogFragment() {
     private val categories: MutableList<CategoryDataModel> = mutableListOf()
 
     override val viewModel: CatalogViewModel by lazy {
-        viewModelFactory.create(CatalogViewModel::class.java)
+        viewModelFactory.get().create(CatalogViewModel::class.java)
     }
 
     private val linearLayoutManager: LinearLayoutManager by lazy {
@@ -40,6 +40,7 @@ class CatalogFragment : BaseMainCatalogFragment() {
                     val action = CatalogFragmentDirections.actionCatalogFragmentToCategoryFragment(
                         categoryName = data.itemDescription.orEmpty(),
                         categoryType = categoryType,
+                        subCategoryType = filterSubcategory ?: -1,
                         filterList = filterArray
                     )
                     findNavController().navigate(action)

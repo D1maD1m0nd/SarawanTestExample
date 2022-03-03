@@ -21,7 +21,7 @@ class CategoryFragment : BaseMainCatalogFragment() {
     private val args: CategoryFragmentArgs by navArgs()
 
     override val viewModel: CategoryViewModel by lazy {
-        viewModelFactory.create(CategoryViewModel::class.java)
+        viewModelFactory.get().create(CategoryViewModel::class.java)
     }
 
     private var sortType: SortBy = SortBy.PRICE_ASC
@@ -94,7 +94,7 @@ class CategoryFragment : BaseMainCatalogFragment() {
                                 SortBy.values().find { it.id.toLong() == id } ?: SortBy.PRICE_ASC
                             viewModel.changeSorting(
                                 args.categoryType,
-                                filterCategory,
+                                filterSubcategory,
                                 sortType,
                                 !sharedPreferences.token.isNullOrEmpty()
                             )
@@ -108,8 +108,8 @@ class CategoryFragment : BaseMainCatalogFragment() {
         binding.catalogSortSpinner.alpha = 1f
         if (!isInitCompleted) {
             sortType =
-                if (args.categoryName != null) SortBy.PRICE_ASC
-                else SortBy.DISCOUNT
+                if (args.categoryType == DISCOUNT) SortBy.DISCOUNT
+                else SortBy.PRICE_ASC
             binding.catalogSortSpinner.setSelection(sortType.id)
         }
     }

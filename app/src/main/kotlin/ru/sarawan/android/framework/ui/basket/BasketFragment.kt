@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import dagger.Lazy
 import dagger.android.support.AndroidSupportInjection
 import retrofit2.HttpException
 import ru.sarawan.android.R
@@ -32,7 +33,7 @@ class BasketFragment : Fragment() {
     lateinit var sharedPreferences: SharedPreferences
 
     @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
+    lateinit var viewModelFactory: Lazy<ViewModelProvider.Factory>
     private var _binding: FragmentBasketBinding? = null
     private val binding get() = _binding!!
 
@@ -75,7 +76,7 @@ class BasketFragment : Fragment() {
     }
     private val adapter = BasketAdapter(itemClickListener)
     private val viewModel: BasketViewModel by lazy {
-        viewModelFactory.create(BasketViewModel::class.java)
+        viewModelFactory.get().create(BasketViewModel::class.java)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

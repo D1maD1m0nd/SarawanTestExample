@@ -1,41 +1,33 @@
 package ru.sarawan.android.di.modules
 
+import dagger.Binds
 import dagger.Module
-import dagger.Provides
+import ru.sarawan.android.di.annotations.Local
 import ru.sarawan.android.model.datasource.*
-import ru.sarawan.android.model.datasource.db.SarawanDatabase
-import javax.inject.Named
 
-@Module
-class DataSourceModule {
+@Suppress("FunctionName")
+@Module(includes = [CacheModule::class])
+interface DataSourceModule {
 
-    @Provides
-    @Named(NAME_REMOTE)
-    fun provideRemoteBasketSource(apiService: ApiService): BasketDataSource =
-        BasketRetrofitImpl(apiService)
+    @Binds
+    fun bindBasketRetrofitImpl_to_BasketDataSource(basketRetrofitImpl: BasketRetrofitImpl): BasketDataSource
 
-    @Provides
-    @Named(NAME_LOCAL)
-    fun provideLocalBasketSource(db: SarawanDatabase): BasketDataSource =
-        BasketRoomImplementation(db)
+    @Binds
+    @Local
+    fun bindBasketRoomImplementation_to_BasketDataSource(basketRoomImplementation: BasketRoomImplementation): BasketDataSource
 
-    @Provides
-    fun provideCategoriesSource(apiService: ApiService): CategoriesDataSource =
-        CategoriesRetrofitImpl(apiService)
+    @Binds
+    fun bindCategoriesImpl_to_CategoriesRetrofitSource(categoriesRetrofitImpl: CategoriesRetrofitImpl): CategoriesDataSource
 
-    @Provides
-    fun provideOrderSource(apiService: ApiService): OrderDataSource =
-        OrderRetrofitImpl(apiService)
+    @Binds
+    fun bindOrderImpl_to_OrderRetrofitSource(orderRetrofitImpl: OrderRetrofitImpl): OrderDataSource
 
-    @Provides
-    fun provideProductSource(apiService: ApiService): ProductDataSource =
-        ProductRetrofitImpl(apiService)
+    @Binds
+    fun bindProductImpl_to_ProductRetrofitSource(productRetrofitImpl: ProductRetrofitImpl): ProductDataSource
 
-    @Provides
-    fun provideProductsSource(apiService: ApiService): ProductsDataSource =
-        ProductsRetrofitImpl(apiService)
+    @Binds
+    fun bindProductsImpl_to_ProductsRetrofitSource(productsRetrofitImpl: ProductsRetrofitImpl): ProductsDataSource
 
-    @Provides
-    fun provideUserSource(apiService: ApiService): UserDataSource =
-        UserRetrofitImpl(apiService)
+    @Binds
+    fun provideUserImpl_to_UserRetrofitSource(userRetrofitImpl: UserRetrofitImpl): UserDataSource
 }

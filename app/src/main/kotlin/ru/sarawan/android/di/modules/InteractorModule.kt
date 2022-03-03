@@ -1,32 +1,22 @@
 package ru.sarawan.android.di.modules
 
+import dagger.Binds
 import dagger.Module
-import dagger.Provides
-import ru.sarawan.android.model.datasource.*
 import ru.sarawan.android.model.interactor.*
-import javax.inject.Named
 
-@Module
-class InteractorModule {
+@Suppress("FunctionName")
+@Module(includes = [DataSourceModule::class])
+interface InteractorModule {
 
-    @Provides
-    fun provideProductInteractor(
-        productRepo: ProductDataSource,
-        productsRepo: ProductsDataSource,
-        categoriesRepo: CategoriesDataSource
-    ): ProductInteractor = ProductInteractorImpl(productRepo, productsRepo, categoriesRepo)
+    @Binds
+    fun bindsProductInteractorImpl_to_ProductInteractor(productInteractorImpl: ProductInteractorImpl): ProductInteractor
 
-    @Provides
-    fun provideBasketInteractor(
-        @Named(NAME_REMOTE) remoteRepo: BasketDataSource,
-        @Named(NAME_LOCAL) localRepo: BasketDataSource,
-    ): BasketInteractor = BasketInteractorImpl(remoteRepo, localRepo)
+    @Binds
+    fun bindsBasketInteractorImpl_to_BasketInteractor(BasketInteractorImpl: BasketInteractorImpl): BasketInteractor
 
-    @Provides
-    fun provideOrderInteractor(remoteRepo: OrderDataSource): OrderInteractor =
-        OrderInteractorImpl(remoteRepo)
+    @Binds
+    fun bindsOrderInteractorImpl_to_OrderInteractor(orderInteractorImpl: OrderInteractorImpl): OrderInteractor
 
-    @Provides
-    fun provideUserInteractor(remoteRepo: UserDataSource): UserInteractor =
-        UserInteractorImpl(remoteRepo)
+    @Binds
+    fun bindsUserInteractorImpl_to_UserInteractor(userInteractorImpl: UserInteractorImpl): UserInteractor
 }

@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.getSystemService
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
@@ -21,6 +22,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import coil.ImageLoader
 import com.google.android.material.chip.Chip
+import dagger.Lazy
 import dagger.android.support.AndroidSupportInjection
 import ru.sarawan.android.R
 import ru.sarawan.android.activity.FabChanger
@@ -41,6 +43,7 @@ import ru.sarawan.android.model.data.Product
 import ru.sarawan.android.model.data.toProduct
 import ru.sarawan.android.rx.ISchedulerProvider
 import ru.sarawan.android.utils.NetworkStatus
+import ru.sarawan.android.utils.StringProvider
 import ru.sarawan.android.utils.exstentions.getNavigationResult
 import ru.sarawan.android.utils.exstentions.token
 import java.util.*
@@ -49,19 +52,16 @@ import javax.inject.Inject
 abstract class BaseMainCatalogFragment : Fragment() {
 
     @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
-
-    @Inject
-    lateinit var schedulerProvider: ISchedulerProvider
-
-    @Inject
-    lateinit var networkStatus: NetworkStatus
+    lateinit var viewModelFactory: Lazy<ViewModelProvider.Factory>
 
     @Inject
     lateinit var imageLoader: ImageLoader
 
     @Inject
     lateinit var sharedPreferences: SharedPreferences
+
+    @Inject
+    lateinit var stringProvider: StringProvider
 
     private var _binding: FragmentMainBinding? = null
     protected val binding get() = _binding!!
@@ -77,9 +77,23 @@ abstract class BaseMainCatalogFragment : Fragment() {
     }
 
     private var wordToSearch: String? = null
-    protected var filterCategory: Int? = null
+    private var prevWordToSearch: String? = null
+    private var filterCategory: Int? = null
+    protected var filterSubcategory: Int? = null
     protected var isFilterSubcategory = false
     private val filterList: MutableList<Filter> = mutableListOf()
+
+    private val getTextFromVoice =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val spokenText: String? =
+                    result.data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
+                        .let { it?.get(0) }
+                binding.searchField.editText?.setText(spokenText)
+                wordToSearch = binding.searchField.editText?.text.toString()
+                makeSearch()
+            }
+        }
 
     private val onListItemClickListener: BaseMainCatalogAdapter.OnListItemClickListener =
         object : BaseMainCatalogAdapter.OnListItemClickListener {
@@ -123,7 +137,6 @@ abstract class BaseMainCatalogFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         AndroidSupportInjection.inject(this)
-        checkOnlineStatus()
     }
 
     override fun onCreateView(
@@ -149,32 +162,35 @@ abstract class BaseMainCatalogFragment : Fragment() {
 
     private fun initFilterChips() = with(binding) {
         filterGroup.setOnCheckedChangeListener { _, checkedId ->
+            val id = if (checkedId == -1) null else checkedId
             if (isFilterSubcategory) {
+                filterSubcategory = id
                 filterCategory = null
-                makeSearch(checkedId)
             } else {
-                filterCategory = checkedId
-                makeSearch()
+                filterSubcategory = null
+                filterCategory = if (id == -1) null
+                else id
             }
+            makeSearch()
         }
     }
 
     protected fun fillChips(filters: List<Filter>?) = with(binding) {
-        if (filters.isNullOrEmpty()) {
-            filtersBar.visibility = View.GONE
-            return@with
-        }
-        if (!filterList.containsAll(filters)) {
-            filtersBar.visibility = View.VISIBLE
-            filterList.clear()
-            filterList.addAll(filters)
-            filterGroup.removeAllViews()
-            filters.forEach {
-                val chip = layoutInflater
-                    .inflate(R.layout.filter_chip_layout, filterGroup, false) as Chip
-                chip.id = it.id.toInt()
-                chip.text = it.name
-                filterGroup.addView(chip)
+        when {
+            filters.isNullOrEmpty() -> filtersBar.visibility = View.GONE
+
+            !filterList.containsAll(filters) -> {
+                filtersBar.visibility = View.VISIBLE
+                filterList.clear()
+                filterList.addAll(filters)
+                filterGroup.removeAllViews()
+                filters.forEach {
+                    val chip = layoutInflater
+                        .inflate(R.layout.filter_chip_layout, filterGroup, false) as Chip
+                    chip.id = it.id.toInt()
+                    chip.text = it.name
+                    filterGroup.addView(chip)
+                }
             }
         }
     }
@@ -223,7 +239,7 @@ abstract class BaseMainCatalogFragment : Fragment() {
         val buttonMoreClickListener = ButtonMoreClickListener {
             if (isOnline) {
                 val action = MainFragmentDirections.actionMainFragmentToCategoryFragment(
-                    null,
+                    stringProvider.getString(R.string.sponsored_items),
                     CategoryFragment.DISCOUNT
                 )
                 findNavController().navigate(action)
@@ -233,6 +249,7 @@ abstract class BaseMainCatalogFragment : Fragment() {
             mainRecyclerAdapter = MainRecyclerAdapter(
                 onListItemClickListener,
                 imageLoader,
+                stringProvider,
                 buttonMoreClickListener,
                 { item, position ->
                     val holder = binding.mainRecyclerView.findViewHolderForItemId(position)
@@ -312,16 +329,21 @@ abstract class BaseMainCatalogFragment : Fragment() {
         }
     }
 
-    private fun makeSearch(subcategory: Int? = null) = with(binding) {
+    private fun makeSearch() = with(binding) {
         activity?.getSystemService<InputMethodManager>()
             ?.hideSoftInputFromWindow(searchField.windowToken, 0)
         searchField.clearFocus()
         isDataLoaded = false
+        if (prevWordToSearch != wordToSearch) {
+            filterCategory = null
+            filterSubcategory = null
+            prevWordToSearch = wordToSearch
+        }
         if (isOnline) {
             viewModel.search(
                 wordToSearch,
                 filterCategory,
-                subcategory,
+                filterSubcategory,
                 !sharedPreferences.token.isNullOrEmpty()
             )
             loadingLayout.visibility = View.VISIBLE
@@ -345,17 +367,7 @@ abstract class BaseMainCatalogFragment : Fragment() {
             putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
             putExtra(RecognizerIntent.EXTRA_PROMPT, getString(R.string.search_in_sarafan))
         }
-        startActivityForResult(intent, SPEECH_REQUEST_CODE)
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == SPEECH_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            val spokenText: String? =
-                data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS).let { it?.get(0) }
-            binding.searchField.editText?.setText(spokenText)
-            wordToSearch = binding.searchField.editText?.text.toString()
-            makeSearch()
-        }
+        getTextFromVoice.launch(intent)
     }
 
     protected fun handleNetworkErrorWithLayout() {
@@ -363,7 +375,8 @@ abstract class BaseMainCatalogFragment : Fragment() {
         fabChanger?.changeState()
     }
 
-    private fun checkOnlineStatus() {
+    @Inject
+    fun checkOnlineStatus(networkStatus: NetworkStatus, schedulerProvider: ISchedulerProvider) {
         networkStatus
             .isOnline()
             .observeOn(schedulerProvider.io)
@@ -386,9 +399,5 @@ abstract class BaseMainCatalogFragment : Fragment() {
     override fun onDetach() {
         fabChanger = null
         super.onDetach()
-    }
-
-    companion object {
-        private const val SPEECH_REQUEST_CODE = 0
     }
 }

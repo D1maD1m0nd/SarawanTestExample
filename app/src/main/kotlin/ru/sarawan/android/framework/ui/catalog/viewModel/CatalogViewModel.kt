@@ -2,6 +2,7 @@ package ru.sarawan.android.framework.ui.catalog.viewModel
 
 import ru.sarawan.android.framework.ui.base.mainCatalog.BaseMainCatalogViewModel
 import ru.sarawan.android.model.data.AppState
+import ru.sarawan.android.model.data.toFilter
 import ru.sarawan.android.model.interactor.BasketInteractor
 import ru.sarawan.android.model.interactor.ProductInteractor
 import ru.sarawan.android.rx.ISchedulerProvider
@@ -27,7 +28,10 @@ class CatalogViewModel @Inject constructor(
                 .observeOn(schedulerProvider.io)
                 .doOnSubscribe { stateLiveData.postValue(AppState.Loading) }
                 .subscribe(
-                    { stateLiveData.postValue(AppState.Success(it)) },
+                    { categories ->
+//                        filters = categories.flatMap { it.categories }.map { it.toFilter() }
+                        stateLiveData.postValue(AppState.Success(categories))
+                    },
                     { stateLiveData.postValue(AppState.Error(it)) }
                 )
         )

@@ -26,7 +26,9 @@ class MainViewModel @Inject constructor(
         lastPage = 1
         searchWord = null
         category = null
-        val discount = productInteractor.getProducts(Products(discountProduct = true))
+        val discount = productInteractor.getProducts(
+            Products(discountProduct = true, sortBy = SortBy.DISCOUNT)
+        )
         val basket = basketInteractor.getBasket(isLoggedUser).onErrorReturnItem(Basket())
         val popular =
             loadMoreData(Products(popularProducts = true, pageSize = PAGE_ELEMENTS), isLoggedUser)
@@ -54,7 +56,7 @@ class MainViewModel @Inject constructor(
                 .subscribe(
                     {
                         stateLiveData.postValue(
-                            AppState.Success(listOf(MainScreenDataModel(it, isLastPage, filters)))
+                            AppState.Success(MainScreenDataModel(it, isLastPage, filters))
                         )
                     },
                     { stateLiveData.postValue(AppState.Error(it)) }
@@ -63,6 +65,7 @@ class MainViewModel @Inject constructor(
     }
 
     override fun getMoreData(isLoggedUser: Boolean) {
+        onCleared()
         val products: Products = if (searchWord == null) Products(
             popularProducts = true,
             pageSize = PAGE_ELEMENTS,
@@ -73,26 +76,27 @@ class MainViewModel @Inject constructor(
             categoryFilter = category,
             sortBy = sortType
         )
-
-        loadMoreData(products, isLoggedUser)
-            .subscribeOn(schedulerProvider.io)
-            .observeOn(schedulerProvider.io)
-            .subscribe(
-                { productsList ->
-                    val result: MutableList<CardScreenDataModel> = mutableListOf()
-                    productsList.forEach { product ->
-                        sortShops(product)
-                        if (isValidToShow(product))
-                            result.add(
-                                product.toMainScreenDataModel(stringProvider.getString(sortType.description))
-                            )
-                    }
-                    stateLiveData.postValue(
-                        AppState.Success(listOf(MainScreenDataModel(result, isLastPage, filters)))
-                    )
-                },
-                { stateLiveData.postValue(AppState.Error(it)) }
-            )
+        compositeDisposable.add(
+            loadMoreData(products, isLoggedUser)
+                .subscribeOn(schedulerProvider.io)
+                .observeOn(schedulerProvider.io)
+                .subscribe(
+                    { productsList ->
+                        val result: MutableList<CardScreenDataModel> = mutableListOf()
+                        productsList.forEach { product ->
+                            sortShops(product)
+                            if (isValidToShow(product))
+                                result.add(
+                                    product.toMainScreenDataModel(stringProvider.getString(sortType.description))
+                                )
+                        }
+                        stateLiveData.postValue(
+                            AppState.Success(MainScreenDataModel(result, isLastPage, filters))
+                        )
+                    },
+                    { stateLiveData.postValue(AppState.Error(it)) }
+                )
+        )
     }
 
 

@@ -16,6 +16,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import dagger.Lazy
 import dagger.android.support.AndroidSupportInjection
 import ru.sarawan.android.R
 import ru.sarawan.android.databinding.FragmentProfileCodeDialogBinding
@@ -32,9 +33,10 @@ class ProfileCodeDialogFragment : DialogFragment() {
     lateinit var sharedPreferences: SharedPreferences
 
     @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
+    lateinit var viewModelFactory: Lazy<ViewModelProvider.Factory>
+
     private val viewModel: SmsCodeViewModel by lazy {
-        viewModelFactory.create(SmsCodeViewModel::class.java)
+        viewModelFactory.get().create(SmsCodeViewModel::class.java)
     }
 
     private var _binding: FragmentProfileCodeDialogBinding? = null

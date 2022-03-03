@@ -1,6 +1,5 @@
 package ru.sarawan.android.framework.ui.order
 
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import dagger.Lazy
 import dagger.android.support.AndroidSupportInjection
 import retrofit2.HttpException
 import ru.sarawan.android.R
@@ -23,16 +23,13 @@ import javax.inject.Inject
 class OrderFragment : Fragment() {
 
     @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
-
-    @Inject
-    lateinit var sharedPreferences: SharedPreferences
+    lateinit var viewModelFactory: Lazy<ViewModelProvider.Factory>
 
     private var _binding: FragmentOrderBinding? = null
     private val binding get() = _binding!!
 
     private val viewModel: OrderViewModel by lazy {
-        viewModelFactory.create(OrderViewModel::class.java)
+        viewModelFactory.get().create(OrderViewModel::class.java)
     }
 
     private var addressItem: AddressItem? = null

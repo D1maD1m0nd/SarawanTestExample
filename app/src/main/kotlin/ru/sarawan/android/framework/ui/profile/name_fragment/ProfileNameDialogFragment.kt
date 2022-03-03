@@ -14,6 +14,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import dagger.Lazy
 import dagger.android.support.AndroidSupportInjection
 import ru.sarawan.android.databinding.FragmentProfileNameDialogBinding
 import ru.sarawan.android.framework.ui.profile.name_fragment.viewModel.NameViewModel
@@ -25,17 +26,17 @@ import ru.sarawan.android.utils.exstentions.userId
 import javax.inject.Inject
 
 class ProfileNameDialogFragment : DialogFragment() {
-    var phone = ""
-
     @Inject
     lateinit var sharedPreferences: SharedPreferences
 
     @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
+    lateinit var viewModelFactory: Lazy<ViewModelProvider.Factory>
 
     private val viewModel: NameViewModel by lazy {
-        viewModelFactory.create(NameViewModel::class.java)
+        viewModelFactory.get().create(NameViewModel::class.java)
     }
+
+    private var phone = ""
 
     private var _binding: FragmentProfileNameDialogBinding? = null
     private val binding get() = _binding!!

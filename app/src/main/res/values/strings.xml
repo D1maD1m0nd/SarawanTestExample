@@ -119,4 +119,7 @@
     <string name="house_empty">Дом не заполнена</string>
     <string name="room_number_empty">Номер квартиры не заполнена</string>
     <string name="server_data_error">Произошла ошибка получения данных</string>
+    <string name="recomended">Мы рекомендуем</string>
+    <string name="sponsored_items">Выгодные предложения</string>
+    <string name="show_all">Посмотреть всё</string>
 </resources>

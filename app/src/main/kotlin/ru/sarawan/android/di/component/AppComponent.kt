@@ -6,25 +6,14 @@ import dagger.Component
 import dagger.android.AndroidInjectionModule
 import dagger.android.support.AndroidSupportInjectionModule
 import ru.sarawan.android.app.App
-import ru.sarawan.android.di.modules.*
+import ru.sarawan.android.di.modules.AppModule
 import javax.inject.Singleton
 
 @Component(
     modules = [
-        InteractorModule::class,
-        ActivityModule::class,
-        FragmentModule::class,
-        ViewModelModule::class,
-        DataSourceModule::class,
         AndroidSupportInjectionModule::class,
         AndroidInjectionModule::class,
-        SchedulerModule::class,
-        CacheModule::class,
         AppModule::class,
-        NetworkModule::class,
-        ImageModule::class,
-        SharedModule::class,
-        StringProviderModule::class
     ]
 )
 @Singleton

@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import dagger.Lazy
 import dagger.android.support.AndroidSupportInjection
 import ru.sarawan.android.R
 import ru.sarawan.android.databinding.FragmentProfileBinding
@@ -32,9 +33,10 @@ class ProfileFragment : Fragment() {
     lateinit var sharedPreferences: SharedPreferences
 
     @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
+    lateinit var viewModelFactory: Lazy<ViewModelProvider.Factory>
+
     private val viewModel: ProfileViewModel by lazy {
-        viewModelFactory.create(ProfileViewModel::class.java)
+        viewModelFactory.get().create(ProfileViewModel::class.java)
     }
 
     private var _binding: FragmentProfileBinding? = null

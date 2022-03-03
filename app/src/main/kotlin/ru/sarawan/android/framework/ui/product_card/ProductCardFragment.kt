@@ -14,6 +14,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import coil.load
+import dagger.Lazy
 import dagger.android.support.AndroidSupportInjection
 import ru.sarawan.android.R
 import ru.sarawan.android.activity.FabChanger
@@ -31,8 +32,8 @@ import ru.sarawan.android.utils.exstentions.setNavigationResult
 import ru.sarawan.android.utils.exstentions.token
 import javax.inject.Inject
 
-
 class ProductCardFragment : Fragment() {
+
     private val itemClickListener = object : ItemClickListener {
 
         override fun openProductCard(productId: Long) {
@@ -72,9 +73,10 @@ class ProductCardFragment : Fragment() {
     lateinit var sharedPreferences: SharedPreferences
 
     @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
+    lateinit var viewModelFactory: Lazy<ViewModelProvider.Factory>
+
     private val viewModel: ProductCardViewModel by lazy {
-        viewModelFactory.create(ProductCardViewModel::class.java)
+        viewModelFactory.get().create(ProductCardViewModel::class.java)
     }
     private var _binding: FragmentProductCardBinding? = null
     private val binding get() = _binding!!

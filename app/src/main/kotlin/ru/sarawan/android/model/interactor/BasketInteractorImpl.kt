@@ -1,6 +1,7 @@
 package ru.sarawan.android.model.interactor
 
 import io.reactivex.rxjava3.core.Single
+import ru.sarawan.android.di.annotations.Local
 import ru.sarawan.android.model.data.Basket
 import ru.sarawan.android.model.data.ProductsUpdate
 import ru.sarawan.android.model.datasource.BasketDataSource
@@ -8,7 +9,7 @@ import javax.inject.Inject
 
 class BasketInteractorImpl @Inject constructor(
     private val remoteRepository: BasketDataSource,
-    private val localRepository: BasketDataSource
+    @Local private val localRepository: BasketDataSource
 ) : BasketInteractor {
     override fun getBasket(isFromRemote: Boolean): Single<Basket> =
         if (isFromRemote) remoteRepository.getBasket() else localRepository.getBasket()

@@ -1,15 +1,16 @@
 package ru.sarawan.android.di.modules
 
+import dagger.Binds
 import dagger.Module
-import dagger.Provides
 import ru.sarawan.android.rx.ISchedulerProvider
 import ru.sarawan.android.rx.SchedulerProvider
 import javax.inject.Singleton
 
 @Module
-class SchedulerModule {
+interface SchedulerModule {
 
-    @Provides
+    @Suppress("FunctionName")
+    @Binds
     @Singleton
-    fun schedulerProvider(): ISchedulerProvider = SchedulerProvider()
+    fun bindsSchedulerProvider_to_ISchedulerProvider(schedulerProvider: SchedulerProvider): ISchedulerProvider
 }

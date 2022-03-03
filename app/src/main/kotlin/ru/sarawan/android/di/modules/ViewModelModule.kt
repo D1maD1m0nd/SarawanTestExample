@@ -6,6 +6,7 @@ import dagger.Binds
 import dagger.MapKey
 import dagger.Module
 import dagger.multibindings.IntoMap
+import ru.sarawan.android.activity.ActivityViewModel
 import ru.sarawan.android.framework.ui.basket.viewModel.BasketViewModel
 import ru.sarawan.android.framework.ui.catalog.viewModel.CatalogViewModel
 import ru.sarawan.android.framework.ui.category.viewModel.CategoryViewModel
@@ -19,7 +20,7 @@ import ru.sarawan.android.framework.ui.profile.sms_code_fragment.viewModel.SmsCo
 import ru.sarawan.android.framework.ui.profile.viewModel.ProfileViewModel
 import kotlin.reflect.KClass
 
-@Module(includes = [InteractorModule::class])
+@Module(includes = [InteractorModule::class, SchedulerModule::class])
 abstract class ViewModelModule {
 
     @Binds
@@ -41,9 +42,9 @@ abstract class ViewModelModule {
     protected abstract fun productCardViewModel(productCardViewModel: ProductCardViewModel): ViewModel
 
     @Binds
-    @ViewModelKey(ru.sarawan.android.activity.ActivityViewModel::class)
+    @ViewModelKey(ActivityViewModel::class)
     @IntoMap
-    protected abstract fun activityViewModel(activityViewModel: ru.sarawan.android.activity.ActivityViewModel): ViewModel
+    protected abstract fun activityViewModel(activityViewModel: ActivityViewModel): ViewModel
 
     @Binds
     @ViewModelKey(CatalogViewModel::class)

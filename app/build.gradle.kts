@@ -10,6 +10,13 @@ plugins {
     id("androidx.navigation.safeargs.kotlin")
 }
 
+kapt {
+    arguments {
+        arg("dagger.fastInit", "enabled")
+        arg("dagger.formatGeneratedSource", "enabled")
+    }
+}
+
 android {
     signingConfigs {
         val keystorePropertiesFile = file("keystore.properties")

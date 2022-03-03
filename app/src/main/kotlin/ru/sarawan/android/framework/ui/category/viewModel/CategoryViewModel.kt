@@ -27,6 +27,7 @@ class CategoryViewModel @Inject constructor(
     }
 
     override fun getMoreData(isLoggedUser: Boolean) {
+        onCleared()
         val products: Products =
             if (category == CategoryFragment.DISCOUNT) Products(
                 sortBy = sortType,
@@ -38,26 +39,27 @@ class CategoryViewModel @Inject constructor(
                 subcategory = subcategory,
                 sortBy = sortType
             )
-
-        loadMoreData(products, isLoggedUser)
-            .subscribeOn(schedulerProvider.io)
-            .observeOn(schedulerProvider.io)
-            .subscribe(
-                { productsList ->
-                    val result: MutableList<CardScreenDataModel> = mutableListOf()
-                    productsList.forEach { product ->
-                        sortShops(product)
-                        if (isValidToShow(product))
-                            result.add(
-                                product.toMainScreenDataModel(stringProvider.getString(sortType.description))
-                            )
-                    }
-                    stateLiveData.postValue(
-                        AppState.Success(MainScreenDataModel(result, isLastPage, filters))
-                    )
-                },
-                { stateLiveData.postValue(AppState.Error(it)) }
-            )
+        compositeDisposable.add(
+            loadMoreData(products, isLoggedUser)
+                .subscribeOn(schedulerProvider.io)
+                .observeOn(schedulerProvider.io)
+                .subscribe(
+                    { productsList ->
+                        val result: MutableList<CardScreenDataModel> = mutableListOf()
+                        productsList.forEach { product ->
+                            sortShops(product)
+                            if (isValidToShow(product))
+                                result.add(
+                                    product.toMainScreenDataModel(stringProvider.getString(sortType.description))
+                                )
+                        }
+                        stateLiveData.postValue(
+                            AppState.Success(MainScreenDataModel(result, isLastPage, filters))
+                        )
+                    },
+                    { stateLiveData.postValue(AppState.Error(it)) }
+                )
+        )
     }
 
     fun changeSorting(
@@ -68,6 +70,7 @@ class CategoryViewModel @Inject constructor(
     ) {
         stateLiveData.value = AppState.Loading
         lastPage = 1
+        prevCategory = category
         this.category = if (subcategory != null) null else category
         this.sortType = sortType
         this.subcategory = subcategory

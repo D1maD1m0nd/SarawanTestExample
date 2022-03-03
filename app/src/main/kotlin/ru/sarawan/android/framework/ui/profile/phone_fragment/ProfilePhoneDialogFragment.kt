@@ -18,6 +18,7 @@ import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import dagger.Lazy
 import dagger.android.support.AndroidSupportInjection
 import ru.sarawan.android.R
 import ru.sarawan.android.databinding.FragmentProfilePhoneDialogBinding
@@ -29,10 +30,10 @@ import javax.inject.Inject
 class ProfilePhoneDialogFragment : DialogFragment() {
 
     @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
+    lateinit var viewModelFactory: Lazy<ViewModelProvider.Factory>
 
     private val viewModel: ProfilePhoneViewModel by lazy {
-        viewModelFactory.create(ProfilePhoneViewModel::class.java)
+        viewModelFactory.get().create(ProfilePhoneViewModel::class.java)
     }
 
     private var _binding: FragmentProfilePhoneDialogBinding? = null

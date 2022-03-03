@@ -7,7 +7,6 @@ object AppDependencies {
         "com.squareup.retrofit2:adapter-rxjava3:${Versions.retrofit}"
     private const val retrofitInterceptor = "com.squareup.okhttp3:logging-interceptor:${Versions.okHttp}"
 
-
     //ViewModel
     private const val liveData = "androidx.lifecycle:lifecycle-livedata-ktx:${Versions.viewModel}"
     private const val viewModel = "androidx.lifecycle:lifecycle-livedata-ktx:${Versions.viewModel}"
@@ -19,7 +18,6 @@ object AppDependencies {
     //FireBase
     private const val fireBaseMessaging = "com.google.firebase:firebase-messaging:${Versions.fireBase}"
     private const val fireBaseMessagingKtx = "com.google.firebase:firebase-messaging-ktx:${Versions.fireBase}"
-
 
     //Room
     private const val runtimeRoom = "androidx.room:room-runtime:${Versions.runtime}"
@@ -42,6 +40,7 @@ object AppDependencies {
     private const val  adapterDelegate = "com.hannesdorfmann:adapterdelegates4-kotlin-dsl:${Versions.adapter}"
 
     //UI
+    private const val activity = "androidx.activity:activity-ktx:${Versions.activity}"
     private const val coil = "io.coil-kt:coil:${Versions.coil}"
     private const val kotlinKtx = "androidx.core:core-ktx:${Versions.kotlinKtx}"
     private const val appcompat = "androidx.appcompat:appcompat:${Versions.appcompat}"
@@ -58,6 +57,7 @@ object AppDependencies {
 
 
     val ui = arrayListOf(
+        activity,
         kotlinKtx,
         support,
         coil,
@@ -120,6 +120,4 @@ object AppDependencies {
     val androidTestLibraries = arrayListOf(espresso, extJunit)
 
     val testLibraries = arrayListOf(junit)
-
-
 }

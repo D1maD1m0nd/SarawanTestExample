@@ -17,9 +17,4 @@ class CacheModule {
             .fallbackToDestructiveMigration()
             .build()
     }
-
-    companion object {
-
-        private const val DB_NAME = "database.db"
-    }
 }
