@@ -5,8 +5,8 @@ import dagger.android.ContributesAndroidInjector
 import ru.sarawan.android.activity.MainActivity
 
 @Module
-abstract class ActivityModule {
+interface ActivityModule {
 
     @ContributesAndroidInjector
-    abstract fun contributeMainActivity(): MainActivity
+    fun contributeMainActivity(): MainActivity
 }

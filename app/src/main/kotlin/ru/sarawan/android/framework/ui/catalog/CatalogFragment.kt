@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import ru.sarawan.android.R
 import ru.sarawan.android.framework.ui.base.mainCatalog.BaseMainCatalogFragment
 import ru.sarawan.android.framework.ui.catalog.adapter.CatalogRecyclerAdapter
 import ru.sarawan.android.framework.ui.catalog.viewModel.CatalogViewModel
@@ -16,7 +17,7 @@ class CatalogFragment : BaseMainCatalogFragment() {
     private val categories: MutableList<CategoryDataModel> = mutableListOf()
 
     override val viewModel: CatalogViewModel by lazy {
-        viewModelFactory.create(CatalogViewModel::class.java)
+        viewModelFactory.get().create(CatalogViewModel::class.java)
     }
 
     private val linearLayoutManager: LinearLayoutManager by lazy {
@@ -39,6 +40,7 @@ class CatalogFragment : BaseMainCatalogFragment() {
                     val action = CatalogFragmentDirections.actionCatalogFragmentToCategoryFragment(
                         categoryName = data.itemDescription.orEmpty(),
                         categoryType = categoryType,
+                        subCategoryType = filterSubcategory ?: -1,
                         filterList = filterArray
                     )
                     findNavController().navigate(action)
@@ -77,33 +79,44 @@ class CatalogFragment : BaseMainCatalogFragment() {
         viewModel.getStateLiveData().observe(viewLifecycleOwner) { appState ->
             when (appState) {
                 is AppState.Success<*> -> {
-                    val listData = appState.data as List<*>?
-                    if (listData.isNullOrEmpty()) loadingLayout.visibility = View.GONE
-                    else when (listData.first()) {
+                    when (appState.data) {
                         is MainScreenDataModel -> {
                             if (mainRecyclerAdapter != null && mainRecyclerAdapter!!.itemCount > 0) {
-                                if (isInitCompleted) handleSuccessData(listData.first() as MainScreenDataModel)
+                                if (isInitCompleted) handleSuccessData(appState.data)
                                 else binding.loadingLayout.visibility = View.GONE
-                            } else handleSuccessData(listData.first() as MainScreenDataModel)
+                            } else handleSuccessData(appState.data)
                             isInitCompleted = true
                         }
-                        is CategoryDataModel -> {
-                            categories.clear()
-                            categories.addAll(listData as List<CategoryDataModel>)
-                            mainRecyclerView.layoutManager = linearLayoutManager
-                            mainRecyclerView.adapter = catalogAdapter
-                            val result: MutableList<CardScreenDataModel> = mutableListOf()
-                            listData.forEach {
-                                result.add(it.toMainScreenDataModel())
+                        is List<*> -> {
+                            when {
+                                appState.data.isEmpty() -> handleNetworkErrorWithToast(
+                                    RuntimeException(getString(R.string.server_data_error))
+                                )
+                                appState.data.first() is CategoryDataModel -> {
+                                    categories.clear()
+                                    @Suppress("UNCHECKED_CAST")
+                                    categories.addAll(appState.data as List<CategoryDataModel>)
+                                    mainRecyclerView.layoutManager = linearLayoutManager
+                                    mainRecyclerView.adapter = catalogAdapter
+                                    val result: MutableList<CardScreenDataModel> = mutableListOf()
+                                    categories.forEach { result.add(it.toMainScreenDataModel()) }
+                                    catalogAdapter?.setData(result) {
+                                        loadingLayout.visibility = View.GONE
+                                    }
+                                    isDataLoaded = true
+                                }
+                                else -> throw RuntimeException("Wrong List type ${appState.data}")
                             }
-                            catalogAdapter?.setData(result) { loadingLayout.visibility = View.GONE }
-                            isDataLoaded = true
                         }
+                        else -> throw RuntimeException("Wrong AppState type $appState")
                     }
                 }
+
                 is AppState.Error -> handleNetworkErrorWithToast(appState.error)
+
                 AppState.Loading -> binding.loadingLayout.visibility = View.VISIBLE
-                AppState.Empty -> Unit
+
+                else -> throw RuntimeException("Wrong AppState type $appState")
             }
         }
     }
@@ -117,11 +130,10 @@ class CatalogFragment : BaseMainCatalogFragment() {
             emptyDataLayout.root.visibility = View.GONE
             mainRecyclerView.layoutManager = gridLayoutManager
             mainRecyclerView.adapter = mainRecyclerAdapter
-            maxCount = data.maxElement
             mainRecyclerAdapter?.setData(
                 data.listOfElements,
                 searchField.editText?.text.isNullOrEmpty(),
-                maxCount
+                data.isLastPage
             )
             isDataLoaded = true
         }

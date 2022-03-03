@@ -1,28 +1,37 @@
 package ru.sarawan.android.framework.ui.main.viewModel
 
 import io.reactivex.rxjava3.core.Single
-import ru.sarawan.android.framework.MainInteractor
 import ru.sarawan.android.framework.ui.base.mainCatalog.BaseMainCatalogViewModel
 import ru.sarawan.android.framework.ui.base.mainCatalog.CardType
 import ru.sarawan.android.model.data.*
+import ru.sarawan.android.model.interactor.BasketInteractor
+import ru.sarawan.android.model.interactor.ProductInteractor
 import ru.sarawan.android.rx.ISchedulerProvider
 import ru.sarawan.android.utils.StringProvider
 import ru.sarawan.android.utils.constants.SortBy
 import javax.inject.Inject
 
 class MainViewModel @Inject constructor(
-    private val interactor: MainInteractor,
+    private val productInteractor: ProductInteractor,
+    private val basketInteractor: BasketInteractor,
     private val schedulerProvider: ISchedulerProvider,
     private val stringProvider: StringProvider
-) : BaseMainCatalogViewModel(interactor, schedulerProvider, stringProvider) {
+) : BaseMainCatalogViewModel(
+    productInteractor,
+    basketInteractor,
+    schedulerProvider,
+    stringProvider
+) {
     override fun getStartData(isOnline: Boolean, isLoggedUser: Boolean) {
+        lastPage = 1
         searchWord = null
         category = null
-        val discount = interactor.getData(Query.Get.Products(discountProduct = true), isOnline)
-        val basket =
-            interactor.getData(Query.Get.Basket, isLoggedUser).onErrorReturnItem(listOf(Basket()))
+        val discount = productInteractor.getProducts(
+            Products(discountProduct = true, sortBy = SortBy.DISCOUNT)
+        )
+        val basket = basketInteractor.getBasket(isLoggedUser).onErrorReturnItem(Basket())
         val popular =
-            loadMoreData(isOnline, Query.Get.Products(popularProducts = true), isLoggedUser)
+            loadMoreData(Products(popularProducts = true, pageSize = PAGE_ELEMENTS), isLoggedUser)
         compositeDisposable.add(
             Single.zip(discount, popular, basket) { discountData, popularData, basketData ->
                 val data: MutableList<CardScreenDataModel> = mutableListOf()
@@ -31,11 +40,10 @@ class MainViewModel @Inject constructor(
                     if (isValidToShow(product))
                         data.add(product.toMainScreenDataModel(stringProvider.getString(sortType.description)))
                 }
-                val basketObject = (basketData as List<Basket>).firstOrNull()
-                basketID = basketObject?.basketId
-                (discountData.first() as Response).results.forEach { discountSingleData ->
+                basketID = basketData.basketId
+                discountData.results.forEach { discountSingleData ->
                     discountSingleData.apply { storePrices?.sortByDescending { it.discount } }
-                    getQuantityFromBasket(basketObject, discountSingleData)
+                    getQuantityFromBasket(basketData, discountSingleData)
                     if (isValidToShow(discountSingleData))
                         data.add(discountSingleData
                             .toMainScreenDataModel(stringProvider.getString(SortBy.DISCOUNT.description))
@@ -48,7 +56,7 @@ class MainViewModel @Inject constructor(
                 .subscribe(
                     {
                         stateLiveData.postValue(
-                            AppState.Success(listOf(MainScreenDataModel(it, maxElement, filters)))
+                            AppState.Success(MainScreenDataModel(it, isLastPage, filters))
                         )
                     },
                     { stateLiveData.postValue(AppState.Error(it)) }
@@ -56,35 +64,39 @@ class MainViewModel @Inject constructor(
         )
     }
 
-    override fun getMoreData(isOnline: Boolean, isLoggedUser: Boolean) {
-        val query: Query.Get.Products = if (searchWord == null) Query.Get.Products(
+    override fun getMoreData(isLoggedUser: Boolean) {
+        onCleared()
+        val products: Products = if (searchWord == null) Products(
             popularProducts = true,
+            pageSize = PAGE_ELEMENTS,
             categoryFilter = category
-        ) else Query.Get.Products(
+        ) else Products(
             productName = searchWord,
+            pageSize = PAGE_ELEMENTS,
             categoryFilter = category,
             sortBy = sortType
         )
-
-        loadMoreData(isOnline, query, isLoggedUser)
-            .subscribeOn(schedulerProvider.io)
-            .observeOn(schedulerProvider.io)
-            .subscribe(
-                { productsList ->
-                    val result: MutableList<CardScreenDataModel> = mutableListOf()
-                    productsList.forEach { product ->
-                        sortShops(product)
-                        if (isValidToShow(product))
-                            result.add(
-                                product.toMainScreenDataModel(stringProvider.getString(sortType.description))
-                            )
-                    }
-                    stateLiveData.postValue(
-                        AppState.Success(listOf(MainScreenDataModel(result, maxElement, filters)))
-                    )
-                },
-                { stateLiveData.postValue(AppState.Error(it)) }
-            )
+        compositeDisposable.add(
+            loadMoreData(products, isLoggedUser)
+                .subscribeOn(schedulerProvider.io)
+                .observeOn(schedulerProvider.io)
+                .subscribe(
+                    { productsList ->
+                        val result: MutableList<CardScreenDataModel> = mutableListOf()
+                        productsList.forEach { product ->
+                            sortShops(product)
+                            if (isValidToShow(product))
+                                result.add(
+                                    product.toMainScreenDataModel(stringProvider.getString(sortType.description))
+                                )
+                        }
+                        stateLiveData.postValue(
+                            AppState.Success(MainScreenDataModel(result, isLastPage, filters))
+                        )
+                    },
+                    { stateLiveData.postValue(AppState.Error(it)) }
+                )
+        )
     }
 
 

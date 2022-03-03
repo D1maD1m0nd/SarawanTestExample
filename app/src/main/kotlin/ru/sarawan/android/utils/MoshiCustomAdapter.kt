@@ -4,8 +4,9 @@ import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import ru.sarawan.android.model.data.ProductInformation
 import java.lang.reflect.Type
+import javax.inject.Inject
 
-class MoshiCustomAdapter(val moshi: Moshi) {
+class MoshiCustomAdapter @Inject constructor(val moshi: Moshi) {
     private val jsonAdapter: JsonAdapter<ProductInformation> =
         moshi.adapter(ProductInformation::class.java)
 

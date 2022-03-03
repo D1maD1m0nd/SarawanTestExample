@@ -16,6 +16,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import dagger.Lazy
 import dagger.android.support.AndroidSupportInjection
 import ru.sarawan.android.R
 import ru.sarawan.android.databinding.FragmentProfileCodeDialogBinding
@@ -32,9 +33,10 @@ class ProfileCodeDialogFragment : DialogFragment() {
     lateinit var sharedPreferences: SharedPreferences
 
     @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
+    lateinit var viewModelFactory: Lazy<ViewModelProvider.Factory>
+
     private val viewModel: SmsCodeViewModel by lazy {
-        viewModelFactory.create(SmsCodeViewModel::class.java)
+        viewModelFactory.get().create(SmsCodeViewModel::class.java)
     }
 
     private var _binding: FragmentProfileCodeDialogBinding? = null
@@ -79,6 +81,7 @@ class ProfileCodeDialogFragment : DialogFragment() {
     }
 
     private fun showKeyboard() {
+        @Suppress("DEPRECATION")
         inputMethodManager?.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
         keyboardShown = true
     }
@@ -216,16 +219,14 @@ class ProfileCodeDialogFragment : DialogFragment() {
     private fun setState(appState: AppState<*>) = with(binding) {
         when (appState) {
             is AppState.Success<*> -> {
-                appState.data as MutableList<UserRegistration>
-                if (appState.data.isNotEmpty()) {
-                    val result = appState.data.first()
-                    sharedPreferences.token = result.token
-                    sharedPreferences.userId = result.userId
+                if (appState.data is UserRegistration) {
+                    sharedPreferences.token = appState.data.token
+                    sharedPreferences.userId = appState.data.userId
                     hideKeyboard()
                     val action = ProfileCodeDialogFragmentDirections
                         .actionProfileCodeDialogFragmentToProfileSuccessDialogFragment()
                     findNavController().navigate(action)
-                }
+                } else throw RuntimeException("Wrong AppState type $appState")
             }
             is AppState.Error -> {
                 //при неверном коде возвращает ошибку 500
@@ -235,7 +236,7 @@ class ProfileCodeDialogFragment : DialogFragment() {
                 setTitle()
                 setCodeBorder()
             }
-            else -> Unit
+            else -> throw RuntimeException("Wrong AppState type $appState")
         }
     }
 

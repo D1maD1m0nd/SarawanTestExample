@@ -14,6 +14,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import dagger.Lazy
 import dagger.android.support.AndroidSupportInjection
 import retrofit2.HttpException
 import ru.sarawan.android.R
@@ -29,13 +30,13 @@ import javax.inject.Inject
 class ProfileAddressDialogFragment : DialogFragment() {
 
     @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
+    lateinit var viewModelFactory: Lazy<ViewModelProvider.Factory>
 
     @Inject
     lateinit var sharedPreferences: SharedPreferences
 
     private val viewModel: ProfileAddressViewModel by lazy {
-        viewModelFactory.create(ProfileAddressViewModel::class.java)
+        viewModelFactory.get().create(ProfileAddressViewModel::class.java)
     }
 
     private var _binding: FragmentProfileAddressDialogBinding? = null
@@ -73,6 +74,7 @@ class ProfileAddressDialogFragment : DialogFragment() {
     }
 
     private fun showKeyboard() {
+        @Suppress("DEPRECATION")
         inputMethodManager?.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
         keyboardShown = true
     }
@@ -152,30 +154,25 @@ class ProfileAddressDialogFragment : DialogFragment() {
     private fun setState(appState: AppState<*>) {
         when (appState) {
             is AppState.Success<*> -> {
-                if (appState.data.isNotEmpty()) {
-                    when (val item = appState.data.firstOrNull()) {
-                        is AddressItem -> {
-                            Toast.makeText(
-                                context,
-                                getString(R.string.save_success),
-                                Toast.LENGTH_SHORT
-                            ).show()
-                            hideKeyboard()
-                            isSaveSuccess = true
-                            findNavController().navigateUp()
-                        }
-
-                        is AddressState -> {
-                            if (item != AddressState.VALID) {
-                                setError(item)
-                            } else {
-                                saveData()
-                            }
-                        }
-
+                when (val item = appState.data) {
+                    is AddressItem -> {
+                        Toast.makeText(
+                            context,
+                            getString(R.string.save_success),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        hideKeyboard()
+                        isSaveSuccess = true
+                        findNavController().navigateUp()
                     }
-                }
 
+                    is AddressState -> {
+                        if (item != AddressState.VALID) setError(item)
+                        else saveData()
+                    }
+
+                    else -> throw RuntimeException("Wrong AppState type $appState")
+                }
             }
 
             is AppState.Error -> {
@@ -184,7 +181,7 @@ class ProfileAddressDialogFragment : DialogFragment() {
                     Toast.makeText(context, error.response().toString(), Toast.LENGTH_SHORT).show()
                 }
             }
-            else -> Unit
+            else -> throw RuntimeException("Wrong AppState type $appState")
         }
     }
 

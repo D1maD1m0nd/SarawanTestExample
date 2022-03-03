@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import dagger.Lazy
 import dagger.android.support.AndroidSupportInjection
 import retrofit2.HttpException
 import ru.sarawan.android.R
@@ -31,9 +32,8 @@ class BasketFragment : Fragment() {
     @Inject
     lateinit var sharedPreferences: SharedPreferences
 
-
     @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
+    lateinit var viewModelFactory: Lazy<ViewModelProvider.Factory>
     private var _binding: FragmentBasketBinding? = null
     private val binding get() = _binding!!
 
@@ -76,7 +76,7 @@ class BasketFragment : Fragment() {
     }
     private val adapter = BasketAdapter(itemClickListener)
     private val viewModel: BasketViewModel by lazy {
-        viewModelFactory.create(BasketViewModel::class.java)
+        viewModelFactory.get().create(BasketViewModel::class.java)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -136,26 +136,29 @@ class BasketFragment : Fragment() {
     private fun setState(appState: AppState<*>) = with(binding) {
         when (appState) {
             is AppState.Success<*> -> {
-                val data = appState.data
-                if (data.isNotEmpty()) {
-                    when (val item = data.first()) {
-                        is BasketResponse -> {
-                            viewModel.calculateOrder()
-                        }
-                        is ProductsItem -> {
-                            data as MutableList<ProductsItem>
-                            if (list.size < LIMIT) {
-                                initDataRcView(data)
+                when (appState.data) {
+                    is Basket -> viewModel.calculateOrder()
+                    is List<*> -> {
+                        when {
+                            appState.data.isEmpty() -> Toast.makeText(
+                                context,
+                                getString(R.string.server_data_error),
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            appState.data.first() is ProductsItem -> {
+                                @Suppress("UNCHECKED_CAST")
+                                appState.data as List<ProductsItem>
+                                if (list.size < LIMIT) initDataRcView(appState.data)
+                                progressBar.visibility = View.GONE
                             }
-                            progressBar.visibility = View.GONE
-                        }
-
-                        is Order -> {
-                            recalculateData(item)
+                            else -> throw RuntimeException("Wrong List type ${appState.data}")
                         }
                     }
+                    is Order -> recalculateData(appState.data)
+                    else -> throw RuntimeException("Wrong AppState type $appState")
                 }
             }
+
             is AppState.Error -> {
                 progressBar.visibility = View.GONE
                 val error = appState.error
@@ -169,12 +172,12 @@ class BasketFragment : Fragment() {
                     }
                 }
             }
+
             is AppState.Loading -> {
                 progressBar.visibility = View.VISIBLE
             }
-            is AppState.Empty -> {
-                emptyStatus()
-            }
+
+            is AppState.Empty -> emptyStatus()
         }
     }
 
@@ -242,7 +245,7 @@ class BasketFragment : Fragment() {
     }
 
     private fun updateBasket(pos: Int) {
-        var product = adapter.items[pos] as ProductsItem
+        val product = adapter.items[pos] as ProductsItem
         val products = listOf(product)
         val items = products.map { it.toProduct() }
         viewModel.updateBasket(ProductsUpdate(items), !sharedPreferences.token.isNullOrEmpty())

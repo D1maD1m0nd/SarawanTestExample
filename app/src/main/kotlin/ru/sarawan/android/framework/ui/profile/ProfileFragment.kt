@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import dagger.Lazy
 import dagger.android.support.AndroidSupportInjection
 import ru.sarawan.android.R
 import ru.sarawan.android.databinding.FragmentProfileBinding
@@ -32,9 +33,10 @@ class ProfileFragment : Fragment() {
     lateinit var sharedPreferences: SharedPreferences
 
     @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
+    lateinit var viewModelFactory: Lazy<ViewModelProvider.Factory>
+
     private val viewModel: ProfileViewModel by lazy {
-        viewModelFactory.create(ProfileViewModel::class.java)
+        viewModelFactory.get().create(ProfileViewModel::class.java)
     }
 
     private var _binding: FragmentProfileBinding? = null
@@ -127,56 +129,67 @@ class ProfileFragment : Fragment() {
     private fun setState(appState: AppState<*>) = with(binding) {
         when (appState) {
             is AppState.Success<*> -> {
-                if (appState.data.isNotEmpty()) {
-                    when (val firstItem = appState.data.first()) {
-                        is AddressItem -> {
-                            val data = appState.data as MutableList<AddressItem>
-                            if (data.isNotEmpty()) {
-                                val primaryAddress =
-                                    data.findLast { it.primary } ?: data.first()
-                                primaryAddress.let {
-                                    viewModel.getFormatAddress(it)
-                                    addressItem = it
+                when (val stateData = appState.data) {
+                    is List<*> -> {
+                        if (stateData.isEmpty()) Toast.makeText(
+                            context,
+                            getString(R.string.server_data_error),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        else when (stateData.first()) {
+                            is AddressItem -> {
+                                @Suppress("UNCHECKED_CAST")
+                                val data = appState.data as List<AddressItem>
+                                if (data.isNotEmpty()) {
+                                    val primaryAddress =
+                                        data.findLast { it.primary } ?: data.first()
+                                    primaryAddress.let {
+                                        viewModel.getFormatAddress(it)
+                                        addressItem = it
+                                    }
                                 }
                             }
-                        }
-                        is String -> {
-                            when (appState.case) {
-                                TypeCase.FORMAT_NAME -> {
-                                    profileNameTextView.text = firstItem
-                                }
-                                TypeCase.FORMAT_PHONE -> {
-                                    profilePhoneTextView.text = firstItem
-                                }
-                                TypeCase.DEFAULT -> {}
-                                TypeCase.ADDRESS -> {
-                                    profileAddressTextView.text = firstItem
-                                }
+                            is OrderApprove -> {
+                                @Suppress("UNCHECKED_CAST")
+                                val data = appState.data as List<OrderApprove>
+                                orders = data.toMutableList()
+                                initRcView()
                             }
-
-                        }
-                        is UserDataModel -> {
-                            if (sharedPreferences.basketId == UNREGISTERED.toInt()) {
-                                sharedPreferences.basketId = firstItem.basket?.basketId
-                            }
-                            viewModel.getFormatPhone(
-                                firstItem.phone,
-                                getString(R.string.profile_phone_mask)
-                            )
-                            viewModel.getFormatName(
-                                firstItem,
-                                getString(R.string.profile_add_name)
-                            )
-                            user = firstItem
-
-                        }
-
-                        is OrderApprove -> {
-                            val data = appState.data as MutableList<OrderApprove>
-                            orders = data
-                            initRcView()
+                            else -> throw RuntimeException("Wrong List type $stateData")
                         }
                     }
+
+                    is String -> {
+                        when (appState.case) {
+                            TypeCase.FORMAT_NAME -> {
+                                profileNameTextView.text = stateData
+                            }
+                            TypeCase.FORMAT_PHONE -> {
+                                profilePhoneTextView.text = stateData
+                            }
+                            TypeCase.DEFAULT -> {}
+                            TypeCase.ADDRESS -> {
+                                profileAddressTextView.text = stateData
+                            }
+                        }
+
+                    }
+                    is UserDataModel -> {
+                        if (sharedPreferences.basketId == UNREGISTERED.toInt()) {
+                            sharedPreferences.basketId = stateData.basket?.basketId
+                        }
+                        viewModel.getFormatPhone(
+                            stateData.phone,
+                            getString(R.string.profile_phone_mask)
+                        )
+                        viewModel.getFormatName(
+                            stateData,
+                            getString(R.string.profile_add_name)
+                        )
+                        user = stateData
+
+                    }
+                    else -> throw RuntimeException("Wrong AppState type $appState")
                 }
             }
             is AppState.Error -> {
@@ -186,7 +199,7 @@ class ProfileFragment : Fragment() {
                     Toast.LENGTH_SHORT
                 ).show()
             }
-            else -> Unit
+            else -> throw RuntimeException("Wrong AppState type $appState")
         }
     }
 
@@ -199,12 +212,10 @@ class ProfileFragment : Fragment() {
 
     private fun cancelOrder(pos: Int) {
         val order = orders[pos]
-        val id = order.id
         orders.remove(order)
-
         adapter.setOrder(orders)
         adapter.notifyItemRemoved(pos)
-        viewModel.deleteOrder(id)
+        viewModel.deleteOrder(order.id)
     }
 
     override fun onDestroy() {

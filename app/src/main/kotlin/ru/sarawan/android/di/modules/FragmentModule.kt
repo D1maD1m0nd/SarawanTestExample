@@ -14,39 +14,39 @@ import ru.sarawan.android.framework.ui.profile.name_fragment.ProfileNameDialogFr
 import ru.sarawan.android.framework.ui.profile.phone_fragment.ProfilePhoneDialogFragment
 import ru.sarawan.android.framework.ui.profile.sms_code_fragment.ProfileCodeDialogFragment
 
-@Module
-abstract class FragmentModule {
+@Module(includes = [ImageModule::class])
+interface FragmentModule {
 
     @ContributesAndroidInjector
-    abstract fun contributeMainFragment(): MainFragment
+    fun contributeMainFragment(): MainFragment
 
     @ContributesAndroidInjector
-    abstract fun contributeCatalogFragment(): CatalogFragment
+    fun contributeCatalogFragment(): CatalogFragment
 
     @ContributesAndroidInjector
-    abstract fun contributeBasketFragment(): BasketFragment
+    fun contributeBasketFragment(): BasketFragment
 
     @ContributesAndroidInjector
-    abstract fun contributeProductCardFragment(): ProductCardFragment
+    fun contributeProductCardFragment(): ProductCardFragment
 
     @ContributesAndroidInjector
-    abstract fun contributeProfileFragment(): ProfileFragment
+    fun contributeProfileFragment(): ProfileFragment
 
     @ContributesAndroidInjector
-    abstract fun contributeProfilePhoneFragment(): ProfilePhoneDialogFragment
+    fun contributeProfilePhoneFragment(): ProfilePhoneDialogFragment
 
     @ContributesAndroidInjector
-    abstract fun contributeProfileCodeFragment(): ProfileCodeDialogFragment
+    fun contributeProfileCodeFragment(): ProfileCodeDialogFragment
 
     @ContributesAndroidInjector
-    abstract fun contributeProfileAddressFragment(): ProfileAddressDialogFragment
+    fun contributeProfileAddressFragment(): ProfileAddressDialogFragment
 
     @ContributesAndroidInjector
-    abstract fun contributeProfileNameFragment(): ProfileNameDialogFragment
+    fun contributeProfileNameFragment(): ProfileNameDialogFragment
 
     @ContributesAndroidInjector
-    abstract fun contributeCategoryFragment(): CategoryFragment
+    fun contributeCategoryFragment(): CategoryFragment
 
     @ContributesAndroidInjector
-    abstract fun contributeOrderFragment(): OrderFragment
+    fun contributeOrderFragment(): OrderFragment
 }

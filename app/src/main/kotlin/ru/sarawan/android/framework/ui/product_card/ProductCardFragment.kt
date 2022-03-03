@@ -14,6 +14,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import coil.load
+import dagger.Lazy
 import dagger.android.support.AndroidSupportInjection
 import ru.sarawan.android.R
 import ru.sarawan.android.activity.FabChanger
@@ -31,8 +32,8 @@ import ru.sarawan.android.utils.exstentions.setNavigationResult
 import ru.sarawan.android.utils.exstentions.token
 import javax.inject.Inject
 
-
 class ProductCardFragment : Fragment() {
+
     private val itemClickListener = object : ItemClickListener {
 
         override fun openProductCard(productId: Long) {
@@ -48,7 +49,7 @@ class ProductCardFragment : Fragment() {
         }
 
         override fun create(product: Product, pos: Int, type: TypeCardEnum) {
-            when(type) {
+            when (type) {
                 TypeCardEnum.STORE -> {
                     mainProduct.let {
                         product.apply {
@@ -58,6 +59,7 @@ class ProductCardFragment : Fragment() {
                         }
                     }
                 }
+                else -> Unit
             }
 
             itemSave(product, pos, true, type)
@@ -71,9 +73,10 @@ class ProductCardFragment : Fragment() {
     lateinit var sharedPreferences: SharedPreferences
 
     @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
+    lateinit var viewModelFactory: Lazy<ViewModelProvider.Factory>
+
     private val viewModel: ProductCardViewModel by lazy {
-        viewModelFactory.create(ProductCardViewModel::class.java)
+        viewModelFactory.get().create(ProductCardViewModel::class.java)
     }
     private var _binding: FragmentProductCardBinding? = null
     private val binding get() = _binding!!
@@ -172,23 +175,39 @@ class ProductCardFragment : Fragment() {
     private fun setState(appState: AppState<*>) {
         when (appState) {
             is AppState.Success<*> -> {
-                val data = appState.data as MutableList<Product>
-                val filteredData = data.filter { !it.storePrices.isNullOrEmpty() }
-                val product = data.findLast { it.id == args.productID }
-                similarProducts = data
-                    .filter { !it.storePrices.isNullOrEmpty() && it.id != product?.id }
-                    .toMutableList()
-                mainProduct = product
-                if (filteredData.isNullOrEmpty() || (filteredData - product).isNullOrEmpty() || similarProducts.isNullOrEmpty()) {
-                    binding.semilarTitleTextView.visibility = View.GONE
-                    binding.similarProductRecyclerView.visibility = View.GONE
-                } else {
-                    binding.semilarTitleTextView.visibility = View.VISIBLE
-                    initSimilarList(similarProducts)
+                when (appState.data) {
+                    is List<*> -> {
+                        when {
+                            appState.data.isEmpty() -> Toast.makeText(
+                                context,
+                                getString(R.string.server_data_error),
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            appState.data.first() is Product -> {
+                                @Suppress("UNCHECKED_CAST")
+                                val data = appState.data as List<Product>
+                                val filteredData = data.filter { !it.storePrices.isNullOrEmpty() }
+                                val product = data.findLast { it.id == args.productID }
+                                similarProducts = data
+                                    .filter { !it.storePrices.isNullOrEmpty() && it.id != product?.id }
+                                    .toMutableList()
+                                mainProduct = product
+                                if (filteredData.isNullOrEmpty() || (filteredData - product).isNullOrEmpty() || similarProducts.isNullOrEmpty()) {
+                                    binding.semilarTitleTextView.visibility = View.GONE
+                                    binding.similarProductRecyclerView.visibility = View.GONE
+                                } else {
+                                    binding.semilarTitleTextView.visibility = View.VISIBLE
+                                    initSimilarList(similarProducts)
+                                }
+                                product?.let { initViewData(it) }
+                                binding.progressBar.visibility = View.GONE
+                                binding.contentNestedScrollView.visibility = View.VISIBLE
+                            }
+                            else -> throw RuntimeException("Wrong List type ${appState.data}")
+                        }
+                    }
+                    else -> throw RuntimeException("Wrong AppState type $appState")
                 }
-                product?.let { initViewData(it) }
-                binding.progressBar.visibility = View.GONE
-                binding.contentNestedScrollView.visibility = View.VISIBLE
             }
             is AppState.Error -> {
                 Toast.makeText(context, "Произошла ошибка", Toast.LENGTH_SHORT).show()
@@ -198,7 +217,7 @@ class ProductCardFragment : Fragment() {
                 binding.contentNestedScrollView.visibility = View.INVISIBLE
                 binding.progressBar.visibility = View.VISIBLE
             }
-            else -> Unit
+            else -> throw RuntimeException("Wrong AppState type $appState")
         }
     }
 

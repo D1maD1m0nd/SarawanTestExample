@@ -1,41 +1,22 @@
 package ru.sarawan.android.di.modules
 
+import dagger.Binds
 import dagger.Module
-import dagger.Provides
-import ru.sarawan.android.framework.MainInteractor
-import ru.sarawan.android.framework.ui.basket.interactor.BasketInteractor
-import ru.sarawan.android.framework.ui.basket.interactor.IBasketInteractor
-import ru.sarawan.android.framework.ui.profile.address_fragment.interactor.AddressInteractor
-import ru.sarawan.android.framework.ui.profile.address_fragment.interactor.IAddressInteractor
-import ru.sarawan.android.framework.ui.profile.interactor.IProfileInteractor
-import ru.sarawan.android.framework.ui.profile.interactor.ProfileInteractor
-import ru.sarawan.android.model.datasource.DataSource
-import javax.inject.Named
+import ru.sarawan.android.model.interactor.*
 
-@Module
-class InteractorModule {
+@Suppress("FunctionName")
+@Module(includes = [DataSourceModule::class])
+interface InteractorModule {
 
-    @Provides
-    fun provideInteractor(
-        @Named(NAME_REMOTE) remoteRepo: DataSource<List<*>>,
-        @Named(NAME_LOCAL) localRepo: DataSource<List<*>>,
-    ): MainInteractor {
-        return MainInteractor(remoteRepo, localRepo)
-    }
+    @Binds
+    fun bindsProductInteractorImpl_to_ProductInteractor(productInteractorImpl: ProductInteractorImpl): ProductInteractor
 
+    @Binds
+    fun bindsBasketInteractorImpl_to_BasketInteractor(BasketInteractorImpl: BasketInteractorImpl): BasketInteractor
 
-    @Provides
-    fun provideBasketInteractor(): IBasketInteractor {
-        return BasketInteractor()
-    }
+    @Binds
+    fun bindsOrderInteractorImpl_to_OrderInteractor(orderInteractorImpl: OrderInteractorImpl): OrderInteractor
 
-    @Provides
-    fun provideProfileInteractor(): IProfileInteractor {
-        return ProfileInteractor()
-    }
-
-    @Provides
-    fun provideAddressInteractor(): IAddressInteractor {
-        return AddressInteractor()
-    }
+    @Binds
+    fun bindsUserInteractorImpl_to_UserInteractor(userInteractorImpl: UserInteractorImpl): UserInteractor
 }

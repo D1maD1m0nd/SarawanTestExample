@@ -2,15 +2,17 @@ package ru.sarawan.android.framework.ui.base.mainCatalog
 
 import io.reactivex.rxjava3.core.Single
 import retrofit2.HttpException
-import ru.sarawan.android.framework.MainInteractor
 import ru.sarawan.android.framework.ui.base.BaseViewModel
 import ru.sarawan.android.model.data.*
+import ru.sarawan.android.model.interactor.BasketInteractor
+import ru.sarawan.android.model.interactor.ProductInteractor
 import ru.sarawan.android.rx.ISchedulerProvider
 import ru.sarawan.android.utils.StringProvider
 import ru.sarawan.android.utils.constants.SortBy
 
 abstract class BaseMainCatalogViewModel(
-    private val interactor: MainInteractor,
+    private val productsInteractor: ProductInteractor,
+    private val basketInteractor: BasketInteractor,
     private val schedulerProvider: ISchedulerProvider,
     private val stringProvider: StringProvider
 ) : BaseViewModel<AppState<*>>(), MainCatalogInterface {
@@ -19,7 +21,7 @@ abstract class BaseMainCatalogViewModel(
 
     protected var lastPage = 1
 
-    protected var maxElement = 0
+    protected var isLastPage = false
 
     protected var searchWord: String? = null
     protected var category: Int? = null
@@ -29,24 +31,28 @@ abstract class BaseMainCatalogViewModel(
 
     protected var basketID: Int? = null
 
+    protected var prevCategory: Int? = null
+
     fun search(
         word: String?,
         categoryFilter: Int?,
         subcategory: Int?,
-        isOnline: Boolean,
         isLoggedUser: Boolean,
-        searchType: SortBy = SortBy.PRICE_ASC
+        searchType: SortBy = sortType
     ) {
+        onCleared()
         sortType = searchType
         lastPage = 1
+        if (categoryFilter != null && word.isNullOrEmpty()) prevCategory = categoryFilter
         searchWord = word
-        category = if (subcategory != null) null else categoryFilter
+        category = if (subcategory != null) null else (categoryFilter ?: prevCategory)
+//        val foundSubcategory = filters?.find { it.id == subcategory?.toLong() }?.id?.toInt()
         compositeDisposable.add(
             loadMoreData(
-                isOnline,
-                Query.Get.Products(
+                Products(
                     productName = word,
-                    categoryFilter = categoryFilter,
+                    pageSize = PAGE_ELEMENTS,
+                    categoryFilter = if (subcategory == null) categoryFilter ?: prevCategory else null,
                     subcategory = subcategory,
                     sortBy = searchType
                 ),
@@ -64,9 +70,7 @@ abstract class BaseMainCatalogViewModel(
                                 .add(product.toMainScreenDataModel(stringProvider.getString(sortType.description)))
                         }
                         stateLiveData.postValue(
-                            AppState.Success(
-                                listOf(MainScreenDataModel(result, maxElement, filters))
-                            )
+                            AppState.Success(MainScreenDataModel(result, isLastPage, filters))
                         )
                     },
                     { stateLiveData.postValue(AppState.Error(it)) }
@@ -75,23 +79,22 @@ abstract class BaseMainCatalogViewModel(
     }
 
     fun saveData(data: CardScreenDataModel, isLoggedUser: Boolean, isNewItem: Boolean) {
+        onCleared()
         val products = listOf(data.toProduct())
         if (isNewItem) compositeDisposable.add(
-            interactor
-                .getData(Query.Post.Basket.Put(ProductsUpdate(products)), isLoggedUser)
+            basketInteractor
+                .putProduct(isLoggedUser, ProductsUpdate(products))
                 .subscribeOn(schedulerProvider.io)
                 .observeOn(schedulerProvider.io)
-                .subscribe({
-                    basketID = (it as List<BasketResponse>).first().basketId
-                }, { stateLiveData.postValue(AppState.Error(it)) })
+                .subscribe(
+                    { basketID = it.id },
+                    { stateLiveData.postValue(AppState.Error(it)) }
+                )
         )
         else basketID?.let { basket ->
             compositeDisposable.add(
-                interactor
-                    .getData(
-                        Query.Put.Basket.Update(basket, ProductsUpdate(products)),
-                        isLoggedUser
-                    )
+                basketInteractor
+                    .updateProduct(isLoggedUser, basket, ProductsUpdate(products))
                     .subscribeOn(schedulerProvider.io)
                     .observeOn(schedulerProvider.io)
                     .subscribe({}, { stateLiveData.postValue(AppState.Error(it)) })
@@ -102,32 +105,20 @@ abstract class BaseMainCatalogViewModel(
     }
 
     protected fun loadMoreData(
-        isOnline: Boolean,
-        query: Query.Get.Products,
+        products: Products,
         isLoggedUser: Boolean
     ): Single<MutableList<Product>> {
-        val basket =
-            interactor.getData(Query.Get.Basket, isLoggedUser).onErrorReturnItem(listOf(Basket()))
-        val productsData = getProductsData(isOnline, query.apply { page = lastPage })
-        return Single.zip(productsData, basket) { responseData, basketData ->
-            val data: MutableList<Product> = mutableListOf()
-            val basketObject = (basketData as List<Basket>).firstOrNull()
-            basketID = basketObject?.basketId
-            responseData.forEach { response ->
-                filters = response.filters
-                maxElement = when {
-                    category != null -> {
-                        response.filters?.find { it.id.toInt() == category }?.let { return@let it }
-                        response.count
-                    }
-                    else -> response.count
-                }
-                response.results.forEach { singleData ->
-                    data.add(singleData)
-                    getQuantityFromBasket(basketObject, singleData)
-                }
-            }
-            lastPage += PAGES
+        val basket = basketInteractor.getBasket(isLoggedUser).onErrorReturnItem(Basket())
+        val productsData = getProductsData(products.apply {
+            page = lastPage
+            lastPage++
+        })
+        return Single.zip(productsData, basket) { response, basketData ->
+            basketID = basketData.basketId
+            filters = response.filters
+            isLastPage = response.nextPage.isNullOrEmpty()
+            val data: MutableList<Product> = response.results.toMutableList()
+            data.forEach { getQuantityFromBasket(basketData, it) }
             data
         }
     }
@@ -145,26 +136,14 @@ abstract class BaseMainCatalogViewModel(
         }
     }
 
-    private fun getProductsData(
-        isOnline: Boolean,
-        query: Query.Get.Products
-    ): Single<MutableList<Response>> {
-        return if (lastPage + PAGES <= query.page) Single.fromCallable { mutableListOf() }
-        else {
-            val singleData = (interactor.getData(query, isOnline) as Single<MutableList<Response>>)
-                .onErrorReturn {
-                    if (it is HttpException && it.code() == 404) mutableListOf()
-                    else throw it
-                }
-            Single.zip(singleData, getProductsData(isOnline, query.apply { page += 1 }))
-            { data1, data2 ->
-                data1.addAll(data2)
-                data1
+    private fun getProductsData(products: Products): Single<Response> =
+        productsInteractor.getProducts(products)
+            .onErrorReturn {
+                if (it is HttpException && it.code() == 404) Response(emptyList(), null, null)
+                else throw it
             }
-        }
-    }
 
-    abstract fun getMoreData(isOnline: Boolean, isLoggedUser: Boolean)
+    abstract fun getMoreData(isLoggedUser: Boolean)
 
     protected fun sortShops(product: Product) {
         product.apply {
@@ -184,6 +163,6 @@ abstract class BaseMainCatalogViewModel(
     }
 
     companion object {
-        const val PAGES = 3
+        const val PAGE_ELEMENTS = 50
     }
 }

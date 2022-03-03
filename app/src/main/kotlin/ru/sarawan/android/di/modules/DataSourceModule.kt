@@ -1,31 +1,33 @@
 package ru.sarawan.android.di.modules
 
+import dagger.Binds
 import dagger.Module
-import dagger.Provides
-import ru.sarawan.android.model.datasource.ApiService
-import ru.sarawan.android.model.datasource.DataSource
-import ru.sarawan.android.model.datasource.RetrofitImplementation
-import ru.sarawan.android.model.datasource.RoomDataBaseImplementation
-import ru.sarawan.android.model.datasource.db.SarawanDatabase
-import javax.inject.Named
-import javax.inject.Singleton
+import ru.sarawan.android.di.annotations.Local
+import ru.sarawan.android.model.datasource.*
 
-@Module
-class DataSourceModule {
+@Suppress("FunctionName")
+@Module(includes = [CacheModule::class])
+interface DataSourceModule {
 
-    @Provides
-    @Singleton
-    @Named(NAME_REMOTE)
-    internal fun provideRemoteDataSource(apiService: ApiService): DataSource<List<*>> {
-        return RetrofitImplementation(apiService)
-    }
+    @Binds
+    fun bindBasketRetrofitImpl_to_BasketDataSource(basketRetrofitImpl: BasketRetrofitImpl): BasketDataSource
 
-    @Provides
-    @Singleton
-    @Named(NAME_LOCAL)
-    internal fun provideLocalDataSource(db: SarawanDatabase): DataSource<List<*>> {
-        return RoomDataBaseImplementation(db)
-    }
+    @Binds
+    @Local
+    fun bindBasketRoomImplementation_to_BasketDataSource(basketRoomImplementation: BasketRoomImplementation): BasketDataSource
 
+    @Binds
+    fun bindCategoriesImpl_to_CategoriesRetrofitSource(categoriesRetrofitImpl: CategoriesRetrofitImpl): CategoriesDataSource
 
+    @Binds
+    fun bindOrderImpl_to_OrderRetrofitSource(orderRetrofitImpl: OrderRetrofitImpl): OrderDataSource
+
+    @Binds
+    fun bindProductImpl_to_ProductRetrofitSource(productRetrofitImpl: ProductRetrofitImpl): ProductDataSource
+
+    @Binds
+    fun bindProductsImpl_to_ProductsRetrofitSource(productsRetrofitImpl: ProductsRetrofitImpl): ProductsDataSource
+
+    @Binds
+    fun provideUserImpl_to_UserRetrofitSource(userRetrofitImpl: UserRetrofitImpl): UserDataSource
 }

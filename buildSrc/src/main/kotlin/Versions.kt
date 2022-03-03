@@ -9,6 +9,7 @@ object Versions {
     const val retrofit = "2.9.0"
     const val okHttp = "4.9.2"
 
+    const val activity = "1.4.0"
     const val kotlinKtx = "1.7.0"
     const val coil = "1.4.0"
     const val swipe = "1.1.0"
@@ -25,7 +26,7 @@ object Versions {
     const val constraint = "2.1.3"
 
     //viewModel
-    const val viewModel = "2.4.1";
+    const val viewModel = "2.4.1"
 
     //Navigation
     const val navigation = "2.4.1"

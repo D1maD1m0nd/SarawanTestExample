@@ -16,6 +16,7 @@ import ru.sarawan.android.utils.MoshiCustomAdapter
 import ru.sarawan.android.utils.MoshiCustomAdapter.Companion.LENIENT_FACTORY
 import ru.sarawan.android.utils.NetworkStatus
 import ru.sarawan.android.utils.exstentions.token
+import javax.inject.Singleton
 
 @Module
 class NetworkModule {
@@ -24,11 +25,10 @@ class NetworkModule {
     fun getNetworkStatus(context: Context): NetworkStatus = AndroidNetworkStatus(context)
 
     @Provides
-    fun moshi(): Moshi {
-        return Moshi.Builder().add(LENIENT_FACTORY).build()
-    }
+    fun moshi(): Moshi = Moshi.Builder().add(LENIENT_FACTORY).build()
 
     @Provides
+    @Singleton
     fun getHttpClient(shared: SharedPreferences): OkHttpClient {
         val httpClient = OkHttpClient.Builder()
         httpClient.addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
@@ -48,9 +48,7 @@ class NetworkModule {
     }
 
     @Provides
-    fun getMoshiCustomAdapter(moshi: Moshi): MoshiCustomAdapter = MoshiCustomAdapter(moshi)
-
-    @Provides
+    @Singleton
     fun getRetrofit(httpClient: OkHttpClient, moshi: Moshi): Retrofit = Retrofit.Builder()
         .baseUrl(BASE_URL)
         .addConverterFactory(MoshiConverterFactory.create(moshi))
@@ -59,5 +57,6 @@ class NetworkModule {
         .build()
 
     @Provides
+    @Singleton
     fun getApiService(retrofit: Retrofit): ApiService = retrofit.create(ApiService::class.java)
 }

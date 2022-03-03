@@ -115,6 +115,10 @@
             android:defaultValue="-1"
             app:argType="integer" />
         <argument
+            android:name="subCategoryType"
+            android:defaultValue="-1"
+            app:argType="integer" />
+        <argument
             android:name="filterList"
             android:defaultValue="@null"
             app:argType="ru.sarawan.android.model.data.Filter[]"

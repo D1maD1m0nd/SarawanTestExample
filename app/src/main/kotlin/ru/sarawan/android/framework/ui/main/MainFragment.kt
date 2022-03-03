@@ -12,7 +12,7 @@ import ru.sarawan.android.utils.exstentions.token
 class MainFragment : BaseMainCatalogFragment() {
 
     override val viewModel: MainViewModel by lazy {
-        viewModelFactory.create(MainViewModel::class.java)
+        viewModelFactory.get().create(MainViewModel::class.java)
     }
 
     override fun attachAdapterToView() {
@@ -42,32 +42,35 @@ class MainFragment : BaseMainCatalogFragment() {
         viewModel.getStateLiveData().observe(viewLifecycleOwner) { appState ->
             when (appState) {
                 is AppState.Success<*> -> {
-                    if (mainRecyclerAdapter != null && mainRecyclerAdapter!!.itemCount > 0) {
-                        if (isInitCompleted) handleSuccessResult(appState)
-                        else binding.loadingLayout.visibility = View.GONE
-                    } else handleSuccessResult(appState)
-                    isInitCompleted = true
+                    if (appState.data is MainScreenDataModel) {
+                        if (mainRecyclerAdapter != null && mainRecyclerAdapter!!.itemCount > 0) {
+                            if (isInitCompleted) handleSuccessResult(appState.data)
+                            else binding.loadingLayout.visibility = View.GONE
+                        } else handleSuccessResult(appState.data)
+                        isInitCompleted = true
+                    } else throw RuntimeException("Wrong AppState type $appState")
                 }
+
                 is AppState.Error -> handleNetworkErrorWithToast(appState.error)
+
                 AppState.Loading -> binding.loadingLayout.visibility = View.VISIBLE
-                AppState.Empty -> Unit
+
+                else -> throw RuntimeException("Wrong AppState type $appState")
             }
         }
     }
 
-    private fun handleSuccessResult(appState: AppState.Success<*>) {
-        val data = (appState.data as List<MainScreenDataModel>).first()
+    private fun handleSuccessResult(data: MainScreenDataModel) = with(binding) {
         if (data.listOfElements.find { it.cardType == CardType.TOP.type } == null) fillChips(data.filters)
         if (data.listOfElements.isNullOrEmpty()) {
-            binding.loadingLayout.visibility = View.GONE
-            binding.emptyDataLayout.root.visibility = View.VISIBLE
+            loadingLayout.visibility = View.GONE
+            emptyDataLayout.root.visibility = View.VISIBLE
         } else {
-            binding.emptyDataLayout.root.visibility = View.GONE
-            maxCount = data.maxElement
+            emptyDataLayout.root.visibility = View.GONE
             mainRecyclerAdapter?.setData(
                 data.listOfElements,
-                binding.searchField.editText?.text.isNullOrEmpty(),
-                maxCount
+                searchField.editText?.text.isNullOrEmpty(),
+                data.isLastPage
             )
         }
         isDataLoaded = true

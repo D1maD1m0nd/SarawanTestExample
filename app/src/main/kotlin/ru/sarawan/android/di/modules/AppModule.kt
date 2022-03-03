@@ -6,7 +6,15 @@ import dagger.Provides
 import ru.sarawan.android.app.App
 import javax.inject.Singleton
 
-@Module
+@Module(
+    includes = [
+        ActivityModule::class,
+        FragmentModule::class,
+        ViewModelModule::class,
+        NetworkModule::class,
+        SharedModule::class
+    ]
+)
 class AppModule(private val app: App) {
 
     @Singleton

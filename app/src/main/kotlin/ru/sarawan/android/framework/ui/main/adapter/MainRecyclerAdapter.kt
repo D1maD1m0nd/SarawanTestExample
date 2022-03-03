@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import coil.ImageLoader
 import com.google.android.material.textview.MaterialTextView
+import ru.sarawan.android.R
 import ru.sarawan.android.databinding.ListItemButtonBinding
 import ru.sarawan.android.databinding.ListItemCardBinding
 import ru.sarawan.android.databinding.LoadingLayoutBinding
@@ -21,10 +22,12 @@ import ru.sarawan.android.framework.ui.base.mainCatalog.CardType
 import ru.sarawan.android.framework.ui.main.viewHolder.*
 import ru.sarawan.android.model.data.CardScreenDataModel
 import ru.sarawan.android.model.data.Product
+import ru.sarawan.android.utils.StringProvider
 
 class MainRecyclerAdapter(
     private var onListItemClickListener: OnListItemClickListener,
     private val imageLoader: ImageLoader,
+    private val stringProvider: StringProvider,
     private val onButtonMoreClickListener: ButtonMoreClickListener,
     private val changeCardCallback: (CardScreenDataModel, Long) -> Unit,
     private val hideLoadingCallback: () -> Unit
@@ -32,8 +35,6 @@ class MainRecyclerAdapter(
 
     private val topData: MutableList<CardScreenDataModel> = mutableListOf()
     private val commonData: MutableList<CardScreenDataModel> = mutableListOf()
-
-    private var isLoadingHidden = false
 
     private var loadingLayout: LoadingLayoutBinding? = null
 
@@ -44,28 +45,25 @@ class MainRecyclerAdapter(
         }
     private lateinit var topCardsRecycler: RecyclerView
 
-    fun setData(data: List<CardScreenDataModel>?, isRecommended: Boolean, maxCommonData: Int) {
+    fun setData(data: List<CardScreenDataModel>?, isRecommended: Boolean, isLastPage: Boolean) {
         if (data.isNullOrEmpty()) return
         setTopData(data)
         setRecommendedString(isRecommended)
         setLoading()
         setCommonData(data)
-        removeLoading(maxCommonData)
+        removeLoading(isLastPage)
     }
 
-    private fun removeLoading(maxCommonData: Int) {
-        if (!isLoadingHidden && maxCommonData - commonData.size < 1) {
-            isLoadingHidden = true
+    private fun removeLoading(isLastPage: Boolean) {
+        if (isLastPage) {
             displayData.removeLast()
             notifyItemRemoved(itemCount)
         }
     }
 
     private fun setLoading() {
-        if (!isLoadingHidden && displayData.none { it.cardType == CardType.LOADING.type }) displayData.add(
-            CardScreenDataModel(
-                cardType = CardType.LOADING.type
-            )
+        if (displayData.none { it.cardType == CardType.LOADING.type }) displayData.add(
+            CardScreenDataModel(cardType = CardType.LOADING.type)
         )
     }
 
@@ -76,7 +74,7 @@ class MainRecyclerAdapter(
     }
 
     private fun setData(data: CardScreenDataModel) {
-        val index = if (isLoadingHidden) itemCount else itemCount - 1
+        val index = itemCount - 1
         displayData.add(index, data)
         notifyItemInserted(index)
     }
@@ -87,7 +85,7 @@ class MainRecyclerAdapter(
         if (displayData.none { it.cardType == CardType.COMMON.type }) {
             displayData.add(
                 CardScreenDataModel(
-                    itemDescription = if (isRecommended) "Мы рекомендуем" else null,
+                    itemDescription = if (isRecommended) stringProvider.getString(R.string.recomended) else null,
                     fontSize = if (isRecommended) 18F else 0F,
                     backgroundColor = Color.WHITE,
                     padding = if (isRecommended) arrayListOf(13, 24, 0, 14)
@@ -107,7 +105,7 @@ class MainRecyclerAdapter(
             topData.addAll(filteredTopData)
             displayData.add(
                 CardScreenDataModel(
-                    itemDescription = "Выгодные предложения",
+                    itemDescription = stringProvider.getString(R.string.sponsored_items),
                     fontSize = 28F,
                     padding = arrayListOf(0, 32, 0, 14),
                     gravity = Gravity.CENTER,
@@ -117,7 +115,7 @@ class MainRecyclerAdapter(
             displayData.add(CardScreenDataModel(cardType = CardType.TOP.type))
             displayData.add(
                 CardScreenDataModel(
-                    itemDescription = "Посмотреть всё",
+                    itemDescription = stringProvider.getString(R.string.show_all),
                     cardType = CardType.BUTTON.type
                 )
             )
@@ -255,7 +253,7 @@ class MainRecyclerAdapter(
 
     fun changeLoadingAnimation(enable: Boolean) {
         loadingLayout?.let {
-            if (!isLoadingHidden && it.root.isVisible) {
+            if (it.root.isVisible) {
                 if (enable) {
                     if (!it.loadingProgress.isIndeterminate) {
                         it.loadingProgress.visibility = View.INVISIBLE
@@ -280,9 +278,7 @@ class MainRecyclerAdapter(
     }
 
     override fun onViewRecycled(holder: RecyclerView.ViewHolder) {
-        if (holder is CancellableHolder) {
-            holder.cancelTask()
-        }
+        if (holder is CancellableHolder) holder.cancelTask()
         super.onViewRecycled(holder)
     }
 
