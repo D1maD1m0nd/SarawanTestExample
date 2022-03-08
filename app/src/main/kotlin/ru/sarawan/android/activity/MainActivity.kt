@@ -1,9 +1,17 @@
 package ru.sarawan.android.activity
 
+import android.animation.ObjectAnimator
 import android.content.SharedPreferences
+import android.os.Build
 import android.os.Bundle
+import android.os.CountDownTimer
+import android.view.View
+import android.view.ViewTreeObserver
+import android.view.animation.AnticipateInterpolator
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.animation.doOnEnd
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
@@ -54,6 +62,7 @@ class MainActivity : AppCompatActivity(), FabChanger, BasketSaver {
         AndroidInjection.inject(this)
         _binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        setDefaultSplashScreen()
         initNavigation()
         initFAB()
         initNetwork()
@@ -176,7 +185,55 @@ class MainActivity : AppCompatActivity(), FabChanger, BasketSaver {
         isBackShown = true
         lastTimeBackPressed = System.currentTimeMillis()
     }
+    private fun setDefaultSplashScreen() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            setSplashScreenHideAnimation()
+        }
 
+        setSplashScreenDuration()
+    }
+
+    @RequiresApi(31)
+    private fun setSplashScreenHideAnimation() {
+        splashScreen.setOnExitAnimationListener { splashScreenView ->
+            val slideLeft = ObjectAnimator.ofFloat(
+                splashScreenView,
+                View.TRANSLATION_X,
+                0f,
+                splashScreenView.height.toFloat()
+            )
+            //slideLeft.interpolator = AnticipateInterpolator()
+            slideLeft.duration = SLIDE_LEFT_DURATION
+
+            slideLeft.doOnEnd { splashScreenView.remove() }
+            slideLeft.start()
+        }
+    }
+
+    private fun setSplashScreenDuration() {
+        var isHideSplashScreen = false
+
+        object : CountDownTimer(COUNTDOWN_DURATION, COUNTDOWN_INTERVAL) {
+            override fun onTick(millisUntilFinished: Long) {}
+            override fun onFinish() {
+                isHideSplashScreen = true
+            }
+        }.start()
+
+        val content: View = findViewById(android.R.id.content)
+        content.viewTreeObserver.addOnPreDrawListener(
+            object : ViewTreeObserver.OnPreDrawListener {
+                override fun onPreDraw(): Boolean {
+                    return if (isHideSplashScreen) {
+                        content.viewTreeObserver.removeOnPreDrawListener(this)
+                        true
+                    } else {
+                        false
+                    }
+                }
+            }
+        )
+    }
     override fun putPrice(price: Float) = totalPrice.onNext(price)
 
     override fun changePrice(price: Float) = totalPrice.onNext((totalPrice.value ?: 0f) + price)
@@ -192,6 +249,9 @@ class MainActivity : AppCompatActivity(), FabChanger, BasketSaver {
 
     companion object {
         private const val BACK_BUTTON_EXIT_DELAY = 3000
+        private const val SLIDE_LEFT_DURATION = 500L
+        private const val COUNTDOWN_DURATION = 1150L
+        private const val COUNTDOWN_INTERVAL = 750L
     }
 }
 
