@@ -27,6 +27,15 @@ class UserInteractorImpl @Inject constructor(
 
     override fun getAddress(): Single<List<AddressItem>> = remoteRepository.getAddress()
 
+    override fun formatAddress(address: AddressItem): Single<String> {
+        val city = address.city
+        val street = address.street
+        val house = address.house
+        val roomNum = address.roomNumber
+        return  Single.just("$city, ул $street, д $house, кв $roomNum")
+
+    }
+
     override fun formatPhone(number: String, numberMask: String): Single<String> {
         var index = 0
         val result = numberMask

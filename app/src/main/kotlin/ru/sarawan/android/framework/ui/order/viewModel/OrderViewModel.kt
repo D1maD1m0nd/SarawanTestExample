@@ -6,7 +6,7 @@ import ru.sarawan.android.model.data.AppState
 import ru.sarawan.android.model.interactor.OrderInteractor
 import ru.sarawan.android.model.interactor.UserInteractor
 import ru.sarawan.android.rx.ISchedulerProvider
-import ru.sarawan.android.utils.formatAddress
+import ru.sarawan.android.utils.constants.TypeCase
 import javax.inject.Inject
 
 class OrderViewModel @Inject constructor(
@@ -15,7 +15,13 @@ class OrderViewModel @Inject constructor(
     private val schedulerProvider: ISchedulerProvider
 ) : BaseViewModel<AppState<*>>() {
     fun getFormatAddress(address: AddressItem) {
-        stateLiveData.value = AppState.Success(listOf(formatAddress(address)))
+        compositeDisposable.add(
+            userInteractor.formatAddress(address)
+                .subscribeOn(schedulerProvider.io)
+                .observeOn(schedulerProvider.ui)
+                .subscribe({stateLiveData.value = AppState.Success(it, TypeCase.ADDRESS)},
+                    { stateLiveData.value = AppState.Error(it) })
+        )
     }
 
     fun getAddress() {
@@ -26,8 +32,8 @@ class OrderViewModel @Inject constructor(
                 .doOnSubscribe { stateLiveData.postValue(AppState.Loading) }
                 .subscribe({ addressItems ->
                     val address = addressItems.find { it.primary } ?: addressItems.firstOrNull()
-                    stateLiveData.postValue(AppState.Success(address))
-                }, { stateLiveData.postValue(AppState.Error(it)) })
+                    stateLiveData.value = AppState.Success(address) },
+                    { stateLiveData.value = AppState.Error(it) })
         )
     }
 
@@ -37,8 +43,8 @@ class OrderViewModel @Inject constructor(
                 .subscribeOn(schedulerProvider.io)
                 .observeOn(schedulerProvider.ui)
                 .subscribe(
-                    { stateLiveData.postValue(AppState.Success(it)) },
-                    { stateLiveData.postValue(AppState.Error(it)) }),
+                    { stateLiveData.value = AppState.Success(it) },
+                    { stateLiveData.value = AppState.Error(it) }),
         )
     }
 
@@ -49,8 +55,8 @@ class OrderViewModel @Inject constructor(
                 .observeOn(schedulerProvider.ui)
                 .doOnSubscribe { stateLiveData.postValue(AppState.Loading) }
                 .subscribe(
-                    { stateLiveData.postValue(AppState.Success(it)) },
-                    { stateLiveData.postValue(AppState.Error(it)) }),
+                    { stateLiveData.value = AppState.Success(it) },
+                    { stateLiveData.value = AppState.Error(it) }),
         )
     }
 }

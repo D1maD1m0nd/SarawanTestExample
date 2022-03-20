@@ -9,7 +9,7 @@ import ru.sarawan.android.model.interactor.OrderInteractor
 import ru.sarawan.android.model.interactor.UserInteractor
 import ru.sarawan.android.rx.ISchedulerProvider
 import ru.sarawan.android.utils.constants.TypeCase
-import ru.sarawan.android.utils.formatAddress
+
 import javax.inject.Inject
 
 class ProfileViewModel @Inject constructor(
@@ -17,32 +17,38 @@ class ProfileViewModel @Inject constructor(
     private val orderInteractor: OrderInteractor,
     private val schedulerProvider: ISchedulerProvider
 ) : BaseViewModel<AppState<*>>() {
+
+
+
     fun getUserData(id: Long) {
         compositeDisposable.addAll(
             userInteractor.getUser(id)
                 .subscribeOn(schedulerProvider.io)
-                .observeOn(schedulerProvider.io)
+                .observeOn(schedulerProvider.ui)
                 .subscribe(
-                    { stateLiveData.postValue(AppState.Success(it)) },
-                    { stateLiveData.postValue(AppState.Error(it)) }),
+                    { stateLiveData.value = AppState.Success(it) },
+                    { stateLiveData.value = AppState.Error(it) }),
             userInteractor.getAddress()
                 .subscribeOn(schedulerProvider.io)
-                .observeOn(schedulerProvider.io)
+                .observeOn(schedulerProvider.ui)
                 .subscribe(
-                    { stateLiveData.postValue(AppState.Success(it)) },
-                    { stateLiveData.postValue(AppState.Error(it)) }),
+                    { stateLiveData.value = AppState.Success(it) },
+                    { stateLiveData.value = AppState.Error(it) }),
         )
     }
 
     fun getOrders() {
         compositeDisposable.add(
             orderInteractor.getOrders()
-                .map { it.filter { orderApprove -> orderApprove.orderStatus != OrderStatus.CAN } }
+                .map {
+                    it.filter { orderApprove -> orderApprove.orderStatus != OrderStatus.CAN
+                    }
+                }
                 .subscribeOn(schedulerProvider.io)
-                .observeOn(schedulerProvider.io)
+                .observeOn(schedulerProvider.ui)
                 .subscribe(
-                    { stateLiveData.postValue(AppState.Success(it)) },
-                    { stateLiveData.postValue(AppState.Error(it)) }
+                    { stateLiveData.value = AppState.Success(it) },
+                    { stateLiveData.value = AppState.Error(it) }
                 )
         )
     }
@@ -51,31 +57,41 @@ class ProfileViewModel @Inject constructor(
         compositeDisposable.add(
             orderInteractor.cancelOrder(id)
                 .subscribeOn(schedulerProvider.io)
-                .observeOn(schedulerProvider.io)
-                .subscribe({}, { stateLiveData.postValue(AppState.Error(it)) })
+                .observeOn(schedulerProvider.ui)
+                .subscribe({}, { stateLiveData.value = AppState.Error(it) })
         )
     }
 
     fun getFormatAddress(address: AddressItem) {
-        stateLiveData.value = AppState.Success(formatAddress(address))
+        compositeDisposable.add(
+            userInteractor.formatAddress(address)
+                .subscribeOn(schedulerProvider.io)
+                .observeOn(schedulerProvider.ui)
+                .subscribe({stateLiveData.value = AppState.Success(it, TypeCase.ADDRESS)}, { stateLiveData.value = AppState.Error(it) })
+        )
     }
 
     fun getFormatPhone(number: String, mask: String) {
-        userInteractor
-            .formatPhone(number, mask)
-            .subscribeOn(schedulerProvider.io)
-            .observeOn(schedulerProvider.io)
-            .subscribe(
-                { stateLiveData.postValue(AppState.Success(it, TypeCase.FORMAT_PHONE)) },
-                { stateLiveData.postValue(AppState.Error(it)) })
+        compositeDisposable.add(
+            userInteractor
+                .formatPhone(number, mask)
+                .subscribeOn(schedulerProvider.io)
+                .observeOn(schedulerProvider.ui)
+                .subscribe(
+                    { stateLiveData.value = AppState.Success(it, TypeCase.FORMAT_PHONE)},
+                    { stateLiveData.value = AppState.Error(it) })
+        )
+
     }
 
     fun getFormatName(user: UserDataModel, defaultStr: String) {
-        userInteractor.formatName(user, defaultStr)
-            .subscribeOn(schedulerProvider.io)
-            .observeOn(schedulerProvider.io)
-            .subscribe(
-                { stateLiveData.postValue(AppState.Success(it, TypeCase.FORMAT_NAME)) },
-                { stateLiveData.postValue(AppState.Error(it)) })
+        compositeDisposable.add(
+            userInteractor.formatName(user, defaultStr)
+                .subscribeOn(schedulerProvider.io)
+                .observeOn(schedulerProvider.ui)
+                .subscribe(
+                    { stateLiveData.value = AppState.Success(it, TypeCase.FORMAT_NAME) },
+                    { stateLiveData.value = AppState.Error(it) })
+        )
     }
 }

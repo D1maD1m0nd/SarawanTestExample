@@ -19,14 +19,24 @@ kapt {
 
 android {
     signingConfigs {
-        val keystorePropertiesFile = file("keystore.properties")
-        val keystoreProperties = Properties()
-        keystoreProperties.load(FileInputStream(keystorePropertiesFile))
-        register("Sarawan_release") {
-            keyAlias = keystoreProperties["ALIAS"] as String
-            keyPassword = keystoreProperties["STORE_PASSWORD"] as String
+        getByName("debug") {
+            val keystorePropertiesFile = file("keystore.properties")
+            val keystoreProperties = Properties()
+            keystoreProperties.load(FileInputStream(keystorePropertiesFile))
             storeFile = file(keystoreProperties["FILE_PATH"] as String)
             storePassword = keystoreProperties["STORE_PASSWORD"] as String
+            keyAlias = keystoreProperties["ALIAS"] as String
+            keyPassword = keystoreProperties["KEY_PASSWORD"] as String
+        }
+
+        create("release") {
+            val keystorePropertiesFile = file("keystore.properties")
+            val keystoreProperties = Properties()
+            keystoreProperties.load(FileInputStream(keystorePropertiesFile))
+            storeFile = file(keystoreProperties["FILE_PATH"] as String)
+            storePassword = keystoreProperties["STORE_PASSWORD"] as String
+            keyAlias = keystoreProperties["ALIAS"] as String
+            keyPassword = keystoreProperties["KEY_PASSWORD"] as String
         }
     }
     compileSdk = AppConfig.compileSdk
@@ -43,6 +53,7 @@ android {
 
     buildTypes {
         getByName("release") {
+            signingConfig = signingConfigs.getByName("release")
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),

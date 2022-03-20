@@ -13,6 +13,7 @@ interface UserInteractor {
     fun sendSMS(user: UserRegistration): Single<UserRegistration>
     fun createAddress(address: AddressItem): Single<AddressItem>
     fun getAddress(): Single<List<AddressItem>>
+    fun formatAddress(address: AddressItem): Single<String>
     fun formatPhone(number: String, numberMask: String): Single<String>
     fun formatName(user: UserDataModel, emptyStr: String): Single<String>
     fun validateAddress(addressItem: AddressItem): Single<AddressState>
