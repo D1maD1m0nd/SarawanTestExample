@@ -29,7 +29,7 @@ class OrderViewModel @Inject constructor(
             userInteractor.getAddress()
                 .subscribeOn(schedulerProvider.io)
                 .observeOn(schedulerProvider.ui)
-                .doOnSubscribe { stateLiveData.postValue(AppState.Loading) }
+                .doOnSubscribe { stateLiveData.value = AppState.Loading }
                 .subscribe({ addressItems ->
                     val address = addressItems.find { it.primary } ?: addressItems.firstOrNull()
                     stateLiveData.value = AppState.Success(address) },
@@ -53,7 +53,7 @@ class OrderViewModel @Inject constructor(
             orderInteractor.createOrder(address)
                 .subscribeOn(schedulerProvider.io)
                 .observeOn(schedulerProvider.ui)
-                .doOnSubscribe { stateLiveData.postValue(AppState.Loading) }
+                .doOnSubscribe { stateLiveData.value = AppState.Loading }
                 .subscribe(
                     { stateLiveData.value = AppState.Success(it) },
                     { stateLiveData.value = AppState.Error(it) }),

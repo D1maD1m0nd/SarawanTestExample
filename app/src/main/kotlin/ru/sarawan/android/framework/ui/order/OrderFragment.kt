@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -87,6 +88,7 @@ class OrderFragment : Fragment() {
                     is String -> binding.addressButton.text = item
 
                     is AddressItem -> {
+                        binding.progressBar.visibility = View.GONE
                         addressItem = AddressItem(idAddressOrder = item.id)
                         addressItem?.let { viewModel.getOrder(it) }
                         viewModel.getFormatAddress(item)
@@ -118,8 +120,9 @@ class OrderFragment : Fragment() {
                 val error = state.error
                 if (error is HttpException) {
                     when (error.code()) {
-                        500 -> Unit
+                        500 -> Toast.makeText(context, "Ошибка сервера ${error.message()}", Toast.LENGTH_SHORT).show();
                     }
+                    Toast.makeText(context, "Error ${error.message()}", Toast.LENGTH_SHORT).show();
                 }
             }
 
