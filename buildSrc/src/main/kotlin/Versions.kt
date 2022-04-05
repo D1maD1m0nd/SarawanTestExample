@@ -14,6 +14,8 @@ object Versions {
     const val coil = "1.4.0"
     const val swipe = "1.1.0"
     const val recyclerView = "1.2.1"
+    //map
+    const val map = "4.0.0-full"
 
     //Room
     const val roomKtx = "2.4.1"

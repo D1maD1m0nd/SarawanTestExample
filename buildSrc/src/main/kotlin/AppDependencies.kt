@@ -49,6 +49,7 @@ object AppDependencies {
     private const val support = "androidx.legacy:legacy-support-v4:${Versions.support}"
     private const val swipe = "androidx.swiperefreshlayout:swiperefreshlayout:${Versions.swipe}"
     private const val recyclerView = "androidx.recyclerview:recyclerview:${Versions.recyclerView}"
+    private const val map = "com.yandex.android:maps.mobile:${Versions.map}"
 
     //Test
     private const val junit = "junit:junit:${Versions.junit}"
