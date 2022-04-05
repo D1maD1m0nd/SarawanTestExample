@@ -99,9 +99,7 @@ class ProfileCodeDialogFragment : DialogFragment() {
                 profileCodeCode1EditText,
                 profileCodeCode2EditText,
                 profileCodeCode3EditText,
-                profileCodeCode4EditText,
-                profileCodeCode5EditText,
-                profileCodeCode6EditText,
+                profileCodeCode4EditText
             )
         }
     }
@@ -193,7 +191,7 @@ class ProfileCodeDialogFragment : DialogFragment() {
     private fun concatCode() = StringBuilder()
         .also { profileCodeEdits.forEach { tv -> it.append(tv.text.toString()) } }.toString()
 
-    private fun getFormatNumber(): String = "+" + args.number.replace(Regex("\\D"), "")
+    private fun getFormatNumber(): String = args.number.replace(Regex("\\D"), "")
 
     private fun updateTimerText(time: String) = with(binding) {
         val text = getString(R.string.profile_code_re_request_code_in) + " $time"
@@ -248,7 +246,7 @@ class ProfileCodeDialogFragment : DialogFragment() {
     }
 
     companion object {
-        private const val DEFAULT_CODE_LENGTH = 6
+        private const val DEFAULT_CODE_LENGTH = 4
         private const val TIMER_DURATION = 60_000L
         private const val TIMER_INTERVAL = 1_000L
         private const val ZERO = "0"

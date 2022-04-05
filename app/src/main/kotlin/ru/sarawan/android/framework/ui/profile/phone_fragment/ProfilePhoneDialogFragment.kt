@@ -132,7 +132,7 @@ class ProfilePhoneDialogFragment : DialogFragment() {
 
     private fun sendCode() {
         val number = getFormatNumber()
-        if (number.length == 12) {
+        if (number.length == 11) {
             val user = UserRegistration(phoneNumber = number)
             viewModel.sendSms(user)
         } else Toast.makeText(context, getString(R.string.incorrect_number), Toast.LENGTH_SHORT)
@@ -144,7 +144,7 @@ class ProfilePhoneDialogFragment : DialogFragment() {
         return phoneNumberWithoutMask(number)
     }
 
-    private fun phoneNumberWithoutMask(number: String) = "+" + number.replace(Regex("\\D"), "")
+    private fun phoneNumberWithoutMask(number: String) = number.replace(Regex("\\D"), "")
 
     private fun setState(appState: AppState<*>) {
         when (appState) {
