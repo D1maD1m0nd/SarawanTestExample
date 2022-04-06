@@ -1,14 +1,12 @@
 package ru.sarawan.android.framework.ui.profile.address_fragment
 
+import android.annotation.SuppressLint
 import android.content.DialogInterface
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.view.WindowManager
+import android.view.*
+import android.view.View.OnTouchListener
 import android.view.inputmethod.InputMethodManager
-import android.widget.AdapterView
 import android.widget.AdapterView.OnItemClickListener
 import android.widget.Toast
 import androidx.core.content.getSystemService
@@ -89,6 +87,7 @@ class ProfileAddressDialogFragment : DialogFragment() {
         keyboardShown = false
     } else Unit
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun initViews() = with(binding) {
         args.street.let { profileAddressStreetEditText.setText(it) }
         args.house.let { profileAddressHouseEditText.setText(it) }
@@ -102,9 +101,31 @@ class ProfileAddressDialogFragment : DialogFragment() {
                     OnItemClickListener { _, _, pos, _ ->
                         fillAddress(it[pos])
                     }
-
             }
         }
+        /*
+        The warning arises because the code listens for onTouchEvent (see docs, point 3).
+        There is a pointer to a solution for a click event,
+        but that does not address whether a swipe needs to be handled or not.
+         */
+        addressAutoCompleteTextView.setOnTouchListener(
+            @SuppressLint("ClickableViewAccessibility")
+            object : OnTouchListener {
+                override fun onTouch(p0: View?, event: MotionEvent?): Boolean {
+                    val DRAWABLE_LEFT = 0
+                    val DRAWABLE_TOP = 1
+                    val DRAWABLE_RIGHT = 2
+                    val DRAWABLE_BOTTOM = 3
+                    if (event?.action == MotionEvent.ACTION_UP) {
+                        if (event.rawX >= addressAutoCompleteTextView.right - addressAutoCompleteTextView.compoundDrawables[DRAWABLE_RIGHT].bounds.width()
+                        ) {
+                            // your action here
+                            return true
+                        }
+                    }
+                    return false
+                }
+            })
 
         profileAddressBackButton.setOnClickListener {
             hideKeyboard()
