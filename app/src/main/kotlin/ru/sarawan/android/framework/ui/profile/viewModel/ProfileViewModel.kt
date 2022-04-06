@@ -19,7 +19,6 @@ class ProfileViewModel @Inject constructor(
 ) : BaseViewModel<AppState<*>>() {
 
 
-
     fun getUserData(id: Long) {
         compositeDisposable.addAll(
             userInteractor.getUser(id)
@@ -41,7 +40,8 @@ class ProfileViewModel @Inject constructor(
         compositeDisposable.add(
             orderInteractor.getOrders()
                 .map {
-                    it.filter { orderApprove -> orderApprove.orderStatus != OrderStatus.CAN
+                    it.filter { orderApprove ->
+                        orderApprove.orderStatus != OrderStatus.CAN
                     }
                 }
                 .subscribeOn(schedulerProvider.io)
@@ -67,7 +67,9 @@ class ProfileViewModel @Inject constructor(
             userInteractor.formatAddress(address)
                 .subscribeOn(schedulerProvider.io)
                 .observeOn(schedulerProvider.ui)
-                .subscribe({stateLiveData.value = AppState.Success(it, TypeCase.ADDRESS)}, { stateLiveData.value = AppState.Error(it) })
+                .subscribe(
+                    { stateLiveData.value = AppState.Success(it, TypeCase.ADDRESS) },
+                    { stateLiveData.value = AppState.Error(it) })
         )
     }
 
@@ -78,7 +80,7 @@ class ProfileViewModel @Inject constructor(
                 .subscribeOn(schedulerProvider.io)
                 .observeOn(schedulerProvider.ui)
                 .subscribe(
-                    { stateLiveData.value = AppState.Success(it, TypeCase.FORMAT_PHONE)},
+                    { stateLiveData.value = AppState.Success(it, TypeCase.FORMAT_PHONE) },
                     { stateLiveData.value = AppState.Error(it) })
         )
 

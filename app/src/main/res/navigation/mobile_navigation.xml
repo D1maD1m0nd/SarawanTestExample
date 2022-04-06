@@ -212,6 +212,10 @@
         <action
             android:id="@+id/action_profileAddressDialogFragment_to_profileAlertDialogFragment"
             app:destination="@id/profileAlertDialogFragment" />
+        <argument
+            android:name="addressItemArray"
+            app:argType="ru.sarawan.android.model.data.AddressItem[]"
+            app:nullable="true" />
     </dialog>
 
     <dialog

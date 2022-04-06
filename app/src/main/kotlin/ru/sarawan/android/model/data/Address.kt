@@ -1,13 +1,17 @@
 package ru.sarawan.android.model.data
 
+import android.os.Parcelable
 import com.squareup.moshi.Json
+import kotlinx.parcelize.Parcelize
 
+@Parcelize
 data class Address(
 
     @field:Json(name = "Address")
     val address: List<AddressItem>? = null
-)
+) : Parcelable
 
+@Parcelize
 data class AddressItem(
 
     @field:Json(name = "city")
@@ -38,5 +42,7 @@ data class AddressItem(
     val building: String = "",
 
     @field:Json(name = "primary")
-    val primary: Boolean = false
-)
+    val primary: Boolean = false,
+
+    var addressFull: String = ""
+) : Parcelable

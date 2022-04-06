@@ -15,10 +15,10 @@ class ProfileAddressViewModel @Inject constructor(
         compositeDisposable.add(
             userInteractor.createAddress(address)
                 .subscribeOn(schedulerProvider.io)
-                .observeOn(schedulerProvider.io)
+                .observeOn(schedulerProvider.ui)
                 .subscribe(
-                    { stateLiveData.postValue(AppState.Success(it)) },
-                    { stateLiveData.postValue(AppState.Error(it)) })
+                    { stateLiveData.value = AppState.Success(it) },
+                    { stateLiveData.value = AppState.Error(it) })
 
         )
     }
@@ -26,9 +26,11 @@ class ProfileAddressViewModel @Inject constructor(
     fun validateAddress(address: AddressItem) {
         userInteractor.validateAddress(address)
             .subscribeOn(schedulerProvider.io)
-            .observeOn(schedulerProvider.io)
+            .observeOn(schedulerProvider.ui)
             .subscribe(
-                { stateLiveData.postValue(AppState.Success(it)) },
-                { stateLiveData.postValue(AppState.Error(it)) })
+                { stateLiveData.value = AppState.Success(it) },
+                { stateLiveData.value = AppState.Error(it) })
     }
+
+
 }

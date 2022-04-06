@@ -1,6 +1,7 @@
 package ru.sarawan.android.model.interactor
 
 import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.internal.operators.single.SingleJust
 import ru.sarawan.android.model.data.AddressItem
 import ru.sarawan.android.model.data.UserDataModel
 import ru.sarawan.android.model.data.UserRegistration
@@ -25,14 +26,25 @@ class UserInteractorImpl @Inject constructor(
     override fun createAddress(address: AddressItem): Single<AddressItem> =
         remoteRepository.createAddress(address)
 
-    override fun getAddress(): Single<List<AddressItem>> = remoteRepository.getAddress()
+    override fun getAddress(): Single<List<AddressItem>> {
+        return remoteRepository.getAddress().flatMap {
+            SingleJust(it.map { item ->
+                val city = item.city
+                val street = item.street
+                val house = item.house
+                val roomNum = item.roomNumber
+                item.addressFull = "$city, ул $street, д $house, кв $roomNum"
+                item
+            })
+        }
+    }
 
     override fun formatAddress(address: AddressItem): Single<String> {
         val city = address.city
         val street = address.street
         val house = address.house
         val roomNum = address.roomNumber
-        return  Single.just("$city, ул $street, д $house, кв $roomNum")
+        return Single.just("$city, ул $street, д $house, кв $roomNum")
 
     }
 

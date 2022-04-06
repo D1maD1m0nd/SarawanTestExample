@@ -122,4 +122,5 @@
     <string name="recomended">Мы рекомендуем</string>
     <string name="sponsored_items">Выгодные предложения</string>
     <string name="show_all">Посмотреть всё</string>
+    <string name="select_a_country">Select a country</string>
 </resources>

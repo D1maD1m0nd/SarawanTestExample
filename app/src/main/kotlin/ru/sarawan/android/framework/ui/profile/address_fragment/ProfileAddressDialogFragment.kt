@@ -19,6 +19,7 @@ import dagger.android.support.AndroidSupportInjection
 import retrofit2.HttpException
 import ru.sarawan.android.R
 import ru.sarawan.android.databinding.FragmentProfileAddressDialogBinding
+import ru.sarawan.android.framework.ui.profile.address_fragment.adapter.AddressAdapter
 import ru.sarawan.android.framework.ui.profile.address_fragment.viewModel.ProfileAddressViewModel
 import ru.sarawan.android.model.data.AddressItem
 import ru.sarawan.android.model.data.AppState
@@ -89,6 +90,13 @@ class ProfileAddressDialogFragment : DialogFragment() {
         args.street.let { profileAddressStreetEditText.setText(it) }
         args.house.let { profileAddressHouseEditText.setText(it) }
         args.roomNumber.let { profileAddressApartmentEditText.setText(it) }
+        args.addressItemArray.let { addressList ->
+            addressList?.let {
+                val adapter = AddressAdapter(root.context, it.toList())
+
+                addressAutoCompleteTextView.setAdapter(adapter)
+            }
+        }
 
         profileAddressBackButton.setOnClickListener {
             hideKeyboard()

@@ -45,7 +45,7 @@ class ProfileFragment : Fragment() {
     private var user: UserDataModel? = null
 
     private var addressItem: AddressItem? = null
-
+    private var addressList: List<AddressItem> = ArrayList()
     private val itemClickListener = object : ItemClickListener {
         override fun cancel(pos: Int) {
             cancelOrder(pos)
@@ -109,7 +109,8 @@ class ProfileFragment : Fragment() {
             city = addressItem?.city,
             street = addressItem?.street,
             house = addressItem?.house,
-            roomNumber = addressItem?.roomNumber
+            roomNumber = addressItem?.roomNumber,
+            addressItemArray = addressList.toTypedArray()
         )
         findNavController().navigate(action)
     }
@@ -147,6 +148,7 @@ class ProfileFragment : Fragment() {
                                         viewModel.getFormatAddress(it)
                                         addressItem = it
                                     }
+                                    addressList = data
                                 }
                             }
                             is OrderApprove -> {
