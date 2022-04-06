@@ -101,6 +101,7 @@ dependencies {
 
     //room
     implementation(AppDependencies.roomImpl)
+    implementation("androidx.legacy:legacy-support-v4:1.0.0")
 
     //kapt
     kapt(AppDependencies.kapt)
