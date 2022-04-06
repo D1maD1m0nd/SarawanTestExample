@@ -8,6 +8,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
+import android.widget.AdapterView
+import android.widget.AdapterView.OnItemClickListener
 import android.widget.Toast
 import androidx.core.content.getSystemService
 import androidx.fragment.app.DialogFragment
@@ -27,6 +29,7 @@ import ru.sarawan.android.utils.constants.AddressState
 import ru.sarawan.android.utils.exstentions.setNavigationResult
 import ru.sarawan.android.utils.exstentions.userId
 import javax.inject.Inject
+
 
 class ProfileAddressDialogFragment : DialogFragment() {
 
@@ -95,6 +98,11 @@ class ProfileAddressDialogFragment : DialogFragment() {
                 val adapter = AddressAdapter(root.context, it.toList())
 
                 addressAutoCompleteTextView.setAdapter(adapter)
+                addressAutoCompleteTextView.onItemClickListener =
+                    OnItemClickListener { _, _, pos, _ ->
+                        fillAddress(it[pos])
+                    }
+
             }
         }
 
@@ -141,6 +149,18 @@ class ProfileAddressDialogFragment : DialogFragment() {
     private fun saveData() {
         val address = getAddress()
         viewModel.createAddress(address)
+    }
+
+    private fun fillAddress(addressItem: AddressItem) = with(binding) {
+        val city = addressItem.city
+        val street = addressItem.street
+        val house = addressItem.house
+        val apartment = addressItem.roomNumber
+
+        binding.profileAddressCityTextView.text = city
+        binding.profileAddressStreetEditText.setText(street)
+        binding.profileAddressHouseEditText.setText(house)
+        binding.profileAddressApartmentEditText.setText(apartment)
     }
 
     private fun getAddress(): AddressItem = with(binding) {
