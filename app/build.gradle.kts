@@ -68,6 +68,13 @@ android {
             )
         }
     }
+    defaultConfig {
+        val properties = Properties()
+        val propertiesFile = file("config_constants.properties")
+        properties.load(FileInputStream(propertiesFile))
+        val apiKey = properties["api_key"] as String
+        buildConfigField("String", "MAP_API_KEY", apiKey)
+    }
     viewBinding {
         android.buildFeatures.viewBinding = true
     }

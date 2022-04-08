@@ -119,6 +119,7 @@ class ProfileAddressDialogFragment : DialogFragment() {
                     if (event?.action == MotionEvent.ACTION_UP) {
                         if (event.rawX >= addressAutoCompleteTextView.right - addressAutoCompleteTextView.compoundDrawables[DRAWABLE_RIGHT].bounds.width()
                         ) {
+                            openMapFragment()
                             // your action here
                             return true
                         }
@@ -138,6 +139,14 @@ class ProfileAddressDialogFragment : DialogFragment() {
 
         profileAddressStreetEditText.requestFocus()
         showKeyboard()
+    }
+
+    private fun openMapFragment() {
+        val action =
+            ProfileAddressDialogFragmentDirections.actionProfileAddressDialogFragmentToMapFragment(
+                ""
+            )
+        findNavController().navigate(action)
     }
 
     private fun showAlert() {

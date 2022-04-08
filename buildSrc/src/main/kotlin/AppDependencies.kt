@@ -71,7 +71,8 @@ object AppDependencies {
         material,
         constraint,
         swipe,
-        recyclerView
+        recyclerView,
+        map
     )
 
     val navImpl = arrayListOf(
