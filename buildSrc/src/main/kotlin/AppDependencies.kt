@@ -1,11 +1,16 @@
 object AppDependencies {
+    //security
+    private const val encryptSharedPref =
+        "androidx.security:security-crypto:${Versions.securityShared}"
 
     // Retrofit
     private const val retrofit = "com.squareup.retrofit2:retrofit:${Versions.retrofit}"
-    private const val retrofitJsonAdapter = "com.squareup.retrofit2:converter-moshi:${Versions.retrofit}"
+    private const val retrofitJsonAdapter =
+        "com.squareup.retrofit2:converter-moshi:${Versions.retrofit}"
     private const val retrofitRxJavaAdapter =
         "com.squareup.retrofit2:adapter-rxjava3:${Versions.retrofit}"
-    private const val retrofitInterceptor = "com.squareup.okhttp3:logging-interceptor:${Versions.okHttp}"
+    private const val retrofitInterceptor =
+        "com.squareup.okhttp3:logging-interceptor:${Versions.okHttp}"
 
     //ViewModel
     private const val liveData = "androidx.lifecycle:lifecycle-livedata-ktx:${Versions.viewModel}"
@@ -110,6 +115,10 @@ object AppDependencies {
     val roomImpl = arrayListOf(
         runtimeRoom,
         roomKtxRoom
+    )
+
+    val security = arrayListOf(
+        encryptSharedPref
     )
 
     val kapt = arrayListOf(

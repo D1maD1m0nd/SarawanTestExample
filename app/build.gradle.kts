@@ -83,6 +83,10 @@ android {
 }
 
 dependencies {
+
+    //security
+    implementation(AppDependencies.security)
+
     //std lib
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
 

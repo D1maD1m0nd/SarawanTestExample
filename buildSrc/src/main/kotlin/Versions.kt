@@ -1,4 +1,6 @@
 object Versions {
+    const val securityShared = "1.1.0-alpha03"
+
 
     const val gradle = "7.1.2"
     const val kotlinGradle = "1.6.20"
