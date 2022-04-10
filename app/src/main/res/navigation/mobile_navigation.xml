@@ -291,7 +291,7 @@
     </dialog>
     <fragment
         android:id="@+id/mapFragment"
-        android:name="ru.sarawan.android.MapFragment"
+        android:name="ru.sarawan.android.framework.ui.map.MapFragment"
         android:label="fragment_map"
         tools:layout="@layout/fragment_map">
         <argument

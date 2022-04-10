@@ -238,11 +238,11 @@ class ProfileCodeDialogFragment : DialogFragment() {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
         timer.cancel()
         _binding = null
         inputMethodManager = null
+        super.onDestroyView()
     }
 
     companion object {

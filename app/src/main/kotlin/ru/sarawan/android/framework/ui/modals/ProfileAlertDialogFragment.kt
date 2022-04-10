@@ -34,8 +34,9 @@ class ProfileAlertDialogFragment : DialogFragment() {
         profileAlertOkButton.setOnClickListener { findNavController().navigateUp() }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
         _binding = null
+        super.onDestroyView()
     }
+
 }

@@ -103,11 +103,7 @@ class ProfileAddressDialogFragment : DialogFragment() {
                     }
             }
         }
-        /*
-        The warning arises because the code listens for onTouchEvent (see docs, point 3).
-        There is a pointer to a solution for a click event,
-        but that does not address whether a swipe needs to be handled or not.
-         */
+
         addressAutoCompleteTextView.setOnTouchListener(
             @SuppressLint("ClickableViewAccessibility")
             object : OnTouchListener {
@@ -248,11 +244,12 @@ class ProfileAddressDialogFragment : DialogFragment() {
         setNavigationResult(KEY_ADDRESS, isSaveSuccess)
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
         _binding = null
         inputMethodManager = null
+        super.onDestroyView()
     }
+
 
     companion object {
         const val KEY_ADDRESS = "Address"

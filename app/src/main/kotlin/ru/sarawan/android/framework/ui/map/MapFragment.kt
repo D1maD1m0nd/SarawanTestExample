@@ -1,4 +1,4 @@
-package ru.sarawan.android
+package ru.sarawan.android.framework.ui.map
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.yandex.mapkit.MapKitFactory
+import ru.sarawan.android.BuildConfig
 import ru.sarawan.android.databinding.FragmentMapBinding
 
 
@@ -39,7 +40,6 @@ class MapFragment : Fragment() {
     override fun onDestroyView() {
         binding.mapview.onStop()
         MapKitFactory.getInstance().onStop()
-        super.onStop()
         super.onDestroyView()
     }
 }

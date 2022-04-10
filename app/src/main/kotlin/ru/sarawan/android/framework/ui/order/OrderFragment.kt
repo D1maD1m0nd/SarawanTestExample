@@ -88,18 +88,24 @@ class OrderFragment : Fragment() {
             is AppState.Success -> {
                 when (val item = state.data) {
                     is String -> binding.addressButton.text = item
-
-                    is AddressItem -> {
-                        val addresses = item as List<AddressItem>
-                        val address = addresses.find { it.primary } ?: addresses.firstOrNull()
-                        address?.let {
-                            addressList = addresses
-                            binding.progressBar.visibility = View.GONE
-                            addressItem = AddressItem(idAddressOrder = item.id)
-                            addressItem?.let { viewModel.getOrder(it) }
-                            viewModel.getFormatAddress(item)
+                    is List<*> -> {
+                        when (val listItem = item.first()) {
+                            is AddressItem -> {
+                                val addresses = item as List<AddressItem>
+                                val address =
+                                    addresses.find { it.primary } ?: addresses.firstOrNull()
+                                address?.let {
+                                    addressList = addresses
+                                    binding.progressBar.visibility = View.GONE
+                                    addressItem = AddressItem(idAddressOrder = listItem.id)
+                                    addressItem?.let { viewModel.getOrder(it) }
+                                    viewModel.getFormatAddress(listItem)
+                                }
+                            }
+                            else -> {}
                         }
                     }
+
 
                     is Order -> setOrderData(item)
 

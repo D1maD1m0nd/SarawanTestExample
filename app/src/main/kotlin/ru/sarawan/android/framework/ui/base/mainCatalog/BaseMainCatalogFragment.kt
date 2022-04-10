@@ -385,10 +385,10 @@ abstract class BaseMainCatalogFragment : Fragment() {
     }
 
     override fun onDestroyView() {
-        super.onDestroyView()
         binding.mainRecyclerView.layoutManager = null
         binding.mainRecyclerView.adapter = null
         _binding = null
+        super.onDestroyView()
     }
 
     override fun onAttach(context: Context) {

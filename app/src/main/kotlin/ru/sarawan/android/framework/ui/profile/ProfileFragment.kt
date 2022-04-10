@@ -220,8 +220,8 @@ class ProfileFragment : Fragment() {
         viewModel.deleteOrder(order.id)
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
         _binding = null
+        super.onDestroyView()
     }
 }

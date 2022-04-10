@@ -59,11 +59,12 @@ class AddressAdapter(context: Context, countryList: List<AddressItem>) :
         }
 
         override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
-            clear()
-            if (!constraint.isNullOrEmpty()) {
+            if (count > 0 && !constraint.isNullOrEmpty()) {
+                clear()
                 addAll(results?.values as List<AddressItem>)
                 notifyDataSetChanged()
             }
+
         }
 
         override fun convertResultToString(resultValue: Any?): CharSequence {
