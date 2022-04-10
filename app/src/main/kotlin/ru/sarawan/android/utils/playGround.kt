@@ -36,7 +36,7 @@ private fun diffTime(): String {
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
-private fun diffTime(t1 : String, t2 : String, tZone : Int, result : String): Boolean {
+private fun diffTime(t1: String, t2: String, tZone: Int, result: String): Boolean {
     val formatter = DateTimeFormatter.ofPattern("HH:mm")
     var timeDepartmentString = t1
     var timeArrivalString = t2
@@ -51,7 +51,7 @@ private fun diffTime(t1 : String, t2 : String, tZone : Int, result : String): Bo
 
     var duration = Duration.between(timeDepartment, timeArrival).toMinutes()
     if (duration < 0) duration += 24 * 60
-    val timeDiff =  String.format("%d:%02d", duration / 60, (duration % 60))
+    val timeDiff = String.format("%d:%02d", duration / 60, (duration % 60))
     val res = timeDiff == result
     println("$timeDiff == $res")
     return res

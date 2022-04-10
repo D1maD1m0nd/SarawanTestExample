@@ -52,7 +52,8 @@ abstract class BaseMainCatalogViewModel(
                 Products(
                     productName = word,
                     pageSize = PAGE_ELEMENTS,
-                    categoryFilter = if (subcategory == null) categoryFilter ?: prevCategory else null,
+                    categoryFilter = if (subcategory == null) categoryFilter
+                        ?: prevCategory else null,
                     subcategory = subcategory,
                     sortBy = searchType
                 ),

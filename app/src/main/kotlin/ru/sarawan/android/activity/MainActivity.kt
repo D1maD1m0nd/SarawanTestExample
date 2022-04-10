@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.os.CountDownTimer
 import android.view.View
 import android.view.ViewTreeObserver
-import android.view.animation.AnticipateInterpolator
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -185,6 +184,7 @@ class MainActivity : AppCompatActivity(), FabChanger, BasketSaver {
         isBackShown = true
         lastTimeBackPressed = System.currentTimeMillis()
     }
+
     private fun setDefaultSplashScreen() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             setSplashScreenHideAnimation()
@@ -234,6 +234,7 @@ class MainActivity : AppCompatActivity(), FabChanger, BasketSaver {
             }
         )
     }
+
     override fun putPrice(price: Float) = totalPrice.onNext(price)
 
     override fun changePrice(price: Float) = totalPrice.onNext((totalPrice.value ?: 0f) + price)
