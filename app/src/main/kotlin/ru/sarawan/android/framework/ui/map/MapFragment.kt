@@ -1,17 +1,31 @@
 package ru.sarawan.android.framework.ui.map
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.graphics.Color
+import android.graphics.PointF
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.geometry.Point
+import com.yandex.mapkit.layers.ObjectEvent
+import com.yandex.mapkit.location.Location
+import com.yandex.mapkit.location.LocationListener
+import com.yandex.mapkit.location.LocationManager
+import com.yandex.mapkit.location.LocationStatus
 import com.yandex.mapkit.map.*
 import com.yandex.mapkit.map.Map
 import com.yandex.mapkit.search.*
+import com.yandex.mapkit.user_location.UserLocationLayer
+import com.yandex.mapkit.user_location.UserLocationObjectListener
+import com.yandex.mapkit.user_location.UserLocationView
 import com.yandex.runtime.Error
 import com.yandex.runtime.image.ImageProvider
 import com.yandex.runtime.network.NetworkError
@@ -21,12 +35,43 @@ import ru.sarawan.android.R
 import ru.sarawan.android.databinding.FragmentMapBinding
 
 
-class MapFragment : Fragment(), Session.SearchListener, CameraListener {
+class MapFragment : Fragment(), Session.SearchListener, CameraListener, UserLocationObjectListener {
 
     private var _binding: FragmentMapBinding? = null
     private val binding get() = _binding!!
     private var searchManager: SearchManager? = null
     private var searchSession: Session? = null
+    private var userLocationLayer: UserLocationLayer? = null
+    private val permissionResult = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { result ->
+        if (result) {
+
+        } else {
+            Toast.makeText(context, getString(R.string.not_permission), Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun requestPermission() {
+        permissionResult.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+    }
+
+    private fun checkPermission() {
+        activity?.let {
+            when (PackageManager.PERMISSION_GRANTED) {
+                ContextCompat.checkSelfPermission(it, Manifest.permission.ACCESS_FINE_LOCATION) -> {
+                }
+                else -> {
+                    requestPermission()
+                }
+            }
+        }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        checkPermission()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -35,17 +80,31 @@ class MapFragment : Fragment(), Session.SearchListener, CameraListener {
         MapKitFactory.setApiKey(BuildConfig.MAP_API_KEY)
         MapKitFactory.initialize(context)
         SearchFactory.initialize(context)
+
         searchManager = SearchFactory.getInstance().createSearchManager(SearchManagerType.COMBINED)
         _binding = FragmentMapBinding.inflate(inflater, container, false)
         return binding.root
     }
 
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initView()
+
     }
 
+
     private fun initView() = with(binding) {
+        mapview.map.isRotateGesturesEnabled = false
+        val mapKit = MapKitFactory.getInstance()
+        userLocationLayer = mapKit.createUserLocationLayer(mapview.mapWindow)
+        userLocationLayer?.let {
+            it.isVisible = true
+            it.isHeadingEnabled = true
+
+            it.setObjectListener(this@MapFragment)
+        }
+
         searchEdit.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 submitQuery(searchEdit.text.toString())
@@ -56,7 +115,6 @@ class MapFragment : Fragment(), Session.SearchListener, CameraListener {
             CameraPosition(Point(55.7537090, 37.6198133), 14.0f, 0.0f, 0.0f)
         )
 
-        submitQuery(searchEdit.text.toString())
     }
 
     override fun onStart() {
@@ -121,6 +179,51 @@ class MapFragment : Fragment(), Session.SearchListener, CameraListener {
         if (finished) {
             submitQuery(binding.searchEdit.text.toString())
         }
+    }
+
+
+    override fun onObjectAdded(userLocationView: UserLocationView) = with(binding) {
+
+        userLocationLayer?.setAnchor(
+            PointF((mapview.width * 0.5).toFloat(), (mapview.height * 0.5).toFloat()),
+            PointF((mapview.width * 0.5).toFloat(), (mapview.height * 0.83).toFloat())
+        )
+
+        userLocationView.arrow.setIcon(
+            ImageProvider.fromResource(
+                context, R.drawable.user_arrow
+            )
+        )
+
+        val pinIcon: CompositeIcon = userLocationView.pin.useCompositeIcon()
+
+        pinIcon.setIcon(
+            "icon",
+            ImageProvider.fromResource(context, R.drawable.icon),
+            IconStyle().setAnchor(PointF(0f, 0f))
+                .setRotationType(RotationType.ROTATE)
+                .setZIndex(0f)
+                .setScale(1f)
+        )
+
+        pinIcon.setIcon(
+            "pin",
+            ImageProvider.fromResource(context, R.drawable.search_result),
+            IconStyle().setAnchor(PointF(0.5f, 0.5f))
+                .setRotationType(RotationType.ROTATE)
+                .setZIndex(1f)
+                .setScale(0.5f)
+        )
+
+        userLocationView.accuracyCircle.fillColor = Color.BLUE and -0x66000001
+    }
+
+    override fun onObjectRemoved(p0: UserLocationView) {
+
+    }
+
+    override fun onObjectUpdated(p0: UserLocationView, p1: ObjectEvent) {
+
     }
 }
 

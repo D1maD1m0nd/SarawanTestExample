@@ -3,7 +3,7 @@
     <string name="network_error_message">Network error</string>
     <string name="remote_error_message">Remote server error</string>
     <string name="unknown_error_message">Unknown error</string>
-
+    <string name="not_permission">Нет разрешения</string>
     <string name="app_name">Sarawan</string>
     <string name="title_home">Главная</string>
     <string name="title_basket">Корзина</string>
