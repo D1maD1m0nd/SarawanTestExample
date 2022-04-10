@@ -44,7 +44,7 @@ class UserInteractorImpl @Inject constructor(
         val street = address.street
         val house = address.house
         val roomNum = address.roomNumber
-        return Single.just("$city, ул $street, д $house, кв $roomNum")
+        return SingleJust("$city, ул $street, д $house, кв $roomNum")
 
     }
 
@@ -61,7 +61,7 @@ class UserInteractorImpl @Inject constructor(
                     } else c
                 } else c
             }.joinToString("")
-        return Single.just(result)
+        return SingleJust(result)
     }
 
     override fun formatName(user: UserDataModel, emptyStr: String): Single<String> {
@@ -69,7 +69,7 @@ class UserInteractorImpl @Inject constructor(
         val lastName = user.lastName
         val fullName = "$firstName $lastName".trim()
         val result = fullName.ifEmpty { emptyStr }
-        return Single.just(result)
+        return SingleJust(result)
     }
 
     override fun validateAddress(addressItem: AddressItem): Single<AddressState> {

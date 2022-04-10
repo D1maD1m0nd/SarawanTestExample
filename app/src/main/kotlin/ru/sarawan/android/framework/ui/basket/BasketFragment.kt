@@ -205,7 +205,6 @@ class BasketFragment : Fragment() {
         footer.apply {
             price = order.basketSumm
             weight = order.weight
-
         }
         adapter.updateFooter()
     }
