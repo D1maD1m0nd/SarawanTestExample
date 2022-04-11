@@ -9,7 +9,7 @@ import ru.sarawan.android.framework.ui.base.mainCatalog.BaseMainCatalogFragment
 import ru.sarawan.android.framework.ui.catalog.adapter.CatalogRecyclerAdapter
 import ru.sarawan.android.framework.ui.catalog.viewModel.CatalogViewModel
 import ru.sarawan.android.model.data.*
-import ru.sarawan.android.utils.exstentions.token
+import ru.sarawan.android.utils.exstentions.localstore.token
 
 class CatalogFragment : BaseMainCatalogFragment() {
 

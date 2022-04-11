@@ -7,7 +7,7 @@ import ru.sarawan.android.framework.ui.base.mainCatalog.CardType
 import ru.sarawan.android.framework.ui.main.viewModel.MainViewModel
 import ru.sarawan.android.model.data.AppState
 import ru.sarawan.android.model.data.MainScreenDataModel
-import ru.sarawan.android.utils.exstentions.token
+import ru.sarawan.android.utils.exstentions.localstore.token
 
 class MainFragment : BaseMainCatalogFragment() {
 

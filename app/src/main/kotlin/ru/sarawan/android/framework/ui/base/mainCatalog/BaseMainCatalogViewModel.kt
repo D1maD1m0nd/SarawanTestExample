@@ -18,19 +18,13 @@ abstract class BaseMainCatalogViewModel(
 ) : BaseViewModel<AppState<*>>(), MainCatalogInterface {
 
     protected var sortType = SortBy.PRICE_ASC
-
     protected var lastPage = 1
-
     protected var isLastPage = false
-
     protected var searchWord: String? = null
     protected var category: Int? = null
     protected var subcategory: Int? = null
-
     protected var filters: List<Filter>? = null
-
     protected var basketID: Int? = null
-
     protected var prevCategory: Int? = null
 
     fun search(

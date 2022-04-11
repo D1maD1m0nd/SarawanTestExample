@@ -17,7 +17,7 @@ import coil.load
 import dagger.Lazy
 import dagger.android.support.AndroidSupportInjection
 import ru.sarawan.android.R
-import ru.sarawan.android.activity.FabChanger
+import ru.sarawan.android.activity.contracts.FabChanger
 import ru.sarawan.android.databinding.FragmentProductCardBinding
 import ru.sarawan.android.framework.ui.product_card.adapter.ItemClickListener
 import ru.sarawan.android.framework.ui.product_card.adapter.SimilarAdapter
@@ -28,8 +28,8 @@ import ru.sarawan.android.model.data.Product
 import ru.sarawan.android.model.data.StorePrice
 import ru.sarawan.android.utils.constants.TypeCardEnum
 import ru.sarawan.android.utils.exstentions.getNavigationResult
+import ru.sarawan.android.utils.exstentions.localstore.token
 import ru.sarawan.android.utils.exstentions.setNavigationResult
-import ru.sarawan.android.utils.exstentions.token
 import javax.inject.Inject
 
 class ProductCardFragment : Fragment() {

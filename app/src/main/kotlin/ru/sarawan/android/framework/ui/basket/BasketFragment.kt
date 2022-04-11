@@ -23,9 +23,9 @@ import ru.sarawan.android.model.data.delegatesModel.BasketFooter
 import ru.sarawan.android.model.data.delegatesModel.BasketHeader
 import ru.sarawan.android.model.data.delegatesModel.BasketListItem
 import ru.sarawan.android.utils.ItemClickListener
-import ru.sarawan.android.utils.exstentions.UNREGISTERED
-import ru.sarawan.android.utils.exstentions.token
-import ru.sarawan.android.utils.exstentions.userId
+import ru.sarawan.android.utils.exstentions.localstore.UNREGISTERED
+import ru.sarawan.android.utils.exstentions.localstore.token
+import ru.sarawan.android.utils.exstentions.localstore.userId
 import javax.inject.Inject
 
 class BasketFragment : Fragment() {
