@@ -19,6 +19,8 @@ import dagger.android.AndroidInjection
 import io.reactivex.rxjava3.subjects.BehaviorSubject
 import ru.sarawan.android.MobileNavigationDirections
 import ru.sarawan.android.R
+import ru.sarawan.android.activity.contracts.BasketSaver
+import ru.sarawan.android.activity.contracts.FabChanger
 import ru.sarawan.android.databinding.ActivityMainBinding
 import ru.sarawan.android.model.data.AppState
 import ru.sarawan.android.model.data.Product
@@ -65,17 +67,11 @@ class MainActivity : AppCompatActivity(), FabChanger, BasketSaver {
         setDefaultSplashScreen()
         initNavigation()
         initFAB()
-        initNetwork()
         viewModel.getStateLiveData().observe(this) { appState: AppState<*> -> updateFab(appState) }
+        viewModel.initNetwork()
     }
 
-    private fun initNetwork() {
-        networkStatus
-            .isOnline()
-            .subscribeOn(schedulerProvider.io)
-            .observeOn(schedulerProvider.io)
-            .subscribe { viewModel.getBasket(!sharedPreferences.token.isNullOrEmpty()) }
-    }
+
 
     private fun updateFab(appState: AppState<*>) {
         if (appState is AppState.Success<*>) {
@@ -255,12 +251,5 @@ class MainActivity : AppCompatActivity(), FabChanger, BasketSaver {
     }
 }
 
-interface FabChanger {
-    fun putPrice(price: Float)
-    fun changePrice(price: Float)
-    fun changeState()
-}
 
-interface BasketSaver {
-    fun saveBasket()
-}
+
