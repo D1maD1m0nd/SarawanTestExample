@@ -8,7 +8,6 @@ import javax.inject.Singleton
 
 @Module
 class SharedModule {
-
     @Provides
     @Singleton
     fun sharedProvider(context: Context): SharedPreferences =

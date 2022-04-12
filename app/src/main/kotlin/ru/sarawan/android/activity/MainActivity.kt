@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.os.CountDownTimer
 import android.view.View
 import android.view.ViewTreeObserver
-import android.view.animation.AnticipateInterpolator
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -19,15 +18,15 @@ import dagger.android.AndroidInjection
 import io.reactivex.rxjava3.subjects.BehaviorSubject
 import ru.sarawan.android.MobileNavigationDirections
 import ru.sarawan.android.R
+import ru.sarawan.android.activity.contracts.BasketSaver
+import ru.sarawan.android.activity.contracts.FabChanger
 import ru.sarawan.android.databinding.ActivityMainBinding
 import ru.sarawan.android.model.data.AppState
 import ru.sarawan.android.model.data.Product
 import ru.sarawan.android.model.data.ProductsItem
-import ru.sarawan.android.rx.ISchedulerProvider
-import ru.sarawan.android.utils.NetworkStatus
-import ru.sarawan.android.utils.exstentions.UNREGISTERED
-import ru.sarawan.android.utils.exstentions.token
-import ru.sarawan.android.utils.exstentions.userId
+import ru.sarawan.android.utils.exstentions.localstore.UNREGISTERED
+import ru.sarawan.android.utils.exstentions.localstore.token
+import ru.sarawan.android.utils.exstentions.localstore.userId
 import javax.inject.Inject
 import kotlin.system.exitProcess
 
@@ -35,12 +34,6 @@ class MainActivity : AppCompatActivity(), FabChanger, BasketSaver {
 
     @Inject
     lateinit var sharedPreferences: SharedPreferences
-
-    @Inject
-    lateinit var networkStatus: NetworkStatus
-
-    @Inject
-    lateinit var schedulerProvider: ISchedulerProvider
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
@@ -65,17 +58,11 @@ class MainActivity : AppCompatActivity(), FabChanger, BasketSaver {
         setDefaultSplashScreen()
         initNavigation()
         initFAB()
-        initNetwork()
         viewModel.getStateLiveData().observe(this) { appState: AppState<*> -> updateFab(appState) }
+        viewModel.initNetwork()
     }
 
-    private fun initNetwork() {
-        networkStatus
-            .isOnline()
-            .subscribeOn(schedulerProvider.io)
-            .observeOn(schedulerProvider.io)
-            .subscribe { viewModel.getBasket(!sharedPreferences.token.isNullOrEmpty()) }
-    }
+
 
     private fun updateFab(appState: AppState<*>) {
         if (appState is AppState.Success<*>) {
@@ -138,7 +125,7 @@ class MainActivity : AppCompatActivity(), FabChanger, BasketSaver {
             when (destination.id) {
                 R.id.basketFragment -> binding.fabPrice.hide()
                 R.id.orderFragment -> binding.fabPrice.hide()
-                else -> viewModel.getBasket(!sharedPreferences.token.isNullOrEmpty())
+                else -> viewModel.getBasket()
             }
         }
     }
@@ -189,7 +176,6 @@ class MainActivity : AppCompatActivity(), FabChanger, BasketSaver {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             setSplashScreenHideAnimation()
         }
-
         setSplashScreenDuration()
     }
 
@@ -238,14 +224,15 @@ class MainActivity : AppCompatActivity(), FabChanger, BasketSaver {
 
     override fun changePrice(price: Float) = totalPrice.onNext((totalPrice.value ?: 0f) + price)
 
-    override fun changeState() = viewModel.getBasket(!sharedPreferences.token.isNullOrEmpty())
+    override fun changeState() = viewModel.getBasket()
 
-    override fun saveBasket() = if (sharedPreferences.userId != UNREGISTERED && data.isNotEmpty()) {
-        val products = data.map { item ->
-            Product(id = item.basketProduct?.basketProduct?.id, quantity = item.quantity ?: 0)
-        }
-        viewModel.saveData(products, true)
-    } else Unit
+   override fun saveBasket() = viewModel.saveData(data = data, isLoggedUser = true)
+       //if (sharedPreferences.userId != UNREGISTERED && data.isNotEmpty()) {
+//        val products = data.map { item ->
+//            Product(id = item.basketProduct?.basketProduct?.id, quantity = item.quantity ?: 0)
+//        }
+//        viewModel.saveData(products, true)
+//    } else Unit
 
     companion object {
         private const val BACK_BUTTON_EXIT_DELAY = 3000
@@ -255,12 +242,5 @@ class MainActivity : AppCompatActivity(), FabChanger, BasketSaver {
     }
 }
 
-interface FabChanger {
-    fun putPrice(price: Float)
-    fun changePrice(price: Float)
-    fun changeState()
-}
 
-interface BasketSaver {
-    fun saveBasket()
-}
+

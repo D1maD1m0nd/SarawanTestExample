@@ -15,7 +15,7 @@ import ru.sarawan.android.utils.AndroidNetworkStatus
 import ru.sarawan.android.utils.MoshiCustomAdapter
 import ru.sarawan.android.utils.MoshiCustomAdapter.Companion.LENIENT_FACTORY
 import ru.sarawan.android.utils.NetworkStatus
-import ru.sarawan.android.utils.exstentions.token
+import ru.sarawan.android.utils.exstentions.localstore.token
 import javax.inject.Singleton
 
 @Module
