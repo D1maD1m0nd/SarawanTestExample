@@ -9,7 +9,7 @@ import android.view.WindowManager
 import androidx.fragment.app.DialogFragment
 import androidx.navigation.fragment.findNavController
 import ru.sarawan.android.MobileNavigationDirections
-import ru.sarawan.android.activity.BasketSaver
+import ru.sarawan.android.activity.contracts.BasketSaver
 import ru.sarawan.android.databinding.FragmentProfileSuccessDialogBinding
 
 class ProfileSuccessDialogFragment : DialogFragment() {

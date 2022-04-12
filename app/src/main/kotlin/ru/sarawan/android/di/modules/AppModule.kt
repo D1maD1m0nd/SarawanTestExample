@@ -12,7 +12,8 @@ import javax.inject.Singleton
         FragmentModule::class,
         ViewModelModule::class,
         NetworkModule::class,
-        SharedModule::class
+        SharedModule::class,
+        SharedLocalStoreModule::class
     ]
 )
 class AppModule(private val app: App) {

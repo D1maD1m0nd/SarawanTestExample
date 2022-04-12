@@ -24,8 +24,8 @@ import ru.sarawan.android.framework.ui.profile.address_fragment.viewModel.Profil
 import ru.sarawan.android.model.data.AddressItem
 import ru.sarawan.android.model.data.AppState
 import ru.sarawan.android.utils.constants.AddressState
+import ru.sarawan.android.utils.exstentions.localstore.userId
 import ru.sarawan.android.utils.exstentions.setNavigationResult
-import ru.sarawan.android.utils.exstentions.userId
 import javax.inject.Inject
 
 

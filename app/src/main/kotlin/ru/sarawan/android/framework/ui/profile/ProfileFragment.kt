@@ -25,6 +25,10 @@ import ru.sarawan.android.model.data.OrderApprove
 import ru.sarawan.android.model.data.UserDataModel
 import ru.sarawan.android.utils.constants.TypeCase
 import ru.sarawan.android.utils.exstentions.*
+import ru.sarawan.android.utils.exstentions.localstore.UNREGISTERED
+import ru.sarawan.android.utils.exstentions.localstore.basketId
+import ru.sarawan.android.utils.exstentions.localstore.token
+import ru.sarawan.android.utils.exstentions.localstore.userId
 import javax.inject.Inject
 
 class ProfileFragment : Fragment() {

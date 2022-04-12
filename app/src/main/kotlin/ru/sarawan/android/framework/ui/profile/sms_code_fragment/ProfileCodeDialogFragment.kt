@@ -23,8 +23,8 @@ import ru.sarawan.android.databinding.FragmentProfileCodeDialogBinding
 import ru.sarawan.android.framework.ui.profile.sms_code_fragment.viewModel.SmsCodeViewModel
 import ru.sarawan.android.model.data.AppState
 import ru.sarawan.android.model.data.UserRegistration
-import ru.sarawan.android.utils.exstentions.token
-import ru.sarawan.android.utils.exstentions.userId
+import ru.sarawan.android.utils.exstentions.localstore.token
+import ru.sarawan.android.utils.exstentions.localstore.userId
 import javax.inject.Inject
 
 class ProfileCodeDialogFragment : DialogFragment() {

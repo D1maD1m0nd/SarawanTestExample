@@ -25,7 +25,7 @@ import com.google.android.material.chip.Chip
 import dagger.Lazy
 import dagger.android.support.AndroidSupportInjection
 import ru.sarawan.android.R
-import ru.sarawan.android.activity.FabChanger
+import ru.sarawan.android.activity.contracts.FabChanger
 import ru.sarawan.android.databinding.FragmentMainBinding
 import ru.sarawan.android.framework.ui.catalog.CatalogFragment
 import ru.sarawan.android.framework.ui.catalog.CatalogFragmentDirections
@@ -45,7 +45,7 @@ import ru.sarawan.android.rx.ISchedulerProvider
 import ru.sarawan.android.utils.NetworkStatus
 import ru.sarawan.android.utils.StringProvider
 import ru.sarawan.android.utils.exstentions.getNavigationResult
-import ru.sarawan.android.utils.exstentions.token
+import ru.sarawan.android.utils.exstentions.localstore.token
 import java.util.*
 import javax.inject.Inject
 

@@ -20,9 +20,9 @@ import ru.sarawan.android.databinding.FragmentProfileNameDialogBinding
 import ru.sarawan.android.framework.ui.profile.name_fragment.viewModel.NameViewModel
 import ru.sarawan.android.model.data.AppState
 import ru.sarawan.android.model.data.UserDataModel
-import ru.sarawan.android.utils.exstentions.UNREGISTERED
+import ru.sarawan.android.utils.exstentions.localstore.SharedPrefStore.Companion.UNREGISTERED
+import ru.sarawan.android.utils.exstentions.localstore.userId
 import ru.sarawan.android.utils.exstentions.setNavigationResult
-import ru.sarawan.android.utils.exstentions.userId
 import javax.inject.Inject
 
 class ProfileNameDialogFragment : DialogFragment() {
