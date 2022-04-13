@@ -14,6 +14,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.geometry.Point
@@ -30,11 +31,15 @@ import com.yandex.runtime.network.NetworkError
 import com.yandex.runtime.network.RemoteError
 import dagger.Lazy
 import dagger.android.support.AndroidSupportInjection
+import retrofit2.HttpException
 import ru.sarawan.android.BuildConfig
 import ru.sarawan.android.R
 import ru.sarawan.android.databinding.FragmentMapBinding
 import ru.sarawan.android.framework.ui.map.viewModel.MapViewModel
 import ru.sarawan.android.framework.ui.profile.address_fragment.viewModel.ProfileAddressViewModel
+import ru.sarawan.android.model.data.AddressItem
+import ru.sarawan.android.model.data.AppState
+import ru.sarawan.android.utils.constants.AddressState
 import javax.inject.Inject
 
 
@@ -80,6 +85,7 @@ class MapFragment : Fragment(), CameraListener, UserLocationObjectListener {
         super.onCreate(savedInstanceState)
         checkPermission()
         AndroidSupportInjection.inject(this)
+
     }
 
     override fun onCreateView(
@@ -92,6 +98,8 @@ class MapFragment : Fragment(), CameraListener, UserLocationObjectListener {
 
         searchManager = SearchFactory.getInstance().createSearchManager(SearchManagerType.COMBINED)
         _binding = FragmentMapBinding.inflate(inflater, container, false)
+        viewModel.getStateLiveData()
+            .observe(viewLifecycleOwner) { appState: AppState<*> -> setState(appState) }
         return binding.root
     }
 
@@ -107,7 +115,6 @@ class MapFragment : Fragment(), CameraListener, UserLocationObjectListener {
             CameraPosition(target!!, 15.0f, 0.0f, 0.0f),
             Animation(Animation.Type.SMOOTH, 2F), null
         )
-        binding.mapview.map.cameraPosition.target.latitude
     }
 
     private fun initView() = with(binding) {
@@ -146,7 +153,24 @@ class MapFragment : Fragment(), CameraListener, UserLocationObjectListener {
     }
 
 
+    private fun setState(appState: AppState<*>) {
+        when (appState) {
+            is AppState.Success<*> -> {
+                when (val item = appState.data) {
 
+                    else -> throw RuntimeException("Wrong AppState type $appState")
+                }
+            }
+
+            is AppState.Error -> {
+                val error = appState.error
+                if (error is HttpException) {
+                    Toast.makeText(context, error.response().toString(), Toast.LENGTH_SHORT).show()
+                }
+            }
+            else -> throw RuntimeException("Wrong AppState type $appState")
+        }
+    }
 
 
     override fun onObjectAdded(userLocationView: UserLocationView) = with(binding) {

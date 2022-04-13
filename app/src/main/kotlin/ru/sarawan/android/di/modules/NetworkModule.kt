@@ -71,19 +71,19 @@ class NetworkModule {
     @Provides
     fun getHttpClientYandexMap(): OkHttpClient {
         val queryType = "json"
+        val countResults = "5"
         val httpClient = OkHttpClient.Builder()
         httpClient.addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
         httpClient.addInterceptor { chain ->
             val original = chain.request()
             val request = original.newBuilder()
 
-            //request.header("Authorization", "Token $token")
-
             val builder = request.method(original.method, original.body)
                 .url(
                     original.url.newBuilder()
                         .addQueryParameter("api_key", BuildConfig.GEOCODER_API_KEY)
                         .addQueryParameter("format", queryType)
+                        .addQueryParameter("results", countResults)
                         .build()
                 )
                 .build()

@@ -25,7 +25,7 @@ class OrderViewModel @Inject constructor(
     }
 
     fun getAddress() {
-        compositeDisposable.addAll(
+        compositeDisposable.add(
             userInteractor.getAddress()
                 .subscribeOn(schedulerProvider.io)
                 .observeOn(schedulerProvider.ui)

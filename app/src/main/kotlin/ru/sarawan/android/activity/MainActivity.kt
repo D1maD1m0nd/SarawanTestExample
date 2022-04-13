@@ -1,6 +1,7 @@
 package ru.sarawan.android.activity
 
 import android.animation.ObjectAnimator
+import android.content.Context
 import android.content.SharedPreferences
 import android.os.Build
 import android.os.Bundle
