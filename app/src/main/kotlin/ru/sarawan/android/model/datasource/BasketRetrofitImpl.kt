@@ -3,6 +3,7 @@ package ru.sarawan.android.model.datasource
 import io.reactivex.rxjava3.core.Single
 import ru.sarawan.android.model.data.Basket
 import ru.sarawan.android.model.data.ProductsUpdate
+import ru.sarawan.android.model.datasource.api.ApiService
 import javax.inject.Inject
 
 class BasketRetrofitImpl @Inject constructor(

@@ -10,7 +10,8 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
-import ru.sarawan.android.model.datasource.ApiService
+import ru.sarawan.android.di.annotations.ApiYandex
+import ru.sarawan.android.model.datasource.api.ApiService
 import ru.sarawan.android.utils.AndroidNetworkStatus
 import ru.sarawan.android.utils.MoshiCustomAdapter.Companion.LENIENT_FACTORY
 import ru.sarawan.android.utils.NetworkStatus
@@ -55,7 +56,40 @@ class NetworkModule {
         .client(httpClient)
         .build()
 
+    @ApiYandex
+    @Provides
+    fun getHttpClientYandexMap(): OkHttpClient {
+        val httpClient = OkHttpClient.Builder()
+        httpClient.addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
+        httpClient.addInterceptor { chain ->
+            val original = chain.request()
+            val request = original.newBuilder()
+
+            //request.header("Authorization", "Token $token")
+
+            val builder = request.method(original.method, original.body)
+                .build()
+
+            chain.proceed(builder)
+        }
+        return httpClient.build()
+    }
+
+    @ApiYandex
+    @Provides
+    fun getRetrofitYandexMap(@ApiYandex httpClient: OkHttpClient, moshi: Moshi): Retrofit =
+        Retrofit.Builder()
+            .baseUrl(BASE_URL)
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
+            .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
+            .client(httpClient)
+            .build()
+
     @Provides
     @Singleton
     fun getApiService(retrofit: Retrofit): ApiService = retrofit.create(ApiService::class.java)
+
+    @Provides
+    fun getYandexApiService(@ApiYandex retrofit: Retrofit): ApiService =
+        retrofit.create(ApiService::class.java)
 }

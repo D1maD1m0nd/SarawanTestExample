@@ -1,4 +1,4 @@
-package ru.sarawan.android.model.datasource
+package ru.sarawan.android.model.datasource.api
 
 import io.reactivex.rxjava3.core.Single
 import retrofit2.http.*

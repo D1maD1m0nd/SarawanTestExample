@@ -90,7 +90,7 @@
     <string name="similar_products_view">С этим товаром смотрят:</string>
     <string name="description">Описание</string>
     <string name="delivery_price">Стоимость доставки</string>
-    <string name="profile_code_enter_code_from_sms">Введите код из СМС</string>
+    <string name="profile_code_enter_code_from_sms">Введите последние 4 цифры из звонившего вам номера</string>
     <string name="profile_code_send_code">Отправить</string>
     <string name="profile_code_code_sent">Код отправлен на телефон\n</string>
     <string name="profile_code_request_again">Запросить код повторно</string>

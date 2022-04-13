@@ -4,6 +4,7 @@ import io.reactivex.rxjava3.core.Single
 import ru.sarawan.android.model.data.AddressItem
 import ru.sarawan.android.model.data.UserDataModel
 import ru.sarawan.android.model.data.UserRegistration
+import ru.sarawan.android.model.datasource.api.ApiService
 import javax.inject.Inject
 
 class UserRetrofitImpl @Inject constructor(

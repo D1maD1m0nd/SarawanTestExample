@@ -13,13 +13,10 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.layers.ObjectEvent
-import com.yandex.mapkit.location.Location
-import com.yandex.mapkit.location.LocationListener
-import com.yandex.mapkit.location.LocationManager
-import com.yandex.mapkit.location.LocationStatus
 import com.yandex.mapkit.map.*
 import com.yandex.mapkit.map.Map
 import com.yandex.mapkit.search.*
@@ -93,8 +90,16 @@ class MapFragment : Fragment(), Session.SearchListener, CameraListener, UserLoca
 
     }
 
+    private fun moveCameraToPosition(target: Point?) {
+        binding.mapview.map.move(
+            CameraPosition(target!!, 15.0f, 0.0f, 0.0f),
+            Animation(Animation.Type.SMOOTH, 2F), null
+        )
+        binding.mapview.map.cameraPosition.target.latitude
+    }
 
     private fun initView() = with(binding) {
+
         mapview.map.isRotateGesturesEnabled = false
         val mapKit = MapKitFactory.getInstance()
         userLocationLayer = mapKit.createUserLocationLayer(mapview.mapWindow)
@@ -104,6 +109,14 @@ class MapFragment : Fragment(), Session.SearchListener, CameraListener, UserLoca
 
             it.setObjectListener(this@MapFragment)
         }
+
+        fabPin.setOnClickListener {
+            moveCameraToPosition(userLocationLayer!!.cameraPosition()?.target)
+
+        }
+
+
+
 
         searchEdit.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
@@ -130,20 +143,41 @@ class MapFragment : Fragment(), Session.SearchListener, CameraListener, UserLoca
     }
 
     private fun submitQuery(query: String) {
+//        searchSession = searchManager!!.submit(
+//            "Пихтовая 12",
+//            VisibleRegionUtils.toPolygon(binding.mapview.map.visibleRegion),
+//            SearchOptions().apply {
+//                 searchTypes = SearchType.GEO.value
+//                 geometry = true
+//            },
+//            this
+//        )
+        val lat = userLocationLayer!!.cameraPosition()!!.target.latitude
+        val lon = userLocationLayer!!.cameraPosition()!!.target.longitude
         searchSession = searchManager!!.submit(
-            query,
-            VisibleRegionUtils.toPolygon(binding.mapview.map.visibleRegion),
+            Point(lat, lon),
+            1000,
             SearchOptions(),
             this
         )
     }
 
     override fun onSearchResponse(response: Response) {
+
         val mapObjects: MapObjectCollection = binding.mapview.map.mapObjects
         mapObjects.clear()
-
+        response.collection.children.firstOrNull()?.obj?.metadataContainer?.getItem(
+            ToponymObjectMetadata::class.java
+        )
+            ?.address
         for (searchResult in response.collection.children) {
-            searchResult.obj?.let {
+            searchResult.obj?.let { it ->
+                it.metadataContainer.getItem(ToponymObjectMetadata::class.java)
+                    ?.address
+                    ?.components
+                    ?.firstOrNull { it.kinds.contains(Address.Component.Kind.LOCALITY) }
+                    ?.name
+
                 val resultLocation = it.geometry[0].point
                 if (resultLocation != null) {
                     mapObjects.addPlacemark(
@@ -176,6 +210,7 @@ class MapFragment : Fragment(), Session.SearchListener, CameraListener, UserLoca
         cameraUpdateReason: CameraUpdateReason,
         finished: Boolean
     ) {
+
         if (finished) {
             submitQuery(binding.searchEdit.text.toString())
         }
@@ -188,7 +223,6 @@ class MapFragment : Fragment(), Session.SearchListener, CameraListener, UserLoca
             PointF((mapview.width * 0.5).toFloat(), (mapview.height * 0.5).toFloat()),
             PointF((mapview.width * 0.5).toFloat(), (mapview.height * 0.83).toFloat())
         )
-
         userLocationView.arrow.setIcon(
             ImageProvider.fromResource(
                 context, R.drawable.user_arrow
