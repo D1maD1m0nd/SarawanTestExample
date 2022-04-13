@@ -81,7 +81,7 @@ class NetworkModule {
             val builder = request.method(original.method, original.body)
                 .url(
                     original.url.newBuilder()
-                        .addQueryParameter("api_key", BuildConfig.GEOCODER_API_KEY)
+                        .addQueryParameter("apikey", BuildConfig.GEOCODER_API_KEY)
                         .addQueryParameter("format", queryType)
                         .addQueryParameter("results", countResults)
                         .build()

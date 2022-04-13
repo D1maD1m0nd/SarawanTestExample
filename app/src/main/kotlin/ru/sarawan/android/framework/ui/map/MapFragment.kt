@@ -8,27 +8,24 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.fragment.findNavController
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.layers.ObjectEvent
 import com.yandex.mapkit.map.*
 import com.yandex.mapkit.map.Map
-import com.yandex.mapkit.search.*
+import com.yandex.mapkit.search.SearchFactory
+import com.yandex.mapkit.search.SearchManager
+import com.yandex.mapkit.search.SearchManagerType
 import com.yandex.mapkit.user_location.UserLocationLayer
 import com.yandex.mapkit.user_location.UserLocationObjectListener
 import com.yandex.mapkit.user_location.UserLocationView
-import com.yandex.runtime.Error
 import com.yandex.runtime.image.ImageProvider
-import com.yandex.runtime.network.NetworkError
-import com.yandex.runtime.network.RemoteError
 import dagger.Lazy
 import dagger.android.support.AndroidSupportInjection
 import retrofit2.HttpException
@@ -36,10 +33,7 @@ import ru.sarawan.android.BuildConfig
 import ru.sarawan.android.R
 import ru.sarawan.android.databinding.FragmentMapBinding
 import ru.sarawan.android.framework.ui.map.viewModel.MapViewModel
-import ru.sarawan.android.framework.ui.profile.address_fragment.viewModel.ProfileAddressViewModel
-import ru.sarawan.android.model.data.AddressItem
 import ru.sarawan.android.model.data.AppState
-import ru.sarawan.android.utils.constants.AddressState
 import javax.inject.Inject
 
 
@@ -130,8 +124,14 @@ class MapFragment : Fragment(), CameraListener, UserLocationObjectListener {
         }
 
         fabPin.setOnClickListener {
-            moveCameraToPosition(userLocationLayer!!.cameraPosition()?.target)
-
+            //moveCameraToPosition(userLocationLayer!!.cameraPosition()?.target)
+            userLocationLayer?.let { userLocationLayer ->
+                userLocationLayer.cameraPosition()?.let { camera ->
+                    val lat = camera.target.latitude
+                    val lon = camera.target.longitude
+                    viewModel.getCoordinated(lat, lon)
+                }
+            }
         }
 
         mapview.map.move(

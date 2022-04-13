@@ -2,9 +2,7 @@ package ru.sarawan.android.framework.ui.map.viewModel
 
 import ru.sarawan.android.framework.ui.base.BaseViewModel
 import ru.sarawan.android.model.data.AppState
-import ru.sarawan.android.model.interactor.BasketInteractor
 import ru.sarawan.android.model.interactor.MapInteractor
-import ru.sarawan.android.model.interactor.ProductInteractor
 import ru.sarawan.android.rx.ISchedulerProvider
 import javax.inject.Inject
 
@@ -13,10 +11,8 @@ class MapViewModel @Inject constructor(
     private val schedulerProvider: ISchedulerProvider
 ) : BaseViewModel<AppState<*>>() {
 
-    fun getCoordinated(coordinates: String) {
-        if (coordinates.isEmpty()) {
-            stateLiveData.value = AppState.Error(throw RuntimeException())
-        }
+    fun getCoordinated(lat: Double, lon: Double) {
+        val coordinates = "$lon,$lat"
         compositeDisposable.add(
             mapInteractor.getAddressMetaData(coordinates)
                 .subscribeOn(schedulerProvider.io)

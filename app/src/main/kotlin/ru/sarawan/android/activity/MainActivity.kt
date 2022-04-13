@@ -1,7 +1,6 @@
 package ru.sarawan.android.activity
 
 import android.animation.ObjectAnimator
-import android.content.Context
 import android.content.SharedPreferences
 import android.os.Build
 import android.os.Bundle
@@ -23,10 +22,8 @@ import ru.sarawan.android.activity.contracts.BasketSaver
 import ru.sarawan.android.activity.contracts.FabChanger
 import ru.sarawan.android.databinding.ActivityMainBinding
 import ru.sarawan.android.model.data.AppState
-import ru.sarawan.android.model.data.Product
 import ru.sarawan.android.model.data.ProductsItem
 import ru.sarawan.android.utils.exstentions.localstore.UNREGISTERED
-import ru.sarawan.android.utils.exstentions.localstore.token
 import ru.sarawan.android.utils.exstentions.localstore.userId
 import javax.inject.Inject
 import kotlin.system.exitProcess
