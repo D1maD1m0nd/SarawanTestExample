@@ -13,6 +13,7 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.geometry.Point
@@ -27,17 +28,27 @@ import com.yandex.runtime.Error
 import com.yandex.runtime.image.ImageProvider
 import com.yandex.runtime.network.NetworkError
 import com.yandex.runtime.network.RemoteError
+import dagger.Lazy
+import dagger.android.support.AndroidSupportInjection
 import ru.sarawan.android.BuildConfig
 import ru.sarawan.android.R
 import ru.sarawan.android.databinding.FragmentMapBinding
+import ru.sarawan.android.framework.ui.map.viewModel.MapViewModel
+import ru.sarawan.android.framework.ui.profile.address_fragment.viewModel.ProfileAddressViewModel
+import javax.inject.Inject
 
 
-class MapFragment : Fragment(), Session.SearchListener, CameraListener, UserLocationObjectListener {
+class MapFragment : Fragment(), CameraListener, UserLocationObjectListener {
+
+    @Inject
+    lateinit var viewModelFactory: Lazy<ViewModelProvider.Factory>
+    private val viewModel: MapViewModel by lazy {
+        viewModelFactory.get().create(MapViewModel::class.java)
+    }
 
     private var _binding: FragmentMapBinding? = null
     private val binding get() = _binding!!
     private var searchManager: SearchManager? = null
-    private var searchSession: Session? = null
     private var userLocationLayer: UserLocationLayer? = null
     private val permissionResult = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -68,6 +79,7 @@ class MapFragment : Fragment(), Session.SearchListener, CameraListener, UserLoca
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         checkPermission()
+        AndroidSupportInjection.inject(this)
     }
 
     override fun onCreateView(
@@ -115,15 +127,6 @@ class MapFragment : Fragment(), Session.SearchListener, CameraListener, UserLoca
 
         }
 
-
-
-
-        searchEdit.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                submitQuery(searchEdit.text.toString())
-            }
-            false
-        }
         mapview.map.move(
             CameraPosition(Point(55.7537090, 37.6198133), 14.0f, 0.0f, 0.0f)
         )
@@ -142,79 +145,8 @@ class MapFragment : Fragment(), Session.SearchListener, CameraListener, UserLoca
         super.onDestroyView()
     }
 
-    private fun submitQuery(query: String) {
-//        searchSession = searchManager!!.submit(
-//            "Пихтовая 12",
-//            VisibleRegionUtils.toPolygon(binding.mapview.map.visibleRegion),
-//            SearchOptions().apply {
-//                 searchTypes = SearchType.GEO.value
-//                 geometry = true
-//            },
-//            this
-//        )
-        val lat = userLocationLayer!!.cameraPosition()!!.target.latitude
-        val lon = userLocationLayer!!.cameraPosition()!!.target.longitude
-        searchSession = searchManager!!.submit(
-            Point(lat, lon),
-            1000,
-            SearchOptions(),
-            this
-        )
-    }
 
-    override fun onSearchResponse(response: Response) {
 
-        val mapObjects: MapObjectCollection = binding.mapview.map.mapObjects
-        mapObjects.clear()
-        response.collection.children.firstOrNull()?.obj?.metadataContainer?.getItem(
-            ToponymObjectMetadata::class.java
-        )
-            ?.address
-        for (searchResult in response.collection.children) {
-            searchResult.obj?.let { it ->
-                it.metadataContainer.getItem(ToponymObjectMetadata::class.java)
-                    ?.address
-                    ?.components
-                    ?.firstOrNull { it.kinds.contains(Address.Component.Kind.LOCALITY) }
-                    ?.name
-
-                val resultLocation = it.geometry[0].point
-                if (resultLocation != null) {
-                    mapObjects.addPlacemark(
-                        resultLocation,
-                        ImageProvider.fromResource(context, R.drawable.search_result)
-                    )
-                }
-            }
-        }
-    }
-
-    override fun onSearchError(error: Error) {
-        var errorMessage = getString(R.string.unknown_error_message)
-        errorMessage = when (error) {
-            is RemoteError -> {
-                getString(R.string.remote_error_message)
-            }
-            is NetworkError -> {
-                getString(R.string.network_error_message)
-            }
-            else -> errorMessage
-        }
-
-        Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
-    }
-
-    override fun onCameraPositionChanged(
-        map: Map,
-        cameraPosition: CameraPosition,
-        cameraUpdateReason: CameraUpdateReason,
-        finished: Boolean
-    ) {
-
-        if (finished) {
-            submitQuery(binding.searchEdit.text.toString())
-        }
-    }
 
 
     override fun onObjectAdded(userLocationView: UserLocationView) = with(binding) {
@@ -257,6 +189,15 @@ class MapFragment : Fragment(), Session.SearchListener, CameraListener, UserLoca
     }
 
     override fun onObjectUpdated(p0: UserLocationView, p1: ObjectEvent) {
+
+    }
+
+    override fun onCameraPositionChanged(
+        p0: Map,
+        p1: CameraPosition,
+        p2: CameraUpdateReason,
+        p3: Boolean
+    ) {
 
     }
 }
