@@ -8,6 +8,27 @@ data class MapYandex(
 	val response: ResponseMap? = null
 )
 
+data class GeoObject(
+
+	@Json(name = "metaDataProperty")
+	val metaDataProperty: MetaDataProperty? = null,
+
+	@Json(name = "boundedBy")
+	val boundedBy: BoundedBy? = null,
+
+	@Json(name = "name")
+	val name: String? = null,
+
+	@Json(name = "description")
+	val description: String? = null
+)
+
+data class ResponseMap(
+
+	@Json(name = "GeoObjectCollection")
+	val geoObjectCollection: GeoObjectCollection? = null
+)
+
 data class Locality(
 
 	@Json(name = "LocalityName")
@@ -20,31 +41,19 @@ data class Locality(
 	val thoroughfare: Thoroughfare? = null
 )
 
-data class GeoObject(
+data class AddressDetails(
 
-	@Json(name = "metaDataProperty")
-	val metaDataProperty: MetaDataProperty? = null,
-
-	@Json(name = "boundedBy")
-	val boundedBy: BoundedBy? = null,
-
-	@Json(name = "name")
-	val name: String? = null,
-
-	@Json(name = "Point")
-	val point: Point? = null,
-
-	@Json(name = "description")
-	val description: String? = null
+	@Json(name = "Country")
+	val country: Country? = null
 )
 
-data class AdministrativeArea(
+data class ComponentsItem(
 
-	@Json(name = "AdministrativeAreaName")
-	val administrativeAreaName: String? = null,
+	@Json(name = "kind")
+	val kind: String? = null,
 
-	@Json(name = "Locality")
-	val locality: Locality? = null
+	@Json(name = "name")
+	val name: String? = null
 )
 
 data class Country(
@@ -62,25 +71,49 @@ data class Country(
 	val administrativeArea: AdministrativeArea? = null
 )
 
-data class BoundedBy(
-
-	@Json(name = "Envelope")
-	val envelope: Envelope? = null
-)
-
-data class Thoroughfare(
-
-	@Json(name = "ThoroughfareName")
-	val thoroughfareName: String? = null,
-
-	@Json(name = "Premise")
-	val premise: Premise? = null
-)
-
 data class PostalCode(
 
 	@Json(name = "PostalCodeNumber")
 	val postalCodeNumber: String? = null
+)
+
+data class FeatureMemberItem(
+
+	@Json(name = "GeoObject")
+	val geoObject: GeoObject? = null
+)
+
+data class GeocoderMetaData(
+
+	@Json(name = "Address")
+	val address: Address? = null,
+
+	@Json(name = "AddressDetails")
+	val addressDetails: AddressDetails? = null,
+
+	@Json(name = "kind")
+	val kind: String? = null,
+
+	@Json(name = "precision")
+	val precision: String? = null,
+
+	@Json(name = "text")
+	val text: String? = null
+)
+
+data class DependentLocality(
+
+	@Json(name = "DependentLocalityName")
+	val dependentLocalityName: String? = null,
+
+	@Json(name = "DependentLocality")
+	val dependentLocality: DependentLocality? = null
+)
+
+data class BoundedBy(
+
+	@Json(name = "Envelope")
+	val envelope: Envelope? = null
 )
 
 data class Premise(
@@ -92,6 +125,31 @@ data class Premise(
 	val postalCode: PostalCode? = null
 )
 
+data class Thoroughfare(
+
+	@Json(name = "ThoroughfareName")
+	val thoroughfareName: String? = null,
+
+	@Json(name = "Premise")
+	val premise: Premise? = null
+)
+
+data class MetaDataProperty(
+
+
+	@Json(name = "GeocoderMetaData")
+	val geocoderMetaData: GeocoderMetaData? = null
+)
+
+data class AdministrativeArea(
+
+	@Json(name = "AdministrativeAreaName")
+	val administrativeAreaName: String? = null,
+
+	@Json(name = "Locality")
+	val locality: Locality? = null
+)
+
 data class GeoObjectCollection(
 
 	@Json(name = "metaDataProperty")
@@ -99,48 +157,6 @@ data class GeoObjectCollection(
 
 	@Json(name = "featureMember")
 	val featureMember: List<FeatureMemberItem?>? = null
-)
-
-data class Point(
-
-	@Json(name = "pos")
-	val pos: String? = null
-)
-
-data class ComponentsItem(
-
-	@Json(name = "kind")
-	val kind: String? = null,
-
-	@Json(name = "name")
-	val name: String? = null
-)
-
-data class FeatureMemberItem(
-
-	@Json(name = "GeoObject")
-	val geoObject: GeoObject? = null
-)
-
-data class ResponseMap(
-
-	@Json(name = "GeoObjectCollection")
-	val geoObjectCollection: GeoObjectCollection? = null
-)
-
-data class MetaDataProperty(
-
-	@Json(name = "GeocoderResponseMetaData")
-	val geocoderResponseMetaData: GeocoderResponseMetaData? = null,
-
-	@Json(name = "GeocoderMetaData")
-	val geocoderMetaData: GeocoderMetaData? = null
-)
-
-data class AddressDetails(
-
-	@Json(name = "Country")
-	val country: Country? = null
 )
 
 data class AddressMap(
@@ -158,39 +174,6 @@ data class AddressMap(
 	val postalCode: String? = null
 )
 
-data class GeocoderResponseMetaData(
-
-	@Json(name = "request")
-	val request: String? = null,
-
-	@Json(name = "found")
-	val found: String? = null,
-
-	@Json(name = "Point")
-	val point: Point? = null,
-
-	@Json(name = "results")
-	val results: String? = null
-)
-
-data class GeocoderMetaData(
-
-	@Json(name = "Address")
-	val address: AddressMap? = null,
-
-	@Json(name = "AddressDetails")
-	val addressDetails: AddressDetails? = null,
-
-	@Json(name = "kind")
-	val kind: String? = null,
-
-	@Json(name = "precision")
-	val precision: String? = null,
-
-	@Json(name = "text")
-	val text: String? = null
-)
-
 data class Envelope(
 
 	@Json(name = "lowerCorner")
@@ -198,13 +181,4 @@ data class Envelope(
 
 	@Json(name = "upperCorner")
 	val upperCorner: String? = null
-)
-
-data class DependentLocality(
-
-	@Json(name = "DependentLocalityName")
-	val dependentLocalityName: String? = null,
-
-	@Json(name = "DependentLocality")
-	val dependentLocality: DependentLocality? = null
 )

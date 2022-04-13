@@ -57,10 +57,10 @@ class NetworkModule {
         .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
         .client(httpClient)
         .build()
-
     @Provides
     @Singleton
     fun getApiService(retrofit: Retrofit): ApiService = retrofit.create(ApiService::class.java)
+
 
 
     @ApiYandex
