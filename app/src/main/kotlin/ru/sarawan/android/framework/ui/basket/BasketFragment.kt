@@ -163,6 +163,7 @@ class BasketFragment : Fragment() {
                 progressBar.visibility = View.GONE
                 val error = appState.error
                 if (error is HttpException) {
+                    error.response()
                     when (error.code()) {
                         500 -> Toast.makeText(
                             context,

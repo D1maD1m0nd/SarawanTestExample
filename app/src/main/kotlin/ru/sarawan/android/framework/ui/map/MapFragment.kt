@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
@@ -16,16 +17,19 @@ import androidx.lifecycle.ViewModelProvider
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.geometry.Point
+import com.yandex.mapkit.layers.GeoObjectTapEvent
+import com.yandex.mapkit.layers.GeoObjectTapListener
 import com.yandex.mapkit.layers.ObjectEvent
 import com.yandex.mapkit.map.*
 import com.yandex.mapkit.map.Map
-import com.yandex.mapkit.search.SearchFactory
-import com.yandex.mapkit.search.SearchManager
-import com.yandex.mapkit.search.SearchManagerType
+import com.yandex.mapkit.search.*
 import com.yandex.mapkit.user_location.UserLocationLayer
 import com.yandex.mapkit.user_location.UserLocationObjectListener
 import com.yandex.mapkit.user_location.UserLocationView
+import com.yandex.runtime.Error
 import com.yandex.runtime.image.ImageProvider
+import com.yandex.runtime.network.NetworkError
+import com.yandex.runtime.network.RemoteError
 import dagger.Lazy
 import dagger.android.support.AndroidSupportInjection
 import retrofit2.HttpException
@@ -37,7 +41,10 @@ import ru.sarawan.android.model.data.AppState
 import javax.inject.Inject
 
 
-class MapFragment : Fragment(), CameraListener, UserLocationObjectListener {
+class MapFragment : Fragment(), CameraListener, UserLocationObjectListener, Session.SearchListener,
+    GeoObjectTapListener, InputListener {
+
+    private var permissionLocation = false
 
     @Inject
     lateinit var viewModelFactory: Lazy<ViewModelProvider.Factory>
@@ -48,12 +55,14 @@ class MapFragment : Fragment(), CameraListener, UserLocationObjectListener {
     private var _binding: FragmentMapBinding? = null
     private val binding get() = _binding!!
     private var searchManager: SearchManager? = null
+    private var searchSession: Session? = null
     private var userLocationLayer: UserLocationLayer? = null
+
     private val permissionResult = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { result ->
         if (result) {
-
+            onMapReady()
         } else {
             Toast.makeText(context, getString(R.string.not_permission), Toast.LENGTH_SHORT).show()
         }
@@ -67,6 +76,7 @@ class MapFragment : Fragment(), CameraListener, UserLocationObjectListener {
         activity?.let {
             when (PackageManager.PERMISSION_GRANTED) {
                 ContextCompat.checkSelfPermission(it, Manifest.permission.ACCESS_FINE_LOCATION) -> {
+                    onMapReady()
                 }
                 else -> {
                     requestPermission()
@@ -77,7 +87,6 @@ class MapFragment : Fragment(), CameraListener, UserLocationObjectListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        checkPermission()
         AndroidSupportInjection.inject(this)
 
     }
@@ -100,6 +109,7 @@ class MapFragment : Fragment(), CameraListener, UserLocationObjectListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        checkPermission()
         initView()
 
     }
@@ -114,32 +124,38 @@ class MapFragment : Fragment(), CameraListener, UserLocationObjectListener {
     private fun initView() = with(binding) {
 
         mapview.map.isRotateGesturesEnabled = false
-        val mapKit = MapKitFactory.getInstance()
-        userLocationLayer = mapKit.createUserLocationLayer(mapview.mapWindow)
-        userLocationLayer?.let {
-            it.isVisible = true
-            it.isHeadingEnabled = true
-
-            it.setObjectListener(this@MapFragment)
+        mapview.map.move(
+            CameraPosition(Point(55.7537090, 37.6198133), 14.0f, 0.0f, 0.0f)
+        )
+        searchTextInput.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                submitQuery(searchTextInput.text.toString())
+            }
+            false
         }
+    }
 
-        fabPin.setOnClickListener {
-            //moveCameraToPosition(userLocationLayer!!.cameraPosition()?.target)
-            userLocationLayer?.let { userLocationLayer ->
+    private fun onMapReady() {
+        binding.fabPin.visibility = View.VISIBLE
+        val mapKit = MapKitFactory.getInstance()
+        userLocationLayer = mapKit.createUserLocationLayer(binding.mapview.mapWindow)
+        userLocationLayer?.let { userLocationLayer ->
+            userLocationLayer.isVisible = true
+            userLocationLayer.isHeadingEnabled = true
+            userLocationLayer.setObjectListener(this)
+
+            binding.mapview.map.addCameraListener(this)
+            binding.fabPin.setOnClickListener {
                 userLocationLayer.cameraPosition()?.let { camera ->
                     val lat = camera.target.latitude
                     val lon = camera.target.longitude
                     viewModel.getCoordinated(lat, lon)
+                    moveCameraToPosition(camera.target)
                 }
             }
         }
-
-        mapview.map.move(
-            CameraPosition(Point(55.7537090, 37.6198133), 14.0f, 0.0f, 0.0f)
-        )
-
+        permissionLocation = true
     }
-
     override fun onStart() {
         super.onStart()
         MapKitFactory.getInstance().onStart()
@@ -161,7 +177,6 @@ class MapFragment : Fragment(), CameraListener, UserLocationObjectListener {
                     else -> throw RuntimeException("Wrong AppState type $appState")
                 }
             }
-
             is AppState.Error -> {
                 val error = appState.error
                 if (error is HttpException) {
@@ -217,13 +232,74 @@ class MapFragment : Fragment(), CameraListener, UserLocationObjectListener {
     }
 
     override fun onCameraPositionChanged(
-        p0: Map,
-        p1: CameraPosition,
-        p2: CameraUpdateReason,
-        p3: Boolean
+        map: Map,
+        cameraPosition: CameraPosition,
+        cameraUpdateReason: CameraUpdateReason,
+        finished: Boolean
     ) {
-
+        if (finished) {
+            submitQuery(binding.searchTextInput.text.toString())
+        }
     }
+
+    override fun onSearchResponse(response: Response) {
+        val mapObjects: MapObjectCollection = binding.mapview.map.mapObjects
+        mapObjects.clear()
+
+        for (searchResult in response.collection.children) {
+            val resultLocation = searchResult.obj!!.geometry[0].point
+            if (resultLocation != null) {
+                mapObjects.addPlacemark(
+                    resultLocation,
+                    ImageProvider.fromResource(context, R.drawable.search_result)
+                )
+
+            }
+        }
+    }
+
+
+    override fun onSearchError(error: Error) {
+        var errorMessage = getString(R.string.unknown_error_message)
+        when (error) {
+            is RemoteError -> {
+                errorMessage = getString(R.string.remote_error_message)
+            }
+
+            is NetworkError -> {
+                errorMessage = getString(R.string.network_error_message)
+            }
+        }
+
+        Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun submitQuery(query: String) {
+        searchSession = searchManager!!.submit(
+            query,
+            VisibleRegionUtils.toPolygon(binding.mapview.map.visibleRegion),
+            SearchOptions(),
+            this
+        )
+    }
+
+    override fun onObjectTap(geoObjectTapEvent: GeoObjectTapEvent): Boolean {
+        val selectionMetadata = geoObjectTapEvent
+            .geoObject
+            .metadataContainer
+            .getItem(GeoObjectSelectionMetadata::class.java)
+
+        if (selectionMetadata != null) {
+            binding.mapview.map.selectGeoObject(selectionMetadata.id, selectionMetadata.layerId)
+        }
+        return selectionMetadata != null
+    }
+
+    override fun onMapTap(map: Map, point: Point) {
+        binding.mapview.map.deselectGeoObject()
+    }
+
+    override fun onMapLongTap(map: Map, point: Point) {}
 }
 
 
