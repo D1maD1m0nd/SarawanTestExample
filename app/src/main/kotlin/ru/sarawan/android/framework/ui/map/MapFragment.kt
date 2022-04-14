@@ -37,6 +37,7 @@ import ru.sarawan.android.BuildConfig
 import ru.sarawan.android.R
 import ru.sarawan.android.databinding.FragmentMapBinding
 import ru.sarawan.android.framework.ui.map.viewModel.MapViewModel
+import ru.sarawan.android.model.data.AddressItem
 import ru.sarawan.android.model.data.AppState
 import javax.inject.Inject
 
@@ -45,6 +46,7 @@ class MapFragment : Fragment(), CameraListener, UserLocationObjectListener, Sess
     GeoObjectTapListener, InputListener {
 
     private var permissionLocation = false
+    private var lastResponseAddress: AddressItem? = null
 
     @Inject
     lateinit var viewModelFactory: Lazy<ViewModelProvider.Factory>
@@ -133,6 +135,8 @@ class MapFragment : Fragment(), CameraListener, UserLocationObjectListener, Sess
             }
             false
         }
+        mapview.map.addTapListener(this@MapFragment)
+        mapview.map.addInputListener(this@MapFragment)
     }
 
     private fun onMapReady() {
@@ -156,6 +160,7 @@ class MapFragment : Fragment(), CameraListener, UserLocationObjectListener, Sess
         }
         permissionLocation = true
     }
+
     override fun onStart() {
         super.onStart()
         MapKitFactory.getInstance().onStart()
@@ -173,10 +178,13 @@ class MapFragment : Fragment(), CameraListener, UserLocationObjectListener, Sess
         when (appState) {
             is AppState.Success<*> -> {
                 when (val item = appState.data) {
-
+                    is AddressItem -> {
+                        lastResponseAddress = item
+                    }
                     else -> throw RuntimeException("Wrong AppState type $appState")
                 }
             }
+            is AppState.Loading -> {}
             is AppState.Error -> {
                 val error = appState.error
                 if (error is HttpException) {
@@ -238,7 +246,10 @@ class MapFragment : Fragment(), CameraListener, UserLocationObjectListener, Sess
         finished: Boolean
     ) {
         if (finished) {
-            submitQuery(binding.searchTextInput.text.toString())
+            val textSearch = binding.searchTextInput.text.toString()
+            if (textSearch.isNotEmpty()) {
+                submitQuery(textSearch)
+            }
         }
     }
 
@@ -291,6 +302,13 @@ class MapFragment : Fragment(), CameraListener, UserLocationObjectListener, Sess
 
         if (selectionMetadata != null) {
             binding.mapview.map.selectGeoObject(selectionMetadata.id, selectionMetadata.layerId)
+            geoObjectTapEvent.geoObject.geometry.firstOrNull()?.let {
+                it.point?.let { point ->
+                    val lon = point.longitude
+                    val lat = point.latitude
+                    viewModel.getCoordinated(lat, lon)
+                }
+            }
         }
         return selectionMetadata != null
     }

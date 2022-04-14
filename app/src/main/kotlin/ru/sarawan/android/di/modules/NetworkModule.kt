@@ -71,7 +71,7 @@ class NetworkModule {
     @Provides
     fun getHttpClientYandexMap(): OkHttpClient {
         val queryType = "json"
-        val countResults = "5"
+        val countResults = "1"
         val httpClient = OkHttpClient.Builder()
         httpClient.addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
         httpClient.addInterceptor { chain ->

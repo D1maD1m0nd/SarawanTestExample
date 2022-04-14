@@ -21,7 +21,9 @@ class MapViewModel @Inject constructor(
                 .subscribe({ addressItems ->
                     stateLiveData.value = AppState.Success(addressItems)
                 },
-                    { stateLiveData.value = AppState.Error(it) })
+                    {
+                        stateLiveData.value = AppState.Error(it)
+                    })
         )
     }
 }
