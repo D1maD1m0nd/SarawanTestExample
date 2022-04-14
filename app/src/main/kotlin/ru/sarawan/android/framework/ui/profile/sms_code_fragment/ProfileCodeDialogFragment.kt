@@ -1,6 +1,9 @@
 package ru.sarawan.android.framework.ui.profile.sms_code_fragment
 
+import android.Manifest
+import android.content.IntentFilter
 import android.content.SharedPreferences
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.view.LayoutInflater
@@ -9,6 +12,8 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.content.getSystemService
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
@@ -54,6 +59,25 @@ class ProfileCodeDialogFragment : DialogFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         AndroidSupportInjection.inject(this)
+        val intentFilter = IntentFilter()
+        intentFilter.addAction("android.intent.action.PHONE_STATE")
+        checkPermissionsPhoneState()
+    }
+
+
+    private fun checkPermissionsPhoneState() {
+        if (context?.let {
+                ContextCompat.checkSelfPermission(
+                    it,
+                    Manifest.permission.READ_PHONE_STATE
+                )
+            } != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(
+                requireActivity(),
+                arrayOf(Manifest.permission.READ_PHONE_STATE),
+                PHONE_STATE_PERMISSIONS
+            )
+        }
     }
 
     override fun onCreateView(
@@ -66,6 +90,9 @@ class ProfileCodeDialogFragment : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewModel.getStateLiveData()
+            .observe(viewLifecycleOwner) { appState: AppState<*> -> setState(appState) }
+        viewModel.getPhoneNumber()
         dialog?.window?.attributes?.apply {
             width = WindowManager.LayoutParams.MATCH_PARENT
             height = WindowManager.LayoutParams.MATCH_PARENT
@@ -76,8 +103,6 @@ class ProfileCodeDialogFragment : DialogFragment() {
         setCodeBorder()
         updateTimerText(TIMER_INIT_STRING)
         initTimer()
-        viewModel.getStateLiveData()
-            .observe(viewLifecycleOwner) { appState: AppState<*> -> setState(appState) }
     }
 
     private fun showKeyboard() {
@@ -217,14 +242,19 @@ class ProfileCodeDialogFragment : DialogFragment() {
     private fun setState(appState: AppState<*>) = with(binding) {
         when (appState) {
             is AppState.Success<*> -> {
-                if (appState.data is UserRegistration) {
-                    sharedPreferences.token = appState.data.token
-                    sharedPreferences.userId = appState.data.userId
-                    hideKeyboard()
-                    val action = ProfileCodeDialogFragmentDirections
-                        .actionProfileCodeDialogFragmentToProfileSuccessDialogFragment()
-                    findNavController().navigate(action)
-                } else throw RuntimeException("Wrong AppState type $appState")
+                when (appState.data) {
+                    is UserRegistration -> {
+                        sharedPreferences.token = appState.data.token
+                        sharedPreferences.userId = appState.data.userId
+                        hideKeyboard()
+                        val action = ProfileCodeDialogFragmentDirections
+                            .actionProfileCodeDialogFragmentToProfileSuccessDialogFragment()
+                        findNavController().navigate(action)
+                    }
+
+                    is String -> fillPhoneNumberCode(appState.data)
+                    else -> throw java.lang.RuntimeException("Wrong AppState type $appState")
+                }
             }
             is AppState.Error -> {
                 //при неверном коде возвращает ошибку 500
@@ -238,11 +268,20 @@ class ProfileCodeDialogFragment : DialogFragment() {
         }
     }
 
+    private fun fillPhoneNumberCode(data: String) {
+        val lastFourNumbersPhone = data.subSequence(data.length - 4, data.length)
+        for (i in 0..3) {
+            profileCodeEdits[i].setText(lastFourNumbersPhone[i].toString())
+        }
+        sendCode()
+    }
+
+
     override fun onDestroy() {
-        super.onDestroy()
         timer.cancel()
         _binding = null
         inputMethodManager = null
+        super.onDestroy()
     }
 
     companion object {
@@ -252,5 +291,6 @@ class ProfileCodeDialogFragment : DialogFragment() {
         private const val ZERO = "0"
         private const val TWO_ZERO = "00"
         private const val TIMER_INIT_STRING = "01:00"
+        private const val PHONE_STATE_PERMISSIONS = 100
     }
 }

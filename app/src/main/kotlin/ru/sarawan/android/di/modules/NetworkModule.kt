@@ -1,6 +1,7 @@
 package ru.sarawan.android.di.modules
 
 import android.content.Context
+import android.content.IntentFilter
 import android.content.SharedPreferences
 import com.squareup.moshi.Moshi
 import dagger.Module
@@ -11,6 +12,8 @@ import retrofit2.Retrofit
 import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
 import ru.sarawan.android.model.datasource.ApiService
+import ru.sarawan.android.service.IncomingCallReaderService
+import ru.sarawan.android.service.contacts.ReceiveMessage
 import ru.sarawan.android.utils.AndroidNetworkStatus
 import ru.sarawan.android.utils.MoshiCustomAdapter
 import ru.sarawan.android.utils.MoshiCustomAdapter.Companion.LENIENT_FACTORY
@@ -23,6 +26,16 @@ class NetworkModule {
 
     @Provides
     fun getNetworkStatus(context: Context): NetworkStatus = AndroidNetworkStatus(context)
+
+    // TODO: Убрать в отдельный модуль 
+    @Provides
+    fun provideIncomingCallBroadCastReceiver(context: Context): ReceiveMessage {
+        val receiver = IncomingCallReaderService()
+        val intentFilter = IntentFilter()
+        intentFilter.addAction("android.intent.action.PHONE_STATE")
+        context.registerReceiver(receiver, intentFilter)
+        return receiver
+    }
 
     @Provides
     fun moshi(): Moshi = Moshi.Builder().add(LENIENT_FACTORY).build()

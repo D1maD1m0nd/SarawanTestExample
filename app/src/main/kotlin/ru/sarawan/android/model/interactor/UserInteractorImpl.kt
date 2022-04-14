@@ -22,6 +22,7 @@ class UserInteractorImpl @Inject constructor(
     override fun sendSMS(user: UserRegistration): Single<UserRegistration> =
         remoteRepository.sendSMS(user)
 
+
     override fun createAddress(address: AddressItem): Single<AddressItem> =
         remoteRepository.createAddress(address)
 
@@ -32,7 +33,7 @@ class UserInteractorImpl @Inject constructor(
         val street = address.street
         val house = address.house
         val roomNum = address.roomNumber
-        return  Single.just("$city, ул $street, д $house, кв $roomNum")
+        return Single.just("$city, ул $street, д $house, кв $roomNum")
 
     }
 
