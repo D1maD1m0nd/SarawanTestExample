@@ -2,6 +2,7 @@ package ru.sarawan.android.model.interactor
 
 import io.reactivex.rxjava3.core.Single
 import ru.sarawan.android.model.data.*
+import ru.sarawan.android.model.data.address.sarawan.AddressItem
 import ru.sarawan.android.model.datasource.OrderDataSource
 import javax.inject.Inject
 

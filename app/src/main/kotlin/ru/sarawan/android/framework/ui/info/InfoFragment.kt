@@ -30,11 +30,6 @@ class InfoFragment : Fragment() {
         infoHowWorkingLayout.setOnClickListener { showHowWorking() }
         infoSupportLayout.setOnClickListener { showSupport() }
         infoAboutLayout.setOnClickListener { showAbout() }
-        //несмотря на то, что обработчик на весь лейаут, нажатие на кнопки не работает
-        //поэтому вешаю и на них обработчики те же
-//        infoHowWorkingButton.setOnClickListener { showHowWorking() }
-//        infoSupportButton.setOnClickListener { showSupport() }
-//        infoAboutButton.setOnClickListener { showAbout() }
     }
 
     private fun showHowWorking() {
@@ -52,8 +47,8 @@ class InfoFragment : Fragment() {
         findNavController().navigate(action)
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
         _binding = null
+        super.onDestroyView()
     }
 }

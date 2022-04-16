@@ -30,4 +30,7 @@ interface DataSourceModule {
 
     @Binds
     fun provideUserImpl_to_UserRetrofitSource(userRetrofitImpl: UserRetrofitImpl): UserDataSource
+
+    @Binds
+    fun provideMapImpl_to_MapRetrofitSource(mapImpl: MapRetrofitImpl): MapDataSource
 }

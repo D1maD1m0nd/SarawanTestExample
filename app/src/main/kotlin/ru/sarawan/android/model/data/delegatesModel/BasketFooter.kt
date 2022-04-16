@@ -1,6 +1,6 @@
 package ru.sarawan.android.model.data.delegatesModel
 
-import ru.sarawan.android.model.data.AddressItem
+import ru.sarawan.android.model.data.address.sarawan.AddressItem
 import java.util.*
 
 class BasketFooter(

@@ -11,6 +11,7 @@ import ru.sarawan.android.framework.ui.basket.viewModel.BasketViewModel
 import ru.sarawan.android.framework.ui.catalog.viewModel.CatalogViewModel
 import ru.sarawan.android.framework.ui.category.viewModel.CategoryViewModel
 import ru.sarawan.android.framework.ui.main.viewModel.MainViewModel
+import ru.sarawan.android.framework.ui.map.viewModel.MapViewModel
 import ru.sarawan.android.framework.ui.order.viewModel.OrderViewModel
 import ru.sarawan.android.framework.ui.product_card.viewModel.ProductCardViewModel
 import ru.sarawan.android.framework.ui.profile.address_fragment.viewModel.ProfileAddressViewModel
@@ -85,6 +86,11 @@ abstract class ViewModelModule {
     @ViewModelKey(OrderViewModel::class)
     @IntoMap
     protected abstract fun orderViewModel(orderViewModel: OrderViewModel): ViewModel
+
+    @Binds
+    @ViewModelKey(MapViewModel::class)
+    @IntoMap
+    protected abstract fun mapViewModel(mapViewModel: MapViewModel): ViewModel
 }
 
 @Target(

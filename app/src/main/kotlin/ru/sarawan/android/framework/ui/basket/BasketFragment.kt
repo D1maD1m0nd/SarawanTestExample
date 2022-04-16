@@ -164,6 +164,7 @@ class BasketFragment : Fragment() {
                 val error = appState.error
                 if (error is HttpException) {
                     when (error.code()) {
+
                         500 -> Toast.makeText(
                             context,
                             getString(R.string.error_500),
@@ -205,7 +206,6 @@ class BasketFragment : Fragment() {
         footer.apply {
             price = order.basketSumm
             weight = order.weight
-
         }
         adapter.updateFooter()
     }

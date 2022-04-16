@@ -6,6 +6,7 @@ import ru.sarawan.android.framework.ui.basket.BasketFragment
 import ru.sarawan.android.framework.ui.catalog.CatalogFragment
 import ru.sarawan.android.framework.ui.category.CategoryFragment
 import ru.sarawan.android.framework.ui.main.MainFragment
+import ru.sarawan.android.framework.ui.map.MapFragment
 import ru.sarawan.android.framework.ui.order.OrderFragment
 import ru.sarawan.android.framework.ui.product_card.ProductCardFragment
 import ru.sarawan.android.framework.ui.profile.ProfileFragment
@@ -49,4 +50,7 @@ interface FragmentModule {
 
     @ContributesAndroidInjector
     fun contributeOrderFragment(): OrderFragment
+
+    @ContributesAndroidInjector
+    fun contributeMapFragment(): MapFragment
 }
