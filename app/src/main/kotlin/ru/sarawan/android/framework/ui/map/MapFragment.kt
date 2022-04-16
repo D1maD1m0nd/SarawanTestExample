@@ -1,19 +1,24 @@
 package ru.sarawan.android.framework.ui.map
 
 import android.Manifest
+import android.app.AlertDialog
+import android.content.DialogInterface
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.PointF
 import android.os.Bundle
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.geometry.Point
@@ -56,6 +61,9 @@ class MapFragment : Fragment(), CameraListener, UserLocationObjectListener, Sess
 
     private var _binding: FragmentMapBinding? = null
     private val binding get() = _binding!!
+
+    private lateinit var bottomSheetBehavior: BottomSheetBehavior<ConstraintLayout>
+
     private var searchManager: SearchManager? = null
     private var searchSession: Session? = null
     private var userLocationLayer: UserLocationLayer? = null
@@ -113,7 +121,7 @@ class MapFragment : Fragment(), CameraListener, UserLocationObjectListener, Sess
         super.onViewCreated(view, savedInstanceState)
         checkPermission()
         initView()
-
+        setBottomSheetBehavior(binding.behaivorContainer.bottomSheetContainer)
     }
 
     private fun moveCameraToPosition(target: Point?) {
@@ -135,8 +143,13 @@ class MapFragment : Fragment(), CameraListener, UserLocationObjectListener, Sess
             }
             false
         }
+
+        behaivorContainer.confrimButton.setOnClickListener {
+
+        }
         mapview.map.addTapListener(this@MapFragment)
         mapview.map.addInputListener(this@MapFragment)
+
     }
 
     private fun onMapReady() {
@@ -180,6 +193,13 @@ class MapFragment : Fragment(), CameraListener, UserLocationObjectListener, Sess
                 when (val item = appState.data) {
                     is AddressItem -> {
                         lastResponseAddress = item
+                        if (item.addressFull.isNotEmpty()) {
+                            binding.behaivorContainer.descriptionAdressTextView.text =
+                                item.addressFull
+                            binding.behaivorContainer.confrimButton.visibility = View.VISIBLE
+                            bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+
+                        }
                     }
                     else -> throw RuntimeException("Wrong AppState type $appState")
                 }
@@ -310,6 +330,7 @@ class MapFragment : Fragment(), CameraListener, UserLocationObjectListener, Sess
                 }
             }
         }
+
         return selectionMetadata != null
     }
 
@@ -318,6 +339,12 @@ class MapFragment : Fragment(), CameraListener, UserLocationObjectListener, Sess
     }
 
     override fun onMapLongTap(map: Map, point: Point) {}
+
+    private fun setBottomSheetBehavior(bottomSheet: ConstraintLayout) {
+        bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
+        bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+
+    }
 }
 
 

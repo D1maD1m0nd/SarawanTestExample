@@ -2,25 +2,25 @@ package ru.sarawan.android.model.data.address.yandexMap
 
 import com.squareup.moshi.Json
 
-enum class KindType(val value: String) {
+enum class KindType {
     @field:Json(name = "country")
-    COUNTRY("country"),
+    COUNTRY,
 
     @field:Json(name = "province")
-    PROVINCE("province"),
+    PROVINCE,
 
     @field:Json(name = "area")
-    AREA("area"),
+    AREA,
 
     @field:Json(name = "locality")
-    LOCALITY("locality"),
+    LOCALITY,
 
     @field:Json(name = "district")
-    DISTRICT("district"),
+    DISTRICT,
 
     @field:Json(name = "street")
-    STREET("street"),
+    STREET,
 
     @field:Json(name = "house")
-    HOUSE("house")
+    HOUSE
 }

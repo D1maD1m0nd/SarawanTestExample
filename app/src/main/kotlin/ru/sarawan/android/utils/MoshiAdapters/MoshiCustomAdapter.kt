@@ -1,4 +1,4 @@
-package ru.sarawan.android.utils
+package ru.sarawan.android.utils.MoshiAdapters
 
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi

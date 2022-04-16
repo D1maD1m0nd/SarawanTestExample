@@ -6,5 +6,6 @@ data class MetaDataProperty(
 
 
     @field: Json(name = "GeocoderMetaData")
-    val geocoderMetaData: GeocoderMetaData? = null
-)
+    val geocoderMetaData: GeocoderMetaData? = null,
+
+    )

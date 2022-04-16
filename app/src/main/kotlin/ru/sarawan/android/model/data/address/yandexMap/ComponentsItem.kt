@@ -5,7 +5,7 @@ import com.squareup.moshi.Json
 data class ComponentsItem(
 
     @field: Json(name = "kind")
-    val kind: String = "",
+    val kind: KindType? = null,
 
     @field: Json(name = "name")
     val name: String = ""

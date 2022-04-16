@@ -12,10 +12,12 @@ import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
 import ru.sarawan.android.BuildConfig
 import ru.sarawan.android.di.annotations.ApiYandex
+import ru.sarawan.android.model.data.address.yandexMap.KindType
 import ru.sarawan.android.model.datasource.api.ApiService
 import ru.sarawan.android.model.datasource.api.MapApiService
 import ru.sarawan.android.utils.AndroidNetworkStatus
-import ru.sarawan.android.utils.MoshiCustomAdapter.Companion.LENIENT_FACTORY
+import ru.sarawan.android.utils.MoshiAdapters.EnumKindAdapter
+import ru.sarawan.android.utils.MoshiAdapters.MoshiCustomAdapter.Companion.LENIENT_FACTORY
 import ru.sarawan.android.utils.NetworkStatus
 import ru.sarawan.android.utils.exstentions.localstore.token
 import javax.inject.Singleton
@@ -62,10 +64,9 @@ class NetworkModule {
     fun getApiService(retrofit: Retrofit): ApiService = retrofit.create(ApiService::class.java)
 
 
-
     @ApiYandex
     @Provides
-    fun moshiMapYandex(): Moshi = Moshi.Builder().build()
+    fun moshiMapYandex(): Moshi = Moshi.Builder().add(EnumKindAdapter()).build()
 
     @ApiYandex
     @Provides

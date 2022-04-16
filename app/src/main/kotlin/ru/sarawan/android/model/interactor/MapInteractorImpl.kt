@@ -13,16 +13,7 @@ class MapInteractorImpl @Inject constructor(
 ) : MapInteractor {
     override fun getAddressMetaData(coordinates: String): Single<AddressItem> {
         return remoteRepository.getAddressMetaData(coordinates).map {
-            val address = it.response
-                ?.geoObjectCollection
-                ?.featureMember
-                ?.firstOrNull()
-                ?.geoObject
-                ?.metaDataProperty
-                ?.geocoderMetaData
-                ?.address
-                ?.toAddress()
-            address
+            it.toAddress()
         }
     }
 }

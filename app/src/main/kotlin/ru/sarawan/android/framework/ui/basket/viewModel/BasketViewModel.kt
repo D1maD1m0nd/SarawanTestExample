@@ -6,7 +6,7 @@ import ru.sarawan.android.model.data.*
 import ru.sarawan.android.model.interactor.BasketInteractor
 import ru.sarawan.android.model.interactor.OrderInteractor
 import ru.sarawan.android.rx.ISchedulerProvider
-import ru.sarawan.android.utils.MoshiCustomAdapter
+import ru.sarawan.android.utils.MoshiAdapters.MoshiCustomAdapter
 import javax.inject.Inject
 
 class BasketViewModel @Inject constructor(

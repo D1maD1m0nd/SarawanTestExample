@@ -12,6 +12,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import dagger.Lazy
 import dagger.android.support.AndroidSupportInjection
+import retrofit2.HttpException
 import ru.sarawan.android.R
 import ru.sarawan.android.databinding.FragmentProfileBinding
 import ru.sarawan.android.framework.ui.profile.adapter.ItemClickListener
@@ -199,11 +200,17 @@ class ProfileFragment : Fragment() {
                 }
             }
             is AppState.Error -> {
-                Toast.makeText(
-                    context,
-                    getText(R.string.smd_send_error),
-                    Toast.LENGTH_SHORT
-                ).show()
+                val error = appState.error
+                if (error is HttpException) {
+                    when (error.code()) {
+
+                        500 -> Toast.makeText(
+                            context,
+                            getString(R.string.error_500),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
             }
             else -> throw RuntimeException("Wrong AppState type $appState")
         }
