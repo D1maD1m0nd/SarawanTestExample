@@ -3,6 +3,7 @@ package ru.sarawan.android.di.modules
 import android.content.Context
 import android.content.IntentFilter
 import android.content.SharedPreferences
+import android.os.Build
 import com.squareup.moshi.Moshi
 import dagger.Module
 import dagger.Provides
@@ -13,9 +14,10 @@ import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
 import ru.sarawan.android.model.datasource.ApiService
 import ru.sarawan.android.service.IncomingCallReaderService
+import ru.sarawan.android.service.callscreenservice.IncomingCallScreenBroadCastReceiver
+import ru.sarawan.android.service.callscreenservice.IncomingCallScreenService
 import ru.sarawan.android.service.contacts.ReceiveMessage
 import ru.sarawan.android.utils.AndroidNetworkStatus
-import ru.sarawan.android.utils.MoshiCustomAdapter
 import ru.sarawan.android.utils.MoshiCustomAdapter.Companion.LENIENT_FACTORY
 import ru.sarawan.android.utils.NetworkStatus
 import ru.sarawan.android.utils.exstentions.localstore.token
@@ -30,11 +32,19 @@ class NetworkModule {
     // TODO: Убрать в отдельный модуль 
     @Provides
     fun provideIncomingCallBroadCastReceiver(context: Context): ReceiveMessage {
-        val receiver = IncomingCallReaderService()
-        val intentFilter = IntentFilter()
-        intentFilter.addAction("android.intent.action.PHONE_STATE")
-        context.registerReceiver(receiver, intentFilter)
-        return receiver
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
+            val receiver = IncomingCallReaderService()
+            val intentFilter = IntentFilter()
+            intentFilter.addAction("android.intent.action.PHONE_STATE")
+            context.registerReceiver(receiver, intentFilter)
+            return receiver
+        } else {
+            val receiver = IncomingCallScreenBroadCastReceiver()
+            val intentFilter = IntentFilter()
+            intentFilter.addAction(IncomingCallScreenService.INTENT_INCOMING_CALL_ACTION)
+            context.registerReceiver(receiver, intentFilter)
+            return receiver
+        }
     }
 
     @Provides

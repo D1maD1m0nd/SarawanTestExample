@@ -1,11 +1,13 @@
 package ru.sarawan.android.framework.ui.profile.sms_code_fragment
 
 import android.Manifest
-import android.content.IntentFilter
+import android.app.role.RoleManager
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.os.CountDownTimer
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -33,7 +35,6 @@ import ru.sarawan.android.utils.exstentions.localstore.userId
 import javax.inject.Inject
 
 class ProfileCodeDialogFragment : DialogFragment() {
-
     @Inject
     lateinit var sharedPreferences: SharedPreferences
 
@@ -59,11 +60,12 @@ class ProfileCodeDialogFragment : DialogFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         AndroidSupportInjection.inject(this)
-        val intentFilter = IntentFilter()
-        intentFilter.addAction("android.intent.action.PHONE_STATE")
-        checkPermissionsPhoneState()
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
+            checkPermissionsPhoneState()
+        } else {
+            checkRollCallScreening()
+        }
     }
-
 
     private fun checkPermissionsPhoneState() {
         if (context?.let {
@@ -77,6 +79,25 @@ class ProfileCodeDialogFragment : DialogFragment() {
                 arrayOf(Manifest.permission.READ_PHONE_STATE),
                 PHONE_STATE_PERMISSIONS
             )
+        }
+    }
+
+
+    private fun checkRollCallScreening() {
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.Q) {
+            val roleManager by lazy { requireActivity().getSystemService(RoleManager::class.java) }
+            when {
+                roleManager.isRoleHeld(RoleManager.ROLE_CALL_SCREENING) ->
+                    Log.e("AppLog", "got role")
+                roleManager.isRoleAvailable(RoleManager.ROLE_CALL_SCREENING) ->{
+                    Log.e("AppLog", "cannot hold role")
+                    requireActivity().startActivityForResult(
+                        roleManager.createRequestRoleIntent(
+                            RoleManager.ROLE_CALL_SCREENING
+                        ), REQUEST_CALLER_ID_APP
+                    )
+                }
+            }
         }
     }
 
@@ -292,5 +313,6 @@ class ProfileCodeDialogFragment : DialogFragment() {
         private const val TWO_ZERO = "00"
         private const val TIMER_INIT_STRING = "01:00"
         private const val PHONE_STATE_PERMISSIONS = 100
+        private const val REQUEST_CALLER_ID_APP = 10
     }
 }

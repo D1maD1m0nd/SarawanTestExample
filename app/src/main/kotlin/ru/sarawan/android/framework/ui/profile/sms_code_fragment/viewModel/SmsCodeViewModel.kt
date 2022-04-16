@@ -6,7 +6,6 @@ import ru.sarawan.android.model.data.AppState
 import ru.sarawan.android.model.data.UserRegistration
 import ru.sarawan.android.model.interactor.UserInteractor
 import ru.sarawan.android.rx.ISchedulerProvider
-import ru.sarawan.android.service.IncomingCallReaderService
 import ru.sarawan.android.service.contacts.ReceiveMessage
 import javax.inject.Inject
 
@@ -30,10 +29,12 @@ class SmsCodeViewModel @Inject constructor(
         compositeDisposable.addAll(
             incomingCallReaderService.getMessage()
                 .subscribeOn(schedulerProvider.io)
-                ?.observeOn(schedulerProvider.ui)
-                ?.subscribe(
-                    {stateLiveData.postValue(AppState.Success(it)) },
-                    { stateLiveData.postValue(AppState.Error(it))}
+                .observeOn(schedulerProvider.ui)
+                .subscribe(
+                    {   Log.e("phone", it)
+                        stateLiveData.postValue(AppState.Success(it)) },
+                    {  Log.e("phone", it.message.toString())
+                        stateLiveData.postValue(AppState.Error(it))}
                 )
         )
     }
