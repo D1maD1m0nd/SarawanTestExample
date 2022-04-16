@@ -1,7 +1,7 @@
 package ru.sarawan.android.model.data.address.yandexMap
 
 import com.squareup.moshi.Json
-import ru.sarawan.android.model.data.AddressItem
+import ru.sarawan.android.model.data.address.sarawan.AddressItem
 
 
 data class MapYandex(
@@ -10,7 +10,7 @@ data class MapYandex(
 	val response: ResponseMap? = null
 )
 
-fun MapYandex.toAddress(): AddressItem {
+fun MapYandex.toAddress(lat: Double, lon: Double): AddressItem {
 	val address = AddressItem()
 	val metadata =
 		response?.geoObjectCollection?.featureMember?.firstOrNull()?.geoObject?.metaDataProperty?.geocoderMetaData
@@ -18,7 +18,6 @@ fun MapYandex.toAddress(): AddressItem {
 
 	metadata?.address?.components?.map { item ->
 		when (item.kind) {
-
 			KindType.LOCALITY -> {
 				address.city = item.name
 			}
@@ -33,8 +32,10 @@ fun MapYandex.toAddress(): AddressItem {
 			else -> {}
 
 		}
-
 	}
+
+	address.lat = lat
+	address.lon = lon
 
 	return address
 }

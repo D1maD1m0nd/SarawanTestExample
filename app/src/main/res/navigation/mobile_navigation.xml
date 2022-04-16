@@ -169,7 +169,8 @@
             app:destination="@id/mainFragment" />
         <action
             android:id="@+id/action_profileFragment_to_profileAddressFragment"
-            app:destination="@id/profileAddressDialogFragment" />
+            app:destination="@id/profileAddressDialogFragment"
+            app:popUpToInclusive="false" />
         <action
             android:id="@+id/action_profileFragment_to_profileNameDialogFragment"
             app:destination="@id/profileNameDialogFragment" />
@@ -188,10 +189,11 @@
             app:destination="@id/successOrderDialogFragment" />
     </fragment>
 
-    <dialog
+    <fragment
         android:id="@+id/profileAddressDialogFragment"
         android:name="ru.sarawan.android.framework.ui.profile.address_fragment.ProfileAddressDialogFragment"
         android:label="profileAddressDialogFragment"
+
         tools:layout="@layout/fragment_profile_address_dialog">
         <argument
             android:name="city"
@@ -214,12 +216,15 @@
             app:destination="@id/profileAlertDialogFragment" />
         <argument
             android:name="addressItemArray"
-            app:argType="ru.sarawan.android.model.data.AddressItem[]"
+            app:argType="ru.sarawan.android.model.data.address.sarawan.AddressItem[]"
             app:nullable="true" />
         <action
+            app:popUpToSaveState="true"
             android:id="@+id/action_profileAddressDialogFragment_to_mapFragment"
-            app:destination="@id/mapFragment" />
-    </dialog>
+            app:destination="@id/mapFragment"
+            app:launchSingleTop="true"
+            app:popUpToInclusive="false" />
+    </fragment>
 
     <dialog
         android:id="@+id/profileNameDialogFragment"

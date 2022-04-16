@@ -1,7 +1,7 @@
 package ru.sarawan.android.framework.ui.order.viewModel
 
 import ru.sarawan.android.framework.ui.base.BaseViewModel
-import ru.sarawan.android.model.data.AddressItem
+import ru.sarawan.android.model.data.address.sarawan.AddressItem
 import ru.sarawan.android.model.data.AppState
 import ru.sarawan.android.model.interactor.OrderInteractor
 import ru.sarawan.android.model.interactor.UserInteractor

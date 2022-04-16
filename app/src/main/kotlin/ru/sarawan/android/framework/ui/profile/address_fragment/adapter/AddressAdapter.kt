@@ -8,7 +8,7 @@ import android.widget.ArrayAdapter
 import android.widget.Filter
 import android.widget.TextView
 import ru.sarawan.android.R
-import ru.sarawan.android.model.data.AddressItem
+import ru.sarawan.android.model.data.address.sarawan.AddressItem
 import java.util.*
 
 class AddressAdapter(context: Context, countryList: List<AddressItem>) :

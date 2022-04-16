@@ -11,6 +11,8 @@ import android.widget.AdapterView.OnItemClickListener
 import android.widget.Toast
 import androidx.core.content.getSystemService
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -19,17 +21,19 @@ import dagger.android.support.AndroidSupportInjection
 import retrofit2.HttpException
 import ru.sarawan.android.R
 import ru.sarawan.android.databinding.FragmentProfileAddressDialogBinding
+import ru.sarawan.android.framework.ui.map.MapFragment
 import ru.sarawan.android.framework.ui.profile.address_fragment.adapter.AddressAdapter
 import ru.sarawan.android.framework.ui.profile.address_fragment.viewModel.ProfileAddressViewModel
-import ru.sarawan.android.model.data.AddressItem
 import ru.sarawan.android.model.data.AppState
+import ru.sarawan.android.model.data.address.sarawan.AddressItem
 import ru.sarawan.android.utils.constants.AddressState
+import ru.sarawan.android.utils.exstentions.getNavigationResult
 import ru.sarawan.android.utils.exstentions.localstore.userId
 import ru.sarawan.android.utils.exstentions.setNavigationResult
 import javax.inject.Inject
 
 
-class ProfileAddressDialogFragment : DialogFragment() {
+class ProfileAddressDialogFragment : Fragment() {
 
     @Inject
     lateinit var viewModelFactory: Lazy<ViewModelProvider.Factory>
@@ -65,14 +69,12 @@ class ProfileAddressDialogFragment : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        dialog?.window?.attributes?.apply {
-            width = WindowManager.LayoutParams.MATCH_PARENT
-            height = WindowManager.LayoutParams.MATCH_PARENT
-        }
         inputMethodManager = requireActivity().getSystemService()
+
         initViews()
         viewModel.getStateLiveData()
             .observe(viewLifecycleOwner) { appState: AppState<*> -> setState(appState) }
+        handleProductCardResult()
     }
 
     private fun showKeyboard() {
@@ -234,22 +236,25 @@ class ProfileAddressDialogFragment : DialogFragment() {
                 if (error is HttpException) {
                     Toast.makeText(context, error.response().toString(), Toast.LENGTH_SHORT).show()
                 }
+
             }
             else -> throw RuntimeException("Wrong AppState type $appState")
         }
-    }
-
-    override fun onDismiss(dialog: DialogInterface) {
-        super.onDismiss(dialog)
-        setNavigationResult(KEY_ADDRESS, isSaveSuccess)
     }
 
     override fun onDestroyView() {
         _binding = null
         inputMethodManager = null
         super.onDestroyView()
+        setNavigationResult(KEY_ADDRESS, isSaveSuccess)
     }
 
+
+    private fun handleProductCardResult() {
+        getNavigationResult<AddressItem>(MapFragment.REQUEST_KEY) { item ->
+            fillAddress(item)
+        }
+    }
 
     companion object {
         const val KEY_ADDRESS = "Address"

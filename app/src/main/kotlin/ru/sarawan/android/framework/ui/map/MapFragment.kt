@@ -1,13 +1,10 @@
 package ru.sarawan.android.framework.ui.map
 
 import android.Manifest
-import android.app.AlertDialog
-import android.content.DialogInterface
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.PointF
 import android.os.Bundle
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,6 +15,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKitFactory
@@ -42,8 +40,10 @@ import ru.sarawan.android.BuildConfig
 import ru.sarawan.android.R
 import ru.sarawan.android.databinding.FragmentMapBinding
 import ru.sarawan.android.framework.ui.map.viewModel.MapViewModel
-import ru.sarawan.android.model.data.AddressItem
+import ru.sarawan.android.framework.ui.product_card.ProductCardFragment
+import ru.sarawan.android.model.data.address.sarawan.AddressItem
 import ru.sarawan.android.model.data.AppState
+import ru.sarawan.android.utils.exstentions.setNavigationResult
 import javax.inject.Inject
 
 
@@ -105,10 +105,6 @@ class MapFragment : Fragment(), CameraListener, UserLocationObjectListener, Sess
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        MapKitFactory.setApiKey(BuildConfig.MAP_API_KEY)
-        MapKitFactory.initialize(context)
-        SearchFactory.initialize(context)
-
         searchManager = SearchFactory.getInstance().createSearchManager(SearchManagerType.COMBINED)
         _binding = FragmentMapBinding.inflate(inflater, container, false)
         viewModel.getStateLiveData()
@@ -145,11 +141,16 @@ class MapFragment : Fragment(), CameraListener, UserLocationObjectListener, Sess
         }
 
         behaivorContainer.confrimButton.setOnClickListener {
-
+            onFragmentClose()
         }
         mapview.map.addTapListener(this@MapFragment)
         mapview.map.addInputListener(this@MapFragment)
 
+    }
+
+    private fun onFragmentClose() = with(findNavController()) {
+        setNavigationResult(REQUEST_KEY, lastResponseAddress)
+        popBackStack()
     }
 
     private fun onMapReady() {
@@ -343,7 +344,10 @@ class MapFragment : Fragment(), CameraListener, UserLocationObjectListener, Sess
     private fun setBottomSheetBehavior(bottomSheet: ConstraintLayout) {
         bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+    }
 
+    companion object {
+        const val REQUEST_KEY = "Map Fragment Result"
     }
 }
 

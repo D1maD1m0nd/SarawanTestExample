@@ -1,7 +1,7 @@
 package ru.sarawan.android.framework.ui.profile.viewModel
 
 import ru.sarawan.android.framework.ui.base.BaseViewModel
-import ru.sarawan.android.model.data.AddressItem
+import ru.sarawan.android.model.data.address.sarawan.AddressItem
 import ru.sarawan.android.model.data.AppState
 import ru.sarawan.android.model.data.OrderStatus
 import ru.sarawan.android.model.data.UserDataModel

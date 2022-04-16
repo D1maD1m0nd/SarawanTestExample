@@ -9,7 +9,7 @@ class EnumKindAdapter {
     @FromJson
     fun fromJson(jsonReader: JsonReader, delegate: JsonAdapter<KindType>): KindType? {
         val value = jsonReader.nextString()
-        val kindType = KindType.values().any { it.name == "value" }
+        val kindType = KindType.values().any { it.name == value.uppercase() }
         return if (kindType) delegate.fromJsonValue(value) else null
     }
 }

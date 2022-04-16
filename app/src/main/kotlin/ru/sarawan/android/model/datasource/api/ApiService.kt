@@ -3,6 +3,7 @@ package ru.sarawan.android.model.datasource.api
 import io.reactivex.rxjava3.core.Single
 import retrofit2.http.*
 import ru.sarawan.android.model.data.*
+import ru.sarawan.android.model.data.address.sarawan.AddressItem
 
 interface ApiService {
 

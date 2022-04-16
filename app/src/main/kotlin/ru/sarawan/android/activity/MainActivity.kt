@@ -14,8 +14,11 @@ import androidx.core.animation.doOnEnd
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
+import com.yandex.mapkit.MapKitFactory
+import com.yandex.mapkit.search.SearchFactory
 import dagger.android.AndroidInjection
 import io.reactivex.rxjava3.subjects.BehaviorSubject
+import ru.sarawan.android.BuildConfig
 import ru.sarawan.android.MobileNavigationDirections
 import ru.sarawan.android.R
 import ru.sarawan.android.activity.contracts.BasketSaver
@@ -58,6 +61,9 @@ class MainActivity : AppCompatActivity(), FabChanger, BasketSaver {
         initFAB()
         viewModel.getStateLiveData().observe(this) { appState: AppState<*> -> updateFab(appState) }
         viewModel.initNetwork()
+        MapKitFactory.setApiKey(BuildConfig.MAP_API_KEY)
+        MapKitFactory.initialize(this)
+        SearchFactory.initialize(this)
     }
 
 

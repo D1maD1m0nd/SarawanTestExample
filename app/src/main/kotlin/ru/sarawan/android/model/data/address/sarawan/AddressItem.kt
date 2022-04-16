@@ -1,4 +1,4 @@
-package ru.sarawan.android.model.data
+package ru.sarawan.android.model.data.address.sarawan
 
 import android.os.Parcelable
 import com.squareup.moshi.Json
@@ -6,6 +6,12 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class AddressItem(
+
+    @field:Json(name = "lon")
+    var lon: Double = 0.0,
+
+    @field:Json(name = "lat")
+    var lat: Double = 0.0,
 
     @field:Json(name = "city")
     var city: String = "",

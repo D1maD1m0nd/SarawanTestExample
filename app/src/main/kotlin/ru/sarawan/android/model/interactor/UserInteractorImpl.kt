@@ -2,7 +2,7 @@ package ru.sarawan.android.model.interactor
 
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.internal.operators.single.SingleJust
-import ru.sarawan.android.model.data.AddressItem
+import ru.sarawan.android.model.data.address.sarawan.AddressItem
 import ru.sarawan.android.model.data.UserDataModel
 import ru.sarawan.android.model.data.UserRegistration
 import ru.sarawan.android.model.datasource.UserDataSource

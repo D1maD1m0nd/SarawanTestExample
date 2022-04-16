@@ -20,7 +20,7 @@ import ru.sarawan.android.framework.ui.profile.adapter.OrdersAdapter
 import ru.sarawan.android.framework.ui.profile.address_fragment.ProfileAddressDialogFragment
 import ru.sarawan.android.framework.ui.profile.name_fragment.ProfileNameDialogFragment
 import ru.sarawan.android.framework.ui.profile.viewModel.ProfileViewModel
-import ru.sarawan.android.model.data.AddressItem
+import ru.sarawan.android.model.data.address.sarawan.AddressItem
 import ru.sarawan.android.model.data.AppState
 import ru.sarawan.android.model.data.OrderApprove
 import ru.sarawan.android.model.data.UserDataModel

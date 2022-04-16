@@ -12,9 +12,9 @@ class MapViewModel @Inject constructor(
 ) : BaseViewModel<AppState<*>>() {
 
     fun getCoordinated(lat: Double, lon: Double) {
-        val coordinates = "$lon,$lat"
+
         compositeDisposable.add(
-            mapInteractor.getAddressMetaData(coordinates)
+            mapInteractor.getAddressMetaData(lat, lon)
                 .subscribeOn(schedulerProvider.io)
                 .observeOn(schedulerProvider.ui)
                 .doOnSubscribe { stateLiveData.value = AppState.Loading }
