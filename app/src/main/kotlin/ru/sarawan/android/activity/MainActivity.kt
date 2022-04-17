@@ -52,6 +52,9 @@ class MainActivity : AppCompatActivity(), FabChanger, BasketSaver {
     private var data: List<ProductsItem> = emptyList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        MapKitFactory.setApiKey(BuildConfig.MAP_API_KEY)
+        MapKitFactory.initialize(this)
+        SearchFactory.initialize(this)
         super.onCreate(savedInstanceState)
         AndroidInjection.inject(this)
         _binding = ActivityMainBinding.inflate(layoutInflater)
@@ -61,9 +64,6 @@ class MainActivity : AppCompatActivity(), FabChanger, BasketSaver {
         initFAB()
         viewModel.getStateLiveData().observe(this) { appState: AppState<*> -> updateFab(appState) }
         viewModel.initNetwork()
-        MapKitFactory.setApiKey(BuildConfig.MAP_API_KEY)
-        MapKitFactory.initialize(this)
-        SearchFactory.initialize(this)
     }
 
 
@@ -127,8 +127,7 @@ class MainActivity : AppCompatActivity(), FabChanger, BasketSaver {
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
-                R.id.basketFragment -> binding.fabPrice.hide()
-                R.id.orderFragment -> binding.fabPrice.hide()
+                R.id.basketFragment, R.id.orderFragment, R.id.mapFragment -> binding.fabPrice.hide()
                 else -> viewModel.getBasket()
             }
         }
