@@ -129,17 +129,22 @@ class OrderFragment : Fragment() {
             }
 
             is AppState.Error -> {
+
                 binding.progressBar.visibility = View.GONE
                 val error = state.error
                 if (error is HttpException) {
                     when (error.code()) {
-                        500 -> Toast.makeText(
-                            context,
-                            "Ошибка сервера ${error.message()}",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        500 -> {
+                            Toast.makeText(
+                                context,
+                                getString(R.string.error_server_order),
+                                Toast.LENGTH_LONG
+                            ).show()
+                            findNavController().popBackStack()
+                        }
+
                     }
-                    Toast.makeText(context, "Error ${error.message()}", Toast.LENGTH_SHORT).show()
+
                 }
             }
 

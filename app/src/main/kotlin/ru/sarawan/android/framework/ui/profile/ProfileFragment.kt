@@ -137,12 +137,7 @@ class ProfileFragment : Fragment() {
             is AppState.Success<*> -> {
                 when (val stateData = appState.data) {
                     is List<*> -> {
-                        if (stateData.isEmpty()) Toast.makeText(
-                            context,
-                            getString(R.string.server_data_error),
-                            Toast.LENGTH_SHORT
-                        ).show()
-                        else when (stateData.first()) {
+                        when (stateData.firstOrNull()) {
                             is AddressItem -> {
                                 @Suppress("UNCHECKED_CAST")
                                 val data = appState.data as List<AddressItem>
@@ -162,7 +157,7 @@ class ProfileFragment : Fragment() {
                                 orders = data.toMutableList()
                                 initRcView()
                             }
-                            else -> throw RuntimeException("Wrong List type $stateData")
+                            else -> {}
                         }
                     }
 
@@ -196,7 +191,7 @@ class ProfileFragment : Fragment() {
                         user = stateData
 
                     }
-                    else -> throw RuntimeException("Wrong AppState type $appState")
+                    else -> {}
                 }
             }
             is AppState.Error -> {
@@ -212,7 +207,7 @@ class ProfileFragment : Fragment() {
                     }
                 }
             }
-            else -> throw RuntimeException("Wrong AppState type $appState")
+            else -> {}
         }
     }
 

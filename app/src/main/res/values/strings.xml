@@ -134,4 +134,5 @@
     <string name="search">Поиск</string>
     <string name="confrim_select_address">Подтвердите выбор адреса</string>
     <string name="confrim">Подтвердить</string>
+    <string name="error_server_order">Ошибка сервера попробуйте оформить заказ позже</string>
 </resources>
