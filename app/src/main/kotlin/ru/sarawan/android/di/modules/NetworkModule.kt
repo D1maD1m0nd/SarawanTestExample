@@ -1,7 +1,9 @@
 package ru.sarawan.android.di.modules
 
 import android.content.Context
+import android.content.IntentFilter
 import android.content.SharedPreferences
+import android.os.Build
 import com.squareup.moshi.Moshi
 import dagger.Module
 import dagger.Provides
@@ -15,6 +17,10 @@ import ru.sarawan.android.di.annotations.ApiYandex
 import ru.sarawan.android.model.data.address.yandexMap.KindType
 import ru.sarawan.android.model.datasource.api.ApiService
 import ru.sarawan.android.model.datasource.api.MapApiService
+import ru.sarawan.android.service.IncomingCallReaderService
+import ru.sarawan.android.service.callscreenservice.IncomingCallScreenBroadCastReceiver
+import ru.sarawan.android.service.callscreenservice.IncomingCallScreenService
+import ru.sarawan.android.service.contacts.ReceiveMessage
 import ru.sarawan.android.utils.AndroidNetworkStatus
 import ru.sarawan.android.utils.MoshiAdapters.EnumKindAdapter
 import ru.sarawan.android.utils.MoshiAdapters.MoshiCustomAdapter.Companion.LENIENT_FACTORY
@@ -27,6 +33,24 @@ class NetworkModule {
 
     @Provides
     fun getNetworkStatus(context: Context): NetworkStatus = AndroidNetworkStatus(context)
+
+    // TODO: Убрать в отдельный модуль
+    @Provides
+    fun provideIncomingCallBroadCastReceiver(context: Context): ReceiveMessage {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
+            val receiver = IncomingCallReaderService()
+            val intentFilter = IntentFilter()
+            intentFilter.addAction("android.intent.action.PHONE_STATE")
+            context.registerReceiver(receiver, intentFilter)
+            return receiver
+        } else {
+            val receiver = IncomingCallScreenBroadCastReceiver()
+            val intentFilter = IntentFilter()
+            intentFilter.addAction(IncomingCallScreenService.INTENT_INCOMING_CALL_ACTION)
+            context.registerReceiver(receiver, intentFilter)
+            return receiver
+        }
+    }
 
     @Provides
     fun moshi(): Moshi = Moshi.Builder().add(LENIENT_FACTORY).build()

@@ -233,12 +233,6 @@ class MainActivity : AppCompatActivity(), FabChanger, BasketSaver {
     override fun changeState() = viewModel.getBasket()
 
    override fun saveBasket() = viewModel.saveData(data = data, isLoggedUser = true)
-       //if (sharedPreferences.userId != UNREGISTERED && data.isNotEmpty()) {
-//        val products = data.map { item ->
-//            Product(id = item.basketProduct?.basketProduct?.id, quantity = item.quantity ?: 0)
-//        }
-//        viewModel.saveData(products, true)
-//    } else Unit
 
     companion object {
         private const val BACK_BUTTON_EXIT_DELAY = 3000

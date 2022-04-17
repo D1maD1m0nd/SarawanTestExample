@@ -36,7 +36,7 @@
     <string name="result_payment">Итого к оплате:</string>
     <string name="set_order">Оформить заказ</string>
     <string name="profile_phone_user_agreement">Нажимая на кнопку, я принимаю условия пользовательского соглашения</string>
-    <string name="profile_phone_send_sms">Получить СМС с кодом</string>
+    <string name="profile_phone_send_sms">Произвести Звонок с кодом</string>
     <string name="profile_phone_welcome">Добро пожаловать!</string>
     <string name="profile_phone_enter_number">Введите номер телефона, чтобы войти или зарегистрироваться.</string>
     <string name="profile_address_save">Сохранить</string>
