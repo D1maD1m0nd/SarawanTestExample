@@ -1,7 +1,7 @@
 package ru.sarawan.android.framework.ui.order.viewModel
 
 import ru.sarawan.android.framework.ui.base.BaseViewModel
-import ru.sarawan.android.model.data.AddressItem
+import ru.sarawan.android.model.data.address.sarawan.AddressItem
 import ru.sarawan.android.model.data.AppState
 import ru.sarawan.android.model.interactor.OrderInteractor
 import ru.sarawan.android.model.interactor.UserInteractor
@@ -19,20 +19,20 @@ class OrderViewModel @Inject constructor(
             userInteractor.formatAddress(address)
                 .subscribeOn(schedulerProvider.io)
                 .observeOn(schedulerProvider.ui)
-                .subscribe({stateLiveData.value = AppState.Success(it, TypeCase.ADDRESS)},
+                .subscribe({ stateLiveData.value = AppState.Success(it, TypeCase.ADDRESS) },
                     { stateLiveData.value = AppState.Error(it) })
         )
     }
 
     fun getAddress() {
-        compositeDisposable.addAll(
+        compositeDisposable.add(
             userInteractor.getAddress()
                 .subscribeOn(schedulerProvider.io)
                 .observeOn(schedulerProvider.ui)
                 .doOnSubscribe { stateLiveData.value = AppState.Loading }
                 .subscribe({ addressItems ->
-                    val address = addressItems.find { it.primary } ?: addressItems.firstOrNull()
-                    stateLiveData.value = AppState.Success(address) },
+                    stateLiveData.value = AppState.Success(addressItems)
+                },
                     { stateLiveData.value = AppState.Error(it) })
         )
     }

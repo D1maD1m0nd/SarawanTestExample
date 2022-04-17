@@ -19,4 +19,7 @@ interface InteractorModule {
 
     @Binds
     fun bindsUserInteractorImpl_to_UserInteractor(userInteractorImpl: UserInteractorImpl): UserInteractor
+
+    @Binds
+    fun bindsMapInteractorImpl_to_MapInteractor(mapInteractorImpl: MapInteractorImpl): MapInteractor
 }

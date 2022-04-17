@@ -131,11 +131,12 @@ class ProfileNameDialogFragment : DialogFragment() {
         setNavigationResult(KEY_NAME, isSaveSuccess)
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
         _binding = null
         inputMethodManager = null
+        super.onDestroyView()
     }
+
 
     companion object {
         const val KEY_NAME = "Name"

@@ -2,7 +2,6 @@ package ru.sarawan.android.framework.ui.catalog.viewModel
 
 import ru.sarawan.android.framework.ui.base.mainCatalog.BaseMainCatalogViewModel
 import ru.sarawan.android.model.data.AppState
-import ru.sarawan.android.model.data.toFilter
 import ru.sarawan.android.model.interactor.BasketInteractor
 import ru.sarawan.android.model.interactor.ProductInteractor
 import ru.sarawan.android.rx.ISchedulerProvider

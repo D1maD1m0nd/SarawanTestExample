@@ -12,6 +12,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import dagger.Lazy
 import dagger.android.support.AndroidSupportInjection
+import retrofit2.HttpException
 import ru.sarawan.android.R
 import ru.sarawan.android.databinding.FragmentProfileBinding
 import ru.sarawan.android.framework.ui.profile.adapter.ItemClickListener
@@ -19,12 +20,12 @@ import ru.sarawan.android.framework.ui.profile.adapter.OrdersAdapter
 import ru.sarawan.android.framework.ui.profile.address_fragment.ProfileAddressDialogFragment
 import ru.sarawan.android.framework.ui.profile.name_fragment.ProfileNameDialogFragment
 import ru.sarawan.android.framework.ui.profile.viewModel.ProfileViewModel
-import ru.sarawan.android.model.data.AddressItem
+import ru.sarawan.android.model.data.address.sarawan.AddressItem
 import ru.sarawan.android.model.data.AppState
 import ru.sarawan.android.model.data.OrderApprove
 import ru.sarawan.android.model.data.UserDataModel
 import ru.sarawan.android.utils.constants.TypeCase
-import ru.sarawan.android.utils.exstentions.*
+import ru.sarawan.android.utils.exstentions.getNavigationResult
 import ru.sarawan.android.utils.exstentions.localstore.UNREGISTERED
 import ru.sarawan.android.utils.exstentions.localstore.basketId
 import ru.sarawan.android.utils.exstentions.localstore.token
@@ -49,7 +50,7 @@ class ProfileFragment : Fragment() {
     private var user: UserDataModel? = null
 
     private var addressItem: AddressItem? = null
-
+    private var addressList: List<AddressItem> = ArrayList()
     private val itemClickListener = object : ItemClickListener {
         override fun cancel(pos: Int) {
             cancelOrder(pos)
@@ -113,7 +114,8 @@ class ProfileFragment : Fragment() {
             city = addressItem?.city,
             street = addressItem?.street,
             house = addressItem?.house,
-            roomNumber = addressItem?.roomNumber
+            roomNumber = addressItem?.roomNumber,
+            addressItemArray = addressList.toTypedArray()
         )
         findNavController().navigate(action)
     }
@@ -151,6 +153,7 @@ class ProfileFragment : Fragment() {
                                         viewModel.getFormatAddress(it)
                                         addressItem = it
                                     }
+                                    addressList = data
                                 }
                             }
                             is OrderApprove -> {
@@ -197,11 +200,17 @@ class ProfileFragment : Fragment() {
                 }
             }
             is AppState.Error -> {
-                Toast.makeText(
-                    context,
-                    getText(R.string.smd_send_error),
-                    Toast.LENGTH_SHORT
-                ).show()
+                val error = appState.error
+                if (error is HttpException) {
+                    when (error.code()) {
+
+                        500 -> Toast.makeText(
+                            context,
+                            getString(R.string.error_500),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
             }
             else -> throw RuntimeException("Wrong AppState type $appState")
         }
@@ -222,8 +231,8 @@ class ProfileFragment : Fragment() {
         viewModel.deleteOrder(order.id)
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
         _binding = null
+        super.onDestroyView()
     }
 }

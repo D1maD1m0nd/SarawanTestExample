@@ -14,7 +14,7 @@ import retrofit2.HttpException
 import ru.sarawan.android.R
 import ru.sarawan.android.databinding.FragmentOrderBinding
 import ru.sarawan.android.framework.ui.order.viewModel.OrderViewModel
-import ru.sarawan.android.model.data.AddressItem
+import ru.sarawan.android.model.data.address.sarawan.AddressItem
 import ru.sarawan.android.model.data.AppState
 import ru.sarawan.android.model.data.Order
 import ru.sarawan.android.model.data.OrderApprove
@@ -34,6 +34,7 @@ class OrderFragment : Fragment() {
     }
 
     private var addressItem: AddressItem? = null
+    private var addressList: List<AddressItem> = ArrayList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,7 +64,8 @@ class OrderFragment : Fragment() {
                 city = addressItem?.city,
                 street = addressItem?.street,
                 house = addressItem?.house,
-                roomNumber = addressItem?.roomNumber
+                roomNumber = addressItem?.roomNumber,
+                addressItemArray = addressList.toTypedArray()
             )
             findNavController().navigate(action)
         }
@@ -86,13 +88,24 @@ class OrderFragment : Fragment() {
             is AppState.Success -> {
                 when (val item = state.data) {
                     is String -> binding.addressButton.text = item
-
-                    is AddressItem -> {
-                        binding.progressBar.visibility = View.GONE
-                        addressItem = AddressItem(idAddressOrder = item.id)
-                        addressItem?.let { viewModel.getOrder(it) }
-                        viewModel.getFormatAddress(item)
+                    is List<*> -> {
+                        when (val listItem = item.first()) {
+                            is AddressItem -> {
+                                val addresses = item as List<AddressItem>
+                                val address =
+                                    addresses.find { it.primary } ?: addresses.firstOrNull()
+                                address?.let {
+                                    addressList = addresses
+                                    binding.progressBar.visibility = View.GONE
+                                    addressItem = AddressItem(idAddressOrder = listItem.id)
+                                    addressItem?.let { viewModel.getOrder(it) }
+                                    viewModel.getFormatAddress(listItem)
+                                }
+                            }
+                            else -> {}
+                        }
                     }
+
 
                     is Order -> setOrderData(item)
 
@@ -120,9 +133,13 @@ class OrderFragment : Fragment() {
                 val error = state.error
                 if (error is HttpException) {
                     when (error.code()) {
-                        500 -> Toast.makeText(context, "Ошибка сервера ${error.message()}", Toast.LENGTH_SHORT).show();
+                        500 -> Toast.makeText(
+                            context,
+                            "Ошибка сервера ${error.message()}",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
-                    Toast.makeText(context, "Error ${error.message()}", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Error ${error.message()}", Toast.LENGTH_SHORT).show()
                 }
             }
 

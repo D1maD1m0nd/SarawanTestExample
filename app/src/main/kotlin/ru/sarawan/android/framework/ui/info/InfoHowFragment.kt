@@ -30,8 +30,8 @@ class InfoHowFragment : Fragment() {
         infoHowBackButton.setOnClickListener { findNavController().popBackStack() }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
         _binding = null
+        super.onDestroyView()
     }
 }

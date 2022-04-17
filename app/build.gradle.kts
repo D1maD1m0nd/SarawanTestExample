@@ -49,12 +49,21 @@ android {
         versionName = AppConfig.versionName
 
         testInstrumentationRunner = AppConfig.androidTestInstrumentation
+
+        val properties = Properties()
+        val propertiesFile = file("config_constants.properties")
+        properties.load(FileInputStream(propertiesFile))
+        val apiKeyMap = properties["api_key_map_kit"] as String
+        val apiKeyGeocoder = properties["api_key_geocoder"] as String
+        buildConfigField("String", "MAP_API_KEY", apiKeyMap)
+        buildConfigField("String", "GEOCODER_API_KEY", apiKeyGeocoder)
     }
 
     buildTypes {
         getByName("release") {
             signingConfig = signingConfigs.getByName("release")
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -68,6 +77,7 @@ android {
             )
         }
     }
+
     viewBinding {
         android.buildFeatures.viewBinding = true
     }
@@ -83,6 +93,10 @@ android {
 }
 
 dependencies {
+
+    //security
+    implementation(AppDependencies.security)
+
     //std lib
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
 
@@ -101,6 +115,7 @@ dependencies {
 
     //room
     implementation(AppDependencies.roomImpl)
+    implementation("androidx.legacy:legacy-support-v4:1.0.0")
 
     //kapt
     kapt(AppDependencies.kapt)

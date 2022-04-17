@@ -1,7 +1,8 @@
 package ru.sarawan.android.model.interactor
 
 import io.reactivex.rxjava3.core.Single
-import ru.sarawan.android.model.data.AddressItem
+import io.reactivex.rxjava3.internal.operators.single.SingleJust
+import ru.sarawan.android.model.data.address.sarawan.AddressItem
 import ru.sarawan.android.model.data.UserDataModel
 import ru.sarawan.android.model.data.UserRegistration
 import ru.sarawan.android.model.datasource.UserDataSource
@@ -26,14 +27,25 @@ class UserInteractorImpl @Inject constructor(
     override fun createAddress(address: AddressItem): Single<AddressItem> =
         remoteRepository.createAddress(address)
 
-    override fun getAddress(): Single<List<AddressItem>> = remoteRepository.getAddress()
+    override fun getAddress(): Single<List<AddressItem>> {
+        return remoteRepository.getAddress().flatMap {
+            SingleJust(it.map { item ->
+                val city = item.city
+                val street = item.street
+                val house = item.house
+                val roomNum = item.roomNumber
+                item.addressFull = "$city, ул $street, д $house, кв $roomNum"
+                item
+            })
+        }
+    }
 
     override fun formatAddress(address: AddressItem): Single<String> {
         val city = address.city
         val street = address.street
         val house = address.house
         val roomNum = address.roomNumber
-        return Single.just("$city, ул $street, д $house, кв $roomNum")
+        return  Single.just("$city, ул $street, д $house, кв $roomNum")
 
     }
 
@@ -50,7 +62,7 @@ class UserInteractorImpl @Inject constructor(
                     } else c
                 } else c
             }.joinToString("")
-        return Single.just(result)
+        return SingleJust(result)
     }
 
     override fun formatName(user: UserDataModel, emptyStr: String): Single<String> {
@@ -58,7 +70,7 @@ class UserInteractorImpl @Inject constructor(
         val lastName = user.lastName
         val fullName = "$firstName $lastName".trim()
         val result = fullName.ifEmpty { emptyStr }
-        return Single.just(result)
+        return SingleJust(result)
     }
 
     override fun validateAddress(addressItem: AddressItem): Single<AddressState> {

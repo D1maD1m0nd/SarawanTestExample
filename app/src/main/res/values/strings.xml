@@ -1,4 +1,9 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="not_found_error_message">Not found</string>
+    <string name="network_error_message">Network error</string>
+    <string name="remote_error_message">Remote server error</string>
+    <string name="unknown_error_message">Unknown error</string>
+    <string name="not_permission">Нет разрешения</string>
     <string name="app_name">Sarawan</string>
     <string name="title_home">Главная</string>
     <string name="title_basket">Корзина</string>
@@ -85,7 +90,7 @@
     <string name="similar_products_view">С этим товаром смотрят:</string>
     <string name="description">Описание</string>
     <string name="delivery_price">Стоимость доставки</string>
-    <string name="profile_code_enter_code_from_sms">Введите последние 4 цифры входящего номера</string>
+    <string name="profile_code_enter_code_from_sms">Введите последние 4 цифры из звонившего вам номера</string>
     <string name="profile_code_send_code">Отправить</string>
     <string name="profile_code_code_sent">Код отправлен на телефон\n</string>
     <string name="profile_code_request_again">Запросить код повторно</string>
@@ -122,4 +127,11 @@
     <string name="recomended">Мы рекомендуем</string>
     <string name="sponsored_items">Выгодные предложения</string>
     <string name="show_all">Посмотреть всё</string>
+    <string name="select_a_country">Select a country</string>
+    <string name="fill_address">Введите адрес</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="search">Поиск</string>
+    <string name="confrim_select_address">Подтвердите выбор адреса</string>
+    <string name="confrim">Подтвердить</string>
 </resources>

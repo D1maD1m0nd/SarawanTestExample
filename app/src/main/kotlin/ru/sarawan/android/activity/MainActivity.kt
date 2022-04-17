@@ -14,18 +14,19 @@ import androidx.core.animation.doOnEnd
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
+import com.yandex.mapkit.MapKitFactory
+import com.yandex.mapkit.search.SearchFactory
 import dagger.android.AndroidInjection
 import io.reactivex.rxjava3.subjects.BehaviorSubject
+import ru.sarawan.android.BuildConfig
 import ru.sarawan.android.MobileNavigationDirections
 import ru.sarawan.android.R
 import ru.sarawan.android.activity.contracts.BasketSaver
 import ru.sarawan.android.activity.contracts.FabChanger
 import ru.sarawan.android.databinding.ActivityMainBinding
 import ru.sarawan.android.model.data.AppState
-import ru.sarawan.android.model.data.Product
 import ru.sarawan.android.model.data.ProductsItem
 import ru.sarawan.android.utils.exstentions.localstore.UNREGISTERED
-import ru.sarawan.android.utils.exstentions.localstore.token
 import ru.sarawan.android.utils.exstentions.localstore.userId
 import javax.inject.Inject
 import kotlin.system.exitProcess
@@ -60,6 +61,9 @@ class MainActivity : AppCompatActivity(), FabChanger, BasketSaver {
         initFAB()
         viewModel.getStateLiveData().observe(this) { appState: AppState<*> -> updateFab(appState) }
         viewModel.initNetwork()
+        MapKitFactory.setApiKey(BuildConfig.MAP_API_KEY)
+        MapKitFactory.initialize(this)
+        SearchFactory.initialize(this)
     }
 
 
@@ -172,6 +176,7 @@ class MainActivity : AppCompatActivity(), FabChanger, BasketSaver {
         isBackShown = true
         lastTimeBackPressed = System.currentTimeMillis()
     }
+
     private fun setDefaultSplashScreen() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             setSplashScreenHideAnimation()
@@ -220,6 +225,7 @@ class MainActivity : AppCompatActivity(), FabChanger, BasketSaver {
             }
         )
     }
+
     override fun putPrice(price: Float) = totalPrice.onNext(price)
 
     override fun changePrice(price: Float) = totalPrice.onNext((totalPrice.value ?: 0f) + price)
