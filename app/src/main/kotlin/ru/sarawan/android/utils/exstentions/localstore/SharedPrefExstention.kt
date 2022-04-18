@@ -6,14 +6,14 @@ import javax.inject.Inject
 class SharedPrefStore @Inject constructor(
     private val sharedPreferences: SharedPreferences): LocalStore {
     override var token : String?
-        get() = sharedPreferences.getString("token", "4c2cb1e36b9e50cbd742a9e57a89d8e24c3f8eeb")
+        get() = sharedPreferences.getString("token", "")
         set(value) {
             sharedPreferences.edit()
                 .putString("token", value)
                 .apply()
         }
     override var userId: Long?
-        get() = sharedPreferences.getLong("userId", 12)
+        get() = sharedPreferences.getLong("userId", UNREGISTERED)
         set(value) {
             if (value != null) {
                 sharedPreferences.edit()
@@ -27,7 +27,7 @@ class SharedPrefStore @Inject constructor(
 }
 
 var SharedPreferences.token: String?
-    get() = this.getString("token", "4c2cb1e36b9e50cbd742a9e57a89d8e24c3f8eeb")
+    get() = this.getString("token", "")
     set(value) {
         this.edit()
             .putString("token", value)
@@ -35,7 +35,7 @@ var SharedPreferences.token: String?
     }
 
 var SharedPreferences.userId: Long?
-    get() = this.getLong("userId", 12)
+    get() = this.getLong("userId", UNREGISTERED)
     set(value) {
         if (value != null) {
             this.edit()
