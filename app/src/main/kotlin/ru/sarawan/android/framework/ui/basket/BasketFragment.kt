@@ -60,7 +60,7 @@ class BasketFragment : Fragment() {
         }
 
         override fun openOrderCard() {
-            if (sharedPreferences.token != null) {
+            if (!sharedPreferences.token.isNullOrEmpty()) {
                 val action = BasketFragmentDirections.actionBasketFragmentToOrderFragment()
                 findNavController().navigate(action)
             } else {
@@ -189,6 +189,7 @@ class BasketFragment : Fragment() {
         actionBasketTextView.setOnClickListener {
             val action = BasketFragmentDirections.actionBasketFragmentToMainFragment()
             findNavController().navigate(action)
+
         }
     }
 
