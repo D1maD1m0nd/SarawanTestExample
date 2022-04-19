@@ -7,7 +7,7 @@ import ru.sarawan.android.R
 import ru.sarawan.android.databinding.BasketFooterItemBinding
 import ru.sarawan.android.databinding.BasketHeaderItemBinding
 import ru.sarawan.android.databinding.BasketItemBinding
-import ru.sarawan.android.model.data.ProductsItem
+import ru.sarawan.android.model.data.basket.ProductsItem
 import ru.sarawan.android.model.data.delegatesModel.BasketFooter
 import ru.sarawan.android.model.data.delegatesModel.BasketHeader
 import ru.sarawan.android.model.data.delegatesModel.BasketListItem

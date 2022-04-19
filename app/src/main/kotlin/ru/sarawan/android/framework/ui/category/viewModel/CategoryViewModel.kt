@@ -2,7 +2,11 @@ package ru.sarawan.android.framework.ui.category.viewModel
 
 import ru.sarawan.android.framework.ui.base.mainCatalog.BaseMainCatalogViewModel
 import ru.sarawan.android.framework.ui.category.CategoryFragment
-import ru.sarawan.android.model.data.*
+import ru.sarawan.android.model.data.AppState
+import ru.sarawan.android.model.data.CardScreenDataModel
+import ru.sarawan.android.model.data.MainScreenDataModel
+import ru.sarawan.android.model.data.product.Products
+import ru.sarawan.android.model.data.toMainScreenDataModel
 import ru.sarawan.android.model.interactor.BasketInteractor
 import ru.sarawan.android.model.interactor.ProductInteractor
 import ru.sarawan.android.rx.ISchedulerProvider

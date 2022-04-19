@@ -6,10 +6,7 @@ import android.telecom.Call
 import android.telecom.CallScreeningService
 import android.util.Log
 import androidx.annotation.RequiresApi
-import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.subjects.BehaviorSubject
-import ru.sarawan.android.service.contacts.ReceiveMessage
 
 @RequiresApi(Build.VERSION_CODES.N)
 class IncomingCallScreenService : CallScreeningService() {
@@ -26,8 +23,9 @@ class IncomingCallScreenService : CallScreeningService() {
             }
         }
     }
+
     companion object {
-      const val PHONE_NUMBER = "phoneNumber"
-      const val INTENT_INCOMING_CALL_ACTION = "incoming_call_action"
+        const val PHONE_NUMBER = "phoneNumber"
+        const val INTENT_INCOMING_CALL_ACTION = "incoming_call_action"
     }
 }

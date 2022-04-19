@@ -2,7 +2,11 @@ package ru.sarawan.android.model.datasource.db
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import ru.sarawan.android.model.data.*
+import ru.sarawan.android.model.data.basket.BasketProduct
+import ru.sarawan.android.model.data.basket.ProductsItem
+import ru.sarawan.android.model.data.product.Image
+import ru.sarawan.android.model.data.product.Product
+import ru.sarawan.android.model.data.product.StorePrice
 import ru.sarawan.android.model.datasource.db.RoomDataModel.Companion.TABLE_NAME
 
 @Entity(tableName = TABLE_NAME)

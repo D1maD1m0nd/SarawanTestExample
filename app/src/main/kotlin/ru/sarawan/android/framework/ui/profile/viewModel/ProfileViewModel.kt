@@ -1,15 +1,14 @@
 package ru.sarawan.android.framework.ui.profile.viewModel
 
 import ru.sarawan.android.framework.ui.base.BaseViewModel
-import ru.sarawan.android.model.data.address.sarawan.AddressItem
 import ru.sarawan.android.model.data.AppState
-import ru.sarawan.android.model.data.OrderStatus
 import ru.sarawan.android.model.data.UserDataModel
+import ru.sarawan.android.model.data.address.sarawan.AddressItem
+import ru.sarawan.android.model.data.order.OrderStatus
 import ru.sarawan.android.model.interactor.OrderInteractor
 import ru.sarawan.android.model.interactor.UserInteractor
 import ru.sarawan.android.rx.ISchedulerProvider
 import ru.sarawan.android.utils.constants.TypeCase
-
 import javax.inject.Inject
 
 class ProfileViewModel @Inject constructor(

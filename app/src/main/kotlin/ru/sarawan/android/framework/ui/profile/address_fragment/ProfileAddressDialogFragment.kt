@@ -1,18 +1,18 @@
 package ru.sarawan.android.framework.ui.profile.address_fragment
 
 import android.annotation.SuppressLint
-import android.content.DialogInterface
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.MotionEvent
+import android.view.View
 import android.view.View.OnTouchListener
+import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.AdapterView.OnItemClickListener
 import android.widget.Toast
 import androidx.core.content.getSystemService
-import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs

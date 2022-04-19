@@ -9,8 +9,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import ru.sarawan.android.R
 import ru.sarawan.android.databinding.StoreItemBinding
-import ru.sarawan.android.model.data.Product
-import ru.sarawan.android.model.data.StorePrice
+import ru.sarawan.android.model.data.product.Product
+import ru.sarawan.android.model.data.product.StorePrice
 import ru.sarawan.android.utils.constants.TypeCardEnum
 
 

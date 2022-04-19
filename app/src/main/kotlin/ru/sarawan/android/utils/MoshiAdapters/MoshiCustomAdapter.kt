@@ -2,7 +2,7 @@ package ru.sarawan.android.utils.MoshiAdapters
 
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
-import ru.sarawan.android.model.data.ProductInformation
+import ru.sarawan.android.model.data.basket.ProductInformation
 import java.lang.reflect.Type
 import javax.inject.Inject
 

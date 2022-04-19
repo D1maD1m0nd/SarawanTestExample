@@ -89,7 +89,7 @@ class ProfileCodeDialogFragment : DialogFragment() {
             when {
                 roleManager.isRoleHeld(RoleManager.ROLE_CALL_SCREENING) ->
                     Log.e("AppLog", "got role")
-                roleManager.isRoleAvailable(RoleManager.ROLE_CALL_SCREENING) ->{
+                roleManager.isRoleAvailable(RoleManager.ROLE_CALL_SCREENING) -> {
                     Log.e("AppLog", "cannot hold role")
                     requireActivity().startActivityForResult(
                         roleManager.createRequestRoleIntent(

@@ -24,8 +24,8 @@ import ru.sarawan.android.framework.ui.product_card.adapter.SimilarAdapter
 import ru.sarawan.android.framework.ui.product_card.adapter.StoreAdapter
 import ru.sarawan.android.framework.ui.product_card.viewModel.ProductCardViewModel
 import ru.sarawan.android.model.data.AppState
-import ru.sarawan.android.model.data.Product
-import ru.sarawan.android.model.data.StorePrice
+import ru.sarawan.android.model.data.product.Product
+import ru.sarawan.android.model.data.product.StorePrice
 import ru.sarawan.android.utils.constants.TypeCardEnum
 import ru.sarawan.android.utils.exstentions.getNavigationResult
 import ru.sarawan.android.utils.exstentions.localstore.token
@@ -210,7 +210,11 @@ class ProductCardFragment : Fragment() {
                 }
             }
             is AppState.Error -> {
-                Toast.makeText(context, "Произошла ошибка", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    context,
+                    "Произошла ошибка" + appState.error?.message,
+                    Toast.LENGTH_SHORT
+                ).show()
                 binding.progressBar.visibility = View.GONE
             }
             is AppState.Loading -> {

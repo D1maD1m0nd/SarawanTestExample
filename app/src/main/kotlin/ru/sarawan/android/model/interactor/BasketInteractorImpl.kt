@@ -3,7 +3,7 @@ package ru.sarawan.android.model.interactor
 import io.reactivex.rxjava3.core.Single
 import ru.sarawan.android.di.annotations.Local
 import ru.sarawan.android.model.data.Basket
-import ru.sarawan.android.model.data.ProductsUpdate
+import ru.sarawan.android.model.data.product.ProductsUpdate
 import ru.sarawan.android.model.datasource.BasketDataSource
 import javax.inject.Inject
 

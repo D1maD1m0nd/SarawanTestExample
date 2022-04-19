@@ -2,9 +2,9 @@ package ru.sarawan.android.model.interactor
 
 import io.reactivex.rxjava3.core.Single
 import ru.sarawan.android.model.data.CategoryDataModel
-import ru.sarawan.android.model.data.Product
-import ru.sarawan.android.model.data.Products
-import ru.sarawan.android.model.data.Response
+import ru.sarawan.android.model.data.product.Product
+import ru.sarawan.android.model.data.product.Products
+import ru.sarawan.android.model.data.product.Response
 
 interface ProductInteractor {
     fun getProducts(products: Products): Single<Response>

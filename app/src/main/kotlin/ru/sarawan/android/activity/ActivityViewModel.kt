@@ -2,9 +2,9 @@ package ru.sarawan.android.activity
 
 import ru.sarawan.android.framework.ui.base.BaseViewModel
 import ru.sarawan.android.model.data.AppState
-import ru.sarawan.android.model.data.Product
-import ru.sarawan.android.model.data.ProductsItem
-import ru.sarawan.android.model.data.ProductsUpdate
+import ru.sarawan.android.model.data.basket.ProductsItem
+import ru.sarawan.android.model.data.product.Product
+import ru.sarawan.android.model.data.product.ProductsUpdate
 import ru.sarawan.android.model.interactor.BasketInteractor
 import ru.sarawan.android.rx.ISchedulerProvider
 import ru.sarawan.android.utils.NetworkStatus

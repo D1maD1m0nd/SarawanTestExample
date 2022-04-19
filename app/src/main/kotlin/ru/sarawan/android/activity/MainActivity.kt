@@ -25,7 +25,7 @@ import ru.sarawan.android.activity.contracts.BasketSaver
 import ru.sarawan.android.activity.contracts.FabChanger
 import ru.sarawan.android.databinding.ActivityMainBinding
 import ru.sarawan.android.model.data.AppState
-import ru.sarawan.android.model.data.ProductsItem
+import ru.sarawan.android.model.data.basket.ProductsItem
 import ru.sarawan.android.utils.exstentions.localstore.UNREGISTERED
 import ru.sarawan.android.utils.exstentions.localstore.userId
 import javax.inject.Inject
@@ -65,7 +65,6 @@ class MainActivity : AppCompatActivity(), FabChanger, BasketSaver {
         viewModel.getStateLiveData().observe(this) { appState: AppState<*> -> updateFab(appState) }
         viewModel.initNetwork()
     }
-
 
 
     private fun updateFab(appState: AppState<*>) {
@@ -231,7 +230,7 @@ class MainActivity : AppCompatActivity(), FabChanger, BasketSaver {
 
     override fun changeState() = viewModel.getBasket()
 
-   override fun saveBasket() = viewModel.saveData(data = data, isLoggedUser = true)
+    override fun saveBasket() = viewModel.saveData(data = data, isLoggedUser = true)
 
     companion object {
         private const val BACK_BUTTON_EXIT_DELAY = 3000

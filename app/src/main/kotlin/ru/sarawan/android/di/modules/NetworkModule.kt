@@ -14,7 +14,6 @@ import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
 import ru.sarawan.android.BuildConfig
 import ru.sarawan.android.di.annotations.ApiYandex
-import ru.sarawan.android.model.data.address.yandexMap.KindType
 import ru.sarawan.android.model.datasource.api.ApiService
 import ru.sarawan.android.model.datasource.api.MapApiService
 import ru.sarawan.android.service.IncomingCallReaderService
@@ -83,6 +82,7 @@ class NetworkModule {
         .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
         .client(httpClient)
         .build()
+
     @Provides
     @Singleton
     fun getApiService(retrofit: Retrofit): ApiService = retrofit.create(ApiService::class.java)

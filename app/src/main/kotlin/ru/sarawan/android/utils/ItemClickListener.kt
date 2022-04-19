@@ -1,6 +1,6 @@
 package ru.sarawan.android.utils
 
-import ru.sarawan.android.model.data.ProductsItem
+import ru.sarawan.android.model.data.basket.ProductsItem
 import ru.sarawan.android.model.data.delegatesModel.BasketListItem
 
 interface ItemClickListener {

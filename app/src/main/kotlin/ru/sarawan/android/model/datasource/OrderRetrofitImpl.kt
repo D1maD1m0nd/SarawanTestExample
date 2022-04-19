@@ -1,10 +1,10 @@
 package ru.sarawan.android.model.datasource
 
 import io.reactivex.rxjava3.core.Single
-import ru.sarawan.android.model.data.address.sarawan.AddressItem
 import ru.sarawan.android.model.data.Order
 import ru.sarawan.android.model.data.OrderApprove
 import ru.sarawan.android.model.data.UserDataModel
+import ru.sarawan.android.model.data.address.sarawan.AddressItem
 import ru.sarawan.android.model.datasource.api.ApiService
 import javax.inject.Inject
 

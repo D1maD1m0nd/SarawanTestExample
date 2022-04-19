@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import ru.sarawan.android.R
 import ru.sarawan.android.databinding.OrderItemBinding
 import ru.sarawan.android.model.data.OrderApprove
-import ru.sarawan.android.model.data.OrderStatus
+import ru.sarawan.android.model.data.order.OrderStatus
 
 class OrdersAdapter(val itemClickListener: ItemClickListener) :
     RecyclerView.Adapter<OrdersAdapter.OrderViewHolder>() {

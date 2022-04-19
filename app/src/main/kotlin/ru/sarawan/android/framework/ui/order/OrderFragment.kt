@@ -14,10 +14,10 @@ import retrofit2.HttpException
 import ru.sarawan.android.R
 import ru.sarawan.android.databinding.FragmentOrderBinding
 import ru.sarawan.android.framework.ui.order.viewModel.OrderViewModel
-import ru.sarawan.android.model.data.address.sarawan.AddressItem
 import ru.sarawan.android.model.data.AppState
 import ru.sarawan.android.model.data.Order
 import ru.sarawan.android.model.data.OrderApprove
+import ru.sarawan.android.model.data.address.sarawan.AddressItem
 import ru.sarawan.android.utils.exstentions.toFormatString
 import javax.inject.Inject
 

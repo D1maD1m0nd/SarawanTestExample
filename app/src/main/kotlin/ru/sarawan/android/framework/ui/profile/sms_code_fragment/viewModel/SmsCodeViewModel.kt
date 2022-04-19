@@ -25,16 +25,20 @@ class SmsCodeViewModel @Inject constructor(
         )
     }
 
-    fun getPhoneNumber(){
+    fun getPhoneNumber() {
         compositeDisposable.addAll(
             incomingCallReaderService.getMessage()
                 .subscribeOn(schedulerProvider.io)
                 .observeOn(schedulerProvider.ui)
                 .subscribe(
-                    {   Log.e("phone", it)
-                        stateLiveData.postValue(AppState.Success(it)) },
-                    {  Log.e("phone", it.message.toString())
-                        stateLiveData.postValue(AppState.Error(it))}
+                    {
+                        Log.e("phone", it)
+                        stateLiveData.postValue(AppState.Success(it))
+                    },
+                    {
+                        Log.e("phone", it.message.toString())
+                        stateLiveData.postValue(AppState.Error(it))
+                    }
                 )
         )
     }

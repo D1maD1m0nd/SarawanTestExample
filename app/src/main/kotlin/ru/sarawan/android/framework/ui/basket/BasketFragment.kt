@@ -18,10 +18,15 @@ import ru.sarawan.android.R
 import ru.sarawan.android.databinding.FragmentBasketBinding
 import ru.sarawan.android.framework.ui.basket.adapter.BasketAdapter
 import ru.sarawan.android.framework.ui.basket.viewModel.BasketViewModel
-import ru.sarawan.android.model.data.*
+import ru.sarawan.android.model.data.AppState
+import ru.sarawan.android.model.data.Basket
+import ru.sarawan.android.model.data.Order
+import ru.sarawan.android.model.data.basket.ProductsItem
+import ru.sarawan.android.model.data.basket.toProduct
 import ru.sarawan.android.model.data.delegatesModel.BasketFooter
 import ru.sarawan.android.model.data.delegatesModel.BasketHeader
 import ru.sarawan.android.model.data.delegatesModel.BasketListItem
+import ru.sarawan.android.model.data.product.ProductsUpdate
 import ru.sarawan.android.utils.ItemClickListener
 import ru.sarawan.android.utils.exstentions.localstore.UNREGISTERED
 import ru.sarawan.android.utils.exstentions.localstore.token

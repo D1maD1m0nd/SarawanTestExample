@@ -21,7 +21,7 @@ import ru.sarawan.android.framework.ui.base.mainCatalog.BaseMainCatalogAdapter
 import ru.sarawan.android.framework.ui.base.mainCatalog.CardType
 import ru.sarawan.android.framework.ui.main.viewHolder.*
 import ru.sarawan.android.model.data.CardScreenDataModel
-import ru.sarawan.android.model.data.Product
+import ru.sarawan.android.model.data.product.Product
 import ru.sarawan.android.utils.StringProvider
 
 class MainRecyclerAdapter(

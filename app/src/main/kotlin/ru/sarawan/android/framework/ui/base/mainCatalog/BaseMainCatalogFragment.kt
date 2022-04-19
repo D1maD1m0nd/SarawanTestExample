@@ -38,8 +38,8 @@ import ru.sarawan.android.framework.ui.main.viewHolder.ButtonMoreClickListener
 import ru.sarawan.android.framework.ui.main.viewHolder.CardItemViewHolder
 import ru.sarawan.android.framework.ui.product_card.ProductCardFragment
 import ru.sarawan.android.model.data.CardScreenDataModel
-import ru.sarawan.android.model.data.Filter
-import ru.sarawan.android.model.data.Product
+import ru.sarawan.android.model.data.product.Filter
+import ru.sarawan.android.model.data.product.Product
 import ru.sarawan.android.model.data.toProduct
 import ru.sarawan.android.rx.ISchedulerProvider
 import ru.sarawan.android.utils.NetworkStatus

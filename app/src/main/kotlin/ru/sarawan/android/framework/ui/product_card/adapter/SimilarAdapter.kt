@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import ru.sarawan.android.R
 import ru.sarawan.android.databinding.ListItemCardBinding
-import ru.sarawan.android.model.data.Product
+import ru.sarawan.android.model.data.product.Product
 import ru.sarawan.android.utils.constants.TypeCardEnum
 
 class SimilarAdapter(val itemClickListener: ItemClickListener) :

@@ -1,4 +1,4 @@
-package ru.sarawan.android.model.data
+package ru.sarawan.android.model.data.product
 
 import ru.sarawan.android.utils.constants.SortBy
 

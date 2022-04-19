@@ -2,6 +2,9 @@ package ru.sarawan.android.model.data
 
 import androidx.annotation.ColorInt
 import ru.sarawan.android.framework.ui.base.mainCatalog.CardType
+import ru.sarawan.android.model.data.product.Image
+import ru.sarawan.android.model.data.product.Product
+import ru.sarawan.android.model.data.product.StorePrice
 
 data class CardScreenDataModel(
     val id: Long? = null,

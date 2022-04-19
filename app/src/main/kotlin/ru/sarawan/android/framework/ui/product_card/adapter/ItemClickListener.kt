@@ -1,6 +1,6 @@
 package ru.sarawan.android.framework.ui.product_card.adapter
 
-import ru.sarawan.android.model.data.Product
+import ru.sarawan.android.model.data.product.Product
 import ru.sarawan.android.utils.constants.TypeCardEnum
 
 interface ItemClickListener {

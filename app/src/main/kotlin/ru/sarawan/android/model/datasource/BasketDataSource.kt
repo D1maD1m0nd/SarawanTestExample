@@ -2,7 +2,8 @@ package ru.sarawan.android.model.datasource
 
 import io.reactivex.rxjava3.core.Single
 import ru.sarawan.android.model.data.Basket
-import ru.sarawan.android.model.data.ProductsUpdate
+import ru.sarawan.android.model.data.product.ProductsResponse
+import ru.sarawan.android.model.data.product.ProductsUpdate
 
 interface BasketDataSource {
     fun getBasket(): Single<Basket>

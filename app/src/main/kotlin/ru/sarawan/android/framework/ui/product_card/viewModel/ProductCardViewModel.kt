@@ -2,7 +2,11 @@ package ru.sarawan.android.framework.ui.product_card.viewModel
 
 import io.reactivex.rxjava3.core.Single
 import ru.sarawan.android.framework.ui.base.BaseViewModel
-import ru.sarawan.android.model.data.*
+import ru.sarawan.android.model.data.AppState
+import ru.sarawan.android.model.data.Basket
+import ru.sarawan.android.model.data.product.Product
+import ru.sarawan.android.model.data.product.Products
+import ru.sarawan.android.model.data.product.ProductsUpdate
 import ru.sarawan.android.model.interactor.BasketInteractor
 import ru.sarawan.android.model.interactor.ProductInteractor
 import ru.sarawan.android.rx.ISchedulerProvider
@@ -79,7 +83,7 @@ class ProductCardViewModel @Inject constructor(
         if (isNewItem) compositeDisposable.add(
             basketInteractor.putProduct(isLoggedUser, ProductsUpdate(data))
                 .subscribeOn(schedulerProvider.io)
-                .observeOn(schedulerProvider.io)
+                .observeOn(schedulerProvider.ui)
                 .subscribe(
                     { basketID = it.basketId },
                     { stateLiveData.postValue(AppState.Error(it)) }
@@ -89,7 +93,7 @@ class ProductCardViewModel @Inject constructor(
             compositeDisposable.add(
                 basketInteractor.updateProduct(isLoggedUser, basket, ProductsUpdate(data))
                     .subscribeOn(schedulerProvider.io)
-                    .observeOn(schedulerProvider.io)
+                    .observeOn(schedulerProvider.ui)
                     .subscribe({}, { stateLiveData.postValue(AppState.Error(it)) })
             )
         }

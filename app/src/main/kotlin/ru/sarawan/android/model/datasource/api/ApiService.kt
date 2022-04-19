@@ -4,6 +4,10 @@ import io.reactivex.rxjava3.core.Single
 import retrofit2.http.*
 import ru.sarawan.android.model.data.*
 import ru.sarawan.android.model.data.address.sarawan.AddressItem
+import ru.sarawan.android.model.data.product.Product
+import ru.sarawan.android.model.data.product.ProductsResponse
+import ru.sarawan.android.model.data.product.ProductsUpdate
+import ru.sarawan.android.model.data.product.Response
 
 interface ApiService {
 

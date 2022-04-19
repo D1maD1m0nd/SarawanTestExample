@@ -121,7 +121,7 @@
         <argument
             android:name="filterList"
             android:defaultValue="@null"
-            app:argType="ru.sarawan.android.model.data.Filter[]"
+            app:argType="ru.sarawan.android.model.data.product.Filter[]"
             app:nullable="true" />
     </fragment>
 

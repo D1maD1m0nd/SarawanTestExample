@@ -17,7 +17,9 @@ class IncomingCallReaderService : BroadcastReceiver(), ReceiveMessage {
     private val statusSubject: BehaviorSubject<String> = BehaviorSubject.create()
 
     override fun onReceive(context: Context?, intent: Intent?) {
-        if (intent?.getStringExtra(TelephonyManager.EXTRA_STATE).equals(TelephonyManager.EXTRA_STATE_RINGING)){
+        if (intent?.getStringExtra(TelephonyManager.EXTRA_STATE)
+                .equals(TelephonyManager.EXTRA_STATE_RINGING)
+        ) {
             Log.i("SERVICE", intent?.dataString.toString())
         }
         val telephonyManager: TelephonyManager = context
@@ -27,7 +29,7 @@ class IncomingCallReaderService : BroadcastReceiver(), ReceiveMessage {
             telephonyManager.listen(
                 object : PhoneStateListener() {
                     override fun onCallStateChanged(state: Int, phoneNumber: String?) {
-                        if (!phoneNumber.isNullOrEmpty()){
+                        if (!phoneNumber.isNullOrEmpty()) {
                             this@IncomingCallReaderService.phoneNumber = phoneNumber
                             statusSubject.onNext(phoneNumber)
                         }
@@ -37,6 +39,6 @@ class IncomingCallReaderService : BroadcastReceiver(), ReceiveMessage {
         }
     }
 
-    override fun getMessage(): Observable<String>  = statusSubject
+    override fun getMessage(): Observable<String> = statusSubject
     override fun firstMessage(): Single<String> = statusSubject.first("")
 }

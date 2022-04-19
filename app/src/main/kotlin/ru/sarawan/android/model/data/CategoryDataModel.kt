@@ -2,6 +2,7 @@ package ru.sarawan.android.model.data
 
 import com.squareup.moshi.Json
 import ru.sarawan.android.framework.ui.base.mainCatalog.CardType
+import ru.sarawan.android.model.data.product.Filter
 
 data class CategoryDataModel(
     @field:Json(name = "id") val id: Long,

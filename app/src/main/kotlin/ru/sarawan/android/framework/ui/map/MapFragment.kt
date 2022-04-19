@@ -36,13 +36,11 @@ import com.yandex.runtime.network.RemoteError
 import dagger.Lazy
 import dagger.android.support.AndroidSupportInjection
 import retrofit2.HttpException
-import ru.sarawan.android.BuildConfig
 import ru.sarawan.android.R
 import ru.sarawan.android.databinding.FragmentMapBinding
 import ru.sarawan.android.framework.ui.map.viewModel.MapViewModel
-import ru.sarawan.android.framework.ui.product_card.ProductCardFragment
-import ru.sarawan.android.model.data.address.sarawan.AddressItem
 import ru.sarawan.android.model.data.AppState
+import ru.sarawan.android.model.data.address.sarawan.AddressItem
 import ru.sarawan.android.utils.exstentions.setNavigationResult
 import javax.inject.Inject
 
