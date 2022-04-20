@@ -53,20 +53,22 @@ abstract class BaseMainCatalogViewModel(
                     sortBy = searchType
                 ),
                 isLoggedUser
-            )
+            ).map { productsList ->
+                val result: MutableList<CardScreenDataModel> = mutableListOf()
+                productsList.forEach { product ->
+                    sortShops(product)
+                    if (isValidToShow(product)) result
+                        .add(product.toMainScreenDataModel(stringProvider.getString(sortType.description)))
+                }
+                result
+            }
                 .subscribeOn(schedulerProvider.io)
-                .observeOn(schedulerProvider.io)
-                .doOnSubscribe { stateLiveData.postValue(AppState.Loading) }
+                .observeOn(schedulerProvider.ui)
+                .doOnSubscribe { stateLiveData.value = AppState.Loading }
                 .subscribe(
-                    { productsList ->
-                        val result: MutableList<CardScreenDataModel> = mutableListOf()
-                        productsList.forEach { product ->
-                            sortShops(product)
-                            if (isValidToShow(product)) result
-                                .add(product.toMainScreenDataModel(stringProvider.getString(sortType.description)))
-                        }
+                    {
                         stateLiveData.value =
-                            AppState.Success(MainScreenDataModel(result, isLastPage, filters))
+                            AppState.Success(MainScreenDataModel(it, isLastPage, filters))
 
                     },
                     { stateLiveData.value = AppState.Error(it) }
