@@ -5,9 +5,9 @@ import ru.sarawan.android.model.data.CategoryDataModel
 import ru.sarawan.android.model.data.product.Product
 import ru.sarawan.android.model.data.product.Products
 import ru.sarawan.android.model.data.product.Response
-import ru.sarawan.android.model.datasource.CategoriesDataSource
-import ru.sarawan.android.model.datasource.ProductDataSource
-import ru.sarawan.android.model.datasource.ProductsDataSource
+import ru.sarawan.android.model.datasource.category.CategoriesDataSource
+import ru.sarawan.android.model.datasource.product.ProductDataSource
+import ru.sarawan.android.model.datasource.product.ProductsDataSource
 import javax.inject.Inject
 
 class ProductInteractorImpl @Inject constructor(

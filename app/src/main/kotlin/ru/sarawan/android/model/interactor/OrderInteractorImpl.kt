@@ -6,7 +6,7 @@ import ru.sarawan.android.model.data.OrderApprove
 import ru.sarawan.android.model.data.UserDataModel
 import ru.sarawan.android.model.data.address.sarawan.AddressItem
 import ru.sarawan.android.model.data.basket.ProductsItem
-import ru.sarawan.android.model.datasource.OrderDataSource
+import ru.sarawan.android.model.datasource.order.OrderDataSource
 import javax.inject.Inject
 
 class OrderInteractorImpl @Inject constructor(

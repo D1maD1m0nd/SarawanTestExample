@@ -1,10 +1,11 @@
-package ru.sarawan.android.model.datasource
+package ru.sarawan.android.model.datasource.basket
 
 import io.reactivex.rxjava3.core.Single
 import ru.sarawan.android.model.data.Basket
 import ru.sarawan.android.model.data.product.Products
 import ru.sarawan.android.model.data.product.ProductsUpdate
 import ru.sarawan.android.model.data.product.Response
+import ru.sarawan.android.model.datasource.product.ProductsDataSource
 import ru.sarawan.android.model.datasource.db.SarawanDatabase
 import ru.sarawan.android.model.datasource.db.toProduct
 import ru.sarawan.android.model.datasource.db.toProductsItem

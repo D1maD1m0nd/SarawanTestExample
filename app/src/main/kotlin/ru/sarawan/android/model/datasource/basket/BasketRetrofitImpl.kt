@@ -1,8 +1,7 @@
-package ru.sarawan.android.model.datasource
+package ru.sarawan.android.model.datasource.basket
 
 import io.reactivex.rxjava3.core.Single
 import ru.sarawan.android.model.data.Basket
-import ru.sarawan.android.model.data.product.ProductsResponse
 import ru.sarawan.android.model.data.product.ProductsUpdate
 import ru.sarawan.android.model.datasource.api.ApiService
 import javax.inject.Inject
