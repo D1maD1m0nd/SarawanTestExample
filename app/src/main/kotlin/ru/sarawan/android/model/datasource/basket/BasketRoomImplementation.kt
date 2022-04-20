@@ -1,7 +1,7 @@
 package ru.sarawan.android.model.datasource.basket
 
 import io.reactivex.rxjava3.core.Single
-import ru.sarawan.android.model.data.Basket
+import ru.sarawan.android.model.data.basket.Basket
 import ru.sarawan.android.model.data.product.Products
 import ru.sarawan.android.model.data.product.ProductsUpdate
 import ru.sarawan.android.model.data.product.Response
@@ -14,7 +14,7 @@ import javax.inject.Inject
 
 class BasketRoomImplementation @Inject constructor(
     private val db: SarawanDatabase
-) : BasketDataSource, ProductsDataSource {
+) : BasketLocalDataSource, ProductsDataSource {
 
     override fun getBasket(): Single<Basket> = Single.fromCallable {
         val productsItems = db.basketDao

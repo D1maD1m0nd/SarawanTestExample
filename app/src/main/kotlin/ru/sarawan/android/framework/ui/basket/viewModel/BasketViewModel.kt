@@ -3,14 +3,12 @@ package ru.sarawan.android.framework.ui.basket.viewModel
 import io.reactivex.rxjava3.observers.DisposableSingleObserver
 import ru.sarawan.android.framework.ui.base.BaseViewModel
 import ru.sarawan.android.model.data.AppState
-import ru.sarawan.android.model.data.Basket
-import ru.sarawan.android.model.data.basket.ProductInformation
+import ru.sarawan.android.model.data.basket.Basket
 import ru.sarawan.android.model.data.basket.ProductsItem
 import ru.sarawan.android.model.data.product.ProductsUpdate
 import ru.sarawan.android.model.interactor.BasketInteractor
 import ru.sarawan.android.model.interactor.OrderInteractor
 import ru.sarawan.android.rx.ISchedulerProvider
-import ru.sarawan.android.utils.MoshiAdapters.MoshiCustomAdapter
 import javax.inject.Inject
 
 class BasketViewModel @Inject constructor(

@@ -4,6 +4,7 @@ import io.reactivex.rxjava3.core.Single
 import ru.sarawan.android.framework.ui.base.mainCatalog.BaseMainCatalogViewModel
 import ru.sarawan.android.framework.ui.base.mainCatalog.CardType
 import ru.sarawan.android.model.data.*
+import ru.sarawan.android.model.data.basket.Basket
 import ru.sarawan.android.model.data.product.Products
 import ru.sarawan.android.model.interactor.BasketInteractor
 import ru.sarawan.android.model.interactor.ProductInteractor

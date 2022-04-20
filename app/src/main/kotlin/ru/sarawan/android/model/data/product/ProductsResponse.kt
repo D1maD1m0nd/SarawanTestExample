@@ -1,6 +1,7 @@
 package ru.sarawan.android.model.data.product
 
 import com.squareup.moshi.Json
+import ru.sarawan.android.model.data.basket.ProductDto
 
 data class ProductsResponse(
 
@@ -19,3 +20,8 @@ data class ProductsItem(
     @Json(name = "quantity")
     val quantity: Int? = null
 )
+
+
+fun ProductsResponse.toProductDto(): ProductDto {
+    return ProductDto(id = this.id)
+}

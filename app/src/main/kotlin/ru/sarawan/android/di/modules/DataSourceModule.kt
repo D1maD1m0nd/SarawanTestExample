@@ -4,6 +4,7 @@ import dagger.Binds
 import dagger.Module
 import ru.sarawan.android.di.annotations.Local
 import ru.sarawan.android.model.datasource.basket.BasketDataSource
+import ru.sarawan.android.model.datasource.basket.BasketLocalDataSource
 import ru.sarawan.android.model.datasource.basket.BasketRetrofitImpl
 import ru.sarawan.android.model.datasource.basket.BasketRoomImplementation
 import ru.sarawan.android.model.datasource.category.CategoriesDataSource
@@ -27,8 +28,7 @@ interface DataSourceModule {
     fun bindBasketRetrofitImpl_to_BasketDataSource(basketRetrofitImpl: BasketRetrofitImpl): BasketDataSource
 
     @Binds
-    @Local
-    fun bindBasketRoomImplementation_to_BasketDataSource(basketRoomImplementation: BasketRoomImplementation): BasketDataSource
+    fun bindBasketRoomImplementation_to_BasketDataSource(basketRoomImplementation: BasketRoomImplementation): BasketLocalDataSource
 
     @Binds
     fun bindCategoriesImpl_to_CategoriesRetrofitSource(categoriesRetrofitImpl: CategoriesRetrofitImpl): CategoriesDataSource

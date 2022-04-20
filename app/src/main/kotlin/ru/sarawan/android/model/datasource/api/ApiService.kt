@@ -4,6 +4,7 @@ import io.reactivex.rxjava3.core.Single
 import retrofit2.http.*
 import ru.sarawan.android.model.data.*
 import ru.sarawan.android.model.data.address.sarawan.AddressItem
+import ru.sarawan.android.model.data.basket.Basket
 import ru.sarawan.android.model.data.product.Product
 import ru.sarawan.android.model.data.product.ProductsResponse
 import ru.sarawan.android.model.data.product.ProductsUpdate
@@ -45,7 +46,7 @@ interface ApiService {
      * Добавление продукта в корзину
      */
     @POST("api/basket/")
-    fun putBasketProduct(@Body productItem: ProductsUpdate): Single<Basket>
+    fun putBasketProduct(@Body productItem: ProductsUpdate): Single<ProductsResponse>
 
     /**
      * Обновление продукта
@@ -54,7 +55,7 @@ interface ApiService {
     fun updateBasketProduct(
         @Path("id") id: Int,
         @Body productItem: ProductsUpdate
-    ): Single<Basket>
+    ): Single<ProductsResponse>
 
     /**
      * Удаление продукта из корзины

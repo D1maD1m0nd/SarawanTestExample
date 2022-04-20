@@ -1,6 +1,7 @@
 package ru.sarawan.android.model.data
 
 import com.squareup.moshi.Json
+import ru.sarawan.android.model.data.basket.Basket
 
 data class UserDataModel(
 

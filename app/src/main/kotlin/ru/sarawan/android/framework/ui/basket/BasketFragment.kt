@@ -19,8 +19,9 @@ import ru.sarawan.android.databinding.FragmentBasketBinding
 import ru.sarawan.android.framework.ui.basket.adapter.BasketAdapter
 import ru.sarawan.android.framework.ui.basket.viewModel.BasketViewModel
 import ru.sarawan.android.model.data.AppState
-import ru.sarawan.android.model.data.Basket
+import ru.sarawan.android.model.data.basket.Basket
 import ru.sarawan.android.model.data.Order
+import ru.sarawan.android.model.data.basket.ProductDto
 import ru.sarawan.android.model.data.basket.ProductsItem
 import ru.sarawan.android.model.data.basket.toProduct
 import ru.sarawan.android.model.data.delegatesModel.BasketFooter
@@ -142,18 +143,22 @@ class BasketFragment : Fragment() {
         when (appState) {
             is AppState.Success<*> -> {
                 when (appState.data) {
-                    is Basket -> viewModel.calculateOrder()
+                    is Basket, is ProductDto -> viewModel.calculateOrder()
                     is List<*> -> {
-                        when {
-                            appState.data.isEmpty() -> Toast.makeText(
+                        val item = appState.data
+                        if (item.isEmpty()) {
+                            Toast.makeText(
                                 context,
                                 getString(R.string.server_data_error),
                                 Toast.LENGTH_SHORT
                             ).show()
-                            appState.data.first() is ProductsItem -> {
+                            return
+                        }
+                        when (item.first()) {
+                            is ProductsItem -> {
                                 @Suppress("UNCHECKED_CAST")
                                 appState.data as List<ProductsItem>
-                                if (list.size < LIMIT) initDataRcView(appState.data)
+                                initDataRcView(appState.data)
                                 progressBar.visibility = View.GONE
                             }
                             else -> throw RuntimeException("Wrong List type ${appState.data}")

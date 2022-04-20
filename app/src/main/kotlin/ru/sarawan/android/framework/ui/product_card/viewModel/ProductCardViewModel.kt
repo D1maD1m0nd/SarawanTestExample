@@ -3,7 +3,7 @@ package ru.sarawan.android.framework.ui.product_card.viewModel
 import io.reactivex.rxjava3.core.Single
 import ru.sarawan.android.framework.ui.base.BaseViewModel
 import ru.sarawan.android.model.data.AppState
-import ru.sarawan.android.model.data.Basket
+import ru.sarawan.android.model.data.basket.Basket
 import ru.sarawan.android.model.data.product.Product
 import ru.sarawan.android.model.data.product.Products
 import ru.sarawan.android.model.data.product.ProductsUpdate
@@ -85,7 +85,7 @@ class ProductCardViewModel @Inject constructor(
                 .subscribeOn(schedulerProvider.io)
                 .observeOn(schedulerProvider.ui)
                 .subscribe(
-                    { basketID = it.basketId },
+                    { basketID = it.id },
                     { stateLiveData.value = AppState.Error(it) }
                 )
         )

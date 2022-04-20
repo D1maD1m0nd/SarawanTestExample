@@ -4,6 +4,7 @@ import io.reactivex.rxjava3.core.Single
 import retrofit2.HttpException
 import ru.sarawan.android.framework.ui.base.BaseViewModel
 import ru.sarawan.android.model.data.*
+import ru.sarawan.android.model.data.basket.Basket
 import ru.sarawan.android.model.data.product.*
 import ru.sarawan.android.model.interactor.BasketInteractor
 import ru.sarawan.android.model.interactor.ProductInteractor
