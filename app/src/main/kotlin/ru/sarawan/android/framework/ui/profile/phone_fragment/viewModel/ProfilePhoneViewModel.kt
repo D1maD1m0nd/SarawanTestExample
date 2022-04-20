@@ -15,10 +15,10 @@ class ProfilePhoneViewModel @Inject constructor(
         compositeDisposable.addAll(
             userInteractor.sendSMS(user)
                 .subscribeOn(schedulerProvider.io)
-                .observeOn(schedulerProvider.io)
+                .observeOn(schedulerProvider.ui)
                 .subscribe(
-                    { stateLiveData.postValue(AppState.Success(it)) },
-                    { stateLiveData.postValue(AppState.Error(it)) })
+                    { stateLiveData.value = AppState.Success(it) },
+                    { stateLiveData.value = AppState.Error(it) })
         )
     }
 

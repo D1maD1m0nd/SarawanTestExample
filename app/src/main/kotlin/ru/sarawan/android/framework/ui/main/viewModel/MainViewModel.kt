@@ -52,15 +52,15 @@ class MainViewModel @Inject constructor(
                 }
                 data
             }
-                .subscribeOn(schedulerProvider.io)
-                .observeOn(schedulerProvider.io)
+                .subscribeOn(schedulerProvider.computation)
+                .observeOn(schedulerProvider.ui)
                 .subscribe(
                     {
-                        stateLiveData.postValue(
+                        stateLiveData.value =
                             AppState.Success(MainScreenDataModel(it, isLastPage, filters))
-                        )
+
                     },
-                    { stateLiveData.postValue(AppState.Error(it)) }
+                    { stateLiveData.value = AppState.Error(it) }
                 )
         )
     }
@@ -79,23 +79,26 @@ class MainViewModel @Inject constructor(
         )
         compositeDisposable.add(
             loadMoreData(products, isLoggedUser)
+                .map { productsList ->
+                    val result: MutableList<CardScreenDataModel> = mutableListOf()
+                    productsList.forEach { product ->
+                        sortShops(product)
+                        if (isValidToShow(product))
+                            result.add(
+                                product.toMainScreenDataModel(stringProvider.getString(sortType.description))
+                            )
+                    }
+                    result
+                }
                 .subscribeOn(schedulerProvider.io)
-                .observeOn(schedulerProvider.io)
+                .observeOn(schedulerProvider.ui)
                 .subscribe(
-                    { productsList ->
-                        val result: MutableList<CardScreenDataModel> = mutableListOf()
-                        productsList.forEach { product ->
-                            sortShops(product)
-                            if (isValidToShow(product))
-                                result.add(
-                                    product.toMainScreenDataModel(stringProvider.getString(sortType.description))
-                                )
-                        }
-                        stateLiveData.postValue(
-                            AppState.Success(MainScreenDataModel(result, isLastPage, filters))
-                        )
+                    {
+                        stateLiveData.value =
+                            AppState.Success(MainScreenDataModel(it, isLastPage, filters))
+
                     },
-                    { stateLiveData.postValue(AppState.Error(it)) }
+                    { stateLiveData.value = AppState.Error(it) }
                 )
         )
     }

@@ -68,12 +68,12 @@ class ProductCardViewModel @Inject constructor(
                     }
                     data
                 }
-                    .subscribeOn(schedulerProvider.io)
+                    .subscribeOn(schedulerProvider.computation)
                     .observeOn(schedulerProvider.ui)
-                    .doOnSubscribe { stateLiveData.postValue(AppState.Loading) }
+                    .doOnSubscribe { stateLiveData.value = AppState.Loading }
                     .subscribe(
-                        { stateLiveData.postValue(AppState.Success(it)) },
-                        { stateLiveData.postValue(AppState.Error(it)) }
+                        { stateLiveData.value = AppState.Success(it) },
+                        { stateLiveData.value = AppState.Error(it) }
                     )
             )
         }
@@ -86,7 +86,7 @@ class ProductCardViewModel @Inject constructor(
                 .observeOn(schedulerProvider.ui)
                 .subscribe(
                     { basketID = it.basketId },
-                    { stateLiveData.postValue(AppState.Error(it)) }
+                    { stateLiveData.value = AppState.Error(it) }
                 )
         )
         else basketID?.let { basket ->
@@ -94,7 +94,7 @@ class ProductCardViewModel @Inject constructor(
                 basketInteractor.updateProduct(isLoggedUser, basket, ProductsUpdate(data))
                     .subscribeOn(schedulerProvider.io)
                     .observeOn(schedulerProvider.ui)
-                    .subscribe({}, { stateLiveData.postValue(AppState.Error(it)) })
+                    .subscribe({}, { stateLiveData.value = AppState.Error(it) })
             )
         }
         if (basketID == null) stateLiveData.value =

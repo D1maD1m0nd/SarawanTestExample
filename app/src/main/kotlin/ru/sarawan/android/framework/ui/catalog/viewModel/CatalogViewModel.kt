@@ -24,14 +24,13 @@ class CatalogViewModel @Inject constructor(
         compositeDisposable.add(
             productInteractor.getCategories()
                 .subscribeOn(schedulerProvider.io)
-                .observeOn(schedulerProvider.io)
-                .doOnSubscribe { stateLiveData.postValue(AppState.Loading) }
+                .observeOn(schedulerProvider.ui)
+                .doOnSubscribe { stateLiveData.value = AppState.Loading }
                 .subscribe(
                     { categories ->
-//                        filters = categories.flatMap { it.categories }.map { it.toFilter() }
-                        stateLiveData.postValue(AppState.Success(categories))
+                        stateLiveData.value = AppState.Success(categories)
                     },
-                    { stateLiveData.postValue(AppState.Error(it)) }
+                    { stateLiveData.value = AppState.Error(it) }
                 )
         )
     }

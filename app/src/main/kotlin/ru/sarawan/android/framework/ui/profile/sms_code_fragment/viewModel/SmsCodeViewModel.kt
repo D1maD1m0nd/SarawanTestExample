@@ -15,29 +15,29 @@ class SmsCodeViewModel @Inject constructor(
     private val incomingCallReaderService: ReceiveMessage
 ) : BaseViewModel<AppState<*>>() {
     fun createUser(user: UserRegistration) {
-        compositeDisposable.addAll(
+        compositeDisposable.add(
             userInteractor.createUser(user)
                 .subscribeOn(schedulerProvider.io)
-                .observeOn(schedulerProvider.io)
+                .observeOn(schedulerProvider.ui)
                 .subscribe(
-                    { stateLiveData.postValue(AppState.Success(it)) },
-                    { stateLiveData.postValue(AppState.Error(it)) })
+                    { stateLiveData.value = AppState.Success(it) },
+                    { stateLiveData.value = AppState.Error(it) })
         )
     }
 
     fun getPhoneNumber() {
-        compositeDisposable.addAll(
+        compositeDisposable.add(
             incomingCallReaderService.getMessage()
                 .subscribeOn(schedulerProvider.io)
                 .observeOn(schedulerProvider.ui)
                 .subscribe(
                     {
                         Log.e("phone", it)
-                        stateLiveData.postValue(AppState.Success(it))
+                        stateLiveData.value = AppState.Success(it)
                     },
                     {
                         Log.e("phone", it.message.toString())
-                        stateLiveData.postValue(AppState.Error(it))
+                        stateLiveData.value = AppState.Error(it)
                     }
                 )
         )

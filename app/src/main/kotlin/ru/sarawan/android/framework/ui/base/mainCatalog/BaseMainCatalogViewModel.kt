@@ -41,7 +41,6 @@ abstract class BaseMainCatalogViewModel(
         if (categoryFilter != null && word.isNullOrEmpty()) prevCategory = categoryFilter
         searchWord = word
         category = if (subcategory != null) null else (categoryFilter ?: prevCategory)
-//        val foundSubcategory = filters?.find { it.id == subcategory?.toLong() }?.id?.toInt()
         compositeDisposable.add(
             loadMoreData(
                 Products(
