@@ -281,9 +281,5 @@ class BasketFragment : Fragment() {
         _binding = null
         super.onDestroyView()
     }
-
-    companion object {
-        private const val LIMIT = 3
-    }
 }
 

@@ -65,11 +65,11 @@ abstract class BaseMainCatalogViewModel(
                             if (isValidToShow(product)) result
                                 .add(product.toMainScreenDataModel(stringProvider.getString(sortType.description)))
                         }
-                        stateLiveData.postValue(
+                        stateLiveData.value =
                             AppState.Success(MainScreenDataModel(result, isLastPage, filters))
-                        )
+
                     },
-                    { stateLiveData.postValue(AppState.Error(it)) }
+                    { stateLiveData.value = AppState.Error(it) }
                 )
         )
     }
@@ -81,10 +81,10 @@ abstract class BaseMainCatalogViewModel(
             basketInteractor
                 .putProduct(isLoggedUser, ProductsUpdate(products))
                 .subscribeOn(schedulerProvider.io)
-                .observeOn(schedulerProvider.io)
+                .observeOn(schedulerProvider.ui)
                 .subscribe(
                     { basketID = it.id },
-                    { stateLiveData.postValue(AppState.Error(it)) }
+                    { stateLiveData.value = AppState.Error(it) }
                 )
         )
         else basketID?.let { basket ->
@@ -92,8 +92,8 @@ abstract class BaseMainCatalogViewModel(
                 basketInteractor
                     .updateProduct(isLoggedUser, basket, ProductsUpdate(products))
                     .subscribeOn(schedulerProvider.io)
-                    .observeOn(schedulerProvider.io)
-                    .subscribe({}, { stateLiveData.postValue(AppState.Error(it)) })
+                    .observeOn(schedulerProvider.ui)
+                    .subscribe({}, { stateLiveData.value = AppState.Error(it) })
             )
         }
         if (basketID == null) stateLiveData.value =
@@ -144,8 +144,7 @@ abstract class BaseMainCatalogViewModel(
     protected fun sortShops(product: Product) {
         product.apply {
             when (sortType) {
-                SortBy.PRICE_ASC -> storePrices?.sortBy { it.price }
-                SortBy.PRICE_DES -> storePrices?.sortBy { it.price }
+                SortBy.PRICE_ASC, SortBy.PRICE_DES -> storePrices?.sortBy { it.price }
                 SortBy.ALPHABET -> Unit
                 SortBy.DISCOUNT -> storePrices?.sortByDescending { it.discount }
             }

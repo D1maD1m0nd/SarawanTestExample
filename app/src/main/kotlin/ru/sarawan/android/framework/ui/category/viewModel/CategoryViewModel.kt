@@ -45,17 +45,6 @@ class CategoryViewModel @Inject constructor(
             )
         compositeDisposable.add(
             loadMoreData(products, isLoggedUser)
-                .map { productsList ->
-                    val result: MutableList<CardScreenDataModel> = mutableListOf()
-                    productsList.forEach { product ->
-                        sortShops(product)
-                        if (isValidToShow(product))
-                            result.add(
-                                product.toMainScreenDataModel(stringProvider.getString(sortType.description))
-                            )
-                    }
-                    result
-                }
                 .subscribeOn(schedulerProvider.io)
                 .observeOn(schedulerProvider.ui)
                 .subscribe(
